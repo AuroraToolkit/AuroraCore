@@ -20,10 +20,10 @@ public struct Context: Codable, Equatable {
     public let id: UUID
 
     /// A collection of `ContextItem` instances that make up the content of the context.
-    private(set) var items: [ContextItem] = []
+    public private(set) var items: [ContextItem] = []
 
     /// A collection of `Bookmark` instances within the context.
-    private(set) var bookmarks: [Bookmark] = []
+    public private(set) var bookmarks: [Bookmark] = []
 
     /**
      Initializes a new `Context` with a unique identifier.

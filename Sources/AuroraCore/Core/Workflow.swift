@@ -23,7 +23,7 @@ public struct Workflow {
     public var description: String
 
     /// The collection of tasks within this workflow.
-    public var tasks: [Task]
+    public private(set) var tasks: [Task]
 
     /// The timestamp for when the workflow was created.
     public var creationDate: Date
