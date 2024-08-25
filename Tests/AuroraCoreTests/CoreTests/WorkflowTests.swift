@@ -126,4 +126,62 @@ final class WorkflowTests: XCTestCase {
         XCTAssertEqual(activeTasks.count, 1)
         XCTAssertEqual(activeTasks.first?.name, "Task 2")
     }
+
+    func testSequentialTaskExecution() {
+        // Given
+        var workflow = Workflow(name: "Sequential Workflow", description: "This is a sequential workflow")
+
+        var task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
+        var task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
+
+        workflow.addTask(task1)
+        workflow.addTask(task2)
+
+        // When
+        workflow.start()
+
+        // Then
+        XCTAssertEqual(workflow.tasks[0].status, .completed, "Task 1 should be completed after execution.")
+        XCTAssertEqual(workflow.tasks[1].status, .completed, "Task 2 should be completed after execution.")
+        XCTAssertNotNil(workflow.completionDate, "Workflow should be completed once all tasks are executed.")
+    }
+
+    func testWorkflowStopsOnTaskFailure() {
+        // Given
+        var workflow = Workflow(name: "Failure Workflow", description: "This workflow will stop on failure")
+
+        var task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
+        var task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": nil]) // This will fail due to nil input
+
+        workflow.addTask(task1)
+        workflow.addTask(task2)
+
+        // When
+        workflow.start()
+
+        // Then
+        XCTAssertEqual(workflow.tasks[0].status, .completed, "Task 1 should be completed successfully.")
+        XCTAssertEqual(workflow.tasks[1].status, .failed, "Task 2 should have failed due to missing required input.")
+        XCTAssertNil(workflow.completionDate, "Workflow should not be marked as completed if a task fails.")
+    }
+
+    func testResetAfterFailure() {
+        // Given
+        var workflow = Workflow(name: "Reset Workflow", description: "Workflow will reset after failure")
+
+        var task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
+        var task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": nil]) // This will fail due to nil input
+
+        workflow.addTask(task1)
+        workflow.addTask(task2)
+
+        // When
+        workflow.start()
+        workflow.resetWorkflow()
+
+        // Then
+        XCTAssertEqual(workflow.tasks[0].status, .pending, "Task 1 should be reset to pending.")
+        XCTAssertEqual(workflow.tasks[1].status, .pending, "Task 2 should be reset to pending.")
+        XCTAssertNil(workflow.completionDate, "Workflow should have no completion date after reset.")
+    }
 }

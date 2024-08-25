@@ -8,7 +8,7 @@
 import Foundation
 
 /**
- A workflow represents a collection of tasks that are executed in sequence or parallel, with tracking of their statuses and timestamps.
+ A workflow represents a collection of tasks that are executed in sequence, with tracking of their statuses and timestamps.
 
  The workflow can be marked as complete once all tasks are either completed or failed.
  */
@@ -30,6 +30,9 @@ public struct Workflow {
 
     /// The timestamp for when the workflow was completed, if applicable.
     public var completionDate: Date?
+
+    /// Index of the currently executing task.
+    private var currentTaskIndex: Int = 0
 
     /**
      Initializes a new workflow with a specified name, description, and tasks.
@@ -70,6 +73,7 @@ public struct Workflow {
     public mutating func resetWorkflow() {
         tasks.indices.forEach { tasks[$0].resetTask() }
         self.completionDate = nil
+        self.currentTaskIndex = 0
     }
 
     /**
@@ -88,5 +92,58 @@ public struct Workflow {
      */
     public func activeTasks() -> [Task] {
         return tasks.filter { $0.status == .pending || $0.status == .inProgress }
+    }
+
+    /**
+     Starts the execution of the workflow by triggering the first task.
+     */
+    public mutating func start() {
+        executeNextTask()
+    }
+
+    /**
+     Executes the next task in the workflow that is in the `pending` state.
+     */
+    private mutating func executeNextTask() {
+        guard currentTaskIndex < tasks.count else {
+            markCompleted()
+            return
+        }
+
+        var task = tasks[currentTaskIndex]
+        task.markInProgress()
+
+        // Here we would typically execute the task's logic (e.g., async call)
+        // Simulating task completion
+        if task.hasRequiredInputs() {
+            markTaskCompleted(task)
+        } else {
+            handleTaskFailure(task)
+        }
+    }
+
+    /**
+     Marks a task as completed, processes its outputs, and proceeds to the next task.
+
+     - Parameters:
+        - task: The completed task.
+     */
+    private mutating func markTaskCompleted(_ task: Task) {
+        // Process outputs and pass to the next task if necessary
+        tasks[currentTaskIndex].markCompleted(withOutputs: task.outputs)
+        currentTaskIndex += 1
+        executeNextTask()
+    }
+
+    /**
+     Handles the failure of a task. The workflow may either stop or attempt to recover.
+
+     - Parameters:
+        - task: The failed task.
+     */
+    private mutating func handleTaskFailure(_ task: Task) {
+        tasks[currentTaskIndex].markFailed()
+        // We could add retry logic or recovery mechanisms here
+        // For now, we will stop the workflow upon failure
     }
 }
