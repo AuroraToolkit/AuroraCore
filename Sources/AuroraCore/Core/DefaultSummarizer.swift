@@ -8,35 +8,50 @@
 import Foundation
 
 /**
- `DefaultSummarizer` is a concrete implementation of the `Summarizer` protocol.
+ The `DefaultSummarizer` class provides a basic implementation of the `Summarizer` protocol.
 
- This class provides basic summarization functionality, which currently returns the original text without any changes. It can be extended to include more advanced summarization techniques.
+ It offers general summarization logic for text, code, and articles.
  */
 public class DefaultSummarizer: Summarizer {
 
     /**
-     Summarizes a single block of text.
+     Summarizes a piece of text by truncating it.
 
-     This method currently returns the input text without modification, but it can be extended to implement more complex summarization logic.
-
-     - Parameter text: The input text to be summarized.
-     - Returns: The summarized text, which is currently the same as the input.
+     - Parameter text: The text to be summarized.
+     - Returns: A truncated version of the text, followed by ellipsis.
      */
     public func summarize(_ text: String) -> String {
-        // Implement actual summarization logic
-        return text
+        return String(text.prefix(100)) + "..."
     }
 
     /**
-     Summarizes a collection of `ContextItem` objects by joining their texts.
+     Summarizes a collection of `ContextItem` objects by concatenating and truncating their content.
 
-     This method concatenates the text of multiple `ContextItem` objects and then summarizes the combined text using the `summarize(_:)` method.
-
-     - Parameter items: An array of `ContextItem` objects to be summarized.
-     - Returns: The summarized text, which is currently the combined text of all items.
+     - Parameter items: An array of `ContextItem` objects.
+     - Returns: A summarized version of the concatenated content.
      */
     public func summarizeItems(_ items: [ContextItem]) -> String {
-        let text = items.map { $0.text }.joined(separator: " ")
-        return summarize(text)
+        let combinedText = items.map { $0.text }.joined(separator: " ")
+        return summarize(combinedText)
+    }
+
+    /**
+     Summarizes a block of code by truncating the first few lines.
+
+     - Parameter code: The code to be summarized.
+     - Returns: A summarized version of the code snippet.
+     */
+    public func summarizeCode(_ code: String) -> String {
+        return String(code.prefix(50)) + "..."
+    }
+
+    /**
+     Summarizes an article by truncating it.
+
+     - Parameter article: The article content to be summarized.
+     - Returns: A summarized version of the article, followed by ellipsis.
+     */
+    public func summarizeArticle(_ article: String) -> String {
+        return summarize(article)
     }
 }

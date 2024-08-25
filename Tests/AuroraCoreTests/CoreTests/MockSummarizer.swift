@@ -9,6 +9,15 @@ import Foundation
 @testable import AuroraCore
 
 class MockSummarizer: Summarizer, Equatable {
+
+    func summarizeCode(_ code: String) -> String {
+        return "Code Summary"
+    }
+
+    func summarizeArticle(_ article: String) -> String {
+        return "Article Summary"
+    }
+
     func summarize(_ text: String) -> String {
         return "Summary"
     }

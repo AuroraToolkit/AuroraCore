@@ -22,7 +22,9 @@ final class DefaultSummarizerTests: XCTestCase {
         super.tearDown()
     }
 
-    func testSingleTextSummarization() {
+    // MARK: - Text Summarization Tests
+
+    func testSingleTextSummarizationShortText() {
         // Given
         let text = "This is a simple test text."
 
@@ -30,8 +32,33 @@ final class DefaultSummarizerTests: XCTestCase {
         let summary = defaultSummarizer.summarize(text)
 
         // Then
-        XCTAssertEqual(summary, text, "Default summarizer should return the input text unchanged.")
+        XCTAssertEqual(summary, text + "...", "Default summarizer should return the input text with '...' appended if it's short.")
     }
+
+    func testSingleTextSummarizationLongText() {
+        // Given
+        let longText = String(repeating: "This is a long text. ", count: 10) // This will create a long string
+
+        // When
+        let summary = defaultSummarizer.summarize(longText)
+
+        // Then
+        let expectedSummary = String(longText.prefix(100)) + "..."
+        XCTAssertEqual(summary, expectedSummary, "Default summarizer should truncate the text to 100 characters and append '...'.")
+    }
+
+    func testSummarizationOfEmptyText() {
+        // Given
+        let emptyText = ""
+
+        // When
+        let summary = defaultSummarizer.summarize(emptyText)
+
+        // Then
+        XCTAssertEqual(summary, "...", "Summarizer should handle empty text by returning just '...'.")
+    }
+
+    // MARK: - Multiple Items Summarization Tests
 
     func testMultipleItemsSummarization() {
         // Given
@@ -45,31 +72,42 @@ final class DefaultSummarizerTests: XCTestCase {
         let summary = defaultSummarizer.summarizeItems(items)
 
         // Then
-        let expectedSummary = "This is the first sentence. Here comes the second sentence. Finally, the third sentence."
-        XCTAssertEqual(summary, expectedSummary, "Default summarizer should concatenate the text of all context items.")
+        let expectedSummary = "This is the first sentence. Here comes the second sentence. Finally, the third sentence...."
+        XCTAssertEqual(summary, expectedSummary, "Default summarizer should concatenate the text of all context items and truncate to 100 characters.")
     }
 
-    // Placeholder for future tests when actual summarization logic is added
-    func testSummarizationOfLongText() {
+    // MARK: - Code Summarization Tests
+
+    func testCodeSummarization() {
         // Given
-        let longText = String(repeating: "This is a long text. ", count: 100)
+        let code = """
+        func testFunction() {
+            print("This is a test.")
+        }
+        """
 
         // When
-        let summary = defaultSummarizer.summarize(longText)
+        let summary = defaultSummarizer.summarizeCode(code)
 
         // Then
-        // As of now, the summarizer returns the full text. Later, this test can be modified to assert a proper summary.
-        XCTAssertEqual(summary, longText, "Default summarizer should return the full text for now.")
+        let expectedSummary = String(code.prefix(50)) + "..."
+        XCTAssertEqual(summary, expectedSummary, "Default summarizer should truncate the code to 50 characters and append '...'.")
     }
 
-    func testSummarizationOfEmptyText() {
+    // MARK: - Article Summarization Tests
+
+    func testArticleSummarization() {
         // Given
-        let emptyText = ""
+        let article = """
+        In a recent study, scientists discovered that the earth's core is cooling faster than previously thought.
+        This could have significant implications for tectonic activities and climate.
+        """
 
         // When
-        let summary = defaultSummarizer.summarize(emptyText)
+        let summary = defaultSummarizer.summarizeArticle(article)
 
         // Then
-        XCTAssertEqual(summary, emptyText, "Summarizer should handle empty text and return it unchanged.")
+        let expectedSummary = String(article.prefix(100)) + "..."
+        XCTAssertEqual(summary, expectedSummary, "Default summarizer should truncate the article to 100 characters and append '...'.")
     }
 }

@@ -1,34 +1,48 @@
 //
 //  Summarizer.swift
-//  Aurora
+//  AuroraCore
 //
-//  Created by Dan Murrell Jr on 8/21/24.
+//  Created by Dan Murrell Jr on 8/24/24.
 //
 
 import Foundation
 
 /**
- A protocol that defines the interface for summarizing text.
+ The `Summarizer` protocol defines a set of methods for summarizing different types of content.
 
- Conforming types must implement methods for summarizing a single block of text, as well as summarizing a collection of `ContextItem` objects.
+ Summarizers can be customized for general text, code, articles, and context items.
  */
 public protocol Summarizer {
 
     /**
-     Summarizes a single block of text.
+     Summarizes a given piece of text.
 
-     - Parameter text: The input text to be summarized.
-     - Returns: The summarized text.
+     - Parameter text: The text to be summarized.
+     - Returns: A summarized version of the text.
      */
     func summarize(_ text: String) -> String
 
     /**
      Summarizes a collection of `ContextItem` objects.
 
-     This method combines the text of multiple `ContextItem` objects and returns a summarized version of the combined text.
-
-     - Parameter items: An array of `ContextItem` objects to be summarized.
-     - Returns: The summarized text.
+     - Parameter items: The `ContextItem` objects to be summarized.
+     - Returns: A summarized version of the content within the context items.
      */
     func summarizeItems(_ items: [ContextItem]) -> String
+
+    /**
+     Summarizes a block of code.
+
+     - Parameter code: The code to be summarized.
+     - Returns: A summarized version of the code.
+     */
+    func summarizeCode(_ code: String) -> String
+
+    /**
+     Summarizes an article.
+
+     - Parameter article: The article content to be summarized.
+     - Returns: A summarized version of the article.
+     */
+    func summarizeArticle(_ article: String) -> String
 }
