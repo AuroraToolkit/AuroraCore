@@ -8,9 +8,11 @@
 import Foundation
 
 /**
- A representation of a task within a workflow system. Each task has a name, description, status, and timestamps for creation and completion.
+ A representation of a task within a workflow system. Each task has a name, description, inputs, outputs, status, and timestamps for creation and completion.
 
- Tasks can transition between statuses such as `pending`, `inProgress`, `completed`, and `failed`.
+ Tasks can transition between statuses such as `pending`, `inProgress`, `completed`, and `failed`. Tasks require inputs to proceed and generate outputs that are passed to the next task in the workflow.
+
+ - Important: Inputs are required by default. To denote an input as optional, append a `?` suffix to the input key.
  */
 public struct Task {
     /// Unique identifier for the task.
@@ -25,6 +27,16 @@ public struct Task {
     /// The current status of the task.
     public var status: TaskStatus
 
+    /**
+     A dictionary representing the inputs required by the task.
+
+     - Note: Inputs are required by default. To specify an input as optional, append a `?` suffix to the input key (e.g., `"optionalInput?"`).
+     */
+    public var inputs: [String: Any?]
+
+    /// A dictionary representing the outputs produced by the task.
+    public private(set) var outputs: [String: Any] = [:]
+
     /// The timestamp for when the task was created.
     public var creationDate: Date
 
@@ -32,27 +44,33 @@ public struct Task {
     public var completionDate: Date?
 
     /**
-     Initializes a new task with a specified name and description. The task starts in the `pending` status by default.
+     Initializes a new task with a specified name, description, and inputs. The task starts in the `pending` status by default.
 
      - Parameters:
         - name: The name of the task.
         - description: A detailed description of the task.
+        - inputs: The required inputs for the task. To mark an input as optional, append a `?` suffix to the input key.
         - status: The initial status of the task (default is `.pending`).
      */
-    public init(name: String, description: String, status: TaskStatus = .pending) {
+    public init(name: String, description: String, inputs: [String: Any?] = [:], status: TaskStatus = .pending) {
         self.id = UUID()
         self.name = name
         self.description = description
+        self.inputs = inputs
         self.status = status
         self.creationDate = Date()
     }
 
     /**
      Marks the task as completed and sets the completion timestamp to the current time.
+
+     - Parameters:
+        - outputs: A dictionary of outputs produced by the task.
      */
-    public mutating func markCompleted() {
+    public mutating func markCompleted(withOutputs outputs: [String: Any] = [:]) {
         self.status = .completed
         self.completionDate = Date()
+        self.outputs = outputs
     }
 
     /**
@@ -70,11 +88,31 @@ public struct Task {
     }
 
     /**
-     Resets the task to its initial `pending` state, clearing the completion date if it was previously set.
+     Resets the task to its initial `pending` state, clearing the completion date and outputs if they were previously set.
      */
     public mutating func resetTask() {
         self.status = .pending
         self.completionDate = nil
+        self.outputs = [:]
+    }
+
+    /**
+     Checks if the task has all required inputs.
+
+     - Returns: `true` if all required inputs are present, `false` otherwise.
+
+     - Note: Inputs are required by default. Inputs marked with a `?` suffix are considered optional.
+     */
+    public func hasRequiredInputs() -> Bool {
+        return inputs.allSatisfy { key, value in
+            // If the key ends with `?`, treat it as optional and skip the check
+            if key.hasSuffix("?") {
+                return true
+            }
+            // Check if the value is nil by casting it to Optional<Any>
+            let mirror = Mirror(reflecting: value as Any)
+            return mirror.displayStyle != .optional || mirror.children.first != nil
+        }
     }
 }
 
