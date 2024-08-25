@@ -85,9 +85,13 @@ public class ContextController {
     }
 
     /**
-     Summarizes older context items that are more than 7 days old. Groups and summarizes items while adhering to token limits.
+     Summarizes older context items based on a given age threshold and a customizable summarization strategy.
+
+     - Parameters:
+        - daysThreshold: The number of days after which items are considered "old". Defaults to 7 days.
+        - strategy: The strategy for summarizing items, either single-item or multi-item. Defaults to `.multiItem`.
      */
-    public func summarizeOlderContext() {
+    public func summarizeOlderContext(daysThreshold: Int = 7, strategy: SummarizationStrategy = .multiItem) {
         guard !context.items.isEmpty else {
             return
         }
@@ -95,35 +99,41 @@ public class ContextController {
         var group: [ContextItem] = []
         var groupTokenCount = 0
 
-        for item in context.items where !item.isSummarized && item.isOlderThan(days: 7) {
+        for item in context.items where !item.isSummarized && item.isOlderThan(days: daysThreshold) {
             group.append(item)
             groupTokenCount += item.tokenCount
 
             if groupTokenCount >= maxTokenLimit / 2 {
-                summarizeGroup(group)
+                summarizeGroup(group, strategy: strategy)
                 group.removeAll()
                 groupTokenCount = 0
             }
         }
 
         if !group.isEmpty {
-            summarizeGroup(group)
+            summarizeGroup(group, strategy: strategy)
         }
     }
 
     /**
-     Summarizes a group of context items and stores the result in `summarizedItems`.
+     Summarizes a group of context items using the given summarization strategy and stores the result in `summarizedItems`.
 
      - Parameters:
         - group: The array of `ContextItem` to be summarized.
+        - strategy: The summarization strategy to use, either single-item or multi-item.
      */
-    private func summarizeGroup(_ group: [ContextItem]) {
+    private func summarizeGroup(_ group: [ContextItem], strategy: SummarizationStrategy) {
         let summary: String
 
-        if group.count == 1 {
-            summary = summarizer.summarize(group[0].text)
-        } else {
-            summary = summarizer.summarizeItems(group)
+        switch strategy {
+        case .singleItem:
+            summary = group.map { summarizer.summarize($0.text) }.joined(separator: "\n")
+        case .multiItem:
+            if group.count == 1 {
+                summary = summarizer.summarize(group[0].text)
+            } else {
+                summary = summarizer.summarizeItems(group)
+            }
         }
 
         let summaryItem = ContextItem(text: summary, isSummary: true)
@@ -135,7 +145,7 @@ public class ContextController {
             context.updateItem(updatedItem)
         }
     }
-
+    
     /**
      Retrieves the full history of context items.
 

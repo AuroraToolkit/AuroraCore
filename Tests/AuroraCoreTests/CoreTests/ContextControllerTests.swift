@@ -208,4 +208,35 @@ final class ContextControllerTests: XCTestCase {
         XCTAssertEqual(contextController.fullHistory().count, 2, "Full history should contain the original items.")
         XCTAssertEqual(contextController.summarizedContext().count, 1, "A summary should be created for the two items.")
     }
+
+    func testSummarizeOlderContextWithSingleItemStrategy() {
+        // Given
+        let oldItem = ContextItem(text: "Old item", creationDate: Date().addingTimeInterval(-8 * 24 * 60 * 60)) // 8 days old
+        contextController.addItem(content: oldItem.text, creationDate: oldItem.creationDate)
+
+        // When
+        contextController.summarizeOlderContext(strategy: .singleItem)
+
+        // Then
+        XCTAssertEqual(contextController.summarizedContext().count, 1, "There should be 1 summarized item.")
+        XCTAssertEqual(contextController.summarizedContext().first?.text, "Summary", "The single item should be summarized individually.")
+        XCTAssertTrue(contextController.getItems().first?.isSummarized ?? false, "The original item should be marked as summarized.")
+    }
+
+    func testSummarizeOlderContextWithMultiItemStrategy() {
+        // Given
+        let oldItem1 = ContextItem(text: "Old item 1", creationDate: Date().addingTimeInterval(-8 * 24 * 60 * 60)) // 8 days old
+        let oldItem2 = ContextItem(text: "Old item 2", creationDate: Date().addingTimeInterval(-8 * 24 * 60 * 60)) // 8 days old
+        contextController.addItem(content: oldItem1.text, creationDate: oldItem1.creationDate)
+        contextController.addItem(content: oldItem2.text, creationDate: oldItem2.creationDate)
+
+        // When
+        contextController.summarizeOlderContext(strategy: .multiItem)
+
+        // Then
+        XCTAssertEqual(contextController.summarizedContext().count, 1, "There should be 1 summarized item.")
+        XCTAssertEqual(contextController.summarizedContext().first?.text, "Summary of 2 items", "Multiple items should be summarized together.")
+        XCTAssertTrue(contextController.getItems().first?.isSummarized ?? false, "The first item should be marked as summarized.")
+        XCTAssertTrue(contextController.getItems()[1].isSummarized, "The second item should be marked as summarized.")
+    }
 }

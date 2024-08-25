@@ -8,6 +8,17 @@
 import Foundation
 
 /**
+ Enum representing the strategy for summarizing context items.
+
+ - singleItem: Summarizes each item individually.
+ - multiItem: Summarizes multiple items together when possible.
+ */
+public enum SummarizationStrategy {
+    case singleItem
+    case multiItem
+}
+
+/**
  The `Summarizer` protocol defines a set of methods for summarizing different types of content.
 
  Summarizers can be customized for general text, code, articles, and context items.
