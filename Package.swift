@@ -1,4 +1,5 @@
 // swift-tools-version: 5.10
+
 import PackageDescription
 
 let package = Package(
@@ -12,11 +13,17 @@ let package = Package(
             name: "AuroraCore",
             targets: ["AuroraCore"]),
     ],
+    dependencies: [],
     targets: [
         .target(
-            name: "AuroraCore"),
+            name: "AuroraCore",
+            dependencies: [],
+            path: "Sources/AuroraCore"
+        ),
         .testTarget(
             name: "AuroraCoreTests",
-            dependencies: ["AuroraCore"]),
+            dependencies: ["AuroraCore"],
+            path: "Tests/AuroraCoreTests"
+        )
     ]
 )
