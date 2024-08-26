@@ -6,12 +6,16 @@
 //
 
 import Foundation
+import os.log
 
 /**
  `WorkflowManager` is responsible for managing the execution of workflows and their tasks in a linear sequence.
  It tracks the state of the workflow, handles task execution, manages inputs and outputs, and gracefully handles errors.
  */
 public class WorkflowManager {
+
+    private let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "WorkflowManager")
+
 
     /// The workflow that the manager will execute.
     private var workflow: Workflow
@@ -42,12 +46,12 @@ public class WorkflowManager {
      */
     public func start() {
         guard !isCompleted() else {
-            print("Workflow is already completed.")
+            logger.log("Workflow is already completed.")
             return
         }
 
         guard !workflow.tasks.isEmpty else {
-            print("No tasks available in the workflow.")
+            logger.log("No tasks available in the workflow.")
             return
         }
 
@@ -59,7 +63,7 @@ public class WorkflowManager {
      */
     internal func executeCurrentTask() {
         guard !isCompleted() else {
-            print("Workflow is already completed.")
+            logger.log("Workflow is already completed.")
             return
         }
 
@@ -72,7 +76,7 @@ public class WorkflowManager {
             // Simulate task execution and complete the task
             completeTask(task)
         } else {
-            print("Required inputs not present for task: \(task.name)")
+            logger.log("Required inputs not present for task: \(task.name)")
             handleTaskFailure(for: task)
             // Stop the workflow due to missing inputs
             return
@@ -89,10 +93,11 @@ public class WorkflowManager {
         updatedTask.markCompleted()
         workflow.updateTask(updatedTask, at: currentTaskIndex)
 
-        print("Task \(task.name) completed with outputs: \(updatedTask.outputs)")
-        currentTaskIndex += 1
+        logger.log("Task \(task.name) completed with outputs: \(updatedTask.outputs)")
 
-        if currentTaskIndex < workflow.tasks.count {
+        // Only increment the index if we are moving to the next task
+        if currentTaskIndex + 1 < workflow.tasks.count {
+            currentTaskIndex += 1
             executeCurrentTask()
         } else {
             completeWorkflow()
@@ -104,21 +109,41 @@ public class WorkflowManager {
      */
     private func completeWorkflow() {
         workflow.markCompleted()
-        print("Workflow completed.")
+        logger.log("Workflow completed.")
     }
 
     /**
-     Handles a task failure and stops the workflow.
+     Handles a task failure and determines whether to retry the task or stop the workflow.
 
      - Parameter task: The task that failed.
      */
-    private func handleTaskFailure(for task: Task) {
-        var failedTask = task
-        failedTask.markFailed()
-        workflow.updateTask(failedTask, at: currentTaskIndex)
+    internal func handleTaskFailure(for task: Task) {
+        var failedTask = workflow.tasks[currentTaskIndex] // Get the task from the workflow
 
-        // Ensure the workflow stops here, don't let it continue
-        print("Task \(task.name) failed. Workflow stopping.")
+        // Check if retries are still available
+        if failedTask.retryCount < failedTask.maxRetries {
+            failedTask.incrementRetryCount() // Increment the retry count
+            workflow.updateTask(failedTask, at: currentTaskIndex) // Update the task in the workflow
+            logger.log("Retrying task \(failedTask.name). Retry \(failedTask.retryCount) of \(failedTask.maxRetries).")
+            executeCurrentTask() // Retry the task without incrementing the currentTaskIndex
+        } else {
+            failedTask.markFailed() // Mark as failed after max retries
+            workflow.updateTask(failedTask, at: currentTaskIndex) // Update the task in the workflow
+            logger.log("Task \(failedTask.name) failed after \(failedTask.maxRetries) retries. Stopping workflow.")
+            stopWorkflow() // Stop the workflow after failure
+        }
+    }
+
+    /**
+     Stops the workflow by marking it as completed and logs the action.
+     */
+    internal func stopWorkflow() {
+        if !isCompleted() {
+            workflow.markCompleted() // Modify the original workflow directly
+            logger.log("Workflow has stopped.")
+        } else {
+            logger.log("Workflow already completed.")
+        }
     }
 
     /**

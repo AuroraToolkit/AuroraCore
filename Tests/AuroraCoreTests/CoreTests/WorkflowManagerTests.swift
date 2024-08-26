@@ -162,4 +162,57 @@ final class WorkflowManagerTests: XCTestCase {
         XCTAssertEqual(retrievedWorkflow.name, workflow.name, "The retrieved workflow should be the same as the initialized one.")
         XCTAssertEqual(retrievedWorkflow.tasks.count, workflow.tasks.count, "The number of tasks in the retrieved workflow should match the original workflow.")
     }
+
+    // Test task failure with retries
+    func testHandleTaskFailureWithRetries() {
+        // Given
+        var task = Task(name: "Test Task", description: "Task with retries", inputs: ["input1": "value1"], maxRetries: 3)
+        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task])
+        let manager = WorkflowManager(workflow: workflow)
+
+        // When
+        manager.start() // Start the workflow
+        manager.handleTaskFailure(for: task) // Simulate task failure
+
+        // Then
+        let updatedTask = manager.getWorkflow().tasks.first!
+        XCTAssertEqual(updatedTask.retryCount, 1, "The task should have attempted 1 retry.")
+        XCTAssertEqual(manager.getWorkflowState(), "In Progress", "The workflow should still be in progress due to retries.")
+    }
+
+    // Test task failure without retries, ensuring workflow stops
+    func testHandleTaskFailureNoRetries() {
+        // Given
+        var task = Task(name: "Test Task", description: "Task without retries", inputs: ["input1": "value1"], maxRetries: 0)
+        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task])
+        let manager = WorkflowManager(workflow: workflow)
+
+        // When
+        manager.start()
+
+        // Simulate task failure
+        task.markFailed()
+        manager.handleTaskFailure(for: task)
+
+        // Then
+        let updatedTask = manager.getWorkflow().tasks.first!
+        XCTAssertEqual(updatedTask.status, .failed, "The task should be marked as failed.")
+        XCTAssertEqual(manager.getWorkflowState(), "Completed", "The workflow should stop after the task failure with no retries.")
+    }
+
+    // Test stopping a workflow that is already completed
+    func testStopWorkflowAlreadyCompleted() {
+        // Given
+        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [])
+        let manager = WorkflowManager(workflow: workflow)
+
+        // When
+        manager.stopWorkflow()  // First stop call
+
+        // Simulate a second stop
+        manager.stopWorkflow()  // Second stop call
+
+        // Then
+        XCTAssertEqual(manager.getWorkflowState(), "Completed", "The workflow should remain completed after a second stop call.")
+    }
 }

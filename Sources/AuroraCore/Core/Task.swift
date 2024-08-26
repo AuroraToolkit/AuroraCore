@@ -43,6 +43,13 @@ public struct Task {
     /// The timestamp for when the task was completed, if applicable.
     public var completionDate: Date?
 
+    /// The number of times the task has been retried.
+    public private(set) var retryCount: Int = 0
+
+    /// The maximum number of retries allowed for this task.
+    public let maxRetries: Int
+
+
     /**
      Initializes a new task with a specified name, description, and inputs. The task starts in the `pending` status by default.
 
@@ -52,13 +59,14 @@ public struct Task {
         - inputs: The required inputs for the task. To mark an input as optional, append a `?` suffix to the input key.
         - status: The initial status of the task (default is `.pending`).
      */
-    public init(name: String, description: String, inputs: [String: Any?] = [:], status: TaskStatus = .pending) {
+    public init(name: String, description: String, inputs: [String: Any?] = [:], maxRetries: Int = 0, status: TaskStatus = .pending) {
         self.id = UUID()
         self.name = name
         self.description = description
         self.inputs = inputs
         self.status = status
         self.creationDate = Date()
+        self.maxRetries = maxRetries
     }
 
     /**
@@ -94,6 +102,22 @@ public struct Task {
         self.status = .pending
         self.completionDate = nil
         self.outputs = [:]
+    }
+
+    /**
+     Increments the retry count for the task.
+     */
+    public mutating func incrementRetryCount() {
+        retryCount += 1
+    }
+
+    /**
+     Checks whether the task can still be retried.
+
+     - Returns: `true` if the retry count is less than the maximum allowed retries, `false` otherwise.
+     */
+    public func canRetry() -> Bool {
+        return retryCount < maxRetries
     }
 
     /**
