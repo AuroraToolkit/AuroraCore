@@ -136,6 +136,18 @@ public struct Workflow {
     }
 
     /**
+     Updates a task at a given index in the workflow.
+
+     - Parameters:
+        - task: The updated task to be placed at the given index.
+        - index: The index of the task to be updated.
+     */
+    public mutating func updateTask(_ task: Task, at index: Int) {
+        guard index >= 0 && index < tasks.count else { return }
+        tasks[index] = task
+    }
+
+    /**
      Handles the failure of a task. The workflow may either stop or attempt to recover.
 
      - Parameters:
