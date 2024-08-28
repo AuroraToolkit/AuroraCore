@@ -102,6 +102,7 @@ public struct Task {
         self.status = .pending
         self.completionDate = nil
         self.outputs = [:]
+        self.retryCount = 0
     }
 
     /**

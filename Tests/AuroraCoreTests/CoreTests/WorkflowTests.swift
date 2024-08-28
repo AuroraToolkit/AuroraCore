@@ -18,8 +18,7 @@ final class WorkflowTests: XCTestCase {
         XCTAssertEqual(workflow.name, "Test Workflow")
         XCTAssertEqual(workflow.description, "This is a test workflow")
         XCTAssertEqual(workflow.tasks.count, 0)
-        XCTAssertNotNil(workflow.creationDate)
-        XCTAssertNil(workflow.completionDate)
+        XCTAssertEqual(workflow.state, .notStarted, "The workflow should be not started when initialized.")
     }
 
     func testAddTaskToWorkflow() {
@@ -48,10 +47,14 @@ final class WorkflowTests: XCTestCase {
         workflow.addTask(task2)
 
         // When
-        workflow.markCompleted()
+        workflow.tryMarkCompleted()
 
         // Then
-        XCTAssertNotNil(workflow.completionDate)
+        if case .completed(_) = workflow.state {
+            XCTAssertTrue(true)
+        } else {
+            XCTFail("Workflow should be in the completed state.")
+        }
     }
 
     func testMarkWorkflowNotCompletedIfActiveTasksExist() {
@@ -66,10 +69,10 @@ final class WorkflowTests: XCTestCase {
         workflow.addTask(task2)
 
         // When
-        workflow.markCompleted()
+        workflow.tryMarkCompleted()
 
         // Then
-        XCTAssertNil(workflow.completionDate)
+        XCTAssertEqual(workflow.state, .notStarted, "Workflow should not be marked as completed if there are active tasks.")
     }
 
     func testResetWorkflow() {
@@ -80,14 +83,14 @@ final class WorkflowTests: XCTestCase {
 
         // Add tasks to workflow and mark workflow completed
         workflow.addTask(task1)
-        workflow.markCompleted()
+        workflow.tryMarkCompleted()
 
         // When
         workflow.resetWorkflow()
 
         // Then
         XCTAssertEqual(workflow.tasks.first?.status, .pending)
-        XCTAssertNil(workflow.completionDate)
+        XCTAssertEqual(workflow.state, .notStarted, "Workflow should be reset to not started after a reset.")
     }
 
     func testCompletedTasks() {
@@ -143,7 +146,11 @@ final class WorkflowTests: XCTestCase {
         // Then
         XCTAssertEqual(workflow.tasks[0].status, .completed, "Task 1 should be completed after execution.")
         XCTAssertEqual(workflow.tasks[1].status, .completed, "Task 2 should be completed after execution.")
-        XCTAssertNotNil(workflow.completionDate, "Workflow should be completed once all tasks are executed.")
+        if case .completed = workflow.state {
+            XCTAssertTrue(true)
+        } else {
+            XCTFail("Workflow should be in the completed state after executing all tasks.")
+        }
     }
 
     func testWorkflowStopsOnTaskFailure() {
@@ -162,7 +169,12 @@ final class WorkflowTests: XCTestCase {
         // Then
         XCTAssertEqual(workflow.tasks[0].status, .completed, "Task 1 should be completed successfully.")
         XCTAssertEqual(workflow.tasks[1].status, .failed, "Task 2 should have failed due to missing required input.")
-        XCTAssertNil(workflow.completionDate, "Workflow should not be marked as completed if a task fails.")
+
+        if case .failed(_, _) = workflow.state {
+            XCTAssertTrue(true)
+        } else {
+            XCTFail("Workflow should be in the failed state.")
+        }
     }
 
     func testResetAfterFailure() {
@@ -182,6 +194,6 @@ final class WorkflowTests: XCTestCase {
         // Then
         XCTAssertEqual(workflow.tasks[0].status, .pending, "Task 1 should be reset to pending.")
         XCTAssertEqual(workflow.tasks[1].status, .pending, "Task 2 should be reset to pending.")
-        XCTAssertNil(workflow.completionDate, "Workflow should have no completion date after reset.")
+        XCTAssertEqual(workflow.state, .notStarted, "Workflow should be reset to not started after failure and reset.")
     }
 }

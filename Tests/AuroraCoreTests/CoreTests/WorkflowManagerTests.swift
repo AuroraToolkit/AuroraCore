@@ -19,7 +19,7 @@ final class WorkflowManagerTests: XCTestCase {
         let workflowState = manager.getWorkflowState()
 
         // Then
-        XCTAssertEqual(workflowState, "In Progress", "Initial workflow state should be 'In Progress'.")
+        XCTAssertTrue(workflowState.isNotStarted, "Initial workflow state should be 'Not Started'.")
     }
 
     func testStartWorkflowWithTasks() {
@@ -34,10 +34,9 @@ final class WorkflowManagerTests: XCTestCase {
 
         // When
         manager.start()
-        let workflowState = manager.getWorkflowState()
 
         // Then
-        XCTAssertEqual(workflowState, "Completed", "Workflow should complete after all tasks are processed.")
+        XCTAssertTrue(manager.getWorkflowState().isCompleted, "Workflow should be in the completed state.")
     }
 
     func testStartWorkflowWithMissingInputs() {
@@ -52,10 +51,9 @@ final class WorkflowManagerTests: XCTestCase {
 
         // When
         manager.start()
-        let workflowState = manager.getWorkflowState()
 
         // Then
-        XCTAssertEqual(workflowState, "In Progress", "Workflow should stop due to missing required inputs.")
+        XCTAssertTrue(manager.getWorkflowState().isFailed, "Workflow should fail due to missing required inputs.")
     }
 
     func testHandleTaskFailure() {
@@ -70,10 +68,9 @@ final class WorkflowManagerTests: XCTestCase {
 
         // When
         manager.start()
-        let workflowState = manager.getWorkflowState()
 
         // Then
-        XCTAssertEqual(workflowState, "In Progress", "Workflow should not complete due to task failure.")
+        XCTAssertTrue(manager.getWorkflowState().isFailed, "Workflow should not complete due to task failure.")
     }
 
     func testEmptyWorkflow() {
@@ -83,10 +80,9 @@ final class WorkflowManagerTests: XCTestCase {
 
         // When
         manager.start()
-        let workflowState = manager.getWorkflowState()
 
         // Then
-        XCTAssertEqual(workflowState, "In Progress", "Empty workflows should not be marked as completed.")
+        XCTAssertTrue(manager.getWorkflowState().isCompleted, "Empty workflows should be marked as completed.")
     }
 
     func testMarkWorkflowCompleteAfterAllTasks() {
@@ -103,7 +99,7 @@ final class WorkflowManagerTests: XCTestCase {
         manager.start()
 
         // Then
-        XCTAssertEqual(manager.getWorkflowState(), "Completed", "Workflow should be marked as completed after all tasks.")
+        XCTAssertTrue(manager.getWorkflowState().isCompleted, "Workflow should be marked as completed after all tasks.")
     }
 
     func testWorkflowAlreadyCompleted() {
@@ -114,7 +110,7 @@ final class WorkflowManagerTests: XCTestCase {
         task2.markCompleted()
 
         var workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
-        workflow.markCompleted()
+        workflow.tryMarkCompleted()
 
         let manager = WorkflowManager(workflow: workflow)
 
@@ -122,8 +118,7 @@ final class WorkflowManagerTests: XCTestCase {
         manager.start() // This should now trigger the guard in `start()`
 
         // Then
-        XCTAssertEqual(manager.getWorkflowState(), "Completed", "Workflow should already be marked as completed, and no task should be executed.")
-        XCTAssertTrue(manager.isCompleted(), "Workflow should return true for isCompleted()")
+        XCTAssertTrue(manager.getWorkflowState().isCompleted, "Workflow should already be marked as completed, and no task should be executed.")
     }
 
     func testExecuteCurrentTaskDoesNotRunIfWorkflowCompleted() {
@@ -134,7 +129,7 @@ final class WorkflowManagerTests: XCTestCase {
         task2.markCompleted()
 
         var workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
-        workflow.markCompleted()
+        workflow.tryMarkCompleted()
 
         let manager = WorkflowManager(workflow: workflow)
 
@@ -166,18 +161,19 @@ final class WorkflowManagerTests: XCTestCase {
     // Test task failure with retries
     func testHandleTaskFailureWithRetries() {
         // Given
-        var task = Task(name: "Test Task", description: "Task with retries", inputs: ["input1": "value1"], maxRetries: 3)
+        let task = Task(name: "Test Task", description: "Task with retries", inputs: ["input1": "value1"], maxRetries: 3)
         let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task])
         let manager = WorkflowManager(workflow: workflow)
 
         // When
         manager.start() // Start the workflow
         manager.handleTaskFailure(for: task) // Simulate task failure
+        manager.evaluateState()
 
         // Then
         let updatedTask = manager.getWorkflow().tasks.first!
         XCTAssertEqual(updatedTask.retryCount, 1, "The task should have attempted 1 retry.")
-        XCTAssertEqual(manager.getWorkflowState(), "In Progress", "The workflow should still be in progress due to retries.")
+        XCTAssertTrue(manager.getWorkflowState().isInProgress, "The workflow should still be in progress due to retries.")
     }
 
     // Test task failure without retries, ensuring workflow stops
@@ -197,7 +193,9 @@ final class WorkflowManagerTests: XCTestCase {
         // Then
         let updatedTask = manager.getWorkflow().tasks.first!
         XCTAssertEqual(updatedTask.status, .failed, "The task should be marked as failed.")
-        XCTAssertEqual(manager.getWorkflowState(), "Completed", "The workflow should stop after the task failure with no retries.")
+
+        // Check that the workflow is in the failed state
+        XCTAssertTrue(manager.getWorkflowState().isFailed, "The workflow should be in the failed state.")
     }
 
     // Test stopping a workflow that is already completed
@@ -212,7 +210,104 @@ final class WorkflowManagerTests: XCTestCase {
         // Simulate a second stop
         manager.stopWorkflow()  // Second stop call
 
+        let workflowState = manager.getWorkflowState()
+
         // Then
-        XCTAssertEqual(manager.getWorkflowState(), "Completed", "The workflow should remain completed after a second stop call.")
+        if case .completed = workflowState {
+            XCTAssertTrue(true)
+        } else {
+            XCTFail("The workflow should remain completed after a second stop call, not \(workflowState).")
+        }
+    }
+
+    // Test case for the notStarted state
+    func testEvaluateStateWhenNotStarted() {
+        // Given
+        let task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
+        let task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
+
+        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
+        let manager = WorkflowManager(workflow: workflow)
+
+        // When
+        manager.evaluateState()
+
+        // Then
+        XCTAssertEqual(manager.getWorkflowState(), .notStarted, "Workflow should remain in the not started state if no tasks have been executed.")
+    }
+
+    func testEvaluateStateWhenAllTasksCompleted() {
+        // Given
+        var task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
+        var task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
+        task1.markCompleted()
+        task2.markCompleted()
+
+        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
+        let manager = WorkflowManager(workflow: workflow)
+
+        // When
+        manager.evaluateState()
+
+        // Then
+        XCTAssertEqual(manager.getWorkflowState(), .completed(Date()), "Workflow should be marked as completed when all tasks are completed.")
+    }
+
+    func testEvaluateStateWhenTaskFailedWithNoRetries() {
+        // Given
+        var task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
+        var task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": "value2"], maxRetries: 0)
+        task1.markCompleted()
+        task2.markFailed()
+
+        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
+        let manager = WorkflowManager(workflow: workflow)
+
+        // When
+        manager.evaluateState()
+
+        // Then
+        if case .failed(_, _) = manager.getWorkflowState() {
+            XCTAssertTrue(true, "Workflow should be marked as failed when a task has no retries left.")
+        } else {
+            XCTFail("Workflow should be in the failed state.")
+        }
+    }
+
+    func testEvaluateStateWhenInProgress() {
+        // Given
+        var task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
+        let task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
+        task1.markInProgress()
+
+        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
+        let manager = WorkflowManager(workflow: workflow)
+
+        // When
+        manager.evaluateState()
+
+        // Then
+        XCTAssertEqual(manager.getWorkflowState(), .inProgress, "Workflow should be in progress when tasks are pending or in progress.")
+    }
+
+    func testEvaluateStateWhenStopped() {
+        // Given
+        let task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
+        let task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
+
+        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
+        let manager = WorkflowManager(workflow: workflow)
+
+        // When
+        manager.stopWorkflow() // Manually stop the workflow
+        manager.evaluateState()
+
+        // Then
+        if case .stopped = manager.getWorkflowState() {
+            XCTAssertTrue(true, "Workflow should remain stopped if it has been manually stopped.")
+        } else {
+            XCTFail("Workflow should remain in the stopped state.")
+        }
     }
 }
+
