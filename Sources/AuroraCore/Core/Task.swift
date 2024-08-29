@@ -1,62 +1,91 @@
 //
 //  Task.swift
-//  Aurora
 //
-//  Created by Dan Murrell Jr on 8/24/24.
+//
+//  Created by Dan Murrell Jr on 8/29/24.
 //
 
 import Foundation
 
 /**
- A representation of a task within a workflow system. Each task has a name, description, inputs, outputs, status, and timestamps for creation and completion.
-
- Tasks can transition between statuses such as `pending`, `inProgress`, `completed`, and `failed`. Tasks require inputs to proceed and generate outputs that are passed to the next task in the workflow.
-
- - Important: Inputs are required by default. To denote an input as optional, append a `?` suffix to the input key.
+ A protocol defining the essential properties and behaviors of a task within a workflow system.
  */
-public struct Task {
+public protocol TaskProtocol {
     /// Unique identifier for the task.
-    public var id: UUID
+    var id: UUID { get }
 
     /// Name of the task.
-    public var name: String
+    var name: String { get }
 
     /// A detailed description of the task.
-    public var description: String
+    var description: String { get }
 
     /// The current status of the task.
-    public var status: TaskStatus
+    var status: TaskStatus { get set }
 
-    /**
-     A dictionary representing the inputs required by the task.
+    /// The inputs required by the task.
+    var inputs: [String: Any?] { get }
 
-     - Note: Inputs are required by default. To specify an input as optional, append a `?` suffix to the input key (e.g., `"optionalInput?"`).
-     */
-    public var inputs: [String: Any?]
-
-    /// A dictionary representing the outputs produced by the task.
-    public private(set) var outputs: [String: Any] = [:]
+    /// The outputs produced by the task.
+    var outputs: [String: Any] { get }
 
     /// The timestamp for when the task was created.
-    public var creationDate: Date
+    var creationDate: Date { get }
 
     /// The timestamp for when the task was completed, if applicable.
-    public var completionDate: Date?
+    var completionDate: Date? { get set }
 
     /// The number of times the task has been retried.
-    public private(set) var retryCount: Int = 0
+    var retryCount: Int { get set }
 
     /// The maximum number of retries allowed for this task.
-    public let maxRetries: Int
+    var maxRetries: Int { get }
 
+    /// Marks the task as completed and sets the completion timestamp to the current time.
+    mutating func markCompleted(withOutputs outputs: [String: Any])
+
+    /// Marks the task as in progress.
+    mutating func markInProgress()
+
+    /// Marks the task as failed.
+    mutating func markFailed()
+
+    /// Resets the task to its initial `pending` state.
+    mutating func resetTask()
+
+    /// Increments the retry count for the task.
+    mutating func incrementRetryCount()
+
+    /// Checks whether the task can still be retried.
+    func canRetry() -> Bool
+
+    /// Checks if the task has all required inputs.
+    func hasRequiredInputs() -> Bool
+}
+
+/**
+ A concrete implementation of the `Task` protocol, representing a task within a workflow system.
+ */
+public struct Task: TaskProtocol {
+    public var id: UUID
+    public var name: String
+    public var description: String
+    public var status: TaskStatus
+    public var inputs: [String: Any?]
+    public var outputs: [String: Any] = [:]
+    public var creationDate: Date
+    public var completionDate: Date?
+    public var retryCount: Int = 0
+    public var maxRetries: Int
 
     /**
-     Initializes a new task with a specified name, description, and inputs. The task starts in the `pending` status by default.
+     Initializes a new `WorkflowTask` with a specified name, description, and inputs.
 
      - Parameters:
         - name: The name of the task.
         - description: A detailed description of the task.
-        - inputs: The required inputs for the task. To mark an input as optional, append a `?` suffix to the input key.
+        - inputs: The required inputs for the task.
+        - maxRetries: The maximum number of retries allowed for this task.
         - status: The initial status of the task (default is `.pending`).
      */
     public init(name: String, description: String, inputs: [String: Any?] = [:], maxRetries: Int = 0, status: TaskStatus = .pending) {
@@ -69,35 +98,20 @@ public struct Task {
         self.maxRetries = maxRetries
     }
 
-    /**
-     Marks the task as completed and sets the completion timestamp to the current time.
-
-     - Parameters:
-        - outputs: A dictionary of outputs produced by the task.
-     */
     public mutating func markCompleted(withOutputs outputs: [String: Any] = [:]) {
         self.status = .completed
         self.completionDate = Date()
         self.outputs = outputs
     }
 
-    /**
-     Marks the task as in progress. The status changes to `inProgress`.
-     */
     public mutating func markInProgress() {
         self.status = .inProgress
     }
 
-    /**
-     Marks the task as failed. This indicates the task could not be completed successfully.
-     */
     public mutating func markFailed() {
         self.status = .failed
     }
 
-    /**
-     Resets the task to its initial `pending` state, clearing the completion date and outputs if they were previously set.
-     */
     public mutating func resetTask() {
         self.status = .pending
         self.completionDate = nil
@@ -105,29 +119,14 @@ public struct Task {
         self.retryCount = 0
     }
 
-    /**
-     Increments the retry count for the task.
-     */
     public mutating func incrementRetryCount() {
         retryCount += 1
     }
 
-    /**
-     Checks whether the task can still be retried.
-
-     - Returns: `true` if the retry count is less than the maximum allowed retries, `false` otherwise.
-     */
     public func canRetry() -> Bool {
         return retryCount < maxRetries
     }
 
-    /**
-     Checks if the task has all required inputs.
-
-     - Returns: `true` if all required inputs are present, `false` otherwise.
-
-     - Note: Inputs are required by default. Inputs marked with a `?` suffix are considered optional.
-     */
     public func hasRequiredInputs() -> Bool {
         return inputs.allSatisfy { key, value in
             // If the key ends with `?`, treat it as optional and skip the check
