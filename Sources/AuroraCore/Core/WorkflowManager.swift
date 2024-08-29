@@ -47,15 +47,15 @@ public protocol WorkflowManagerProtocol {
  A concrete implementation of the `WorkflowManager` protocol, responsible for managing and executing a workflow.
  */
 public class WorkflowManager: WorkflowManagerProtocol {
-    public var workflow: Workflow
-    public var logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "WorkflowManager")
+    public var workflow: WorkflowProtocol
+    public let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "WorkflowManager")
 
     /**
      Initializes the workflow manager with a specific workflow.
 
      - Parameter workflow: The workflow that the manager will execute.
      */
-    public init(workflow: Workflow) {
+    public init(workflow: WorkflowProtocol) {
         self.workflow = workflow
     }
 
@@ -109,7 +109,7 @@ public class WorkflowManager: WorkflowManagerProtocol {
 
     public func completeTask(_ task: TaskProtocol) {
         var updatedTask = task
-        updatedTask.markCompleted()
+        updatedTask.markCompleted(withOutputs: task.outputs)  // Pass the current outputs
         workflow.updateTask(updatedTask, at: workflow.currentTaskIndex)
 
         logger.log("Task \(task.name) completed with outputs: \(updatedTask.outputs)")
@@ -123,7 +123,7 @@ public class WorkflowManager: WorkflowManagerProtocol {
         }
     }
 
-    public func handleTaskFailure(for task: Task) {
+    public func handleTaskFailure(for task: TaskProtocol) {
         if task.retryCount < task.maxRetries {
             var updatedTask = task
             updatedTask.incrementRetryCount() // Increment the retry count
@@ -153,7 +153,7 @@ public class WorkflowManager: WorkflowManagerProtocol {
         return workflow.state
     }
 
-    public func getWorkflow() -> Workflow {
+    public func getWorkflow() -> WorkflowProtocol {
         return workflow
     }
 }
