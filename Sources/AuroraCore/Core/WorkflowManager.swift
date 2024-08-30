@@ -18,12 +18,28 @@ public protocol WorkflowManagerProtocol {
     /// Logger instance for logging workflow events.
     var logger: Logger { get }
 
+    // Workflow-related functions
+    
     /// Starts the workflow execution by triggering the first or current task and proceeds sequentially.
     func start()
+
+    /// Retrieves the current workflow object.
+    func getWorkflow() -> WorkflowProtocol
+
+    /// Retrieves the current workflow state.
+    func getWorkflowState() -> WorkflowState
 
     /// Evaluates and updates the current state of the workflow based on the status of its tasks.
     func evaluateState()
 
+    /// Stops the workflow by marking it as stopped.
+    func stopWorkflow()
+
+    /// Retrieves the current task index in the workflow.
+    func getCurrentTaskIndex() -> Int
+
+    // Task-related functions
+    
     /// Executes the current task in the workflow, checks required inputs, and updates the task state.
     func executeCurrentTask()
 
@@ -32,15 +48,6 @@ public protocol WorkflowManagerProtocol {
 
     /// Handles a task failure and determines whether to retry the task or stop the workflow.
     func handleTaskFailure(for task: TaskProtocol)
-
-    /// Stops the workflow by marking it as stopped.
-    func stopWorkflow()
-
-    /// Retrieves the current workflow state.
-    func getWorkflowState() -> WorkflowState
-
-    /// Retrieves the current workflow object.
-    func getWorkflow() -> WorkflowProtocol
 }
 
 /**
@@ -59,6 +66,7 @@ public class WorkflowManager: WorkflowManagerProtocol {
         self.workflow = workflow
     }
 
+    // Workflow-related functions
     public func start() {
         guard workflow.state.isNotStarted || workflow.state.isInProgress else {
             logger.log("Cannot start workflow. Current state: \(String(describing: self.workflow.state))")
@@ -68,20 +76,33 @@ public class WorkflowManager: WorkflowManagerProtocol {
         executeCurrentTask()
     }
 
-    public func evaluateState() {
-        if workflow.tasks.allSatisfy({ $0.status == .pending }) {
-            workflow.state = .notStarted
-        } else if workflow.tasks.allSatisfy({ $0.status == .completed }) && !workflow.state.isCompleted {
-            workflow.state = .completed(Date())
-        } else if workflow.tasks.contains(where: { $0.status == .failed && !$0.canRetry() }) && !workflow.state.isFailed {
-            workflow.state = .failed(Date(), 0) // Assuming 0 for the failed retry count
-        } else if workflow.state.isStopped {
-            return // Workflow has been manually stopped, do not change its state
-        } else {
-            workflow.state = .inProgress
-        }
+    public func getWorkflow() -> WorkflowProtocol {
+        return workflow
     }
 
+    public func getWorkflowState() -> WorkflowState {
+        return workflow.state
+    }
+
+    public func evaluateState() {
+        workflow.evaluateState()
+    }
+
+    public func stopWorkflow() {
+        guard workflow.state.isInProgress else {
+            logger.log("Workflow already stopped or completed.")
+            return
+        }
+
+        workflow.markStopped()
+        logger.log("Workflow has been stopped.")
+    }
+
+    public func getCurrentTaskIndex() -> Int {
+        return workflow.currentTaskIndex
+    }
+
+    // Task-related functions
     public func executeCurrentTask() {
         guard workflow.state.isNotStarted || workflow.state.isInProgress else {
             logger.log("Workflow is not in progress.")
@@ -126,34 +147,16 @@ public class WorkflowManager: WorkflowManagerProtocol {
     public func handleTaskFailure(for task: TaskProtocol) {
         if task.retryCount < task.maxRetries {
             var updatedTask = task
-            updatedTask.incrementRetryCount() // Increment the retry count
-            workflow.updateTask(updatedTask, at: workflow.currentTaskIndex) // Update the task in the workflow
+            updatedTask.incrementRetryCount()
+            workflow.updateTask(updatedTask, at: workflow.currentTaskIndex)
             logger.log("Retrying task \(updatedTask.name). Retry \(updatedTask.retryCount) of \(updatedTask.maxRetries).")
-            executeCurrentTask() // Re-execute the current task
+            executeCurrentTask()
         } else {
             var failedTask = task
             failedTask.markFailed()
-            workflow.updateTask(failedTask, at: workflow.currentTaskIndex) // Update the task in the workflow
+            workflow.updateTask(failedTask, at: workflow.currentTaskIndex)
             workflow.markFailed(retryCount: failedTask.retryCount)
             logger.log("Task \(failedTask.name) failed after \(failedTask.maxRetries) retries. Stopping workflow.")
         }
-    }
-
-    public func stopWorkflow() {
-        guard workflow.state.isInProgress else {
-            logger.log("Workflow already stopped or completed.")
-            return
-        }
-
-        workflow.markStopped()
-        logger.log("Workflow has been stopped.")
-    }
-
-    public func getWorkflowState() -> WorkflowState {
-        return workflow.state
-    }
-
-    public func getWorkflow() -> WorkflowProtocol {
-        return workflow
     }
 }

@@ -23,7 +23,7 @@ final class WorkflowTests: XCTestCase {
 
     func testAddTaskToWorkflow() {
         // Given
-        var workflow = Workflow(name: "Test Workflow", description: "This is a test workflow")
+        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow")
         let task = Task(name: "Test Task", description: "This is a test task")
 
         // When
@@ -36,7 +36,7 @@ final class WorkflowTests: XCTestCase {
 
     func testMarkWorkflowCompleted() {
         // Given
-        var workflow = Workflow(name: "Test Workflow", description: "This is a test workflow")
+        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow")
         var task1 = Task(name: "Task 1", description: "First task")
         var task2 = Task(name: "Task 2", description: "Second task")
         task1.markCompleted()
@@ -59,7 +59,7 @@ final class WorkflowTests: XCTestCase {
 
     func testMarkWorkflowNotCompletedIfActiveTasksExist() {
         // Given
-        var workflow = Workflow(name: "Test Workflow", description: "This is a test workflow")
+        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow")
         var task1 = Task(name: "Task 1", description: "First task")
         let task2 = Task(name: "Task 2", description: "Second task")
         task1.markCompleted()
@@ -77,7 +77,7 @@ final class WorkflowTests: XCTestCase {
 
     func testResetWorkflow() {
         // Given
-        var workflow = Workflow(name: "Test Workflow", description: "This is a test workflow")
+        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow")
         var task1 = Task(name: "Task 1", description: "First task")
         task1.markCompleted()
 
@@ -95,7 +95,7 @@ final class WorkflowTests: XCTestCase {
 
     func testCompletedTasks() {
         // Given
-        var workflow = Workflow(name: "Test Workflow", description: "This is a test workflow")
+        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow")
         var task1 = Task(name: "Task 1", description: "First task")
         let task2 = Task(name: "Task 2", description: "Second task")
         task1.markCompleted()
@@ -113,7 +113,7 @@ final class WorkflowTests: XCTestCase {
 
     func testActiveTasks() {
         // Given
-        var workflow = Workflow(name: "Test Workflow", description: "This is a test workflow")
+        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow")
         var task1 = Task(name: "Task 1", description: "First task")
         let task2 = Task(name: "Task 2", description: "Second task")
         task1.markCompleted()
@@ -132,7 +132,8 @@ final class WorkflowTests: XCTestCase {
 
     func testSequentialTaskExecution() {
         // Given
-        var workflow = Workflow(name: "Sequential Workflow", description: "This is a sequential workflow")
+        let workflow = Workflow(name: "Sequential Workflow", description: "This is a sequential workflow")
+        let manager = WorkflowManager(workflow: workflow)
 
         let task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
         let task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
@@ -141,7 +142,7 @@ final class WorkflowTests: XCTestCase {
         workflow.addTask(task2)
 
         // When
-        workflow.start()
+        manager.start()
 
         // Then
         XCTAssertEqual(workflow.tasks[0].status, .completed, "Task 1 should be completed after execution.")
@@ -155,7 +156,8 @@ final class WorkflowTests: XCTestCase {
 
     func testWorkflowStopsOnTaskFailure() {
         // Given
-        var workflow = Workflow(name: "Failure Workflow", description: "This workflow will stop on failure")
+        let workflow = Workflow(name: "Failure Workflow", description: "This workflow will stop on failure")
+        let manager = WorkflowManager(workflow: workflow)
 
         let task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
         let task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": nil]) // This will fail due to nil input
@@ -164,7 +166,7 @@ final class WorkflowTests: XCTestCase {
         workflow.addTask(task2)
 
         // When
-        workflow.start()
+        manager.start()
 
         // Then
         XCTAssertEqual(workflow.tasks[0].status, .completed, "Task 1 should be completed successfully.")
@@ -179,7 +181,8 @@ final class WorkflowTests: XCTestCase {
 
     func testResetAfterFailure() {
         // Given
-        var workflow = Workflow(name: "Reset Workflow", description: "Workflow will reset after failure")
+        let workflow = Workflow(name: "Reset Workflow", description: "Workflow will reset after failure")
+        let manager = WorkflowManager(workflow: workflow)
 
         let task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
         let task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": nil]) // This will fail due to nil input
@@ -188,7 +191,7 @@ final class WorkflowTests: XCTestCase {
         workflow.addTask(task2)
 
         // When
-        workflow.start()
+        manager.start()
         workflow.resetWorkflow()
 
         // Then

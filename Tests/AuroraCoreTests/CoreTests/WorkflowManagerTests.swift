@@ -24,7 +24,7 @@ final class WorkflowManagerTests: XCTestCase {
 
     func testStartWorkflowWithTasks() {
         // Given
-        var workflow = Workflow(name: "Test Workflow", description: "A test workflow")
+        let workflow = Workflow(name: "Test Workflow", description: "A test workflow")
         let task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
         let task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
         workflow.addTask(task1)
@@ -41,7 +41,7 @@ final class WorkflowManagerTests: XCTestCase {
 
     func testStartWorkflowWithMissingInputs() {
         // Given
-        var workflow = Workflow(name: "Test Workflow", description: "A test workflow")
+        let workflow = Workflow(name: "Test Workflow", description: "A test workflow")
         let task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
         let task2 = Task(name: "Task 2", description: "Second task", inputs: ["requiredInput": nil]) // Missing required input
         workflow.addTask(task1)
@@ -58,7 +58,7 @@ final class WorkflowManagerTests: XCTestCase {
 
     func testHandleTaskFailure() {
         // Given
-        var workflow = Workflow(name: "Test Workflow", description: "A test workflow")
+        let workflow = Workflow(name: "Test Workflow", description: "A test workflow")
         let task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
         let task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": nil]) // This will trigger failure
         workflow.addTask(task1)
@@ -87,7 +87,7 @@ final class WorkflowManagerTests: XCTestCase {
 
     func testMarkWorkflowCompleteAfterAllTasks() {
         // Given
-        var workflow = Workflow(name: "Test Workflow", description: "A test workflow")
+        let workflow = Workflow(name: "Test Workflow", description: "A test workflow")
         let task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
         let task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
         workflow.addTask(task1)
@@ -109,7 +109,7 @@ final class WorkflowManagerTests: XCTestCase {
         task1.markCompleted()
         task2.markCompleted()
 
-        var workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
+        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
         workflow.tryMarkCompleted()
 
         let manager = WorkflowManager(workflow: workflow)
@@ -128,7 +128,7 @@ final class WorkflowManagerTests: XCTestCase {
         task1.markCompleted()
         task2.markCompleted()
 
-        var workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
+        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
         workflow.tryMarkCompleted()
 
         let manager = WorkflowManager(workflow: workflow)

@@ -12,11 +12,20 @@ import os.log
  A protocol defining the essential properties and behaviors of a workflow, responsible for executing and managing tasks.
  */
 public protocol WorkflowProtocol {
+       /// Unique identifier for the task.
+    var id: UUID { get }
+
+    /// Name of the task.
+    var name: String { get }
+
+    /// A detailed description of the task.
+    var description: String { get }
+
     /// The collection of tasks within this workflow.
-    var tasks: [TaskProtocol] { get set }
+    var tasks: [TaskProtocol] { get }
 
     /// The current state of the workflow.
-    var state: WorkflowState { get set }
+    var state: WorkflowState { get }
 
     /// Index of the currently executing task.
     var currentTaskIndex: Int { get set }
@@ -41,18 +50,30 @@ public protocol WorkflowProtocol {
     func resetWorkflow()
 
     /// Adds a new task to the workflow.
-    func addTask(_ task: TaskProtocol)
+    mutating func addTask(_ task: TaskProtocol)
 
     /// Updates a task at a given index in the workflow.
-    func updateTask(_ task: TaskProtocol, at index: Int)
+    mutating func updateTask(_ task: TaskProtocol, at index: Int)
+
+    /// Evaluates the state of the workflow based on the status of its tasks.
+    mutating func evaluateState()
+
+    /// Returns an array of tasks that are currently active (pending or in progress).
+    func activeTasks() -> [TaskProtocol]
+
+    /// Returns an array of tasks that have been completed.
+    func completedTasks() -> [TaskProtocol]
 }
 
 /**
  A concrete implementation of the `WorkflowProtocol`, responsible for executing and managing tasks in a workflow.
  */
 public class Workflow: WorkflowProtocol {
-    public var tasks: [TaskProtocol]
-    public var state: WorkflowState = .notStarted
+    public let id: UUID
+    public let name: String
+    public let description: String
+    public private(set) var tasks: [TaskProtocol]
+    public private(set) var state: WorkflowState = .notStarted
     public var currentTaskIndex: Int = 0
     public let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "Workflow")
 
@@ -62,7 +83,10 @@ public class Workflow: WorkflowProtocol {
      - Parameters:
         - tasks: An optional array of tasks to be added to the workflow (default is an empty array).
      */
-    public init(tasks: [TaskProtocol] = []) {
+    public init(name: String, description: String, tasks: [TaskProtocol] = []) {
+        self.id = UUID()
+        self.name = name
+        self.description = description
         self.tasks = tasks
     }
 
@@ -170,5 +194,27 @@ public class Workflow: WorkflowProtocol {
             logger.log("Task \(failedTask.name) failed after \(failedTask.retryCount) retries. Stopping workflow.")
             markFailed(retryCount: failedTask.retryCount)
         }
+    }
+
+    public func evaluateState() {
+        if tasks.allSatisfy({ $0.status == .pending }) {
+            state = .notStarted
+        } else if tasks.allSatisfy({ $0.status == .completed }) && !state.isCompleted {
+            state = .completed(Date())
+        } else if tasks.contains(where: { $0.status == .failed && !$0.canRetry() }) && !state.isFailed {
+            state = .failed(Date(), 0) // Assuming 0 for the failed retry count
+        } else if state.isStopped {
+            return // Workflow has been manually stopped, do not change its state
+        } else {
+            state = .inProgress
+        }
+    }
+
+    public func activeTasks() -> [TaskProtocol] {
+        return tasks.filter { $0.status == .inProgress || $0.status == .pending }
+    }
+
+    public func completedTasks() -> [TaskProtocol] {
+        return tasks.filter { $0.status == .completed }
     }
 }
