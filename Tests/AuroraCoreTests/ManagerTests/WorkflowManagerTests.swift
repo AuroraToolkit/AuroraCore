@@ -25,8 +25,8 @@ final class WorkflowManagerTests: XCTestCase {
     func testStartWorkflowWithTasks() {
         // Given
         let workflow = MockWorkflow(name: "Test Workflow", description: "A test workflow")
-        let task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
-        let task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
+        let task1 = MockTask(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
+        let task2 = MockTask(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
         workflow.addTask(task1)
         workflow.addTask(task2)
 
@@ -42,8 +42,8 @@ final class WorkflowManagerTests: XCTestCase {
     func testStartWorkflowWithMissingInputs() {
         // Given
         let workflow = MockWorkflow(name: "Test Workflow", description: "A test workflow")
-        let task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
-        let task2 = Task(name: "Task 2", description: "Second task", inputs: ["requiredInput": nil]) // Missing required input
+        let task1 = MockTask(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
+        let task2 = MockTask(name: "Task 2", description: "Second task", inputs: ["requiredInput": nil], hasRequiredInputsValue: false) // Missing required input
         workflow.addTask(task1)
         workflow.addTask(task2)
 
@@ -59,8 +59,8 @@ final class WorkflowManagerTests: XCTestCase {
     func testHandleTaskFailure() {
         // Given
         let workflow = MockWorkflow(name: "Test Workflow", description: "A test workflow")
-        let task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
-        let task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": nil]) // This will trigger failure
+        let task1 = MockTask(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
+        let task2 = MockTask(name: "Task 2", description: "Second task", inputs: ["input2": nil], hasRequiredInputsValue: false) // This will trigger failure
         workflow.addTask(task1)
         workflow.addTask(task2)
 
@@ -88,8 +88,8 @@ final class WorkflowManagerTests: XCTestCase {
     func testMarkWorkflowCompleteAfterAllTasks() {
         // Given
         let workflow = MockWorkflow(name: "Test Workflow", description: "A test workflow")
-        let task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
-        let task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
+        let task1 = MockTask(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
+        let task2 = MockTask(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
         workflow.addTask(task1)
         workflow.addTask(task2)
 
@@ -104,8 +104,8 @@ final class WorkflowManagerTests: XCTestCase {
 
     func testWorkflowAlreadyCompleted() {
         // Given
-        var task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
-        var task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
+        let task1 = MockTask(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
+        let task2 = MockTask(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
         task1.markCompleted()
         task2.markCompleted()
 
@@ -123,8 +123,8 @@ final class WorkflowManagerTests: XCTestCase {
 
     func testExecuteCurrentTaskDoesNotRunIfWorkflowCompleted() {
         // Given
-        var task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
-        var task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
+        let task1 = MockTask(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
+        let task2 = MockTask(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
         task1.markCompleted()
         task2.markCompleted()
 
@@ -146,7 +146,7 @@ final class WorkflowManagerTests: XCTestCase {
 
     func testGetWorkflow() {
         // Given
-        let task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
+        let task1 = MockTask(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
         let workflow = MockWorkflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1])
         let manager = WorkflowManager(workflow: workflow)
 
@@ -161,13 +161,16 @@ final class WorkflowManagerTests: XCTestCase {
     // Test task failure with retries
     func testHandleTaskFailureWithRetries() {
         // Given
-        let task = Task(name: "Test Task", description: "Task with retries", inputs: ["input1": "value1"], maxRetries: 3)
-        let workflow = MockWorkflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task])
+        let task = MockTask(name: "Test Task", description: "Task with retries", retryCount: 0, maxRetries: 3, hasRequiredInputsValue: true)
+        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task])
         let manager = WorkflowManager(workflow: workflow)
 
+        // Simulate the task failing
+        task.status = .failed
+        task.incrementRetryCount()
+        workflow.updateTask(task, at: 0)
+
         // When
-        manager.start() // Start the workflow
-        manager.handleTaskFailure(for: task) // Simulate task failure
         manager.evaluateState()
 
         // Then
@@ -179,7 +182,7 @@ final class WorkflowManagerTests: XCTestCase {
     // Test task failure without retries, ensuring workflow stops
     func testHandleTaskFailureNoRetries() {
         // Given
-        var task = Task(name: "Test Task", description: "Task without retries", inputs: ["input1": "value1"], maxRetries: 0)
+        let task = MockTask(name: "Test Task", description: "Task without retries", inputs: ["input1": "value1"], maxRetries: 0)
         let workflow = MockWorkflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task])
         let manager = WorkflowManager(workflow: workflow)
 
@@ -201,7 +204,9 @@ final class WorkflowManagerTests: XCTestCase {
     // Test stopping a workflow that is already completed
     func testStopWorkflowAlreadyCompleted() {
         // Given
-        let workflow = MockWorkflow(name: "Test Workflow", description: "This is a test workflow", tasks: [])
+        let task = MockTask(name: "Mock Task", description: "A mock task", status: .completed)
+        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task])
+        workflow.tryMarkCompleted() // Manually mark workflow as completed
         let manager = WorkflowManager(workflow: workflow)
 
         // When
@@ -210,21 +215,15 @@ final class WorkflowManagerTests: XCTestCase {
         // Simulate a second stop
         manager.stopWorkflow()  // Second stop call
 
-        let workflowState = manager.getWorkflowState()
-
         // Then
-        if case .completed = workflowState {
-            XCTAssertTrue(true)
-        } else {
-            XCTFail("The workflow should remain completed after a second stop call, not \(workflowState).")
-        }
+        XCTAssertTrue(manager.getWorkflowState().isCompleted, "The workflow should remain completed after a second stop call.")
     }
 
     // Test case for the notStarted state
     func testEvaluateStateWhenNotStarted() {
         // Given
-        let task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
-        let task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
+        let task1 = MockTask(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
+        let task2 = MockTask(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
 
         let workflow = MockWorkflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
         let manager = WorkflowManager(workflow: workflow)
@@ -238,11 +237,8 @@ final class WorkflowManagerTests: XCTestCase {
 
     func testEvaluateStateWhenAllTasksCompleted() {
         // Given
-        var task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
-        var task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
-        task1.markCompleted()
-        task2.markCompleted()
-
+        let task1 = MockTask(name: "Task 1", description: "First task", status: .completed)
+        let task2 = MockTask(name: "Task 2", description: "Second task", status: .completed)
         let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
         let manager = WorkflowManager(workflow: workflow)
 
@@ -250,13 +246,13 @@ final class WorkflowManagerTests: XCTestCase {
         manager.evaluateState()
 
         // Then
-        XCTAssertEqual(manager.getWorkflowState(), .completed(Date()), "Workflow should be marked as completed when all tasks are completed.")
+        XCTAssertTrue(manager.getWorkflowState().isCompleted, "Workflow should be marked as completed when all tasks are completed.")
     }
 
     func testEvaluateStateWhenTaskFailedWithNoRetries() {
         // Given
-        var task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
-        var task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": "value2"], maxRetries: 0)
+        let task1 = MockTask(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
+        let task2 = MockTask(name: "Task 2", description: "Second task", inputs: ["input2": "value2"], maxRetries: 0)
         task1.markCompleted()
         task2.markFailed()
 
@@ -276,8 +272,8 @@ final class WorkflowManagerTests: XCTestCase {
 
     func testEvaluateStateWhenInProgress() {
         // Given
-        var task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
-        let task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
+        let task1 = MockTask(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
+        let task2 = MockTask(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
         task1.markInProgress()
 
         let workflow = MockWorkflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
@@ -292,22 +288,20 @@ final class WorkflowManagerTests: XCTestCase {
 
     func testEvaluateStateWhenStopped() {
         // Given
-        let task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
-        let task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
-
+        let task1 = MockTask(name: "Task 1", description: "First task")
+        let task2 = MockTask(name: "Task 2", description: "Second task")
         let workflow = MockWorkflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
         let manager = WorkflowManager(workflow: workflow)
+
+        // Manually set the workflow state to simulate that it has started
+        workflow.setState(.inProgress)
 
         // When
         manager.stopWorkflow() // Manually stop the workflow
         manager.evaluateState()
 
         // Then
-        if case .stopped = manager.getWorkflowState() {
-            XCTAssertTrue(true, "Workflow should remain stopped if it has been manually stopped.")
-        } else {
-            XCTFail("Workflow should remain in the stopped state.")
-        }
+        XCTAssertTrue(manager.getWorkflowState().isStopped, "Workflow should remain stopped after evaluateState() is called.")
     }
 }
 

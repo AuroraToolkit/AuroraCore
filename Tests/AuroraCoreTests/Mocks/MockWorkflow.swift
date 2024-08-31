@@ -22,6 +22,10 @@ class MockWorkflow: WorkflowProtocol {
         self.tasks = tasks
     }
 
+    internal func setState(_ state: WorkflowState) {
+        self.state = state
+    }
+
     func addTask(_ task: TaskProtocol) {
         tasks.append(task)
     }
@@ -59,14 +63,17 @@ class MockWorkflow: WorkflowProtocol {
     }
 
     func evaluateState() {
+        if state.isStopped {
+            // If the workflow has been manually stopped, do not change its state
+            return
+        }
+
         if tasks.allSatisfy({ $0.status == .pending }) {
             state = .notStarted
-        } else if tasks.allSatisfy({ $0.status == .completed }) {
+        } else if tasks.allSatisfy({ $0.status == .completed }) && !state.isCompleted {
             state = .completed(Date())
-        } else if tasks.contains(where: { $0.status == .failed && !$0.canRetry() }) {
+        } else if tasks.contains(where: { $0.status == .failed && !$0.canRetry() }) && !state.isFailed {
             state = .failed(Date(), 0) // Assuming 0 for the failed retry count
-        } else if state.isStopped {
-            return
         } else {
             state = .inProgress
         }

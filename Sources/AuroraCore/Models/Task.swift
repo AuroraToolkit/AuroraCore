@@ -66,7 +66,7 @@ public protocol TaskProtocol {
 /**
  A concrete implementation of the `Task` protocol, representing a task within a workflow system.
  */
-public struct Task: TaskProtocol {
+public class Task: TaskProtocol {
     public var id: UUID
     public var name: String
     public var description: String
@@ -98,28 +98,28 @@ public struct Task: TaskProtocol {
         self.maxRetries = maxRetries
     }
 
-    public mutating func markCompleted(withOutputs outputs: [String: Any] = [:]) {
+    public func markCompleted(withOutputs outputs: [String: Any] = [:]) {
         self.status = .completed
         self.completionDate = Date()
         self.outputs = outputs
     }
 
-    public mutating func markInProgress() {
+    public func markInProgress() {
         self.status = .inProgress
     }
 
-    public mutating func markFailed() {
+    public func markFailed() {
         self.status = .failed
     }
 
-    public mutating func resetTask() {
+    public func resetTask() {
         self.status = .pending
         self.completionDate = nil
         self.outputs = [:]
         self.retryCount = 0
     }
 
-    public mutating func incrementRetryCount() {
+    public func incrementRetryCount() {
         retryCount += 1
     }
 

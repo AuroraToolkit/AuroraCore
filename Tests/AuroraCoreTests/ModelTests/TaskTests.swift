@@ -37,7 +37,7 @@ final class TaskTests: XCTestCase {
 
     func testMarkTaskCompleted() {
         // Given
-        var task = Task(name: "Test Task", description: "This is a test task")
+        let task = Task(name: "Test Task", description: "This is a test task")
 
         // When
         task.markCompleted(withOutputs: [:])
@@ -49,7 +49,7 @@ final class TaskTests: XCTestCase {
 
     func testMarkTaskInProgress() {
         // Given
-        var task = Task(name: "Test Task", description: "This is a test task")
+        let task = Task(name: "Test Task", description: "This is a test task")
 
         // When
         task.markInProgress()
@@ -60,7 +60,7 @@ final class TaskTests: XCTestCase {
 
     func testMarkTaskFailed() {
         // Given
-        var task = Task(name: "Test Task", description: "This is a test task")
+        let task = Task(name: "Test Task", description: "This is a test task")
 
         // When
         task.markFailed()
@@ -71,7 +71,7 @@ final class TaskTests: XCTestCase {
 
     func testResetTask() {
         // Given
-        var task = Task(name: "Test Task", description: "This is a test task")
+        let task = Task(name: "Test Task", description: "This is a test task")
         task.markCompleted()
 
         // When
