@@ -30,9 +30,6 @@ public protocol WorkflowProtocol {
     /// Index of the currently executing task.
     var currentTaskIndex: Int { get set }
 
-    /// Logger instance for logging workflow events.
-    var logger: Logger { get }
-
     /// Attempts to mark the workflow as completed.
     @discardableResult
     func tryMarkCompleted() -> Bool

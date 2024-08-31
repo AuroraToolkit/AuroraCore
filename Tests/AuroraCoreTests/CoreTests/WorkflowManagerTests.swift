@@ -12,7 +12,7 @@ final class WorkflowManagerTests: XCTestCase {
 
     func testWorkflowManagerInitialization() {
         // Given
-        let workflow = Workflow(name: "Test Workflow", description: "A test workflow")
+        let workflow = MockWorkflow(name: "Test Workflow", description: "A test workflow")
         let manager = WorkflowManager(workflow: workflow)
 
         // When
@@ -24,7 +24,7 @@ final class WorkflowManagerTests: XCTestCase {
 
     func testStartWorkflowWithTasks() {
         // Given
-        let workflow = Workflow(name: "Test Workflow", description: "A test workflow")
+        let workflow = MockWorkflow(name: "Test Workflow", description: "A test workflow")
         let task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
         let task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
         workflow.addTask(task1)
@@ -41,7 +41,7 @@ final class WorkflowManagerTests: XCTestCase {
 
     func testStartWorkflowWithMissingInputs() {
         // Given
-        let workflow = Workflow(name: "Test Workflow", description: "A test workflow")
+        let workflow = MockWorkflow(name: "Test Workflow", description: "A test workflow")
         let task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
         let task2 = Task(name: "Task 2", description: "Second task", inputs: ["requiredInput": nil]) // Missing required input
         workflow.addTask(task1)
@@ -58,7 +58,7 @@ final class WorkflowManagerTests: XCTestCase {
 
     func testHandleTaskFailure() {
         // Given
-        let workflow = Workflow(name: "Test Workflow", description: "A test workflow")
+        let workflow = MockWorkflow(name: "Test Workflow", description: "A test workflow")
         let task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
         let task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": nil]) // This will trigger failure
         workflow.addTask(task1)
@@ -75,7 +75,7 @@ final class WorkflowManagerTests: XCTestCase {
 
     func testEmptyWorkflow() {
         // Given
-        let workflow = Workflow(name: "Empty Workflow", description: "A workflow with no tasks")
+        let workflow = MockWorkflow(name: "Empty Workflow", description: "A workflow with no tasks")
         let manager = WorkflowManager(workflow: workflow)
 
         // When
@@ -87,7 +87,7 @@ final class WorkflowManagerTests: XCTestCase {
 
     func testMarkWorkflowCompleteAfterAllTasks() {
         // Given
-        let workflow = Workflow(name: "Test Workflow", description: "A test workflow")
+        let workflow = MockWorkflow(name: "Test Workflow", description: "A test workflow")
         let task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
         let task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
         workflow.addTask(task1)
@@ -109,7 +109,7 @@ final class WorkflowManagerTests: XCTestCase {
         task1.markCompleted()
         task2.markCompleted()
 
-        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
+        let workflow = MockWorkflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
         workflow.tryMarkCompleted()
 
         let manager = WorkflowManager(workflow: workflow)
@@ -128,7 +128,7 @@ final class WorkflowManagerTests: XCTestCase {
         task1.markCompleted()
         task2.markCompleted()
 
-        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
+        let workflow = MockWorkflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
         workflow.tryMarkCompleted()
 
         let manager = WorkflowManager(workflow: workflow)
@@ -147,7 +147,7 @@ final class WorkflowManagerTests: XCTestCase {
     func testGetWorkflow() {
         // Given
         let task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
-        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1])
+        let workflow = MockWorkflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1])
         let manager = WorkflowManager(workflow: workflow)
 
         // When
@@ -162,7 +162,7 @@ final class WorkflowManagerTests: XCTestCase {
     func testHandleTaskFailureWithRetries() {
         // Given
         let task = Task(name: "Test Task", description: "Task with retries", inputs: ["input1": "value1"], maxRetries: 3)
-        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task])
+        let workflow = MockWorkflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task])
         let manager = WorkflowManager(workflow: workflow)
 
         // When
@@ -180,7 +180,7 @@ final class WorkflowManagerTests: XCTestCase {
     func testHandleTaskFailureNoRetries() {
         // Given
         var task = Task(name: "Test Task", description: "Task without retries", inputs: ["input1": "value1"], maxRetries: 0)
-        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task])
+        let workflow = MockWorkflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task])
         let manager = WorkflowManager(workflow: workflow)
 
         // When
@@ -201,7 +201,7 @@ final class WorkflowManagerTests: XCTestCase {
     // Test stopping a workflow that is already completed
     func testStopWorkflowAlreadyCompleted() {
         // Given
-        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [])
+        let workflow = MockWorkflow(name: "Test Workflow", description: "This is a test workflow", tasks: [])
         let manager = WorkflowManager(workflow: workflow)
 
         // When
@@ -226,7 +226,7 @@ final class WorkflowManagerTests: XCTestCase {
         let task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
         let task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
 
-        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
+        let workflow = MockWorkflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
         let manager = WorkflowManager(workflow: workflow)
 
         // When
@@ -260,7 +260,7 @@ final class WorkflowManagerTests: XCTestCase {
         task1.markCompleted()
         task2.markFailed()
 
-        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
+        let workflow = MockWorkflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
         let manager = WorkflowManager(workflow: workflow)
 
         // When
@@ -280,7 +280,7 @@ final class WorkflowManagerTests: XCTestCase {
         let task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
         task1.markInProgress()
 
-        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
+        let workflow = MockWorkflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
         let manager = WorkflowManager(workflow: workflow)
 
         // When
@@ -295,7 +295,7 @@ final class WorkflowManagerTests: XCTestCase {
         let task1 = Task(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
         let task2 = Task(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
 
-        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
+        let workflow = MockWorkflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
         let manager = WorkflowManager(workflow: workflow)
 
         // When
