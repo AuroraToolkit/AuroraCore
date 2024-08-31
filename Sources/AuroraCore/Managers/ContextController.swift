@@ -25,7 +25,7 @@ public class ContextController {
     private let maxTokenLimit: Int
 
     /// Summarizer instance responsible for summarizing context items.
-    private let summarizer: Summarizer
+    private let summarizer: SummarizerProtocol
 
     /**
      Initializes a new `ContextController` instance.
@@ -35,11 +35,11 @@ public class ContextController {
         - maxTokenLimit: Maximum token limit for the context's `TokenManager`.
         - summarizer: Optional `Summarizer` instance. If none is provided, a default summarizer will be created.
      */
-    public init(context: Context? = nil, maxTokenLimit: Int, summarizer: Summarizer? = nil) {
+    public init(context: Context? = nil, maxTokenLimit: Int, summarizer: SummarizerProtocol? = nil) {
         self.id = UUID()
         self.context = context ?? Context()
         self.maxTokenLimit = maxTokenLimit
-        self.summarizer = summarizer ?? DefaultSummarizer()
+        self.summarizer = summarizer ?? Summarizer()
     }
 
     /**
@@ -196,7 +196,7 @@ public class ContextController {
 
      - Returns: The `Summarizer` instance.
      */
-    public func getSummarizer() -> Summarizer {
+    public func getSummarizer() -> SummarizerProtocol {
         return summarizer
     }
 }

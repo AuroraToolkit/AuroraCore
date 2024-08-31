@@ -14,7 +14,7 @@ final class SummarizerTests: XCTestCase {
 
     func testDefaultSummarizer() {
         // Given
-        let summarizer = DefaultSummarizer()
+        let summarizer = Summarizer()
         let longText = "This is a long piece of text meant to be summarized. " +
                        "It goes on and on until it reaches the limit of 100 characters."
 

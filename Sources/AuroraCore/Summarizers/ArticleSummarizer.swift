@@ -12,7 +12,7 @@ import Foundation
 
  It extracts key sentences to create a concise summary of the article content.
  */
-public class ArticleSummarizer: Summarizer {
+public class ArticleSummarizer: SummarizerProtocol {
 
     /**
      Summarizes an article by extracting the first few key sentences.

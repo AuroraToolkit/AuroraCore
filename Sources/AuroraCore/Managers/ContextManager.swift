@@ -27,7 +27,7 @@ public class ContextManager {
         - summarizer: An optional `Summarizer` instance to handle text summarization. If none is provided, a default summarizer will be created.
      - Returns: The unique identifier (`UUID`) for the newly created `ContextController`.
      */
-    public func addNewContext(_ context: Context? = nil, maxTokenLimit: Int = 4096, summarizer: Summarizer? = nil) -> UUID {
+    public func addNewContext(_ context: Context? = nil, maxTokenLimit: Int = 4096, summarizer: SummarizerProtocol? = nil) -> UUID {
         let contextController = ContextController(context: context, maxTokenLimit: maxTokenLimit, summarizer: summarizer)
         contextControllers[contextController.id] = contextController
         if activeContextID == nil {

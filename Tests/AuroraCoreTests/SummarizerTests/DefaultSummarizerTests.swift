@@ -10,11 +10,11 @@ import XCTest
 
 final class DefaultSummarizerTests: XCTestCase {
 
-    var defaultSummarizer: DefaultSummarizer!
+    var defaultSummarizer: Summarizer!
 
     override func setUp() {
         super.setUp()
-        defaultSummarizer = DefaultSummarizer()
+        defaultSummarizer = Summarizer()
     }
 
     override func tearDown() {

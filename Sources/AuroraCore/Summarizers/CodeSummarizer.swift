@@ -12,7 +12,7 @@ import Foundation
 
  It provides simple logic to extract information from code, such as the number of lines and a snippet.
  */
-public class CodeSummarizer: Summarizer {
+public class CodeSummarizer: SummarizerProtocol {
 
     /**
      Summarizes a piece of text by identifying it as code and displaying the number of lines and a snippet.

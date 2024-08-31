@@ -8,7 +8,7 @@
 import Foundation
 @testable import AuroraCore
 
-class MockSummarizer: Summarizer, Equatable {
+class MockSummarizer: SummarizerProtocol, Equatable {
 
     func summarizeCode(_ code: String) -> String {
         return "Code Summary"
