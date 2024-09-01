@@ -18,6 +18,9 @@ public protocol LLMServiceProtocol {
     // The API key or authentication token for the service.
     var apiKey: String? { get set }
 
+    // The maximum token limit for the service.
+    var maxTokenLimit: Int { get }
+
     /**
      Sends a request to the LLM service and retrieves the response asynchronously.
 

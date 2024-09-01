@@ -24,10 +24,10 @@ final class LLMManagerTests: XCTestCase {
 
     func testServiceRegistration() {
         // Given
-        let mockService = MockLLMService(name: "TestService", expectedResult: .success(LLMResponse(text: "Test Output")))
+        let mockService = MockLLMService(name: "TestService", maxTokenLimit: 4096, expectedResult: .success(LLMResponse(text: "Test Output")))
 
         // When
-        manager.registerService(mockService, withName: "TestService", maxTokenLimit: 4096)
+        manager.registerService(mockService, withName: "TestService")
 
         // Then
         XCTAssertEqual(manager.services.count, 1, "Service count should be 1")
@@ -36,12 +36,12 @@ final class LLMManagerTests: XCTestCase {
 
     func testSettingActiveService() {
         // Given
-        let service1 = MockLLMService(name: "Service1", expectedResult: .success(LLMResponse(text: "Service1 Output")))
-        let service2 = MockLLMService(name: "Service2", expectedResult: .success(LLMResponse(text: "Service2 Output")))
+        let service1 = MockLLMService(name: "Service1", maxTokenLimit: 4096, expectedResult: .success(LLMResponse(text: "Service1 Output")))
+        let service2 = MockLLMService(name: "Service2", maxTokenLimit: 2048, expectedResult: .success(LLMResponse(text: "Service2 Output")))
 
         // When
-        manager.registerService(service1, withName: "Service1", maxTokenLimit: 4096)
-        manager.registerService(service2, withName: "Service2", maxTokenLimit: 2048)
+        manager.registerService(service1, withName: "Service1")
+        manager.registerService(service2, withName: "Service2")
         manager.setActiveService(byName: "Service2")
 
         // Then
@@ -50,8 +50,8 @@ final class LLMManagerTests: XCTestCase {
 
     func testTokenTrimmingOnRequest() {
         // Given
-        let mockService = MockLLMService(name: "TestService", expectedResult: .success(LLMResponse(text: "Test Output")))
-        manager.registerService(mockService, withName: "TestService", maxTokenLimit: 20, buffer: 0.1) // Buffer of 10%
+        let mockService = MockLLMService(name: "TestService", maxTokenLimit: 20, expectedResult: .success(LLMResponse(text: "Test Output")))
+        manager.registerService(mockService, withName: "TestService")
 
         let longPrompt = String(repeating: "A", count: 100) // More than 20 tokens
 
@@ -65,8 +65,8 @@ final class LLMManagerTests: XCTestCase {
 
     func testTokenTrimmingWithStartStrategy() {
         // Given
-        let mockService = MockLLMService(name: "TestService", expectedResult: .success(LLMResponse(text: "Test Output")))
-        manager.registerService(mockService, withName: "TestService", maxTokenLimit: 20, buffer: 0.1) // Buffer of 10%
+        let mockService = MockLLMService(name: "TestService", maxTokenLimit: 20, expectedResult: .success(LLMResponse(text: "Test Output")))
+        manager.registerService(mockService, withName: "TestService")
 
         let longPrompt = String(repeating: "A", count: 100) // More than 20 tokens
 
@@ -80,11 +80,11 @@ final class LLMManagerTests: XCTestCase {
 
     func testTokenTrimmingOnMultipleServices() {
         // Given
-        let service1 = MockLLMService(name: "Service1", expectedResult: .success(LLMResponse(text: "Service1 Output")))
-        let service2 = MockLLMService(name: "Service2", expectedResult: .success(LLMResponse(text: "Service2 Output")))
+        let service1 = MockLLMService(name: "Service1", maxTokenLimit: 30, expectedResult: .success(LLMResponse(text: "Service1 Output")))
+        let service2 = MockLLMService(name: "Service2", maxTokenLimit: 50, expectedResult: .success(LLMResponse(text: "Service2 Output")))
 
-        manager.registerService(service1, withName: "Service1", maxTokenLimit: 30, buffer: 0.1) // 10% buffer
-        manager.registerService(service2, withName: "Service2", maxTokenLimit: 50, buffer: 0.05) // 5% buffer
+        manager.registerService(service1, withName: "Service1")
+        manager.registerService(service2, withName: "Service2")
 
         let longPrompt = String(repeating: "B", count: 100)
 
@@ -104,11 +104,11 @@ final class LLMManagerTests: XCTestCase {
 
     func testFallbackServiceWithTokenLimits() {
         // Given
-        let mockService = MockLLMService(name: "TestService", expectedResult: .failure(NSError(domain: "Test", code: 1, userInfo: nil)))
-        let fallbackService = MockLLMService(name: "FallbackService", expectedResult: .success(LLMResponse(text: "Fallback Output")))
+        let mockService = MockLLMService(name: "TestService", maxTokenLimit: 20, expectedResult: .failure(NSError(domain: "Test", code: 1, userInfo: nil)))
+        let fallbackService = MockLLMService(name: "FallbackService", maxTokenLimit: 30, expectedResult: .success(LLMResponse(text: "Fallback Output")))
 
-        manager.registerService(mockService, withName: "TestService", maxTokenLimit: 20, buffer: 0.05) // 5% buffer
-        manager.registerService(fallbackService, withName: "FallbackService", maxTokenLimit: 30, buffer: 0.1) // 10% buffer
+        manager.registerService(mockService, withName: "TestService")
+        manager.registerService(fallbackService, withName: "FallbackService")
 
         let longPrompt = String(repeating: "C", count: 100)
 
@@ -122,8 +122,8 @@ final class LLMManagerTests: XCTestCase {
 
     func testBufferedTrimmingWithExactTokenLimit() {
         // Given
-        let mockService = MockLLMService(name: "TestService", expectedResult: .success(LLMResponse(text: "Test Output")))
-        manager.registerService(mockService, withName: "TestService", maxTokenLimit: 25, buffer: 0.2) // 20% buffer
+        let mockService = MockLLMService(name: "TestService", maxTokenLimit: 25, expectedResult: .success(LLMResponse(text: "Test Output")))
+        manager.registerService(mockService, withName: "TestService")
 
         let longPrompt = String(repeating: "D", count: 100) // Exceeds the 20-token adjusted limit
 
