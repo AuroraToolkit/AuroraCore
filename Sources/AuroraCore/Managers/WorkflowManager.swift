@@ -19,9 +19,9 @@ public protocol WorkflowManagerProtocol {
     var logger: Logger { get }
 
     // Workflow-related functions
-    
+
     /// Starts the workflow execution by triggering the first or current task and proceeds sequentially.
-    func start()
+    func start() async
 
     /// Retrieves the current workflow object.
     func getWorkflow() -> WorkflowProtocol
@@ -39,15 +39,15 @@ public protocol WorkflowManagerProtocol {
     func getCurrentTaskIndex() -> Int
 
     // Task-related functions
-    
+
     /// Executes the current task in the workflow, checks required inputs, and updates the task state.
-    func executeCurrentTask()
+    func executeCurrentTask() async
 
     /// Completes the current task and progresses to the next task if available.
-    func completeTask(_ task: WorkflowTaskProtocol)
+    func completeTask(_ task: WorkflowTaskProtocol) async
 
     /// Handles a task failure and determines whether to retry the task or stop the workflow.
-    func handleTaskFailure(for task: WorkflowTaskProtocol)
+    func handleTaskFailure(for task: WorkflowTaskProtocol) async
 }
 
 /**
@@ -67,13 +67,13 @@ public class WorkflowManager: WorkflowManagerProtocol {
     }
 
     // Workflow-related functions
-    public func start() {
+    public func start() async {
         guard workflow.state.isNotStarted || workflow.state.isInProgress else {
             logger.log("Cannot start workflow. Current state: \(String(describing: self.workflow.state))")
             return
         }
 
-        executeCurrentTask()
+        await executeCurrentTask()
     }
 
     public func getWorkflow() -> WorkflowProtocol {
@@ -103,7 +103,7 @@ public class WorkflowManager: WorkflowManagerProtocol {
     }
 
     // Task-related functions
-    public func executeCurrentTask() {
+    public func executeCurrentTask() async {
         guard workflow.state.isNotStarted || workflow.state.isInProgress else {
             logger.log("Workflow is not in progress.")
             return
@@ -121,14 +121,14 @@ public class WorkflowManager: WorkflowManagerProtocol {
         if task.hasRequiredInputs() {
             var updatedTask = task
             updatedTask.markInProgress()
-            completeTask(updatedTask)
+            await completeTask(updatedTask)
         } else {
             logger.log("Required inputs not present for task: \(task.name)")
-            handleTaskFailure(for: task)
+            await handleTaskFailure(for: task)
         }
     }
 
-    public func completeTask(_ task: WorkflowTaskProtocol) {
+    public func completeTask(_ task: WorkflowTaskProtocol) async {
         var updatedTask = task
         updatedTask.markCompleted(withOutputs: task.outputs)  // Pass the current outputs
         workflow.updateTask(updatedTask, at: workflow.currentTaskIndex)
@@ -137,20 +137,20 @@ public class WorkflowManager: WorkflowManagerProtocol {
 
         if workflow.currentTaskIndex + 1 < workflow.tasks.count {
             workflow.currentTaskIndex += 1
-            executeCurrentTask()
+            await executeCurrentTask()
         } else {
             workflow.tryMarkCompleted()
             logger.log("Workflow completed.")
         }
     }
 
-    public func handleTaskFailure(for task: WorkflowTaskProtocol) {
+    public func handleTaskFailure(for task: WorkflowTaskProtocol) async {
         if task.retryCount < task.maxRetries {
             var updatedTask = task
             updatedTask.incrementRetryCount()
             workflow.updateTask(updatedTask, at: workflow.currentTaskIndex)
             logger.log("Retrying task \(updatedTask.name). Retry \(updatedTask.retryCount) of \(updatedTask.maxRetries).")
-            executeCurrentTask()
+            await executeCurrentTask()
         } else {
             var failedTask = task
             failedTask.markFailed()

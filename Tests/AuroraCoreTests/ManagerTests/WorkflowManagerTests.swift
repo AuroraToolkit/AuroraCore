@@ -22,7 +22,7 @@ final class WorkflowManagerTests: XCTestCase {
         XCTAssertTrue(workflowState.isNotStarted, "Initial workflow state should be 'Not Started'.")
     }
 
-    func testStartWorkflowWithTasks() {
+    func testStartWorkflowWithTasks() async {
         // Given
         let workflow = MockWorkflow(name: "Test Workflow", description: "A test workflow")
         let task1 = MockWorkflowTask(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
@@ -33,13 +33,13 @@ final class WorkflowManagerTests: XCTestCase {
         let manager = WorkflowManager(workflow: workflow)
 
         // When
-        manager.start()
+        await manager.start()
 
         // Then
         XCTAssertTrue(manager.getWorkflowState().isCompleted, "Workflow should be in the completed state.")
     }
 
-    func testStartWorkflowWithMissingInputs() {
+    func testStartWorkflowWithMissingInputs() async {
         // Given
         let workflow = MockWorkflow(name: "Test Workflow", description: "A test workflow")
         let task1 = MockWorkflowTask(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
@@ -50,13 +50,13 @@ final class WorkflowManagerTests: XCTestCase {
         let manager = WorkflowManager(workflow: workflow)
 
         // When
-        manager.start()
+        await manager.start()
 
         // Then
         XCTAssertTrue(manager.getWorkflowState().isFailed, "Workflow should fail due to missing required inputs.")
     }
 
-    func testHandleTaskFailure() {
+    func testHandleTaskFailure() async {
         // Given
         let workflow = MockWorkflow(name: "Test Workflow", description: "A test workflow")
         let task1 = MockWorkflowTask(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
@@ -67,25 +67,25 @@ final class WorkflowManagerTests: XCTestCase {
         let manager = WorkflowManager(workflow: workflow)
 
         // When
-        manager.start()
+        await manager.start()
 
         // Then
         XCTAssertTrue(manager.getWorkflowState().isFailed, "Workflow should not complete due to task failure.")
     }
 
-    func testEmptyWorkflow() {
+    func testEmptyWorkflow() async {
         // Given
         let workflow = MockWorkflow(name: "Empty Workflow", description: "A workflow with no tasks")
         let manager = WorkflowManager(workflow: workflow)
 
         // When
-        manager.start()
+        await manager.start()
 
         // Then
         XCTAssertTrue(manager.getWorkflowState().isCompleted, "Empty workflows should be marked as completed.")
     }
 
-    func testMarkWorkflowCompleteAfterAllTasks() {
+    func testMarkWorkflowCompleteAfterAllTasks() async {
         // Given
         let workflow = MockWorkflow(name: "Test Workflow", description: "A test workflow")
         let task1 = MockWorkflowTask(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
@@ -96,13 +96,13 @@ final class WorkflowManagerTests: XCTestCase {
         let manager = WorkflowManager(workflow: workflow)
 
         // When
-        manager.start()
+        await manager.start()
 
         // Then
         XCTAssertTrue(manager.getWorkflowState().isCompleted, "Workflow should be marked as completed after all tasks.")
     }
 
-    func testWorkflowAlreadyCompleted() {
+    func testWorkflowAlreadyCompleted() async {
         // Given
         let task1 = MockWorkflowTask(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
         let task2 = MockWorkflowTask(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
@@ -115,13 +115,13 @@ final class WorkflowManagerTests: XCTestCase {
         let manager = WorkflowManager(workflow: workflow)
 
         // When
-        manager.start() // This should now trigger the guard in `start()`
+        await manager.start() // This should now trigger the guard in `start()`
 
         // Then
         XCTAssertTrue(manager.getWorkflowState().isCompleted, "Workflow should already be marked as completed, and no task should be executed.")
     }
 
-    func testExecuteCurrentTaskDoesNotRunIfWorkflowCompleted() {
+    func testExecuteCurrentTaskDoesNotRunIfWorkflowCompleted() async {
         // Given
         let task1 = MockWorkflowTask(name: "Task 1", description: "First task", inputs: ["input1": "value1"])
         let task2 = MockWorkflowTask(name: "Task 2", description: "Second task", inputs: ["input2": "value2"])
@@ -138,7 +138,7 @@ final class WorkflowManagerTests: XCTestCase {
         let previousTaskIndex = manager.getCurrentTaskIndex()
 
         // When
-        manager.executeCurrentTask() // This should hit the guard clause and do nothing
+        await manager.executeCurrentTask() // This should hit the guard clause and do nothing
 
         // Then
         XCTAssertEqual(manager.getCurrentTaskIndex(), previousTaskIndex, "The task index should not change because the workflow is already completed.")
@@ -180,18 +180,18 @@ final class WorkflowManagerTests: XCTestCase {
     }
 
     // Test task failure without retries, ensuring workflow stops
-    func testHandleTaskFailureNoRetries() {
+    func testHandleTaskFailureNoRetries() async {
         // Given
         let task = MockWorkflowTask(name: "Test Task", description: "Task without retries", inputs: ["input1": "value1"], maxRetries: 0)
         let workflow = MockWorkflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task])
         let manager = WorkflowManager(workflow: workflow)
 
         // When
-        manager.start()
+        await manager.start()
 
         // Simulate task failure
         task.markFailed()
-        manager.handleTaskFailure(for: task)
+        await manager.handleTaskFailure(for: task)
 
         // Then
         let updatedTask = manager.getWorkflow().tasks.first!

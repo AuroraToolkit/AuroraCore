@@ -130,7 +130,7 @@ final class WorkflowTests: XCTestCase {
         XCTAssertEqual(activeTasks.first?.name, "Task 2")
     }
 
-    func testSequentialTaskExecution() {
+    func testSequentialTaskExecution() async {
         // Given
         let workflow = Workflow(name: "Sequential Workflow", description: "This is a sequential workflow")
         let manager = WorkflowManager(workflow: workflow)
@@ -142,7 +142,7 @@ final class WorkflowTests: XCTestCase {
         workflow.addTask(task2)
 
         // When
-        manager.start()
+        await manager.start()
 
         // Then
         XCTAssertEqual(workflow.tasks[0].status, .completed, "Task 1 should be completed after execution.")
@@ -154,7 +154,7 @@ final class WorkflowTests: XCTestCase {
         }
     }
 
-    func testWorkflowStopsOnTaskFailure() {
+    func testWorkflowStopsOnTaskFailure() async {
         // Given
         let workflow = Workflow(name: "Failure Workflow", description: "This workflow will stop on failure")
         let manager = WorkflowManager(workflow: workflow)
@@ -166,7 +166,7 @@ final class WorkflowTests: XCTestCase {
         workflow.addTask(task2)
 
         // When
-        manager.start()
+        await manager.start()
 
         // Then
         XCTAssertEqual(workflow.tasks[0].status, .completed, "Task 1 should be completed successfully.")
@@ -179,7 +179,7 @@ final class WorkflowTests: XCTestCase {
         }
     }
 
-    func testResetAfterFailure() {
+    func testResetAfterFailure() async {
         // Given
         let workflow = Workflow(name: "Reset Workflow", description: "Workflow will reset after failure")
         let manager = WorkflowManager(workflow: workflow)
@@ -191,7 +191,7 @@ final class WorkflowTests: XCTestCase {
         workflow.addTask(task2)
 
         // When
-        manager.start()
+        await manager.start()
         workflow.resetWorkflow()
 
         // Then
