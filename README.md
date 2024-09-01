@@ -5,7 +5,7 @@ AuroraCore is the core library powering the Aurora AI assistant framework. This 
 ## Features
 
 - **Context Management**: Handle and maintain conversation or task-specific context, including adding, retrieving, and summarizing items.
-- **Task and Workflow Handling**: Built-in support for defining and managing tasks and workflows, including the ability to track task status and manage dependent workflows.
+- **Task and Workflow Handling**: Built-in support for defining and managing tasks and workflows, including the ability to track task status and manage dependent workflows. Now supports asynchronous task execution for handling complex, long-running tasks.
 - **LLM Integration**: Seamless integration with various LLM services via an extendable `LLMManager`. Supports token management, trimming strategies, and fallback mechanisms.
 - **Modular and Extendable**: AuroraCore is designed to be modular, allowing developers to plug in their own services, workflows, or task managers.
 
@@ -14,13 +14,16 @@ AuroraCore is the core library powering the Aurora AI assistant framework. This 
 ### 1. **ContextController**
 The `ContextController` manages context data, including adding, updating, and summarizing items. It works closely with summarizers and handles context tokenization.
 
-### 2. **Task and Workflow**
-The `Task` and `Workflow` structs provide mechanisms to define tasks, monitor their progress, and execute complex workflows that are built from multiple tasks.
+### 2. **WorkflowTask and Workflow**
+The `WorkflowTask` and `Workflow` classes provide mechanisms to define tasks, monitor their progress, and execute complex workflows that are built from multiple tasks.
 
-### 3. **LLMManager**
+### 3. **WorkflowManager**
+The `WorkflowManager` is responsible for managing and executing workflows. It coordinates task execution, handles task failures, and manages workflow states such as `inProgress`, `stopped`, `completed`, and `failed`. It supports asynchronous execution, making it suitable for workflows involving AI, network requests, and other asynchronous tasks.
+
+### 4. **LLMManager**
 The `LLMManager` is responsible for managing connections to various language model services, handling requests, and managing token limits. It supports trimming strategies (start, middle, end) to fit within LLM token limits.
 
-### 4. **ContextManager**
+### 5. **ContextManager**
 `ContextManager` supervises multiple `ContextController` instances, allowing for the management of multiple contexts. It handles saving and loading contexts to disk, as well as setting the active context.
 
 ## Installation
@@ -53,15 +56,20 @@ contextController.addItem(content: "This is a new item.")
 let summary = contextController.summarizeContext()
 ```
 
-### Using Task and Workflow
+### Using WorkflowTask and Workflow
 
 ```swift
 import AuroraCore
 
-let task = Task(id: UUID(), title: "Example Task")
-var workflow = Workflow(id: UUID(), title: "Example Workflow", tasks: [task])
+let task = WorkflowTask(name: "Example Task", description: "This is a sample task.")
+var workflow = Workflow(name: "Example Workflow", description: "This is a sample workflow", tasks: [task])
 
-workflow.run()
+let workflowManager = WorkflowManager(workflow: workflow)
+
+// Starting the workflow
+Task {
+    await workflowManager.start()
+}
 ```
 
 ### LLM Integration
