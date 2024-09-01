@@ -12,11 +12,10 @@ import Foundation
 /// A protocol that defines the interface for interacting with various LLM (Language Learning Model) services.
 /// Each service (e.g., OpenAI, Ollama) will conform to this protocol, implementing its own logic for sending and receiving requests.
 public protocol LLMServiceProtocol {
-
-    /// The name of the service (e.g., "OpenAI", "Ollama").
+    // The name of the service (e.g., "OpenAI", "Ollama").
     var name: String { get }
 
-    /// The API key or authentication token for the service.
+    // The API key or authentication token for the service.
     var apiKey: String? { get set }
 
     /**
@@ -24,9 +23,16 @@ public protocol LLMServiceProtocol {
 
      - Parameters:
         - request: The `LLMRequest` containing the prompt and parameters to be processed by the LLM.
-        - completion: A closure that returns a `Result` containing either the `LLMResponse` or an `Error` if the request fails.
+     - Returns: The `LLMResponse` containing the generated text.
+     */
+    func sendRequest(_ request: LLMRequest) async throws -> LLMResponse
 
-     This function should be implemented by each service to handle the specifics of sending requests and receiving responses from the LLM service.
+    /**
+     Sends a request to the LLM service and retrieves the response using a completion handler.
+
+     - Parameters:
+        - request: The `LLMRequest` containing the prompt and parameters to be processed by the LLM.
+        - completion: A closure that handles the result of the request, either a successful `LLMResponse` or an error.
      */
     func sendRequest(_ request: LLMRequest, completion: @escaping (Result<LLMResponse, Error>) -> Void)
 }

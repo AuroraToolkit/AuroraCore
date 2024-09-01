@@ -9,18 +9,29 @@ import Foundation
 import XCTest
 @testable import AuroraCore
 
-class MockLLMService: LLMServiceProtocol {
-    var apiKey: String?
-    
-    var name: String
-    var expectedResult: Result<LLMResponse, Error>
+public class MockLLMService: LLMServiceProtocol {
+    public var name: String
+    public var apiKey: String?
+    private var expectedResult: Result<LLMResponse, Error>
 
-    init(name: String, expectedResult: Result<LLMResponse, Error>) {
+    public init(name: String, expectedResult: Result<LLMResponse, Error>) {
         self.name = name
+        self.apiKey = nil
         self.expectedResult = expectedResult
     }
 
-    func sendRequest(_ request: LLMRequest, completion: @escaping (Result<LLMResponse, Error>) -> Void) {
+    // Async version of sendRequest
+    public func sendRequest(_ request: LLMRequest) async throws -> LLMResponse {
+        switch expectedResult {
+        case .success(let response):
+            return response
+        case .failure(let error):
+            throw error
+        }
+    }
+
+    // Completion handler version of sendRequest
+    public func sendRequest(_ request: LLMRequest, completion: @escaping (Result<LLMResponse, Error>) -> Void) {
         completion(expectedResult)
     }
 }

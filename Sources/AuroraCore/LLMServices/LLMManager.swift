@@ -97,6 +97,36 @@ public class LLMManager {
         self.sendRequestToService(service, withRequest: optimizedRequest, completion: completion)
     }
 
+    // MARK: - Async Send Request
+
+    /**
+     Sends a request to the active LLM service asynchronously, applying token trimming strategies if necessary.
+
+     - Parameters:
+        - request: The `LLMRequest` containing the prompt and parameters.
+        - context: An optional string context to be included with the prompt.
+        - strategy: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
+     - Returns: An optional `LLMResponse` object.
+     */
+    public func sendRequestAsync(_ request: LLMRequest, context: String? = nil, strategy: TokenManager.TrimmingStrategy = .end) async -> LLMResponse? {
+        guard let activeServiceName = activeServiceName, let service = services[activeServiceName] else {
+            logger.error("No active service available to handle the request.")
+            return nil
+        }
+
+        logger.log("Sending request to active service: \(activeServiceName, privacy: .public)")
+        guard let tokenManager = tokenManagers[activeServiceName] else {
+            logger.error("TokenManager not found for active service: \(activeServiceName, privacy: .public)")
+            return nil
+        }
+
+        // Trim tokens if necessary
+        let (trimmedPrompt, _) = tokenManager.trimToFitTokenLimit(prompt: request.prompt, context: context, strategy: strategy)
+        let optimizedRequest = LLMRequest(prompt: trimmedPrompt)
+
+        return await self.sendRequestToServiceAsync(service, withRequest: optimizedRequest)
+    }
+
     // MARK: - Hybrid Routing
 
     /**
@@ -122,6 +152,34 @@ public class LLMManager {
         } else {
             logger.log("Routing strategy failed. Falling back to active service.")
             self.sendRequest(request, completion: completion)
+        }
+    }
+
+    // MARK: - Async Hybrid Routing
+
+    /**
+     Sends a request to a service chosen by the provided routing strategy asynchronously.
+
+     - Parameters:
+        - request: The `LLMRequest` containing the prompt and parameters.
+        - strategy: A closure that selects a service name based on the request.
+     - Returns: An optional `LLMResponse` object.
+     */
+    public func sendRequestWithRoutingAsync(_ request: LLMRequest, usingRoutingStrategy strategy: @escaping (LLMRequest) -> String?) async -> LLMResponse? {
+        if let selectedServiceName = strategy(request),
+           let selectedService = services[selectedServiceName],
+           let tokenManager = tokenManagers[selectedServiceName] {
+
+            logger.log("Routing request to service: \(selectedServiceName, privacy: .public)")
+
+            // Trim tokens if necessary
+            let (trimmedPrompt, _) = tokenManager.trimToFitTokenLimit(prompt: request.prompt, context: nil)
+            let optimizedRequest = LLMRequest(prompt: trimmedPrompt)
+
+            return await self.sendRequestToServiceAsync(selectedService, withRequest: optimizedRequest)
+        } else {
+            logger.log("Routing strategy failed. Falling back to active service.")
+            return await self.sendRequestAsync(request)
         }
     }
 
@@ -160,6 +218,39 @@ public class LLMManager {
         }
     }
 
+    // MARK: - Async Fallback Mechanism
+
+    /**
+     Sends a request to the active service asynchronously, with a fallback to another service if the request fails.
+
+     - Parameters:
+        - request: The `LLMRequest` containing the prompt and parameters.
+        - fallbackServiceName: The name of the service to fall back to if the active service fails.
+        - strategy: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
+     - Returns: An optional `LLMResponse` object.
+     */
+    public func sendRequestWithFallbackAsync(_ request: LLMRequest, fallbackServiceName: String, strategy: TokenManager.TrimmingStrategy = .end) async -> LLMResponse? {
+        logger.log("Attempting request with active service first.")
+        if let response = await sendRequestAsync(request, strategy: strategy) {
+            logger.log("Active service succeeded.")
+            return response
+        } else {
+            logger.error("Active service failed. Attempting fallback service: \(fallbackServiceName, privacy: .public)")
+            if let fallbackService = services[fallbackServiceName],
+               let tokenManager = tokenManagers[fallbackServiceName] {
+
+                // Trim tokens if necessary
+                let (trimmedPrompt, _) = tokenManager.trimToFitTokenLimit(prompt: request.prompt, context: nil)
+                let optimizedRequest = LLMRequest(prompt: trimmedPrompt)
+
+                return await self.sendRequestToServiceAsync(fallbackService, withRequest: optimizedRequest)
+            } else {
+                logger.error("Fallback service not found: \(fallbackServiceName, privacy: .public)")
+                return nil
+            }
+        }
+    }
+
     // MARK: - Helper Method
 
     /**
@@ -180,6 +271,27 @@ public class LLMManager {
                 self?.logger.error("Service failed with error: \(error.localizedDescription, privacy: .public)")
                 completion(nil)
             }
+        }
+    }
+
+    // MARK: - Async Helper Method
+
+    /**
+     Sends a request to a specific LLM service asynchronously.
+
+     - Parameters:
+        - service: The `LLMServiceProtocol` conforming service.
+        - request: The `LLMRequest` to send.
+     - Returns: An optional `LLMResponse` object.
+     */
+    private func sendRequestToServiceAsync(_ service: LLMServiceProtocol, withRequest request: LLMRequest) async -> LLMResponse? {
+        do {
+            let response = try await service.sendRequest(request)
+            logger.log("Service succeeded with response: \(response.text, privacy: .public)")
+            return response
+        } catch {
+            logger.error("Service failed with error: \(error.localizedDescription, privacy: .public)")
+            return nil
         }
     }
 }
