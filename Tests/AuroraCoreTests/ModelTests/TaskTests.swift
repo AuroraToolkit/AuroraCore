@@ -12,7 +12,7 @@ final class TaskTests: XCTestCase {
 
     func testTaskInitializationWithInputs() {
         // Given
-        let task = Task(name: "Test Task", description: "This is a test task", inputs: ["input1": "value1", "input2": nil])
+        let task = WorkflowTask(name: "Test Task", description: "This is a test task", inputs: ["input1": "value1", "input2": nil])
 
         // Then
         XCTAssertEqual(task.name, "Test Task")
@@ -24,7 +24,7 @@ final class TaskTests: XCTestCase {
 
     func testTaskInitializationWithoutInputs() {
         // Given
-        let task = Task(name: "Task Without Inputs", description: "This is a task with no inputs.")
+        let task = WorkflowTask(name: "Task Without Inputs", description: "This is a task with no inputs.")
 
         // Then
         XCTAssertEqual(task.name, "Task Without Inputs")
@@ -37,7 +37,7 @@ final class TaskTests: XCTestCase {
 
     func testMarkTaskCompleted() {
         // Given
-        let task = Task(name: "Test Task", description: "This is a test task")
+        let task = WorkflowTask(name: "Test Task", description: "This is a test task")
 
         // When
         task.markCompleted(withOutputs: [:])
@@ -49,7 +49,7 @@ final class TaskTests: XCTestCase {
 
     func testMarkTaskInProgress() {
         // Given
-        let task = Task(name: "Test Task", description: "This is a test task")
+        let task = WorkflowTask(name: "Test Task", description: "This is a test task")
 
         // When
         task.markInProgress()
@@ -60,7 +60,7 @@ final class TaskTests: XCTestCase {
 
     func testMarkTaskFailed() {
         // Given
-        let task = Task(name: "Test Task", description: "This is a test task")
+        let task = WorkflowTask(name: "Test Task", description: "This is a test task")
 
         // When
         task.markFailed()
@@ -71,7 +71,7 @@ final class TaskTests: XCTestCase {
 
     func testResetTask() {
         // Given
-        let task = Task(name: "Test Task", description: "This is a test task")
+        let task = WorkflowTask(name: "Test Task", description: "This is a test task")
         task.markCompleted()
 
         // When
@@ -84,7 +84,7 @@ final class TaskTests: XCTestCase {
 
     func testHasRequiredInputsTrue() {
         // Given
-        let task = Task(name: "Test Task", description: "This is a test task")
+        let task = WorkflowTask(name: "Test Task", description: "This is a test task")
 
         // When
         let hasRequiredInputs = task.hasRequiredInputs()
@@ -95,7 +95,7 @@ final class TaskTests: XCTestCase {
 
     func testHasRequiredInputsFalse() {
         // Given
-        let task = Task(name: "Test Task", description: "This is a test task", inputs: ["input": nil])
+        let task = WorkflowTask(name: "Test Task", description: "This is a test task", inputs: ["input": nil])
 
         // When
         let hasRequiredInputs = task.hasRequiredInputs()
@@ -106,7 +106,7 @@ final class TaskTests: XCTestCase {
 
     func testHasOptionalInputs() {
         // Given
-        let task = Task(name: "Test Task", description: "This is a test task", inputs: ["optionalInput?": nil])
+        let task = WorkflowTask(name: "Test Task", description: "This is a test task", inputs: ["optionalInput?": nil])
 
         // When
         let hasRequiredInputs = task.hasRequiredInputs()

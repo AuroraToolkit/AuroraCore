@@ -12,11 +12,11 @@ class MockWorkflow: WorkflowProtocol {
     var id: UUID = UUID()
     var name: String
     var description: String
-    var tasks: [TaskProtocol]
+    var tasks: [WorkflowTaskProtocol]
     var currentTaskIndex: Int = 0
     var state: WorkflowState = .notStarted
 
-    init(name: String, description: String, tasks: [TaskProtocol] = []) {
+    init(name: String, description: String, tasks: [WorkflowTaskProtocol] = []) {
         self.name = name
         self.description = description
         self.tasks = tasks
@@ -26,11 +26,11 @@ class MockWorkflow: WorkflowProtocol {
         self.state = state
     }
 
-    func addTask(_ task: TaskProtocol) {
+    func addTask(_ task: WorkflowTaskProtocol) {
         tasks.append(task)
     }
 
-    func updateTask(_ task: TaskProtocol, at index: Int) {
+    func updateTask(_ task: WorkflowTaskProtocol, at index: Int) {
         guard index < tasks.count else { return }
         tasks[index] = task
     }
@@ -79,11 +79,11 @@ class MockWorkflow: WorkflowProtocol {
         }
     }
 
-    func activeTasks() -> [TaskProtocol] {
+    func activeTasks() -> [WorkflowTaskProtocol] {
         return tasks.filter { $0.status == .pending || $0.status == .inProgress }
     }
 
-    func completedTasks() -> [TaskProtocol] {
+    func completedTasks() -> [WorkflowTaskProtocol] {
         return tasks.filter { $0.status == .completed }
     }
 }

@@ -8,7 +8,7 @@
 import Foundation
 @testable import AuroraCore
 
-class MockTask: TaskProtocol {
+class MockWorkflowTask: WorkflowTaskProtocol {
     var id = UUID()
     var name: String
     var description: String
@@ -37,6 +37,10 @@ class MockTask: TaskProtocol {
         self.retryCount = retryCount
         self.maxRetries = maxRetries
         self.hasRequiredInputsValue = hasRequiredInputsValue
+    }
+
+    func execute() async throws {
+        /// doing some stuff
     }
 
     func markCompleted(withOutputs outputs: [String: Any] = [:]) {

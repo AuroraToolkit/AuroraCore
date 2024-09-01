@@ -10,7 +10,7 @@ import Foundation
 /**
  A protocol defining the essential properties and behaviors of a task within a workflow system.
  */
-public protocol TaskProtocol {
+public protocol WorkflowTaskProtocol {
     /// Unique identifier for the task.
     var id: UUID { get }
 
@@ -41,6 +41,9 @@ public protocol TaskProtocol {
     /// The maximum number of retries allowed for this task.
     var maxRetries: Int { get }
 
+    /// Executes the task. This method can be either synchronous or asynchronous.
+    func execute() async throws
+
     /// Marks the task as completed and sets the completion timestamp to the current time.
     mutating func markCompleted(withOutputs outputs: [String: Any])
 
@@ -66,7 +69,7 @@ public protocol TaskProtocol {
 /**
  A concrete implementation of the `Task` protocol, representing a task within a workflow system.
  */
-public class Task: TaskProtocol {
+public class WorkflowTask: WorkflowTaskProtocol {
     public var id: UUID
     public var name: String
     public var description: String
@@ -96,6 +99,10 @@ public class Task: TaskProtocol {
         self.status = status
         self.creationDate = Date()
         self.maxRetries = maxRetries
+    }
+
+    public func execute() async throws {
+        /// Implement task execution logic here
     }
 
     public func markCompleted(withOutputs outputs: [String: Any] = [:]) {

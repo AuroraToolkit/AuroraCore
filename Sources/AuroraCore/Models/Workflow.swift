@@ -22,7 +22,7 @@ public protocol WorkflowProtocol {
     var description: String { get }
 
     /// The collection of tasks within this workflow.
-    var tasks: [TaskProtocol] { get }
+    var tasks: [WorkflowTaskProtocol] { get }
 
     /// The current state of the workflow.
     var state: WorkflowState { get }
@@ -47,19 +47,19 @@ public protocol WorkflowProtocol {
     func resetWorkflow()
 
     /// Adds a new task to the workflow.
-    mutating func addTask(_ task: TaskProtocol)
+    mutating func addTask(_ task: WorkflowTaskProtocol)
 
     /// Updates a task at a given index in the workflow.
-    mutating func updateTask(_ task: TaskProtocol, at index: Int)
+    mutating func updateTask(_ task: WorkflowTaskProtocol, at index: Int)
 
     /// Evaluates the state of the workflow based on the status of its tasks.
     mutating func evaluateState()
 
     /// Returns an array of tasks that are currently active (pending or in progress).
-    func activeTasks() -> [TaskProtocol]
+    func activeTasks() -> [WorkflowTaskProtocol]
 
     /// Returns an array of tasks that have been completed.
-    func completedTasks() -> [TaskProtocol]
+    func completedTasks() -> [WorkflowTaskProtocol]
 }
 
 /**
@@ -69,7 +69,7 @@ public class Workflow: WorkflowProtocol {
     public let id: UUID
     public let name: String
     public let description: String
-    public private(set) var tasks: [TaskProtocol]
+    public private(set) var tasks: [WorkflowTaskProtocol]
     public private(set) var state: WorkflowState = .notStarted
     public var currentTaskIndex: Int = 0
     public let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "Workflow")
@@ -80,7 +80,7 @@ public class Workflow: WorkflowProtocol {
      - Parameters:
         - tasks: An optional array of tasks to be added to the workflow (default is an empty array).
      */
-    public init(name: String, description: String, tasks: [TaskProtocol] = []) {
+    public init(name: String, description: String, tasks: [WorkflowTaskProtocol] = []) {
         self.id = UUID()
         self.name = name
         self.description = description
@@ -121,7 +121,7 @@ public class Workflow: WorkflowProtocol {
         self.state = .notStarted
     }
 
-    public func addTask(_ task: TaskProtocol) {
+    public func addTask(_ task: WorkflowTaskProtocol) {
         tasks.append(task)
     }
 
@@ -132,7 +132,7 @@ public class Workflow: WorkflowProtocol {
         - task: The updated task to be placed at the given index.
         - index: The index of the task to be updated.
      */
-    public func updateTask(_ task: TaskProtocol, at index: Int) {
+    public func updateTask(_ task: WorkflowTaskProtocol, at index: Int) {
         guard index >= 0 && index < tasks.count else { return }
         tasks[index] = task
     }
@@ -141,6 +141,12 @@ public class Workflow: WorkflowProtocol {
      Executes the next task in the workflow that is in the `pending` state.
      */
     public func executeNextTask() {
+        Task {
+            await self.executeNextTaskAsync()
+        }
+    }
+
+    private func executeNextTaskAsync() async {
         guard currentTaskIndex < tasks.count else {
             tryMarkCompleted()
             return
@@ -149,9 +155,15 @@ public class Workflow: WorkflowProtocol {
         var task = tasks[currentTaskIndex]
         task.markInProgress()
 
-        if task.hasRequiredInputs() {
+        guard task.hasRequiredInputs() else {
+            handleTaskFailure()
+            return
+        }
+
+        do {
+            try await task.execute()
             completeCurrentTask()
-        } else {
+        } catch {
             handleTaskFailure()
         }
     }
@@ -210,11 +222,11 @@ public class Workflow: WorkflowProtocol {
         }
     }
 
-    public func activeTasks() -> [TaskProtocol] {
+    public func activeTasks() -> [WorkflowTaskProtocol] {
         return tasks.filter { $0.status == .inProgress || $0.status == .pending }
     }
 
-    public func completedTasks() -> [TaskProtocol] {
+    public func completedTasks() -> [WorkflowTaskProtocol] {
         return tasks.filter { $0.status == .completed }
     }
 }

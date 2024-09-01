@@ -44,10 +44,10 @@ public protocol WorkflowManagerProtocol {
     func executeCurrentTask()
 
     /// Completes the current task and progresses to the next task if available.
-    func completeTask(_ task: TaskProtocol)
+    func completeTask(_ task: WorkflowTaskProtocol)
 
     /// Handles a task failure and determines whether to retry the task or stop the workflow.
-    func handleTaskFailure(for task: TaskProtocol)
+    func handleTaskFailure(for task: WorkflowTaskProtocol)
 }
 
 /**
@@ -128,7 +128,7 @@ public class WorkflowManager: WorkflowManagerProtocol {
         }
     }
 
-    public func completeTask(_ task: TaskProtocol) {
+    public func completeTask(_ task: WorkflowTaskProtocol) {
         var updatedTask = task
         updatedTask.markCompleted(withOutputs: task.outputs)  // Pass the current outputs
         workflow.updateTask(updatedTask, at: workflow.currentTaskIndex)
@@ -144,7 +144,7 @@ public class WorkflowManager: WorkflowManagerProtocol {
         }
     }
 
-    public func handleTaskFailure(for task: TaskProtocol) {
+    public func handleTaskFailure(for task: WorkflowTaskProtocol) {
         if task.retryCount < task.maxRetries {
             var updatedTask = task
             updatedTask.incrementRetryCount()
