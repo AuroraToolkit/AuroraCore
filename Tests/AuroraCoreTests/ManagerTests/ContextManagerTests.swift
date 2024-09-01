@@ -149,7 +149,7 @@ final class ContextManagerTests: XCTestCase {
     }
 
     // Test saving and loading all contexts
-    func testSaveAndLoadAllContexts() {
+    func testSaveAndLoadAllContexts() async {
         // Given
         let contextID1 = contextManager.addNewContext(maxTokenLimit: 4096)
         let contextID2 = contextManager.addNewContext(maxTokenLimit: 4096)
@@ -165,8 +165,8 @@ final class ContextManagerTests: XCTestCase {
 
         // When
         do {
-            try contextManager.saveAllContexts()
-            try contextManager.loadAllContexts()
+            try await contextManager.saveAllContexts()
+            try await contextManager.loadAllContexts()
         } catch {
             XCTFail("Saving and loading contexts should not fail")
         }
@@ -246,7 +246,7 @@ final class ContextManagerTests: XCTestCase {
     }
 
     // Test loading all contexts
-    func testLoadAllContexts() throws {
+    func testLoadAllContexts() async throws {
         // Given
         let contextID1 = contextManager.addNewContext(maxTokenLimit: 4096)
         let contextID2 = contextManager.addNewContext(maxTokenLimit: 2048)
@@ -261,9 +261,9 @@ final class ContextManagerTests: XCTestCase {
         contextController2.addItem(content: "Content for context 2")
 
         // When
-        try contextManager.saveAllContexts()
+        try await contextManager.saveAllContexts()
         contextManager.contextControllers.removeAll()
-        try contextManager.loadAllContexts()
+        try await contextManager.loadAllContexts()
 
         // Then
         XCTAssertEqual(contextManager.getContextController(for: contextID1)?.getItems().first?.text, "Content for context 1", "Context 1 should be loaded correctly.")
@@ -299,28 +299,27 @@ final class ContextManagerTests: XCTestCase {
     }
 
     // Test loading contexts when there is no active context
-    func testLoadAllContextsSetsAnActiveContext() throws {
+    func testLoadAllContextsSetsAnActiveContext() async throws {
         // Given
         let contextID1 = UUID()
         let contextID2 = UUID()
 
-        // Simulate saving two contexts to the file system
-        let storage1 = ContextStorage(filename: "context_\(contextID1.uuidString)")
-        let storage2 = ContextStorage(filename: "context_\(contextID2.uuidString)")
-
+        // Simulate saving two contexts to the file system using SaveContextTask
         var context1 = Context()
         context1.addItem(content: "Item in context 1")
+        let saveTask1 = SaveContextTask(context: context1, filename: "context_\(contextID1.uuidString)")
+        try await saveTask1.execute()
+
         var context2 = Context()
         context2.addItem(content: "Item in context 2")
-
-        try storage1?.saveContext(context1)
-        try storage2?.saveContext(context2)
+        let saveTask2 = SaveContextTask(context: context2, filename: "context_\(contextID2.uuidString)")
+        try await saveTask2.execute()
 
         // Ensure no active context is set
         contextManager.activeContextID = nil
 
         // When
-        try contextManager.loadAllContexts()
+        try await contextManager.loadAllContexts()
 
         // Then
         XCTAssertEqual(contextManager.contextControllers.count, 2, "There should be two context controllers loaded.")

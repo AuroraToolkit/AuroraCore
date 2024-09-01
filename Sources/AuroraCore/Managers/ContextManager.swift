@@ -8,7 +8,8 @@
 import Foundation
 
 /**
- `ContextManager` is responsible for managing multiple `ContextController` instances. It allows adding, removing, switching between contexts, and saving/restoring contexts from disk.
+ `ContextManager` is responsible for managing multiple `ContextController` instances.
+ It allows adding, removing, switching between contexts, and saving/restoring contexts from disk using tasks.
  */
 public class ContextManager {
 
@@ -111,10 +112,10 @@ public class ContextManager {
 
      - Throws: Any errors encountered during saving.
      */
-    public func saveAllContexts() throws {
+    public func saveAllContexts() async throws {
         for (contextID, contextController) in contextControllers {
-            let storage = ContextStorage(filename: "context_\(contextID.uuidString)")
-            try storage?.saveContext(contextController.getContext())
+            let saveTask = SaveContextTask(context: contextController.getContext(), filename: "context_\(contextID.uuidString)")
+            try await saveTask.execute()
         }
     }
 
@@ -125,27 +126,25 @@ public class ContextManager {
 
      - Throws: Any errors encountered during loading.
      */
-    public func loadAllContexts() throws {
-        let fileManager = FileManager.default
-        guard let documentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            throw NSError(domain: "Aurora", code: 1, userInfo: [NSLocalizedDescriptionKey: "Unable to find document directory"])
-        }
+    public func loadAllContexts() async throws {
+        let fetchTask = FetchContextsTask()
+        try await fetchTask.execute()
 
-        // Filter the files in the document directory to those that match the "context_" prefix.
-        let contextFiles = try fileManager.contentsOfDirectory(at: documentDirectory, includingPropertiesForKeys: nil)
-            .filter { $0.lastPathComponent.hasPrefix("context_") }
+        if let contextFiles = fetchTask.outputs["contexts"] as? [URL] {
+            for file in contextFiles {
+                let loadTask = LoadContextTask(filename: file.deletingPathExtension().lastPathComponent)
+                try await loadTask.execute()
 
-        for file in contextFiles {
-            let storage = ContextStorage(filename: file.lastPathComponent.replacingOccurrences(of: ".json", with: ""))
-            let loadedContext = try storage?.loadContext()
+                if let loadedContext = loadTask.outputs["context"] as? Context {
+                    let contextController = ContextController(context: loadedContext, maxTokenLimit: 4096)
+                    let contextID = UUID(uuidString: file.lastPathComponent.replacingOccurrences(of: "context_", with: "").replacingOccurrences(of: ".json", with: ""))!
+                    contextControllers[contextID] = contextController
 
-            let contextController = ContextController(context: loadedContext, maxTokenLimit: 4096)
-            let contextID = UUID(uuidString: file.lastPathComponent.replacingOccurrences(of: "context_", with: "").replacingOccurrences(of: ".json", with: ""))!
-            contextControllers[contextID] = contextController
-
-            // Set the first loaded context as active if no context is active.
-            if activeContextID == nil {
-                activeContextID = contextID
+                    // Set the first loaded context as active if no context is active.
+                    if activeContextID == nil {
+                        activeContextID = contextID
+                    }
+                }
             }
         }
     }
