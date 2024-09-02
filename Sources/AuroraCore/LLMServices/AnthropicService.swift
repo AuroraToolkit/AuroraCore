@@ -7,32 +7,51 @@
 
 import Foundation
 
-/// A stubbed service for interacting with Anthropic's language models.
 public class AnthropicService: LLMServiceProtocol {
-    public let name = "Anthropic"
+    public var name: String = "Anthropic"
     public var apiKey: String?
-    public let maxTokenLimit = 8192  // Example token limit
+    public var maxTokenLimit: Int = 4096 // Example token limit, adjust based on the actual Anthropic model
 
-    /**
-     Initializes a new instance of `AnthropicService`.
-
-     - Parameter apiKey: The API key used to authenticate with Anthropic's services.
-     */
-    public init(apiKey: String?) {
+    public init(apiKey: String) {
         self.apiKey = apiKey
-
-        if let apiKey {
-            SecureStorage.saveAPIKey(apiKey, for: name)
-        }
     }
 
     public func sendRequest(_ request: LLMRequest) async throws -> LLMResponse {
-        // Stubbed response, just return a dummy LLMResponse
-        return LLMResponse(text: "Stubbed response from AnthropicService")
+        guard let apiKey = apiKey, let url = URL(string: "https://api.anthropic.com/v1/completions") else {
+            throw NSError(domain: "AnthropicService", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL or missing API key"])
+        }
+
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = "POST"
+        urlRequest.addValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let body: [String: Any] = [
+            "model": request.model ?? "claude-v1",
+            "prompt": request.prompt,
+            "max_tokens": request.maxTokens
+        ]
+
+        urlRequest.httpBody = try JSONSerialization.data(withJSONObject: body, options: [])
+
+        let (data, _) = try await URLSession.shared.data(for: urlRequest)
+        let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+
+        if let text = json?["choices"] as? [[String: Any]], let firstText = text.first?["text"] as? String {
+            return LLMResponse(text: firstText)
+        } else {
+            throw NSError(domain: "AnthropicService", code: 2, userInfo: [NSLocalizedDescriptionKey: "Invalid response from Anthropic API"])
+        }
     }
 
     public func sendRequest(_ request: LLMRequest, completion: @escaping (Result<LLMResponse, Error>) -> Void) {
-        // Stubbed response, just return a dummy LLMResponse
-        completion(.success(LLMResponse(text: "Stubbed response from AnthropicService")))
+        Task {
+            do {
+                let response = try await sendRequest(request)
+                completion(.success(response))
+            } catch {
+                completion(.failure(error))
+            }
+        }
     }
 }
