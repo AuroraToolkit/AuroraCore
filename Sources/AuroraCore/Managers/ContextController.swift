@@ -48,9 +48,10 @@ public class ContextController {
      - Parameters:
         - content: The content of the item to be added.
         - creationDate: The date when the item was created. Defaults to the current date.
+        - isSummary: A boolean flag indicating whether the item being added is a summary. Defaults to `false`.
      */
-    public func addItem(content: String, creationDate: Date = Date()) {
-        context.addItem(content: content, creationDate: creationDate)
+    public func addItem(content: String, creationDate: Date = Date(), isSummary: Bool = false) {
+        context.addItem(content: content, creationDate: creationDate, isSummary: isSummary)
     }
 
     /**
