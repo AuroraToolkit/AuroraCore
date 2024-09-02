@@ -109,13 +109,28 @@ public class ContextController {
         - group: The array of `ContextItem` to be summarized.
      */
     private func summarizeGroup(_ group: [ContextItem]) async throws {
-        if !group.isEmpty {
-            let combinedText = group.map { $0.text }.joined(separator: " ")
-            let summary = try await summarizer.summarize(combinedText, type: .context)
-            let summaryItem = ContextItem(text: summary, isSummary: true)
-            summarizedItems.append(summaryItem)
+        guard !group.isEmpty else { return }
 
-            group.forEach { var item = $0; item.isSummarized = true; context.updateItem(item) }
+        // Determine if we should summarize items individually or as a group
+        let summary: String
+        if group.count == 1 {
+            // Summarize a single item
+            summary = try await summarizer.summarize(group[0].text, type: .context)
+        } else {
+            // Summarize multiple items
+            let texts = group.map { $0.text }
+            summary = try await summarizer.summarizeGroup(texts, type: .context)
+        }
+
+        // Create a new summary item
+        let summaryItem = ContextItem(text: summary, isSummary: true)
+        summarizedItems.append(summaryItem)
+
+        // Mark the original items as summarized
+        for item in group {
+            var updatedItem = item
+            updatedItem.isSummarized = true
+            context.updateItem(updatedItem)
         }
     }
 

@@ -9,7 +9,7 @@ import Foundation
 
 public class LLMServiceFactory {
     
-    public static func createService(for context: Context) -> LLMServiceProtocol? {
+    public func createService(for context: Context) -> LLMServiceProtocol? {
         guard let apiKey = SecureStorage.getAPIKey(for: context.llmServiceName) else {
             return nil
         }

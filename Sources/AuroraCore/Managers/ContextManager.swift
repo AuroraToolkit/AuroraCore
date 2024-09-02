@@ -18,6 +18,12 @@ public class ContextManager {
 
     /// The ID of the currently active context.
     internal var activeContextID: UUID?
+    
+    private let llmServiceFactory: LLMServiceFactory
+
+    init(llmServiceFactory: LLMServiceFactory = LLMServiceFactory()) {
+        self.llmServiceFactory = llmServiceFactory
+    }
 
     /**
      Adds a new context to the manager and returns the unique identifier of the new context.
@@ -136,7 +142,7 @@ public class ContextManager {
                 try await loadTask.execute()
 
                 if let loadedContext = loadTask.outputs["context"] as? Context,
-                   let llmService = LLMServiceFactory.createService(for: loadedContext) {
+                   let llmService = llmServiceFactory.createService(for: loadedContext) {
                     let contextController = ContextController(context: loadedContext, llmService: llmService)
                     let contextID = UUID(uuidString: file.lastPathComponent.replacingOccurrences(of: "context_", with: "").replacingOccurrences(of: ".json", with: ""))!
                     contextControllers[contextID] = contextController

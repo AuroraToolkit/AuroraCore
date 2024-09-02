@@ -10,10 +10,12 @@ import XCTest
 
 final class ContextControllerTests: XCTestCase {
     var contextController: ContextController!
+    var mockService: MockLLMService!
 
     override func setUp() {
         super.setUp()
-        contextController = ContextController(maxTokenLimit: 2048, summarizer: MockSummarizer())
+        mockService = MockLLMService(name: "TestService", maxTokenLimit: 100, expectedResult: .success(LLMResponse(text: "Test Output")))
+        contextController = ContextController(llmService: mockService, summarizer: MockSummarizer())
     }
 
     override func tearDown() {
@@ -75,8 +77,8 @@ final class ContextControllerTests: XCTestCase {
 
     func testGetContext() {
         // Given
-        let context = Context()
-        let contextController = ContextController(context: context, maxTokenLimit: 4096)
+        let context = Context(llmServiceName: mockService.name)
+        let contextController = ContextController(context: context, llmService: mockService)
 
         // When
         let retrievedContext = contextController.getContext()
@@ -86,7 +88,7 @@ final class ContextControllerTests: XCTestCase {
         XCTAssertEqual(retrievedContext.bookmarks.count, context.bookmarks.count, "The number of bookmarks in the retrieved context should match the original context.")
     }
 
-    func testSummarizeOlderContext() {
+    func testSummarizeOlderContext() async throws {
         // Given
         let oldItem = ContextItem(text: "Old item", creationDate: Date().addingTimeInterval(-8 * 24 * 60 * 60)) // 8 days old
         let recentItem = ContextItem(text: "Recent item", creationDate: Date())
@@ -94,7 +96,7 @@ final class ContextControllerTests: XCTestCase {
         contextController.addItem(content: recentItem.text, creationDate: recentItem.creationDate)
 
         // When
-        contextController.summarizeOlderContext()
+        try await contextController.summarizeOlderContext()
 
         // Then
         XCTAssertEqual(contextController.getItems().count, 2) // Original items remain in context
@@ -103,7 +105,7 @@ final class ContextControllerTests: XCTestCase {
         XCTAssertFalse(contextController.getItems()[1].isSummarized) // The recent item should not be summarized
     }
 
-    func testSummarizeGroupWhenTokenLimitReached() {
+    func testSummarizeGroupWhenTokenLimitReached() async throws {
         // Given
         let content1 = String(repeating: "Item 1 ", count: 10) // 50 tokens
         let content2 = String(repeating: "Item 2 ", count: 10) // 50 tokens
@@ -111,7 +113,7 @@ final class ContextControllerTests: XCTestCase {
         contextController.addItem(content: content2, creationDate: Date().addingTimeInterval(-8 * 24 * 60 * 60)) // 8 days old
 
         // When
-        contextController.summarizeOlderContext()
+        try await contextController.summarizeOlderContext()
 
         // Then
         XCTAssertEqual(contextController.summarizedContext().count, 1, "There should be 1 summary.")
@@ -119,7 +121,7 @@ final class ContextControllerTests: XCTestCase {
         XCTAssertTrue(contextController.fullHistory().first?.isSummarized ?? false, "The original items should be marked as summarized.")
     }
 
-    func testFullHistoryRetrieval() {
+    func testFullHistoryRetrieval() async throws {
         // Given
         contextController.addItem(content: "Item 1")
         contextController.addItem(content: "Item 2")
@@ -133,17 +135,17 @@ final class ContextControllerTests: XCTestCase {
         XCTAssertEqual(fullHistory.last?.text, "Item 2", "The last item in history should be 'Item 2'.")
     }
 
-    func testSummarizedContextRetrieval() {
+    func testSummarizedContextRetrieval() async throws {
         // Given
-        var context = Context()
+        var context = Context(llmServiceName: mockService.name)
         let content1 = String(repeating: "Item 1 ", count: 10)
         let content2 = String(repeating: "Item 2 ", count: 1000)
         context.addItem(content: content1, creationDate: Date().addingTimeInterval(-8 * 24 * 60 * 60)) // 8 days old
         context.addItem(content: content2, creationDate: Date().addingTimeInterval(-8 * 24 * 60 * 60)) // 8 days old
-        let contextController = ContextController(context: context, maxTokenLimit: 1024, summarizer: MockSummarizer())
+        let contextController = ContextController(context: context, llmService: mockService, summarizer: MockSummarizer())
 
         // When
-        contextController.summarizeOlderContext()
+        try await contextController.summarizeOlderContext()
         let summarizedItems = contextController.summarizedContext()
 
         // Then
@@ -151,50 +153,45 @@ final class ContextControllerTests: XCTestCase {
         XCTAssertEqual(summarizedItems.first?.text, "Summary of 2 items", "The summarized content should reflect the correct number of items summarized.")
     }
 
-    // Test summarizeOlderContext with an empty context
-    func testSummarizeOlderContextEmpty() {
+    func testSummarizeOlderContextEmpty() async throws {
         // Given an empty context
 
         // When
-        contextController.summarizeOlderContext()
+        try await contextController.summarizeOlderContext()
 
         // Then
         XCTAssertEqual(contextController.fullHistory().count, 0, "Full history should remain empty.")
         XCTAssertEqual(contextController.summarizedContext().count, 0, "No summaries should be created for an empty context.")
     }
 
-    // Test summarizeOlderContext when all items are already summarized
-    func testSummarizeOlderContextAllSummarized() {
+    func testSummarizeOlderContextAllSummarized() async throws {
         // Given
-        var context = Context()
+        var context = Context(llmServiceName: "TestService")
         context.addItem(content: "Old item", creationDate: Date().addingTimeInterval(-8 * 24 * 60 * 60), isSummary: true)
-        // Initialize the ContextController with this pre-populated context
-        let contextController = ContextController(context: context, maxTokenLimit: 4096)
+        let contextController = ContextController(context: context, llmService: mockService)
 
         // When
-        contextController.summarizeOlderContext()
+        try await contextController.summarizeOlderContext()
 
         // Then
         XCTAssertEqual(contextController.fullHistory().count, 1, "Full history should contain the original summarized item.")
         XCTAssertEqual(contextController.summarizedContext().count, 0, "No additional summaries should be created.")
     }
 
-    // Test summarizeOlderContext when no items are older than 7 days
-    func testSummarizeOlderContextNoOldItems() {
+    func testSummarizeOlderContextNoOldItems() async throws {
         // Given
         let recentItem = ContextItem(text: "Recent item", creationDate: Date())
         contextController.addItem(content: recentItem.text, creationDate: recentItem.creationDate)
 
         // When
-        contextController.summarizeOlderContext()
+        try await contextController.summarizeOlderContext()
 
         // Then
         XCTAssertEqual(contextController.fullHistory().count, 1, "Full history should contain the recent item.")
         XCTAssertEqual(contextController.summarizedContext().count, 0, "No summaries should be created when there are no old items.")
     }
 
-    // Test summarizeOlderContext with boundary condition for token limit
-    func testSummarizeOlderContextBoundaryTokenLimit() {
+    func testSummarizeOlderContextBoundaryTokenLimit() async throws {
         // Given
         let item1 = ContextItem(text: String(repeating: "A", count: 2000), creationDate: Date().addingTimeInterval(-8 * 24 * 60 * 60)) // 8 days old
         let item2 = ContextItem(text: String(repeating: "B", count: 2000), creationDate: Date().addingTimeInterval(-8 * 24 * 60 * 60)) // 8 days old
@@ -202,20 +199,20 @@ final class ContextControllerTests: XCTestCase {
         contextController.addItem(content: item2.text, creationDate: item2.creationDate)
 
         // When
-        contextController.summarizeOlderContext()
+        try await contextController.summarizeOlderContext()
 
         // Then
         XCTAssertEqual(contextController.fullHistory().count, 2, "Full history should contain the original items.")
         XCTAssertEqual(contextController.summarizedContext().count, 1, "A summary should be created for the two items.")
     }
 
-    func testSummarizeOlderContextWithSingleItemStrategy() {
+    func testSummarizeOlderContextWithSingleItem() async throws {
         // Given
         let oldItem = ContextItem(text: "Old item", creationDate: Date().addingTimeInterval(-8 * 24 * 60 * 60)) // 8 days old
         contextController.addItem(content: oldItem.text, creationDate: oldItem.creationDate)
 
         // When
-        contextController.summarizeOlderContext(strategy: .singleItem)
+        try await contextController.summarizeOlderContext()
 
         // Then
         XCTAssertEqual(contextController.summarizedContext().count, 1, "There should be 1 summarized item.")
@@ -223,7 +220,7 @@ final class ContextControllerTests: XCTestCase {
         XCTAssertTrue(contextController.getItems().first?.isSummarized ?? false, "The original item should be marked as summarized.")
     }
 
-    func testSummarizeOlderContextWithMultiItemStrategy() {
+    func testSummarizeOlderContextWithMultipleItems() async throws {
         // Given
         let oldItem1 = ContextItem(text: "Old item 1", creationDate: Date().addingTimeInterval(-8 * 24 * 60 * 60)) // 8 days old
         let oldItem2 = ContextItem(text: "Old item 2", creationDate: Date().addingTimeInterval(-8 * 24 * 60 * 60)) // 8 days old
@@ -231,7 +228,7 @@ final class ContextControllerTests: XCTestCase {
         contextController.addItem(content: oldItem2.text, creationDate: oldItem2.creationDate)
 
         // When
-        contextController.summarizeOlderContext(strategy: .multiItem)
+        try await contextController.summarizeOlderContext()
 
         // Then
         XCTAssertEqual(contextController.summarizedContext().count, 1, "There should be 1 summarized item.")

@@ -36,6 +36,20 @@ public class Summarizer: SummarizerProtocol {
         return try await sendToLLM(prompt)
     }
 
+    public func summarizeGroup(_ texts: [String], type: SummaryType) async throws -> String {
+        let combinedText = texts.joined(separator: "\n")
+        let prompt: String
+
+        switch type {
+        case .general:
+            prompt = "Summarize the following texts:\n\(combinedText)"
+        case .context:
+            prompt = "Summarize the following context items:\n\(combinedText)"
+        }
+
+        return try await sendToLLM(prompt)
+    }
+
     /**
      Sends the text to the LLM service for summarization and returns the result.
 

@@ -8,7 +8,7 @@
 import Foundation
 
 /**
- The `SummarizerProtocol` defines a method for summarizing content via an LLM service.
+ The `SummarizerProtocol` defines methods for summarizing content via an LLM service.
  */
 public protocol SummarizerProtocol {
 
@@ -20,6 +20,15 @@ public protocol SummarizerProtocol {
      - Returns: A summarized version of the text.
      */
     func summarize(_ text: String, type: SummaryType) async throws -> String
+
+    /**
+     Summarizes a group of text strings using the LLM service.
+
+     - Parameter texts: An array of strings to be summarized together.
+     - Parameter type: The type of summary to be performed (e.g., context, general text, etc.).
+     - Returns: A summarized version of the combined texts.
+     */
+    func summarizeGroup(_ texts: [String], type: SummaryType) async throws -> String
 }
 
 /**

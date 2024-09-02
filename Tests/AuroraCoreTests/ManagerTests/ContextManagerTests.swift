@@ -11,10 +11,20 @@ import XCTest
 final class ContextManagerTests: XCTestCase {
 
     var contextManager: ContextManager!
+    var mockService: MockLLMService!
+    var mockService2: MockLLMService!
+    var mockFactory: MockLLMServiceFactory!
 
     override func setUp() {
         super.setUp()
-        contextManager = ContextManager()
+        mockService = MockLLMService(name: "TestService", maxTokenLimit: 4096, expectedResult: .success(LLMResponse(text: "Test Output")))
+        mockService2 = MockLLMService(name: "TestService", maxTokenLimit: 2048, expectedResult: .success(LLMResponse(text: "Test Output")))
+
+        mockFactory = MockLLMServiceFactory()
+        mockFactory.registerMockService(mockService)
+        mockFactory.registerMockService(mockService2)
+
+        contextManager = ContextManager(llmServiceFactory: mockFactory)
     }
 
     override func tearDown() {
@@ -43,7 +53,7 @@ final class ContextManagerTests: XCTestCase {
     // Test adding a new context with default parameters
     func testAddNewContextWithDefaults() {
         // When
-        let contextID = contextManager.addNewContext()
+        let contextID = contextManager.addNewContext(llmService: mockService)
 
         // Then
         XCTAssertNotNil(contextManager.contextControllers[contextID], "ContextController should be created.")
@@ -54,10 +64,10 @@ final class ContextManagerTests: XCTestCase {
     // Test adding a new context with a custom context
     func testAddNewContextWithCustomContext() {
         // Given
-        let customContext = Context()
+        let customContext = Context(llmServiceName: mockService.name)
 
         // When
-        let contextID = contextManager.addNewContext(customContext)
+        let contextID = contextManager.addNewContext(customContext, llmService: mockService)
 
         // Then
         XCTAssertEqual(contextManager.contextControllers[contextID]?.getContext(), customContext, "Custom context should be passed to the ContextController.")
@@ -69,7 +79,7 @@ final class ContextManagerTests: XCTestCase {
         let customSummarizer = MockSummarizer()
 
         // When
-        let contextID = contextManager.addNewContext(nil, summarizer: customSummarizer)
+        let contextID = contextManager.addNewContext(llmService: mockService, summarizer: customSummarizer)
 
         // Then
         XCTAssertEqual(contextManager.contextControllers[contextID]?.getSummarizer() as? MockSummarizer, customSummarizer, "Custom summarizer should be passed to the ContextController.")
@@ -78,11 +88,11 @@ final class ContextManagerTests: XCTestCase {
     // Test adding a new context with both custom context and summarizer
     func testAddNewContextWithCustomContextAndSummarizer() {
         // Given
-        let customContext = Context()
+        let customContext = Context(llmServiceName: mockService.name)
         let customSummarizer = MockSummarizer()
 
         // When
-        let contextID = contextManager.addNewContext(customContext, summarizer: customSummarizer)
+        let contextID = contextManager.addNewContext(customContext, llmService: mockService, summarizer: customSummarizer)
 
         // Then
         XCTAssertEqual(contextManager.contextControllers[contextID]?.getContext(), customContext, "Custom context should be passed to the ContextController.")
@@ -92,7 +102,7 @@ final class ContextManagerTests: XCTestCase {
     // Test that the first context added becomes the active context
     func testFirstContextBecomesActiveContext() {
         // When
-        let contextID = contextManager.addNewContext()
+        let contextID = contextManager.addNewContext(llmService: mockService)
 
         // Then
         XCTAssertEqual(contextManager.activeContextID, contextID, "The first context added should become the active context.")
@@ -100,7 +110,7 @@ final class ContextManagerTests: XCTestCase {
 
     func testAddNewContextWithoutProvidingContext() {
         // When
-        let contextID = contextManager.addNewContext(maxTokenLimit: 4096)
+        let contextID = contextManager.addNewContext(llmService: mockService)
         let contextController = contextManager.getContextController(for: contextID)
 
         // Then
@@ -110,11 +120,11 @@ final class ContextManagerTests: XCTestCase {
 
     func testAddNewContextWithProvidedContext() {
         // Given
-        var preCreatedContext = Context()
+        var preCreatedContext = Context(llmServiceName: mockService.name)
         preCreatedContext.addItem(content: "Pre-created content")
 
         // When
-        let contextID = contextManager.addNewContext(preCreatedContext, maxTokenLimit: 4096)
+        let contextID = contextManager.addNewContext(preCreatedContext, llmService: mockService)
         let contextController = contextManager.getContextController(for: contextID)
 
         // Then
@@ -123,10 +133,10 @@ final class ContextManagerTests: XCTestCase {
     }
 
     // Test summarizing older contexts in multiple context controllers
-    func testSummarizeMultipleContexts() {
+    func testSummarizeMultipleContexts() async throws {
         // Given
-        let contextID1 = contextManager.addNewContext(maxTokenLimit: 4096)
-        let contextID2 = contextManager.addNewContext(maxTokenLimit: 4096)
+        let contextID1 = contextManager.addNewContext(llmService: mockService)
+        let contextID2 = contextManager.addNewContext(llmService: mockService)
 
         guard let contextController1 = contextManager.getContextController(for: contextID1),
               let contextController2 = contextManager.getContextController(for: contextID2) else {
@@ -141,7 +151,7 @@ final class ContextManagerTests: XCTestCase {
         contextController2.addItem(content: String(repeating: "Content2 ", count: 1000), creationDate: oldDate) // Large, old content
 
         // When
-        contextManager.summarizeOlderContexts()
+        try await contextManager.summarizeOlderContexts()
 
         // Then
         XCTAssertEqual(contextController1.summarizedContext().count, 1, "Context 1 should have a summarized item.")
@@ -151,8 +161,8 @@ final class ContextManagerTests: XCTestCase {
     // Test saving and loading all contexts
     func testSaveAndLoadAllContexts() async {
         // Given
-        let contextID1 = contextManager.addNewContext(maxTokenLimit: 4096)
-        let contextID2 = contextManager.addNewContext(maxTokenLimit: 4096)
+        let contextID1 = contextManager.addNewContext(llmService: mockService)
+        let contextID2 = contextManager.addNewContext(llmService: mockService2)
 
         guard let contextController1 = contextManager.getContextController(for: contextID1),
               let contextController2 = contextManager.getContextController(for: contextID2) else {
@@ -179,8 +189,8 @@ final class ContextManagerTests: XCTestCase {
     // Test retrieving all context controllers
     func testGetAllContextControllers() {
         // Given
-        let contextID1 = contextManager.addNewContext(maxTokenLimit: 4096)
-        let contextID2 = contextManager.addNewContext(maxTokenLimit: 2048)
+        let contextID1 = contextManager.addNewContext(llmService: mockService)
+        let contextID2 = contextManager.addNewContext(llmService: mockService2)
 
         // When
         let allContextControllers = contextManager.getAllContextControllers()
@@ -196,8 +206,8 @@ final class ContextManagerTests: XCTestCase {
     // Test removing a context by its ID
     func testRemoveContextByID() {
         // Given
-        let contextID1 = contextManager.addNewContext(maxTokenLimit: 4096)
-        let contextID2 = contextManager.addNewContext(maxTokenLimit: 2048)
+        let contextID1 = contextManager.addNewContext(llmService: mockService)
+        let contextID2 = contextManager.addNewContext(llmService: mockService2)
 
         // When
         contextManager.removeContext(withID: contextID1)
@@ -210,8 +220,8 @@ final class ContextManagerTests: XCTestCase {
     // Test setting an active context by its ID
     func testSetActiveContextByID() {
         // Given
-        _ = contextManager.addNewContext(maxTokenLimit: 4096)
-        let contextID2 = contextManager.addNewContext(maxTokenLimit: 2048)
+        _ = contextManager.addNewContext(llmService: mockService)
+        let contextID2 = contextManager.addNewContext(llmService: mockService2)
 
         // When
         contextManager.setActiveContext(withID: contextID2)
@@ -221,10 +231,10 @@ final class ContextManagerTests: XCTestCase {
     }
 
     // Test summarizing older contexts
-    func testSummarizeOlderContexts() {
+    func testSummarizeOlderContexts() async throws {
         // Given
-        let contextID1 = contextManager.addNewContext(maxTokenLimit: 4096)
-        let contextID2 = contextManager.addNewContext(maxTokenLimit: 2048)
+        let contextID1 = contextManager.addNewContext(llmService: mockService)
+        let contextID2 = contextManager.addNewContext(llmService: mockService2)
 
         guard let contextController1 = contextManager.getContextController(for: contextID1),
               let contextController2 = contextManager.getContextController(for: contextID2) else {
@@ -238,7 +248,7 @@ final class ContextManagerTests: XCTestCase {
         contextController2.addItem(content: String(repeating: "Content2 ", count: 1000), creationDate: oldDate)
 
         // When
-        contextManager.summarizeOlderContexts()
+        try await contextManager.summarizeOlderContexts()
 
         // Then
         XCTAssertEqual(contextController1.summarizedContext().count, 1, "Context 1 should have a summarized item.")
@@ -248,8 +258,8 @@ final class ContextManagerTests: XCTestCase {
     // Test loading all contexts
     func testLoadAllContexts() async throws {
         // Given
-        let contextID1 = contextManager.addNewContext(maxTokenLimit: 4096)
-        let contextID2 = contextManager.addNewContext(maxTokenLimit: 2048)
+        let contextID1 = contextManager.addNewContext(llmService: mockService)
+        let contextID2 = contextManager.addNewContext(llmService: mockService2)
 
         guard let contextController1 = contextManager.getContextController(for: contextID1),
               let contextController2 = contextManager.getContextController(for: contextID2) else {
@@ -273,7 +283,7 @@ final class ContextManagerTests: XCTestCase {
     // Test setting an active context with an invalid ID
     func testSetActiveContextWithInvalidID() {
         // Given
-        let contextID1 = contextManager.addNewContext(maxTokenLimit: 4096)
+        let contextID1 = contextManager.addNewContext(llmService: mockService)
         let invalidContextID = UUID() // Generate a new UUID that is not part of the existing contextControllers
 
         // When
@@ -286,7 +296,7 @@ final class ContextManagerTests: XCTestCase {
     // Test getting active context when there is no active context
     func testGetActiveContextControllerWhenNoActiveContext() {
         // Given
-        _ = contextManager.addNewContext(maxTokenLimit: 4096)
+        _ = contextManager.addNewContext(llmService: mockService)
 
         // Manually set activeContextID to nil to simulate no active context
         contextManager.activeContextID = nil
@@ -305,12 +315,12 @@ final class ContextManagerTests: XCTestCase {
         let contextID2 = UUID()
 
         // Simulate saving two contexts to the file system using SaveContextTask
-        var context1 = Context()
+        var context1 = Context(llmServiceName: mockService.name)
         context1.addItem(content: "Item in context 1")
         let saveTask1 = SaveContextTask(context: context1, filename: "context_\(contextID1.uuidString)")
         try await saveTask1.execute()
 
-        var context2 = Context()
+        var context2 = Context(llmServiceName: mockService2.name)
         context2.addItem(content: "Item in context 2")
         let saveTask2 = SaveContextTask(context: context2, filename: "context_\(contextID2.uuidString)")
         try await saveTask2.execute()
