@@ -12,7 +12,7 @@ import Foundation
 
  A `Context` stores a collection of `ContextItem` instances and `Bookmark` instances,
  which represent the content and notable points in a conversation or task.
- The context is uniquely identified by its `UUID`.
+ The context is uniquely identified by its `UUID` and contains metadata about the associated LLM service.
  */
 public struct Context: Codable, Equatable {
 
@@ -25,11 +25,18 @@ public struct Context: Codable, Equatable {
     /// A collection of `Bookmark` instances within the context.
     public private(set) var bookmarks: [Bookmark] = []
 
+    /// The name of the LLM service associated with this context.
+    public var llmServiceName: String
+
     /**
-     Initializes a new `Context` with a unique identifier.
+     Initializes a new `Context` with a unique identifier and associated LLM service information.
+
+     - Parameters:
+        - llmServiceName: The name of the LLM service associated with this context.
      */
-    public init() {
+    public init(llmServiceName: String) {
         self.id = UUID()
+        self.llmServiceName = llmServiceName
     }
 
     /**
@@ -134,6 +141,9 @@ public struct Context: Codable, Equatable {
      - Returns: `true` if the contexts are equal, otherwise `false`.
      */
     public static func == (lhs: Context, rhs: Context) -> Bool {
-        return lhs.id == rhs.id && lhs.items == rhs.items && lhs.bookmarks == rhs.bookmarks
+        return lhs.id == rhs.id &&
+            lhs.items == rhs.items &&
+            lhs.bookmarks == rhs.bookmarks &&
+            lhs.llmServiceName == rhs.llmServiceName
     }
 }

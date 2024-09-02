@@ -24,12 +24,12 @@ public class ContextManager {
 
      - Parameters:
         - context: An optional `Context` object. If none is provided, a new one will be created automatically.
-        - maxTokenLimit: The maximum token limit for the context's `TokenManager`, defaulting to 4096.
+        - llmService: The LLM service used for summarization in this context.
         - summarizer: An optional `Summarizer` instance to handle text summarization. If none is provided, a default summarizer will be created.
      - Returns: The unique identifier (`UUID`) for the newly created `ContextController`.
      */
-    public func addNewContext(_ context: Context? = nil, maxTokenLimit: Int = 4096, summarizer: SummarizerProtocol? = nil) -> UUID {
-        let contextController = ContextController(context: context, maxTokenLimit: maxTokenLimit, summarizer: summarizer)
+    public func addNewContext(_ context: Context? = nil, llmService: LLMServiceProtocol, summarizer: SummarizerProtocol? = nil) -> UUID {
+        let contextController = ContextController(context: context, llmService: llmService, summarizer: summarizer)
         contextControllers[contextController.id] = contextController
         if activeContextID == nil {
             activeContextID = contextController.id
@@ -99,9 +99,9 @@ public class ContextManager {
 
      This method will invoke the `summarizeOlderContext()` function for each `ContextController` stored in the manager.
      */
-    public func summarizeOlderContexts() {
+    public func summarizeOlderContexts() async throws {
         for (_, controller) in contextControllers {
-            controller.summarizeOlderContext()
+            try await controller.summarizeOlderContext()
         }
     }
 
@@ -135,8 +135,9 @@ public class ContextManager {
                 let loadTask = LoadContextTask(filename: file.deletingPathExtension().lastPathComponent)
                 try await loadTask.execute()
 
-                if let loadedContext = loadTask.outputs["context"] as? Context {
-                    let contextController = ContextController(context: loadedContext, maxTokenLimit: 4096)
+                if let loadedContext = loadTask.outputs["context"] as? Context,
+                   let llmService = LLMServiceFactory.createService(for: loadedContext) {
+                    let contextController = ContextController(context: loadedContext, llmService: llmService)
                     let contextID = UUID(uuidString: file.lastPathComponent.replacingOccurrences(of: "context_", with: "").replacingOccurrences(of: ".json", with: ""))!
                     contextControllers[contextID] = contextController
 

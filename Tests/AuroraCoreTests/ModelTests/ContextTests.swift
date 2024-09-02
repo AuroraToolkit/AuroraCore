@@ -14,7 +14,7 @@ final class ContextTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        context = Context()
+        context = Context(llmServiceName: "openai")
     }
 
     override func tearDown() {
@@ -136,7 +136,6 @@ final class ContextTests: XCTestCase {
 
     func testGetBookmarkByID() {
         // Given
-        var context = Context()
         context.addItem(content: "Item 1")
         let firstItem = context.items.first!
 
@@ -153,7 +152,6 @@ final class ContextTests: XCTestCase {
 
     func testGetRecentItems() {
         // Given
-        var context = Context()
         context.addItem(content: "Item 1")
         context.addItem(content: "Item 2")
         context.addItem(content: "Item 3")

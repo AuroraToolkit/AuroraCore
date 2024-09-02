@@ -8,7 +8,7 @@
 import Foundation
 
 /**
- `ContextController` manages the state and operations related to a specific `Context`, including adding, removing, and updating items, as well as summarizing older items. Each `ContextController` can handle a specific summarizer and manages the token limits for summarization.
+ `ContextController` manages the state and operations related to a specific `Context`, including adding, removing, and updating items, as well as summarizing older items. The controller handles context-specific summarization using a connected LLM service.
  */
 public class ContextController {
 
@@ -21,8 +21,8 @@ public class ContextController {
     /// A collection of summarized context items.
     private var summarizedItems: [ContextItem] = []
 
-    /// Maximum token limit allowed for summarization.
-    private let maxTokenLimit: Int
+    /// LLM service used for generating summaries.
+    private let llmService: LLMServiceProtocol
 
     /// Summarizer instance responsible for summarizing context items.
     private let summarizer: SummarizerProtocol
@@ -32,14 +32,14 @@ public class ContextController {
 
      - Parameters:
         - context: Optional `Context` object. If none is provided, a new context will be created automatically.
-        - maxTokenLimit: Maximum token limit for the context's `TokenManager`.
+        - llmService: The LLM service to be used for summarization.
         - summarizer: Optional `Summarizer` instance. If none is provided, a default summarizer will be created.
      */
-    public init(context: Context? = nil, maxTokenLimit: Int, summarizer: SummarizerProtocol? = nil) {
+    public init(context: Context? = nil, llmService: LLMServiceProtocol, summarizer: SummarizerProtocol? = nil) {
         self.id = UUID()
-        self.context = context ?? Context()
-        self.maxTokenLimit = maxTokenLimit
-        self.summarizer = summarizer ?? Summarizer()
+        self.context = context ?? Context(llmServiceName: llmService.name)
+        self.llmService = llmService
+        self.summarizer = summarizer ?? Summarizer(llmService: llmService)
     }
 
     /**
@@ -85,67 +85,40 @@ public class ContextController {
     }
 
     /**
-     Summarizes older context items based on a given age threshold and a customizable summarization strategy.
+     Summarizes older context items based on a given age threshold.
 
      - Parameters:
         - daysThreshold: The number of days after which items are considered "old". Defaults to 7 days.
-        - strategy: The strategy for summarizing items, either single-item or multi-item. Defaults to `.multiItem`.
      */
-    public func summarizeOlderContext(daysThreshold: Int = 7, strategy: SummarizationStrategy = .multiItem) {
-        guard !context.items.isEmpty else {
-            return
-        }
+    public func summarizeOlderContext(daysThreshold: Int = 7) async throws {
+        guard !context.items.isEmpty else { return }
 
         var group: [ContextItem] = []
-        var groupTokenCount = 0
 
         for item in context.items where !item.isSummarized && item.isOlderThan(days: daysThreshold) {
             group.append(item)
-            groupTokenCount += item.tokenCount
-
-            if groupTokenCount >= maxTokenLimit / 2 {
-                summarizeGroup(group, strategy: strategy)
-                group.removeAll()
-                groupTokenCount = 0
-            }
         }
 
-        if !group.isEmpty {
-            summarizeGroup(group, strategy: strategy)
-        }
+        try await summarizeGroup(group)
     }
 
     /**
-     Summarizes a group of context items using the given summarization strategy and stores the result in `summarizedItems`.
+     Summarizes a group of context items using the connected LLM service and stores the result in `summarizedItems`.
 
      - Parameters:
         - group: The array of `ContextItem` to be summarized.
-        - strategy: The summarization strategy to use, either single-item or multi-item.
      */
-    private func summarizeGroup(_ group: [ContextItem], strategy: SummarizationStrategy) {
-        let summary: String
+    private func summarizeGroup(_ group: [ContextItem]) async throws {
+        if !group.isEmpty {
+            let combinedText = group.map { $0.text }.joined(separator: " ")
+            let summary = try await summarizer.summarize(combinedText, type: .context)
+            let summaryItem = ContextItem(text: summary, isSummary: true)
+            summarizedItems.append(summaryItem)
 
-        switch strategy {
-        case .singleItem:
-            summary = group.map { summarizer.summarize($0.text) }.joined(separator: "\n")
-        case .multiItem:
-            if group.count == 1 {
-                summary = summarizer.summarize(group[0].text)
-            } else {
-                summary = summarizer.summarizeItems(group)
-            }
-        }
-
-        let summaryItem = ContextItem(text: summary, isSummary: true)
-        summarizedItems.append(summaryItem)
-
-        for item in group {
-            var updatedItem = item
-            updatedItem.isSummarized = true
-            context.updateItem(updatedItem)
+            group.forEach { var item = $0; item.isSummarized = true; context.updateItem(item) }
         }
     }
-    
+
     /**
      Retrieves the full history of context items.
 
@@ -188,7 +161,9 @@ public class ContextController {
      - Returns: The `Context` instance.
      */
     public func getContext() -> Context {
-        return context
+        var contextToReturn = context
+        contextToReturn.llmServiceName = llmService.name
+        return contextToReturn
     }
 
     /**

@@ -9,21 +9,8 @@ import Foundation
 @testable import AuroraCore
 
 class MockSummarizer: SummarizerProtocol, Equatable {
-
-    func summarizeCode(_ code: String) -> String {
-        return "Code Summary"
-    }
-
-    func summarizeArticle(_ article: String) -> String {
-        return "Article Summary"
-    }
-
-    func summarize(_ text: String) -> String {
+    func summarize(_ text: String, type: AuroraCore.SummaryType) async throws -> String {
         return "Summary"
-    }
-
-    func summarizeItems(_ items: [ContextItem]) -> String {
-        return "Summary of \(items.count) items"
     }
 
     // Equatable conformance for MockSummarizer
