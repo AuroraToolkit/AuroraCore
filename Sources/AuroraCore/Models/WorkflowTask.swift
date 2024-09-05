@@ -105,7 +105,12 @@ public class WorkflowTask: WorkflowTaskProtocol {
         /// Implement task execution logic here
     }
 
-    public func markCompleted(withOutputs outputs: [String: Any] = [:]) {
+    /**
+     Marks the `LLMTask` as completed and stores the response from the LLM service.
+
+     - Parameter outputs: The response received from the LLM, which will be passed to subsequent tasks.
+     */
+    public func markCompleted(withOutputs outputs: [String : Any] = [:]) {
         self.status = .completed
         self.completionDate = Date()
         self.outputs = outputs
