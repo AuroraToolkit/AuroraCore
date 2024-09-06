@@ -13,11 +13,17 @@ import Foundation
  */
 public class OllamaService: LLMServiceProtocol {
 
+    /// The name of the service, required by the protocol.
     public let name = "Ollama"
+
     public var apiKey: String? // Not used for Ollama but included to satisfy the protocol
 
+    /// The maximum token limit that can be processed by this service.
     public let maxTokenLimit: Int
+
+    /// The base URL for the Ollama API (e.g., `http://localhost:11400`).
     private let baseURL: URL
+
     internal var urlSession: URLSession
 
     /**

@@ -7,43 +7,77 @@
 
 import Foundation
 
+/**
+ `AnthropicService` implements the `LLMServiceProtocol` to interact with the Anthropic API.
+ It allows for flexible configuration for different models and temperature settings.
+ */
 public class AnthropicService: LLMServiceProtocol {
-    public var name: String = "Anthropic"
-    public var apiKey: String?
-    public var maxTokenLimit: Int = 4096 // Example token limit, adjust based on the actual Anthropic model
 
-    public init(apiKey: String) {
+    /// The name of the service, required by the protocol.
+    public let name = "Anthropic"
+
+    /// The API key used for authenticating requests to the Anthropic API.
+    public var apiKey: String?
+
+    /// The maximum token limit that can be processed by this service.
+    public let maxTokenLimit: Int
+
+    /**
+     Initializes a new `AnthropicService` instance with the given API key and token limit.
+
+     - Parameters:
+        - apiKey: The API key used for authenticating requests to the Anthropic API.
+        - maxTokenLimit: The maximum number of tokens allowed in a request.
+     */
+    public init(apiKey: String?, maxTokenLimit: Int = 4096) {
         self.apiKey = apiKey
+        self.maxTokenLimit = maxTokenLimit
     }
 
-    public func sendRequest(_ request: LLMRequest) async throws -> LLMResponse {
-        guard let apiKey = apiKey, let url = URL(string: "https://api.anthropic.com/v1/completions") else {
-            throw NSError(domain: "AnthropicService", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL or missing API key"])
-        }
+    /**
+     Sends a request to the Anthropic API and retrieves the response asynchronously.
 
-        var urlRequest = URLRequest(url: url)
-        urlRequest.httpMethod = "POST"
-        urlRequest.addValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+     - Parameters:
+        - request: The `LLMRequest` containing the prompt and model configuration.
+     - Returns: The `LLMResponse` containing the generated text or an error if the request fails.
+     - Throws: An error if the request to the Anthropic API fails.
+     */
+    public func sendRequest(_ request: LLMRequest) async throws -> LLMResponse {
+        guard let apiKey = apiKey else {
+            throw NSError(domain: "AnthropicService", code: 1, userInfo: [NSLocalizedDescriptionKey: "API key is missing."])
+        }
 
         let body: [String: Any] = [
             "model": request.model ?? "claude-v1",
             "prompt": request.prompt,
-            "max_tokens": request.maxTokens
+            "max_tokens": request.maxTokens,
+            "temperature": request.temperature
         ]
 
-        urlRequest.httpBody = try JSONSerialization.data(withJSONObject: body, options: [])
+        let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
+        var urlRequest = URLRequest(url: URL(string: "https://api.anthropic.com/v1/completions")!)
+        urlRequest.httpMethod = "POST"
+        urlRequest.httpBody = jsonData
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        urlRequest.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
 
-        let (data, _) = try await URLSession.shared.data(for: urlRequest)
-        let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+        let (data, response) = try await URLSession.shared.data(for: urlRequest)
 
-        if let text = json?["choices"] as? [[String: Any]], let firstText = text.first?["text"] as? String {
-            return LLMResponse(text: firstText)
-        } else {
-            throw NSError(domain: "AnthropicService", code: 2, userInfo: [NSLocalizedDescriptionKey: "Invalid response from Anthropic API"])
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw NSError(domain: "AnthropicService", code: 2, userInfo: [NSLocalizedDescriptionKey: "Invalid response from Anthropic API."])
         }
+
+        let decodedResponse = try JSONDecoder().decode(LLMResponse.self, from: data)
+        return decodedResponse
     }
 
+    /**
+     Sends a request to the Anthropic API using a completion handler.
+
+     - Parameters:
+        - request: The `LLMRequest` containing the prompt and model configuration.
+        - completion: A closure that handles the result, returning a successful `LLMResponse` or an error.
+     */
     public func sendRequest(_ request: LLMRequest, completion: @escaping (Result<LLMResponse, Error>) -> Void) {
         Task {
             do {
