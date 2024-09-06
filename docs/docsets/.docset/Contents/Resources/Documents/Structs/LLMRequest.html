@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>LLMRequest Structure Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Struct/LLMRequest" class="dashAnchor"></a>
+    <a title="LLMRequest Structure Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html"> Docs</a> (100% documented)</p>
+        <div class="header-right">
+          <form role="search" action="../search.json">
+            <input type="text" placeholder="Search documentation" data-typeahead>
+          </form>
+        </div>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html">Index</a>
+        <img id="carat" src="../img/carat.png" alt=""/>
+        <a href="../Structs.html">Structures</a>
+        <img id="carat" src="../img/carat.png" alt=""/>
+        AuroraCore.LLMRequest Structure Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/AnthropicService.html">AnthropicService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ContextController.html">ContextController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ContextManager.html">ContextManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/FetchContextsTask.html">FetchContextsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/LLMManager.html">LLMManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/LLMServiceFactory.html">LLMServiceFactory</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/LLMTask.html">LLMTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/LoadContextTask.html">LoadContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/OllamaService.html">OllamaService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/OpenAIService.html">OpenAIService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SaveContextTask.html">SaveContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SecureStorage.html">SecureStorage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SummarizeTask.html">SummarizeTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Summarizer.html">Summarizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/TrimmingTask.html">TrimmingTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Workflow.html">Workflow</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/WorkflowManager.html">WorkflowManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/WorkflowTask.html">WorkflowTask</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Enums/SummaryType.html">SummaryType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/TaskStatus.html">TaskStatus</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/WorkflowState.html">WorkflowState</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Extensions/String.html">String</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/String/TrimmingStrategy.html">– TrimmingStrategy</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/SummarizerProtocol.html">SummarizerProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/WorkflowManagerProtocol.html">WorkflowManagerProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/WorkflowProtocol.html">WorkflowProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/WorkflowTaskProtocol.html">WorkflowTaskProtocol</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Structs/Bookmark.html">Bookmark</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Context.html">Context</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ContextItem.html">ContextItem</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/LLMRequest.html">LLMRequest</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/LLMResponse.html">LLMResponse</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>LLMRequest</h1>
+              <div class="declaration">
+                <div class="language">
+                  
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">LLMRequest</span></code></pre>
+
+                </div>
+              </div>
+            <p>A struct representing the input to be sent to the Language Learning Model (LLM).
+This structure allows customization of various parameters to influence the response generated by the LLM.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore10LLMRequestV6promptSSvp"></a>
+                    <a name="//apple_ref/swift/Property/prompt" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore10LLMRequestV6promptSSvp">prompt</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The text prompt to be processed by the LLM.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">prompt</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore10LLMRequestV11temperatureSdvp"></a>
+                    <a name="//apple_ref/swift/Property/temperature" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore10LLMRequestV11temperatureSdvp">temperature</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The sampling temperature to control randomness (values between 0.0 to 1.0). Higher values (e.g., 1.0) make the output more random, while lower values (e.g., 0.0) make it more deterministic.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">temperature</span><span class="p">:</span> <span class="kt">Double</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore10LLMRequestV9maxTokensSivp"></a>
+                    <a name="//apple_ref/swift/Property/maxTokens" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore10LLMRequestV9maxTokensSivp">maxTokens</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The maximum number of tokens in the generated response.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">maxTokens</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore10LLMRequestV4topPSdvp"></a>
+                    <a name="//apple_ref/swift/Property/topP" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore10LLMRequestV4topPSdvp">topP</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Nucleus sampling parameter that limits sampling to the top percentile of tokens. Lower values narrow the scope of the sampling to the most likely tokens.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">topP</span><span class="p">:</span> <span class="kt">Double</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore10LLMRequestV16frequencyPenaltySdvp"></a>
+                    <a name="//apple_ref/swift/Property/frequencyPenalty" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore10LLMRequestV16frequencyPenaltySdvp">frequencyPenalty</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A penalty applied to reduce the repetition of the same tokens in the response.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">frequencyPenalty</span><span class="p">:</span> <span class="kt">Double</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore10LLMRequestV15presencePenaltySdvp"></a>
+                    <a name="//apple_ref/swift/Property/presencePenalty" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore10LLMRequestV15presencePenaltySdvp">presencePenalty</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A penalty applied to encourage the introduction of new tokens into the response, promoting variety.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">presencePenalty</span><span class="p">:</span> <span class="kt">Double</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore10LLMRequestV13stopSequencesSaySSGSgvp"></a>
+                    <a name="//apple_ref/swift/Property/stopSequences" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore10LLMRequestV13stopSequencesSaySSGSgvp">stopSequences</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sequences of tokens that signal the LLM to stop generating further tokens when encountered in the response.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">stopSequences</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">]?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore10LLMRequestV5modelSSSgvp"></a>
+                    <a name="//apple_ref/swift/Property/model" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore10LLMRequestV5modelSSSgvp">model</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The specific LLM model to use for processing (e.g., &ldquo;gpt-3.5-turbo&rdquo;, &ldquo;davinci&rdquo;). If not specified, the default model for the service will be used.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">model</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore10LLMRequestV9logitBiasSDySSSdGSgvp"></a>
+                    <a name="//apple_ref/swift/Property/logitBias" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore10LLMRequestV9logitBiasSDySSSdGSgvp">logitBias</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A map of token biases, allowing customization of the likelihood of specific tokens appearing in the response.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">logitBias</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span> <span class="p">:</span> <span class="kt">Double</span><span class="p">]?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore10LLMRequestV4userSSSgvp"></a>
+                    <a name="//apple_ref/swift/Property/user" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore10LLMRequestV4userSSSgvp">user</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>An optional user identifier, which can be used for tracking, moderation, or specific user-based adjustments.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">user</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore10LLMRequestV6prompt11temperature9maxTokens4topP16frequencyPenalty08presenceJ013stopSequences5model9logitBias4userACSS_SdSiS3dSaySSGSgSSSgSDySSSdGSgAPtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(prompt:temperature:maxTokens:topP:frequencyPenalty:presencePenalty:stopSequences:model:logitBias:user:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore10LLMRequestV6prompt11temperature9maxTokens4topP16frequencyPenalty08presenceJ013stopSequences5model9logitBias4userACSS_SdSiS3dSaySSGSgSSSgSDySSSdGSgAPtcfc">init(prompt:<wbr>temperature:<wbr>maxTokens:<wbr>topP:<wbr>frequencyPenalty:<wbr>presencePenalty:<wbr>stopSequences:<wbr>model:<wbr>logitBias:<wbr>user:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Initializes a new <code>LLMRequest</code> with customizable parameters and reasonable defaults for most fields.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">prompt</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+     <span class="nv">temperature</span><span class="p">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="mf">0.7</span><span class="p">,</span>
+     <span class="nv">maxTokens</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">256</span><span class="p">,</span>
+     <span class="nv">topP</span><span class="p">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+     <span class="nv">frequencyPenalty</span><span class="p">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+     <span class="nv">presencePenalty</span><span class="p">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+     <span class="nv">stopSequences</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">]?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+     <span class="nv">model</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+     <span class="nv">logitBias</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">Double</span><span class="p">]?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+     <span class="nv">user</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>prompt</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The input text to be processed by the LLM.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>temperature</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A value between 0.0 and 1.0 controlling the randomness of the response (default is 0.7).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>maxTokens</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The maximum number of tokens to generate in the response (default is 256).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>topP</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The top probability value used for nucleus sampling (default is 1.0, meaning no nucleus sampling is applied).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>frequencyPenalty</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A penalty to discourage token repetition in the response (default is 0.0).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>presencePenalty</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A penalty to encourage the introduction of new tokens in the response (default is 0.0).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>stopSequences</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>An optional array of strings that will stop the response generation when encountered.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>model</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>An optional string representing the model to use (default is nil, meaning the default model for the service will be used).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>logitBias</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>An optional dictionary that maps tokens to biases, allowing adjustment of token probabilities (default is nil).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>user</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>An optional string representing a user identifier for tracking purposes (default is nil).</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-09-06)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</html>

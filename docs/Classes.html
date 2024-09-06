@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Classes  Reference</title>
+    <link rel="stylesheet" type="text/css" href="css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="js/jquery.min.js" defer></script>
+    <script src="js/jazzy.js" defer></script>
+    
+    <script src="js/lunr.min.js" defer></script>
+    <script src="js/typeahead.jquery.js" defer></script>
+    <script src="js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Section/Classes" class="dashAnchor"></a>
+    <a title="Classes  Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="index.html"> Docs</a> (100% documented)</p>
+        <div class="header-right">
+          <form role="search" action="search.json">
+            <input type="text" placeholder="Search documentation" data-typeahead>
+          </form>
+        </div>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="index.html">Index</a>
+        <img id="carat" src="img/carat.png" alt=""/>
+        Classes  Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Classes/AnthropicService.html">AnthropicService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/ContextController.html">ContextController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/ContextManager.html">ContextManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/FetchContextsTask.html">FetchContextsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/LLMManager.html">LLMManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/LLMServiceFactory.html">LLMServiceFactory</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/LLMTask.html">LLMTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/LoadContextTask.html">LoadContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/OllamaService.html">OllamaService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/OpenAIService.html">OpenAIService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/SaveContextTask.html">SaveContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/SecureStorage.html">SecureStorage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/SummarizeTask.html">SummarizeTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/Summarizer.html">Summarizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/TrimmingTask.html">TrimmingTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/Workflow.html">Workflow</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/WorkflowManager.html">WorkflowManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/WorkflowTask.html">WorkflowTask</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Enums/SummaryType.html">SummaryType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/TaskStatus.html">TaskStatus</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/WorkflowState.html">WorkflowState</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Extensions/String.html">String</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Extensions/String/TrimmingStrategy.html">– TrimmingStrategy</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Protocols/SummarizerProtocol.html">SummarizerProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Protocols/WorkflowManagerProtocol.html">WorkflowManagerProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Protocols/WorkflowProtocol.html">WorkflowProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Protocols/WorkflowTaskProtocol.html">WorkflowTaskProtocol</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Structs/Bookmark.html">Bookmark</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/Context.html">Context</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/ContextItem.html">ContextItem</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/LLMRequest.html">LLMRequest</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/LLMResponse.html">LLMResponse</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>Classes</h1>
+            <p>The following classes are available globally.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore10LLMManagerC"></a>
+                    <a name="//apple_ref/swift/Class/LLMManager" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore10LLMManagerC">LLMManager</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>LLMManager</code> is responsible for managing multiple Language Learning Model (LLM) services, handling requests, routing, and fallback mechanisms.
+It allows registering services, sending requests, and managing token usage with trimming strategies.</p>
+
+                        <a href="Classes/LLMManager.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">LLMManager</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore17LLMServiceFactoryC"></a>
+                    <a name="//apple_ref/swift/Class/LLMServiceFactory" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore17LLMServiceFactoryC">LLMServiceFactory</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>LLMServiceFactory</code> is responsible for creating instances of LLM services like OpenAI, Anthropic, and Ollama.</p>
+
+<p>The factory ensures that the correct service is instantiated based on the service name and retrieves the required API key from the secure storage.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    This factory can be extended by adding new services to the switch case.
+
+</div>
+
+                        <a href="Classes/LLMServiceFactory.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">LLMServiceFactory</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore7LLMTaskC"></a>
+                    <a name="//apple_ref/swift/Class/LLMTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore7LLMTaskC">LLMTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The <code>LLMTask</code> class represents a workflow task that sends a prompt to a Language Learning Model (LLM) service
+and processes the response.</p>
+
+<p>This task is designed to be part of a workflow where the result from an LLM is used in further tasks.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    This class works with any service that conforms to <code><a href="Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></code>.
+
+</div>
+
+                        <a href="Classes/LLMTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">LLMTask</span> <span class="p">:</span> <span class="kt"><a href="Classes/WorkflowTask.html">WorkflowTask</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore16AnthropicServiceC"></a>
+                    <a name="//apple_ref/swift/Class/AnthropicService" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore16AnthropicServiceC">AnthropicService</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>AnthropicService</code> implements the <code><a href="Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></code> to interact with the Anthropic API.
+It allows for flexible configuration for different models and temperature settings.</p>
+
+                        <a href="Classes/AnthropicService.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">AnthropicService</span> <span class="p">:</span> <span class="kt"><a href="Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore13OllamaServiceC"></a>
+                    <a name="//apple_ref/swift/Class/OllamaService" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore13OllamaServiceC">OllamaService</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>OllamaService</code> implements the <code><a href="Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></code> to interact with the Ollama models via its API.
+This service allows for customizable API base URLs, making it flexible for different environments.</p>
+
+                        <a href="Classes/OllamaService.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">OllamaService</span> <span class="p">:</span> <span class="kt"><a href="Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore13OpenAIServiceC"></a>
+                    <a name="//apple_ref/swift/Class/OpenAIService" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore13OpenAIServiceC">OpenAIService</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>OpenAIService</code> implements the <code><a href="Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></code> to interact with the OpenAI API.
+This service allows flexible configuration for different models and settings.</p>
+
+                        <a href="Classes/OpenAIService.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">OpenAIService</span> <span class="p">:</span> <span class="kt"><a href="Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore17ContextControllerC"></a>
+                    <a name="//apple_ref/swift/Class/ContextController" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore17ContextControllerC">ContextController</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>ContextController</code> manages the state and operations related to a specific <code><a href="Structs/Context.html">Context</a></code>, including adding, removing, and updating items, as well as summarizing older items. The controller handles context-specific summarization using a connected LLM service.</p>
+
+                        <a href="Classes/ContextController.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">ContextController</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore14ContextManagerC"></a>
+                    <a name="//apple_ref/swift/Class/ContextManager" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore14ContextManagerC">ContextManager</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>ContextManager</code> is responsible for managing multiple <code><a href="Classes/ContextController.html">ContextController</a></code> instances.
+It allows adding, removing, switching between contexts, and saving/restoring contexts from disk using tasks.</p>
+
+                        <a href="Classes/ContextManager.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">ContextManager</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore15WorkflowManagerC"></a>
+                    <a name="//apple_ref/swift/Class/WorkflowManager" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore15WorkflowManagerC">WorkflowManager</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A concrete implementation of the <code>WorkflowManager</code> protocol, responsible for managing and executing a workflow.</p>
+
+                        <a href="Classes/WorkflowManager.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WorkflowManager</span> <span class="p">:</span> <span class="kt"><a href="Protocols/WorkflowManagerProtocol.html">WorkflowManagerProtocol</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore8WorkflowC"></a>
+                    <a name="//apple_ref/swift/Class/Workflow" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore8WorkflowC">Workflow</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A concrete implementation of the <code><a href="Protocols/WorkflowProtocol.html">WorkflowProtocol</a></code>, responsible for executing and managing tasks in a workflow.</p>
+
+                        <a href="Classes/Workflow.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">Workflow</span> <span class="p">:</span> <span class="kt"><a href="Protocols/WorkflowProtocol.html">WorkflowProtocol</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore12WorkflowTaskC"></a>
+                    <a name="//apple_ref/swift/Class/WorkflowTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore12WorkflowTaskC">WorkflowTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A concrete implementation of the <code>Task</code> protocol, representing a task within a workflow system.</p>
+
+                        <a href="Classes/WorkflowTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WorkflowTask</span> <span class="p">:</span> <span class="kt"><a href="Protocols/WorkflowTaskProtocol.html">WorkflowTaskProtocol</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore10SummarizerC"></a>
+                    <a name="//apple_ref/swift/Class/Summarizer" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore10SummarizerC">Summarizer</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The <code>Summarizer</code> class provides an implementation of the <code><a href="Protocols/SummarizerProtocol.html">SummarizerProtocol</a></code>, delegating all summarization tasks to an LLM service.</p>
+
+                        <a href="Classes/Summarizer.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">Summarizer</span> <span class="p">:</span> <span class="kt"><a href="Protocols/SummarizerProtocol.html">SummarizerProtocol</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore13SecureStorageC"></a>
+                    <a name="//apple_ref/swift/Class/SecureStorage" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore13SecureStorageC">SecureStorage</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>SecureStorage</code> is responsible for securely saving, retrieving, and deleting API keys and base URLs using the Keychain on Apple devices.
+This is useful for storing sensitive information like API keys and custom base URLs in a secure and persistent manner.</p>
+
+                        <a href="Classes/SecureStorage.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">SecureStorage</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore17FetchContextsTaskC"></a>
+                    <a name="//apple_ref/swift/Class/FetchContextsTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore17FetchContextsTaskC">FetchContextsTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>FetchContextsTask</code> is responsible for retrieving a list of all stored contexts from the disk.</p>
+
+<p>This task can be integrated into a workflow where a list of all available contexts needs to be fetched.</p>
+
+                        <a href="Classes/FetchContextsTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">FetchContextsTask</span> <span class="p">:</span> <span class="kt"><a href="Classes/WorkflowTask.html">WorkflowTask</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore15LoadContextTaskC"></a>
+                    <a name="//apple_ref/swift/Class/LoadContextTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore15LoadContextTaskC">LoadContextTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>LoadContextTask</code> is responsible for loading a <code><a href="Structs/Context.html">Context</a></code> object from disk.</p>
+
+<p>This task can be integrated into a workflow where context data needs to be retrieved from disk.</p>
+
+                        <a href="Classes/LoadContextTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">LoadContextTask</span> <span class="p">:</span> <span class="kt"><a href="Classes/WorkflowTask.html">WorkflowTask</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore15SaveContextTaskC"></a>
+                    <a name="//apple_ref/swift/Class/SaveContextTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore15SaveContextTaskC">SaveContextTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>SaveContextTask</code> is responsible for saving a <code><a href="Structs/Context.html">Context</a></code> object to disk using JSON encoding.</p>
+
+<p>This task can be integrated into a workflow where context data needs to be persisted.</p>
+
+                        <a href="Classes/SaveContextTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">SaveContextTask</span> <span class="p">:</span> <span class="kt"><a href="Classes/WorkflowTask.html">WorkflowTask</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore13SummarizeTaskC"></a>
+                    <a name="//apple_ref/swift/Class/SummarizeTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore13SummarizeTaskC">SummarizeTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>SummarizeTask</code> is responsible for summarizing context items within a <code><a href="Classes/ContextController.html">ContextController</a></code> using the connected LLM service.</p>
+
+                        <a href="Classes/SummarizeTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">SummarizeTask</span> <span class="p">:</span> <span class="kt"><a href="Classes/WorkflowTask.html">WorkflowTask</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore12TrimmingTaskC"></a>
+                    <a name="//apple_ref/swift/Class/TrimmingTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore12TrimmingTaskC">TrimmingTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                        <a href="Classes/TrimmingTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">TrimmingTask</span> <span class="p">:</span> <span class="kt"><a href="Classes/WorkflowTask.html">WorkflowTask</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-09-06)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</html>

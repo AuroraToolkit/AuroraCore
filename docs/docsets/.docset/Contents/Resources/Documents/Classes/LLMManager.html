@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>LLMManager Class Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Class/LLMManager" class="dashAnchor"></a>
+    <a title="LLMManager Class Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html"> Docs</a> (100% documented)</p>
+        <div class="header-right">
+          <form role="search" action="../search.json">
+            <input type="text" placeholder="Search documentation" data-typeahead>
+          </form>
+        </div>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html">Index</a>
+        <img id="carat" src="../img/carat.png" alt=""/>
+        <a href="../Classes.html">Classes</a>
+        <img id="carat" src="../img/carat.png" alt=""/>
+        AuroraCore.LLMManager Class Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/AnthropicService.html">AnthropicService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ContextController.html">ContextController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ContextManager.html">ContextManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/FetchContextsTask.html">FetchContextsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/LLMManager.html">LLMManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/LLMServiceFactory.html">LLMServiceFactory</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/LLMTask.html">LLMTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/LoadContextTask.html">LoadContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/OllamaService.html">OllamaService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/OpenAIService.html">OpenAIService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SaveContextTask.html">SaveContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SecureStorage.html">SecureStorage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SummarizeTask.html">SummarizeTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Summarizer.html">Summarizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/TrimmingTask.html">TrimmingTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Workflow.html">Workflow</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/WorkflowManager.html">WorkflowManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/WorkflowTask.html">WorkflowTask</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Enums/SummaryType.html">SummaryType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/TaskStatus.html">TaskStatus</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/WorkflowState.html">WorkflowState</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Extensions/String.html">String</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/String/TrimmingStrategy.html">– TrimmingStrategy</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/SummarizerProtocol.html">SummarizerProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/WorkflowManagerProtocol.html">WorkflowManagerProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/WorkflowProtocol.html">WorkflowProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/WorkflowTaskProtocol.html">WorkflowTaskProtocol</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Structs/Bookmark.html">Bookmark</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Context.html">Context</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ContextItem.html">ContextItem</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/LLMRequest.html">LLMRequest</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/LLMResponse.html">LLMResponse</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>LLMManager</h1>
+              <div class="declaration">
+                <div class="language">
+                  
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">LLMManager</span></code></pre>
+
+                </div>
+              </div>
+            <p><code>LLMManager</code> is responsible for managing multiple Language Learning Model (LLM) services, handling requests, routing, and fallback mechanisms.
+It allows registering services, sending requests, and managing token usage with trimming strategies.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Register%20Services"></a>
+                <a name="//apple_ref/swift/Section/Register Services" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Register%20Services"></a>
+                  <h3 class="section-name"><span>Register Services</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore10LLMManagerC15registerService_8withNameyAA18LLMServiceProtocol_p_SStF"></a>
+                    <a name="//apple_ref/swift/Method/registerService(_:withName:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore10LLMManagerC15registerService_8withNameyAA18LLMServiceProtocol_p_SStF">registerService(_:<wbr>withName:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Registers a new LLM service with a specified name.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">registerService</span><span class="p">(</span><span class="n">_</span> <span class="nv">service</span><span class="p">:</span> <span class="kt"><a href="../Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></span><span class="p">,</span> <span class="n">withName</span> <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>service</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The service conforming to <code><a href="../Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></code> to be registered.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>name</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The name under which to register the service.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Set%20Active%20Service"></a>
+                <a name="//apple_ref/swift/Section/Set Active Service" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Set%20Active%20Service"></a>
+                  <h3 class="section-name"><span>Set Active Service</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore10LLMManagerC16setActiveService6byNameySS_tF"></a>
+                    <a name="//apple_ref/swift/Method/setActiveService(byName:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore10LLMManagerC16setActiveService6byNameySS_tF">setActiveService(byName:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sets the active LLM service by its registered name.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">setActiveService</span><span class="p">(</span><span class="n">byName</span> <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>name</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The name of the service to be set as active.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Send%20Request"></a>
+                <a name="//apple_ref/swift/Section/Send Request" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Send%20Request"></a>
+                  <h3 class="section-name"><span>Send Request</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore10LLMManagerC11sendRequest_7context6buffer8strategy10completionyAA10LLMRequestV_SSSgSdSSAAE16TrimmingStrategyOyAA11LLMResponseVSgctF"></a>
+                    <a name="//apple_ref/swift/Method/sendRequest(_:context:buffer:strategy:completion:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore10LLMManagerC11sendRequest_7context6buffer8strategy10completionyAA10LLMRequestV_SSSgSdSSAAE16TrimmingStrategyOyAA11LLMResponseVSgctF">sendRequest(_:<wbr>context:<wbr>buffer:<wbr>strategy:<wbr>completion:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sends a request to the active LLM service, applying token trimming strategies if necessary.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">sendRequest</span><span class="p">(</span>
+    <span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Structs/LLMRequest.html">LLMRequest</a></span><span class="p">,</span>
+    <span class="nv">context</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+    <span class="nv">buffer</span><span class="p">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="nv">strategy</span><span class="p">:</span> <span class="kt">String</span><span class="o">.</span><span class="kt">TrimmingStrategy</span> <span class="o">=</span> <span class="o">.</span><span class="n">end</span><span class="p">,</span>
+    <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Structs/LLMResponse.html">LLMResponse</a></span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">Void</span>
+<span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>request</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code><a href="../Structs/LLMRequest.html">LLMRequest</a></code> containing the prompt and parameters.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>context</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>An optional string context to be included with the prompt.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>buffer</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>strategy</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The trimming strategy to apply when tokens exceed the limit. Defaults to <code>.end</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completion</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A closure that receives an optional <code><a href="../Structs/LLMResponse.html">LLMResponse</a></code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Async%20Send%20Request"></a>
+                <a name="//apple_ref/swift/Section/Async Send Request" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Async%20Send%20Request"></a>
+                  <h3 class="section-name"><span>Async Send Request</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore10LLMManagerC16sendRequestAsync_7context6buffer8strategyAA11LLMResponseVSgAA10LLMRequestV_SSSgSdSSAAE16TrimmingStrategyOtYaF"></a>
+                    <a name="//apple_ref/swift/Method/sendRequestAsync(_:context:buffer:strategy:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore10LLMManagerC16sendRequestAsync_7context6buffer8strategyAA11LLMResponseVSgAA10LLMRequestV_SSSgSdSSAAE16TrimmingStrategyOtYaF">sendRequestAsync(_:<wbr>context:<wbr>buffer:<wbr>strategy:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sends a request to the active LLM service asynchronously, applying token trimming strategies if necessary.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">sendRequestAsync</span><span class="p">(</span>
+    <span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Structs/LLMRequest.html">LLMRequest</a></span><span class="p">,</span>
+    <span class="nv">context</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+    <span class="nv">buffer</span><span class="p">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="nv">strategy</span><span class="p">:</span> <span class="kt">String</span><span class="o">.</span><span class="kt">TrimmingStrategy</span> <span class="o">=</span> <span class="o">.</span><span class="n">end</span>
+<span class="p">)</span> <span class="k">async</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/LLMResponse.html">LLMResponse</a></span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>request</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code><a href="../Structs/LLMRequest.html">LLMRequest</a></code> containing the prompt and parameters.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>context</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>An optional string context to be included with the prompt.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>buffer</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>strategy</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The trimming strategy to apply when tokens exceed the limit. Defaults to <code>.end</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>An optional <code><a href="../Structs/LLMResponse.html">LLMResponse</a></code> object.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Hybrid%20Routing"></a>
+                <a name="//apple_ref/swift/Section/Hybrid Routing" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Hybrid%20Routing"></a>
+                  <h3 class="section-name"><span>Hybrid Routing</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore10LLMManagerC22sendRequestWithRouting_05usingG8Strategy6buffer08trimmingI010completionyAA10LLMRequestV_SSSgAJcSdSSAAE08TrimmingI0OyAA11LLMResponseVSgctF"></a>
+                    <a name="//apple_ref/swift/Method/sendRequestWithRouting(_:usingRoutingStrategy:buffer:trimmingStrategy:completion:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore10LLMManagerC22sendRequestWithRouting_05usingG8Strategy6buffer08trimmingI010completionyAA10LLMRequestV_SSSgAJcSdSSAAE08TrimmingI0OyAA11LLMResponseVSgctF">sendRequestWithRouting(_:<wbr>usingRoutingStrategy:<wbr>buffer:<wbr>trimmingStrategy:<wbr>completion:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sends a request to a service chosen by the provided routing strategy.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">sendRequestWithRouting</span><span class="p">(</span>
+    <span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Structs/LLMRequest.html">LLMRequest</a></span><span class="p">,</span>
+    <span class="n">usingRoutingStrategy</span> <span class="nv">strategy</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Structs/LLMRequest.html">LLMRequest</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">?,</span>
+    <span class="nv">buffer</span><span class="p">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="nv">trimmingStrategy</span><span class="p">:</span> <span class="kt">String</span><span class="o">.</span><span class="kt">TrimmingStrategy</span> <span class="o">=</span> <span class="o">.</span><span class="n">end</span><span class="p">,</span>
+    <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Structs/LLMResponse.html">LLMResponse</a></span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">Void</span>
+<span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>request</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code><a href="../Structs/LLMRequest.html">LLMRequest</a></code> containing the prompt and parameters.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>strategy</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A closure that selects a service name based on the request.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>buffer</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>trimmingStrategy</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The trimming strategy to apply when tokens exceed the limit. Defaults to <code>.end</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completion</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A closure that receives an optional <code><a href="../Structs/LLMResponse.html">LLMResponse</a></code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Async%20Hybrid%20Routing"></a>
+                <a name="//apple_ref/swift/Section/Async Hybrid Routing" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Async%20Hybrid%20Routing"></a>
+                  <h3 class="section-name"><span>Async Hybrid Routing</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore10LLMManagerC27sendRequestWithRoutingAsync_05usingG8Strategy6buffer08trimmingJ0AA11LLMResponseVSgAA10LLMRequestV_SSSgALcSdSSAAE08TrimmingJ0OtYaF"></a>
+                    <a name="//apple_ref/swift/Method/sendRequestWithRoutingAsync(_:usingRoutingStrategy:buffer:trimmingStrategy:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore10LLMManagerC27sendRequestWithRoutingAsync_05usingG8Strategy6buffer08trimmingJ0AA11LLMResponseVSgAA10LLMRequestV_SSSgALcSdSSAAE08TrimmingJ0OtYaF">sendRequestWithRoutingAsync(_:<wbr>usingRoutingStrategy:<wbr>buffer:<wbr>trimmingStrategy:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sends a request to a service chosen by the provided routing strategy asynchronously.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">sendRequestWithRoutingAsync</span><span class="p">(</span>
+    <span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Structs/LLMRequest.html">LLMRequest</a></span><span class="p">,</span>
+    <span class="n">usingRoutingStrategy</span> <span class="nv">strategy</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Structs/LLMRequest.html">LLMRequest</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">?,</span>
+    <span class="nv">buffer</span><span class="p">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="nv">trimmingStrategy</span><span class="p">:</span> <span class="kt">String</span><span class="o">.</span><span class="kt">TrimmingStrategy</span> <span class="o">=</span> <span class="o">.</span><span class="n">end</span>
+<span class="p">)</span> <span class="k">async</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/LLMResponse.html">LLMResponse</a></span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>request</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code><a href="../Structs/LLMRequest.html">LLMRequest</a></code> containing the prompt and parameters.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>strategy</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A closure that selects a service name based on the request.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>buffer</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>trimmingStrategy</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The trimming strategy to apply when tokens exceed the limit. Defaults to <code>.end</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>An optional <code><a href="../Structs/LLMResponse.html">LLMResponse</a></code> object.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Fallback%20Mechanism"></a>
+                <a name="//apple_ref/swift/Section/Fallback Mechanism" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Fallback%20Mechanism"></a>
+                  <h3 class="section-name"><span>Fallback Mechanism</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore10LLMManagerC23sendRequestWithFallback_19fallbackServiceName6buffer8strategy10completionyAA10LLMRequestV_SSSdSSAAE16TrimmingStrategyOyAA11LLMResponseVSgctF"></a>
+                    <a name="//apple_ref/swift/Method/sendRequestWithFallback(_:fallbackServiceName:buffer:strategy:completion:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore10LLMManagerC23sendRequestWithFallback_19fallbackServiceName6buffer8strategy10completionyAA10LLMRequestV_SSSdSSAAE16TrimmingStrategyOyAA11LLMResponseVSgctF">sendRequestWithFallback(_:<wbr>fallbackServiceName:<wbr>buffer:<wbr>strategy:<wbr>completion:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sends a request to the active service, with a fallback to another service if the request fails.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">sendRequestWithFallback</span><span class="p">(</span>
+    <span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Structs/LLMRequest.html">LLMRequest</a></span><span class="p">,</span>
+    <span class="nv">fallbackServiceName</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+    <span class="nv">buffer</span><span class="p">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="nv">strategy</span><span class="p">:</span> <span class="kt">String</span><span class="o">.</span><span class="kt">TrimmingStrategy</span> <span class="o">=</span> <span class="o">.</span><span class="n">end</span><span class="p">,</span>
+    <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Structs/LLMResponse.html">LLMResponse</a></span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">Void</span>
+<span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>request</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code><a href="../Structs/LLMRequest.html">LLMRequest</a></code> containing the prompt and parameters.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>fallbackServiceName</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The name of the service to fall back to if the active service fails.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>buffer</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>strategy</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The trimming strategy to apply when tokens exceed the limit. Defaults to <code>.end</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completion</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A closure that receives an optional <code><a href="../Structs/LLMResponse.html">LLMResponse</a></code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Async%20Fallback%20Mechanism"></a>
+                <a name="//apple_ref/swift/Section/Async Fallback Mechanism" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Async%20Fallback%20Mechanism"></a>
+                  <h3 class="section-name"><span>Async Fallback Mechanism</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore10LLMManagerC28sendRequestWithFallbackAsync_19fallbackServiceName6buffer8strategyAA11LLMResponseVSgAA10LLMRequestV_SSSdSSAAE16TrimmingStrategyOtYaF"></a>
+                    <a name="//apple_ref/swift/Method/sendRequestWithFallbackAsync(_:fallbackServiceName:buffer:strategy:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore10LLMManagerC28sendRequestWithFallbackAsync_19fallbackServiceName6buffer8strategyAA11LLMResponseVSgAA10LLMRequestV_SSSdSSAAE16TrimmingStrategyOtYaF">sendRequestWithFallbackAsync(_:<wbr>fallbackServiceName:<wbr>buffer:<wbr>strategy:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sends a request to the active service asynchronously, with a fallback to another service if the request fails.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">sendRequestWithFallbackAsync</span><span class="p">(</span>
+    <span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Structs/LLMRequest.html">LLMRequest</a></span><span class="p">,</span>
+    <span class="nv">fallbackServiceName</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+    <span class="nv">buffer</span><span class="p">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="nv">strategy</span><span class="p">:</span> <span class="kt">String</span><span class="o">.</span><span class="kt">TrimmingStrategy</span> <span class="o">=</span> <span class="o">.</span><span class="n">end</span>
+<span class="p">)</span> <span class="k">async</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/LLMResponse.html">LLMResponse</a></span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>request</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code><a href="../Structs/LLMRequest.html">LLMRequest</a></code> containing the prompt and parameters.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>fallbackServiceName</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The name of the service to fall back to if the active service fails.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>buffer</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>strategy</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The trimming strategy to apply when tokens exceed the limit. Defaults to <code>.end</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>An optional <code><a href="../Structs/LLMResponse.html">LLMResponse</a></code> object.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-09-06)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Workflow Class Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Class/Workflow" class="dashAnchor"></a>
+    <a title="Workflow Class Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html"> Docs</a> (100% documented)</p>
+        <div class="header-right">
+          <form role="search" action="../search.json">
+            <input type="text" placeholder="Search documentation" data-typeahead>
+          </form>
+        </div>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html">Index</a>
+        <img id="carat" src="../img/carat.png" alt=""/>
+        <a href="../Classes.html">Classes</a>
+        <img id="carat" src="../img/carat.png" alt=""/>
+        AuroraCore.Workflow Class Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/AnthropicService.html">AnthropicService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ContextController.html">ContextController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ContextManager.html">ContextManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/FetchContextsTask.html">FetchContextsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/LLMManager.html">LLMManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/LLMServiceFactory.html">LLMServiceFactory</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/LLMTask.html">LLMTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/LoadContextTask.html">LoadContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/OllamaService.html">OllamaService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/OpenAIService.html">OpenAIService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SaveContextTask.html">SaveContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SecureStorage.html">SecureStorage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SummarizeTask.html">SummarizeTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Summarizer.html">Summarizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/TrimmingTask.html">TrimmingTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Workflow.html">Workflow</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/WorkflowManager.html">WorkflowManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/WorkflowTask.html">WorkflowTask</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Enums/SummaryType.html">SummaryType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/TaskStatus.html">TaskStatus</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/WorkflowState.html">WorkflowState</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Extensions/String.html">String</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/String/TrimmingStrategy.html">– TrimmingStrategy</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/SummarizerProtocol.html">SummarizerProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/WorkflowManagerProtocol.html">WorkflowManagerProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/WorkflowProtocol.html">WorkflowProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/WorkflowTaskProtocol.html">WorkflowTaskProtocol</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Structs/Bookmark.html">Bookmark</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Context.html">Context</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ContextItem.html">ContextItem</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/LLMRequest.html">LLMRequest</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/LLMResponse.html">LLMResponse</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>Workflow</h1>
+              <div class="declaration">
+                <div class="language">
+                  
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">Workflow</span> <span class="p">:</span> <span class="kt"><a href="../Protocols/WorkflowProtocol.html">WorkflowProtocol</a></span></code></pre>
+
+                </div>
+              </div>
+            <p>A concrete implementation of the <code><a href="../Protocols/WorkflowProtocol.html">WorkflowProtocol</a></code>, responsible for executing and managing tasks in a workflow.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore16WorkflowProtocolP2id10Foundation4UUIDVvp"></a>
+                    <a name="//apple_ref/swift/Property/id" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore16WorkflowProtocolP2id10Foundation4UUIDVvp">id</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">id</span><span class="p">:</span> <span class="kt">UUID</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore16WorkflowProtocolP4nameSSvp"></a>
+                    <a name="//apple_ref/swift/Property/name" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore16WorkflowProtocolP4nameSSvp">name</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore16WorkflowProtocolP11descriptionSSvp"></a>
+                    <a name="//apple_ref/swift/Property/description" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore16WorkflowProtocolP11descriptionSSvp">description</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">description</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore16WorkflowProtocolP5tasksSayAA0c4TaskD0_pGvp"></a>
+                    <a name="//apple_ref/swift/Property/tasks" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore16WorkflowProtocolP5tasksSayAA0c4TaskD0_pGvp">tasks</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">private(set)</span> <span class="k">var</span> <span class="nv">tasks</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Protocols/WorkflowTaskProtocol.html">WorkflowTaskProtocol</a></span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore16WorkflowProtocolP5stateAA0C5StateOvp"></a>
+                    <a name="//apple_ref/swift/Property/state" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore16WorkflowProtocolP5stateAA0C5StateOvp">state</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">private(set)</span> <span class="k">var</span> <span class="nv">state</span><span class="p">:</span> <span class="kt"><a href="../Enums/WorkflowState.html">WorkflowState</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore16WorkflowProtocolP16currentTaskIndexSivp"></a>
+                    <a name="//apple_ref/swift/Property/currentTaskIndex" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore16WorkflowProtocolP16currentTaskIndexSivp">currentTaskIndex</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">currentTaskIndex</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore8WorkflowC6logger2os6LoggerVvp"></a>
+                    <a name="//apple_ref/swift/Property/logger" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore8WorkflowC6logger2os6LoggerVvp">logger</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">logger</span><span class="p">:</span> <span class="kt">Logger</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore8WorkflowC4name11description5tasksACSS_SSSayAA0C12TaskProtocol_pGtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(name:description:tasks:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore8WorkflowC4name11description5tasksACSS_SSSayAA0C12TaskProtocol_pGtcfc">init(name:<wbr>description:<wbr>tasks:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Initializes a new workflow with a specified name, description, and tasks.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">description</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">tasks</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Protocols/WorkflowTaskProtocol.html">WorkflowTaskProtocol</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[])</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>tasks</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>An optional array of tasks to be added to the workflow (default is an empty array).</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore16WorkflowProtocolP16tryMarkCompletedSbyF"></a>
+                    <a name="//apple_ref/swift/Method/tryMarkCompleted()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore16WorkflowProtocolP16tryMarkCompletedSbyF">tryMarkCompleted()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">tryMarkCompleted</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore16WorkflowProtocolP11markStoppedyyF"></a>
+                    <a name="//apple_ref/swift/Method/markStopped()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore16WorkflowProtocolP11markStoppedyyF">markStopped()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">markStopped</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore16WorkflowProtocolP10markFailed10retryCountySi_tF"></a>
+                    <a name="//apple_ref/swift/Method/markFailed(retryCount:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore16WorkflowProtocolP10markFailed10retryCountySi_tF">markFailed(retryCount:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">markFailed</span><span class="p">(</span><span class="nv">retryCount</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore16WorkflowProtocolP11isCompletedSbyF"></a>
+                    <a name="//apple_ref/swift/Method/isCompleted()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore16WorkflowProtocolP11isCompletedSbyF">isCompleted()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">isCompleted</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore16WorkflowProtocolP05resetC0yyF"></a>
+                    <a name="//apple_ref/swift/Method/resetWorkflow()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore16WorkflowProtocolP05resetC0yyF">resetWorkflow()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">resetWorkflow</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore16WorkflowProtocolP7addTaskyyAA0cfD0_pF"></a>
+                    <a name="//apple_ref/swift/Method/addTask(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore16WorkflowProtocolP7addTaskyyAA0cfD0_pF">addTask(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">addTask</span><span class="p">(</span><span class="n">_</span> <span class="nv">task</span><span class="p">:</span> <span class="kt"><a href="../Protocols/WorkflowTaskProtocol.html">WorkflowTaskProtocol</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore8WorkflowC10updateTask_2atyAA0cE8Protocol_p_SitF"></a>
+                    <a name="//apple_ref/swift/Method/updateTask(_:at:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore8WorkflowC10updateTask_2atyAA0cE8Protocol_p_SitF">updateTask(_:<wbr>at:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Updates a task at a given index in the workflow.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">updateTask</span><span class="p">(</span><span class="n">_</span> <span class="nv">task</span><span class="p">:</span> <span class="kt"><a href="../Protocols/WorkflowTaskProtocol.html">WorkflowTaskProtocol</a></span><span class="p">,</span> <span class="n">at</span> <span class="nv">index</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>task</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The updated task to be placed at the given index.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>index</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The index of the task to be updated.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore8WorkflowC15executeNextTaskyyF"></a>
+                    <a name="//apple_ref/swift/Method/executeNextTask()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore8WorkflowC15executeNextTaskyyF">executeNextTask()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Executes the next task in the workflow that is in the <code>pending</code> state.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">executeNextTask</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore16WorkflowProtocolP13evaluateStateyyF"></a>
+                    <a name="//apple_ref/swift/Method/evaluateState()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore16WorkflowProtocolP13evaluateStateyyF">evaluateState()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">evaluateState</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore16WorkflowProtocolP11activeTasksSayAA0c4TaskD0_pGyF"></a>
+                    <a name="//apple_ref/swift/Method/activeTasks()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore16WorkflowProtocolP11activeTasksSayAA0c4TaskD0_pGyF">activeTasks()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">activeTasks</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="kt"><a href="../Protocols/WorkflowTaskProtocol.html">WorkflowTaskProtocol</a></span><span class="p">]</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore16WorkflowProtocolP14completedTasksSayAA0c4TaskD0_pGyF"></a>
+                    <a name="//apple_ref/swift/Method/completedTasks()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore16WorkflowProtocolP14completedTasksSayAA0c4TaskD0_pGyF">completedTasks()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">completedTasks</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="kt"><a href="../Protocols/WorkflowTaskProtocol.html">WorkflowTaskProtocol</a></span><span class="p">]</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-09-06)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</html>
