@@ -28,15 +28,20 @@ public struct Context: Codable, Equatable {
     /// The name of the LLM service associated with this context.
     public var llmServiceName: String
 
+    /// The creation date for the context.
+    public let creationDate: Date
+
     /**
      Initializes a new `Context` with a unique identifier and associated LLM service information.
 
      - Parameters:
         - llmServiceName: The name of the LLM service associated with this context.
+        - creationDate: The date when the context was created. Defaults to the current date.
      */
-    public init(llmServiceName: String) {
+    public init(llmServiceName: String, creationDate: Date = Date()) {
         self.id = UUID()
         self.llmServiceName = llmServiceName
+        self.creationDate = creationDate
     }
 
     /**
@@ -144,6 +149,7 @@ public struct Context: Codable, Equatable {
         return lhs.id == rhs.id &&
             lhs.items == rhs.items &&
             lhs.bookmarks == rhs.bookmarks &&
-            lhs.llmServiceName == rhs.llmServiceName
+            lhs.llmServiceName == rhs.llmServiceName &&
+            abs(lhs.creationDate.timeIntervalSince(rhs.creationDate)) < 1.0 // Ignore differences smaller than 1 second
     }
 }

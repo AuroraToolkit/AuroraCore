@@ -22,6 +22,22 @@ final class ContextTests: XCTestCase {
         super.tearDown()
     }
 
+    // Test that a new Context sets the creationDate correctly
+    func testContextCreationDate() {
+        // Given
+        let expectedDate = Date()
+
+        // When
+        let context = Context(llmServiceName: "openai", creationDate: expectedDate)
+
+        // Then
+        let calendar = Calendar.current
+        let roundedExpectedDate = calendar.date(bySetting: .nanosecond, value: 0, of: expectedDate)
+        let roundedCreationDate = calendar.date(bySetting: .nanosecond, value: 0, of: context.creationDate)
+
+        XCTAssertEqual(roundedCreationDate, roundedExpectedDate, "The creationDate should be set correctly upon initialization.")
+    }
+
     // Test adding a new item to the context
     func testAddItem() {
         // Given
@@ -34,6 +50,31 @@ final class ContextTests: XCTestCase {
         XCTAssertEqual(context.items.count, 1)
         XCTAssertEqual(context.items.first?.text, content)
         XCTAssertFalse(context.items.first?.isSummarized ?? true)
+    }
+
+    // Test that the context's creationDate persists through encoding and decoding
+    func testContextPersistenceWithCreationDate() {
+        // Given
+        let expectedDate = Date(timeIntervalSince1970: 1000) // Use a fixed timestamp for the test
+        context = Context(llmServiceName: "openai", creationDate: expectedDate)
+
+        let encoder = JSONEncoder()
+        let decoder = JSONDecoder()
+
+        // Set the encoding and decoding strategy for dates
+        encoder.dateEncodingStrategy = .secondsSince1970
+        decoder.dateDecodingStrategy = .secondsSince1970
+
+        // When
+        do {
+            let encodedData = try encoder.encode(context)
+            let decodedContext = try decoder.decode(Context.self, from: encodedData)
+
+            // Then
+            XCTAssertEqual(decodedContext.creationDate, expectedDate, "The creationDate should persist after encoding and decoding.")
+        } catch {
+            XCTFail("Failed to encode or decode the context: \(error)")
+        }
     }
 
     // Test adding and retrieving a bookmark

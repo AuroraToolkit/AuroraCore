@@ -34,6 +34,7 @@ public class ContextManager {
         - summarizer: An optional `Summarizer` instance to handle text summarization. If none is provided, a default summarizer will be created.
      - Returns: The unique identifier (`UUID`) for the newly created `ContextController`.
      */
+    @discardableResult
     public func addNewContext(_ context: Context? = nil, llmService: LLMServiceProtocol, summarizer: SummarizerProtocol? = nil) -> UUID {
         let contextController = ContextController(context: context, llmService: llmService, summarizer: summarizer)
         contextControllers[contextController.id] = contextController
@@ -112,6 +113,16 @@ public class ContextManager {
     }
 
     /**
+     Removes all managed contexts
+
+     This method will also set activeContextID to `nil`.
+     */
+    public func removeAllContexts() {
+        contextControllers.removeAll()
+        activeContextID = nil
+    }
+
+    /**
      Saves all managed contexts to disk.
 
      Each context is saved as a separate file using its UUID in the filename.
@@ -120,7 +131,7 @@ public class ContextManager {
      */
     public func saveAllContexts() async throws {
         for (contextID, contextController) in contextControllers {
-            let saveTask = SaveContextTask(context: contextController.getContext(), filename: "context_\(contextID.uuidString)")
+            let saveTask = SaveContextTask(context: contextController.getContext(), filename: contextID.uuidString)
             try await saveTask.execute()
         }
     }
@@ -144,7 +155,7 @@ public class ContextManager {
                 if let loadedContext = loadTask.outputs["context"] as? Context,
                    let llmService = llmServiceFactory.createService(for: loadedContext) {
                     let contextController = ContextController(context: loadedContext, llmService: llmService)
-                    let contextID = UUID(uuidString: file.lastPathComponent.replacingOccurrences(of: "context_", with: "").replacingOccurrences(of: ".json", with: ""))!
+                    let contextID = loadedContext.id
                     contextControllers[contextID] = contextController
 
                     // Set the first loaded context as active if no context is active.

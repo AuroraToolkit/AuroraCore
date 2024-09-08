@@ -14,8 +14,8 @@ import Foundation
  */
 public class LoadContextTask: WorkflowTask {
 
-    /// The file URL where the context will be loaded from.
-    private let fileURL: URL
+    /// The filename where the context will be loaded from.
+    private let filename: String
 
     /**
      Initializes a `LoadContextTask` with a filename.
@@ -24,16 +24,20 @@ public class LoadContextTask: WorkflowTask {
      - Returns: A `LoadContextTask` instance.
      */
     public init(filename: String) {
-        // Attempt to retrieve the document directory safely
-        guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            fatalError("Document directory not found")
-        }
-        self.fileURL = documentDirectory.appendingPathComponent("\(filename).json")
+        // Ensure that the filename ends with .json only once
+        self.filename = filename.hasSuffix(".json") ? filename : "\(filename).json"
+
         super.init(name: "Load Context", description: "Load the context from disk")
     }
 
     public override func execute() async throws {
         do {
+            // Ensure the contexts directory exists
+            let documentDirectory = try FileManager.default.createContextsDirectory()
+
+            let fileURL = documentDirectory
+                .appendingPathComponent(filename)
+
             let data = try Data(contentsOf: fileURL)
             let decoder = JSONDecoder()
             let context = try decoder.decode(Context.self, from: data)

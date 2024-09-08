@@ -8,43 +8,45 @@
 import Foundation
 
 /**
- `SaveContextTask` is responsible for saving a `Context` object to disk using JSON encoding.
+ `SaveContextTask` is responsible for saving a `Context` object to disk.
 
- This task can be integrated into a workflow where context data needs to be persisted.
+ The task ensures that a dedicated `contexts/` directory exists in the documents folder.
  */
 public class SaveContextTask: WorkflowTask {
 
-    /// The `Context` object to be saved.
+    /// The context to be saved.
     private let context: Context
 
-    /// The file URL where the context will be saved.
-    private let fileURL: URL
+    /// The filename used to store the context.
+    private let filename: String
 
     /**
-     Initializes a `SaveContextTask` with a context and filename.
+     Initializes a `SaveContextTask` with the context and filename.
 
      - Parameters:
-        - context: The `Context` object to be saved.
+        - context: The `Context` object to save.
         - filename: The name of the file (without extension) used for saving the context.
-     - Returns: A `SaveContextTask` instance.
      */
     public init(context: Context, filename: String) {
         self.context = context
-        // Attempt to retrieve the document directory safely
-        guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            fatalError("Document directory not found")
-        }
-        self.fileURL = documentDirectory.appendingPathComponent("\(filename).json")
+        self.filename = filename
         super.init(name: "Save Context", description: "Save the context to disk")
     }
 
     public override func execute() async throws {
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = .prettyPrinted
         do {
+            // Ensure the contexts directory exists
+            let documentDirectory = try FileManager.default.createContextsDirectory()
+
+            // Prepare the file URL
+            let fileURL = documentDirectory.appendingPathComponent("\(filename).json")
+
+            // Encode the context to JSON and save to file
+            let encoder = JSONEncoder()
             let data = try encoder.encode(context)
             try data.write(to: fileURL)
-            markCompleted(withOutputs: ["fileURL": fileURL])
+
+            markCompleted()
         } catch {
             markFailed()
             throw error

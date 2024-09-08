@@ -36,8 +36,8 @@ public class ContextController {
         - summarizer: Optional `Summarizer` instance. If none is provided, a default summarizer will be created.
      */
     public init(context: Context? = nil, llmService: LLMServiceProtocol, summarizer: SummarizerProtocol? = nil) {
-        self.id = UUID()
         self.context = context ?? Context(llmServiceName: llmService.name)
+        self.id = self.context.id  // Use the context's ID as the controller ID
         self.llmService = llmService
         self.summarizer = summarizer ?? Summarizer(llmService: llmService)
     }

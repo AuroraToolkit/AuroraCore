@@ -14,32 +14,21 @@ import Foundation
  */
 public class FetchContextsTask: WorkflowTask {
 
-    /// The directory where the context files are stored.
-    private let directoryURL: URL
-
     /**
      Initializes a `FetchContextsTask` to retrieve all stored contexts.
 
-     - Parameter directory: The directory where context files are stored. Defaults to the app's document directory.
      - Returns: A `FetchContextsTask` instance.
      */
-    public init(directory: URL? = nil) {
-        if let directory = directory {
-            self.directoryURL = directory
-        } else {
-            // Attempt to retrieve the document directory safely
-            guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-                fatalError("Document directory not found")
-            }
-            self.directoryURL = documentDirectory
-        }
+    public init() {
         super.init(name: "Fetch Contexts", description: "Fetch all stored contexts from disk")
     }
 
     public override func execute() async throws {
         do {
-            let fileManager = FileManager.default
-            let fileURLs = try fileManager.contentsOfDirectory(at: directoryURL, includingPropertiesForKeys: nil)
+            // Ensure the contexts directory exists
+            let documentDirectory = try FileManager.default.createContextsDirectory()
+
+            let fileURLs = try FileManager.default.contentsOfDirectory(at: documentDirectory, includingPropertiesForKeys: nil)
 
             // Filter for JSON files (assuming all contexts are stored as .json)
             let contextFiles = fileURLs.filter { $0.pathExtension == "json" }

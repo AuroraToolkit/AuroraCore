@@ -30,11 +30,10 @@ final class ContextManagerTests: XCTestCase {
     override func tearDown() {
         // Clear out saved context files after each test
         let fileManager = FileManager.default
-        let documentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
 
         do {
+            let documentDirectory = try FileManager.default.createContextsDirectory()
             let contextFiles = try fileManager.contentsOfDirectory(at: documentDirectory, includingPropertiesForKeys: nil)
-                .filter { $0.lastPathComponent.hasPrefix("context_") }
 
             // Delete each context file
             for file in contextFiles {
@@ -272,7 +271,7 @@ final class ContextManagerTests: XCTestCase {
 
         // When
         try await contextManager.saveAllContexts()
-        contextManager.contextControllers.removeAll()
+        contextManager.contextControllers.removeAll() // we should have a contextManager.removeAllContexts() that clears active context id
         try await contextManager.loadAllContexts()
 
         // Then
@@ -338,5 +337,79 @@ final class ContextManagerTests: XCTestCase {
         // Verify that one of the contexts is set as active
         let activeContextItems = contextManager.getActiveContextController()?.getContext().items
         XCTAssertTrue(activeContextItems?.first?.text == "Item in context 1" || activeContextItems?.first?.text == "Item in context 2", "The active context should be one of the loaded contexts.")
+    }
+
+    // Test removing all contexts
+    func testRemoveAllContexts() {
+        // Given
+        _ = contextManager.addNewContext(llmService: mockService)
+        _ = contextManager.addNewContext(llmService: mockService2)
+
+        // Ensure contexts are added
+        XCTAssertEqual(contextManager.contextControllers.count, 2, "There should be two context controllers initially.")
+        XCTAssertNotNil(contextManager.activeContextID, "An active context should be set.")
+
+        // When
+        contextManager.removeAllContexts()
+
+        // Then
+        XCTAssertEqual(contextManager.contextControllers.count, 0, "All context controllers should be removed.")
+        XCTAssertNil(contextManager.activeContextID, "The active context ID should be nil after removing all contexts.")
+    }
+
+    // Test adding new context after removing all contexts
+    func testAddNewContextAfterRemoveAllContexts() {
+        // Given
+        contextManager.addNewContext(llmService: mockService)
+        contextManager.addNewContext(llmService: mockService2)
+
+        // Ensure contexts are added
+        XCTAssertEqual(contextManager.contextControllers.count, 2, "There should be two context controllers initially.")
+
+        // Remove all contexts
+        contextManager.removeAllContexts()
+
+        // Ensure contexts are removed
+        XCTAssertEqual(contextManager.contextControllers.count, 0, "All context controllers should be removed.")
+        XCTAssertNil(contextManager.activeContextID, "The active context ID should be nil after removing all contexts.")
+
+        // When
+        let newContextID = contextManager.addNewContext(llmService: mockService)
+
+        // Then
+        XCTAssertEqual(contextManager.contextControllers.count, 1, "A new context should be added after removing all contexts.")
+        XCTAssertEqual(contextManager.activeContextID, newContextID, "The new context should become the active context.")
+    }
+
+    // Test removeAllContexts when no context exists
+    func testRemoveAllContextsWhenNoContextExists() {
+        // Ensure there are no contexts initially
+        XCTAssertEqual(contextManager.contextControllers.count, 0, "There should be no context controllers initially.")
+        XCTAssertNil(contextManager.activeContextID, "The active context ID should be nil initially.")
+
+        // When
+        contextManager.removeAllContexts()
+
+        // Then
+        XCTAssertEqual(contextManager.contextControllers.count, 0, "There should still be no context controllers after removing.")
+        XCTAssertNil(contextManager.activeContextID, "The active context ID should remain nil.")
+    }
+
+    // Test removing a single context and ensuring active context updates correctly
+    func testRemoveSingleContext() {
+        // Given
+        let contextID1 = contextManager.addNewContext(llmService: mockService)
+        let contextID2 = contextManager.addNewContext(llmService: mockService2)
+
+        // Ensure contexts are added
+        XCTAssertEqual(contextManager.contextControllers.count, 2, "There should be two context controllers initially.")
+        XCTAssertEqual(contextManager.activeContextID, contextID1, "The first context should be the active context.")
+
+        // When
+        contextManager.removeContext(withID: contextID1)
+
+        // Then
+        XCTAssertEqual(contextManager.contextControllers.count, 1, "There should be one context controller remaining.")
+        XCTAssertEqual(contextManager.activeContextID, contextID2, "The second context should become the active context after the first one is removed.")
     }
 }
