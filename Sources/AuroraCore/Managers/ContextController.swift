@@ -22,10 +22,10 @@ public class ContextController {
     private var summarizedItems: [ContextItem] = []
 
     /// LLM service used for generating summaries.
-    private let llmService: LLMServiceProtocol
+    private var llmService: LLMServiceProtocol
 
     /// Summarizer instance responsible for summarizing context items.
-    private let summarizer: SummarizerProtocol
+    private var summarizer: SummarizerProtocol
 
     /**
      Initializes a new `ContextController` instance.
@@ -40,6 +40,21 @@ public class ContextController {
         self.id = self.context.id  // Use the context's ID as the controller ID
         self.llmService = llmService
         self.summarizer = summarizer ?? Summarizer(llmService: llmService)
+    }
+
+
+    /**
+     Updates the LLM service used by the `ContextController`.
+
+     - Parameters:
+        - newService: The new `LLMServiceProtocol` to use for summarization.
+
+     This method is useful for switching between different LLM services during runtime.
+     Note: The `Summarizer` instance will be updated to use the new LLM service.
+     */
+    public func updateLLMService(_ newService: LLMServiceProtocol) {
+        self.llmService = newService
+        self.summarizer = Summarizer(llmService: newService)  // Update summarizer to use new LLM
     }
 
     /**
@@ -180,6 +195,15 @@ public class ContextController {
         var contextToReturn = context
         contextToReturn.llmServiceName = llmService.name
         return contextToReturn
+    }
+
+    /**
+     Exposes the llmService used by the `ContextController`.
+
+     - Returns: The `LLMServiceProtocol` instance.
+     */
+    public func getLLMService() -> LLMServiceProtocol {
+        return llmService
     }
 
     /**

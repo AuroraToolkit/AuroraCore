@@ -11,11 +11,13 @@ import XCTest
 final class ContextControllerTests: XCTestCase {
     var contextController: ContextController!
     var mockService: MockLLMService!
+    var mockSummarizer: MockSummarizer!
 
     override func setUp() {
         super.setUp()
         mockService = MockLLMService(name: "TestService", maxTokenLimit: 100, expectedResult: .success(LLMResponse(text: "Test Output")))
-        contextController = ContextController(llmService: mockService, summarizer: MockSummarizer())
+        mockSummarizer = MockSummarizer()
+        contextController = ContextController(llmService: mockService, summarizer: mockSummarizer)
     }
 
     override func tearDown() {
@@ -235,5 +237,47 @@ final class ContextControllerTests: XCTestCase {
         XCTAssertEqual(contextController.summarizedContext().first?.text, "Summary of 2 items", "Multiple items should be summarized together.")
         XCTAssertTrue(contextController.getItems().first?.isSummarized ?? false, "The first item should be marked as summarized.")
         XCTAssertTrue(contextController.getItems()[1].isSummarized, "The second item should be marked as summarized.")
+    }
+
+    // Test updating the LLM service
+    func testUpdateLLMService() {
+        // Given
+        let newMockService = MockLLMService(name: "NewTestService", maxTokenLimit: 150, expectedResult: .success(LLMResponse(text: "New Test Output")))
+
+        // When
+        contextController.updateLLMService(newMockService)
+
+        // Then
+        XCTAssertEqual(contextController.getLLMService().name, "NewTestService", "The LLM service should be updated to the new one.")
+    }
+
+    // Test summarization after LLM service update
+    func testSummarizeWithUpdatedLLMService() async throws {
+        // Given
+        let oldItem = ContextItem(text: "Old item", creationDate: Date().addingTimeInterval(-8 * 24 * 60 * 60)) // 8 days old
+        contextController.addItem(content: oldItem.text, creationDate: oldItem.creationDate)
+
+        let newMockService = MockLLMService(name: "NewTestService", maxTokenLimit: 150, expectedResult: .success(LLMResponse(text: "New Test Output")))
+        contextController.updateLLMService(newMockService)
+
+        // When
+        try await contextController.summarizeOlderContext()
+
+        // Then
+        XCTAssertEqual(contextController.summarizedContext().count, 1, "There should be 1 summarized item after the LLM service is updated.")
+        XCTAssertEqual(contextController.summarizedContext().first?.text, "New Test Output", "The summary should reflect the output of the new LLM service.")
+    }
+
+    // Test that the LLM service is correctly persisted in the context after updating it
+    func testContextPersistenceAfterUpdatingLLMService() {
+        // Given
+        let newMockService = MockLLMService(name: "NewTestService", maxTokenLimit: 150, expectedResult: .success(LLMResponse(text: "New Test Output")))
+
+        // When
+        contextController.updateLLMService(newMockService)
+        let persistedContext = contextController.getContext()
+
+        // Then
+        XCTAssertEqual(persistedContext.llmServiceName, "NewTestService", "The LLM service name should be persisted in the context after updating the service.")
     }
 }
