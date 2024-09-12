@@ -280,6 +280,55 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:10AuroraCore17ContextControllerC16updateLLMServiceyyAA0F8Protocol_pF"></a>
+                    <a name="//apple_ref/swift/Method/updateLLMService(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore17ContextControllerC16updateLLMServiceyyAA0F8Protocol_pF">updateLLMService(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Updates the LLM service used by the <code>ContextController</code>.</p>
+
+<p>This method is useful for switching between different LLM services during runtime.
+Note: The <code><a href="../Classes/Summarizer.html">Summarizer</a></code> instance will be updated to use the new LLM service.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">updateLLMService</span><span class="p">(</span><span class="n">_</span> <span class="nv">newService</span><span class="p">:</span> <span class="kt"><a href="../Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>newService</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The new <code><a href="../Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></code> to use for summarization.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:10AuroraCore17ContextControllerC7addItem7content12creationDate9isSummaryySS_10Foundation0I0VSbtF"></a>
                     <a name="//apple_ref/swift/Method/addItem(content:creationDate:isSummary:)" class="dashAnchor"></a>
                     <a class="token" href="#/s:10AuroraCore17ContextControllerC7addItem7content12creationDate9isSummaryySS_10Foundation0I0VSbtF">addItem(content:<wbr>creationDate:<wbr>isSummary:<wbr>)</a>
@@ -704,6 +753,37 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:10AuroraCore17ContextControllerC13getLLMServiceAA0F8Protocol_pyF"></a>
+                    <a name="//apple_ref/swift/Method/getLLMService()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore17ContextControllerC13getLLMServiceAA0F8Protocol_pyF">getLLMService()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Exposes the llmService used by the <code>ContextController</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">getLLMService</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The <code><a href="../Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></code> instance.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:10AuroraCore17ContextControllerC13getSummarizerAA0F8Protocol_pyF"></a>
                     <a name="//apple_ref/swift/Method/getSummarizer()" class="dashAnchor"></a>
                     <a class="token" href="#/s:10AuroraCore17ContextControllerC13getSummarizerAA0F8Protocol_pyF">getSummarizer()</a>
@@ -737,7 +817,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-09-08)</p>
+          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-09-12)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>

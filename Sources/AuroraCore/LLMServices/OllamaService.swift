@@ -21,8 +21,8 @@ public class OllamaService: LLMServiceProtocol {
     /// The maximum token limit that can be processed by this service.
     public let maxTokenLimit: Int
 
-    /// The base URL for the Ollama API (e.g., `http://localhost:11400`).
-    private let baseURL: URL
+    /// The base URL for the Ollama API (e.g., `http://localhost:11434`).
+    private let baseURL: String
 
     internal var urlSession: URLSession
 
@@ -30,12 +30,12 @@ public class OllamaService: LLMServiceProtocol {
      Initializes a new `OllamaService` instance.
 
      - Parameters:
-        - baseURL: The base URL for the Ollama API (e.g., `http://localhost:11400`).
+        - baseURL: The base URL for the Ollama API as a `String` (e.g., `"http://localhost:11434"`).
         - maxTokenLimit: The maximum number of tokens allowed in a request.
         - apiKey: An optional API key, though not typically required for local Ollama instances.
         - urlSession: The URLSession instance used for network requests (default is URLSession.shared).
      */
-    public init(baseURL: URL, maxTokenLimit: Int = 4096, apiKey: String? = nil, urlSession: URLSession = .shared) {
+    public init(baseURL: String = "http://localhost:11434", maxTokenLimit: Int = 4096, apiKey: String? = nil, urlSession: URLSession = .shared) {
         self.baseURL = baseURL
         self.maxTokenLimit = maxTokenLimit
         self.apiKey = apiKey
@@ -60,7 +60,9 @@ public class OllamaService: LLMServiceProtocol {
         guard let model = request.model else {
             throw NSError(domain: "OllamaService", code: 1, userInfo: [NSLocalizedDescriptionKey: "Model name is required."])
         }
-        let url = baseURL.appendingPathComponent("api/v1/models/\(model)/generate")
+        guard let url = URL(string: "\(baseURL)/api/v1/models/\(model)/generate") else {
+            throw NSError(domain: "OllamaService", code: 3, userInfo: [NSLocalizedDescriptionKey: "Invalid base URL."])
+        }
 
         // Prepare the request body
         let body: [String: Any] = [

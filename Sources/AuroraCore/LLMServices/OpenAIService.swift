@@ -16,6 +16,9 @@ public class OpenAIService: LLMServiceProtocol {
     /// The name of the service, required by the protocol.
     public let name = "OpenAI"
 
+    /// The base url for the OpenAI API.
+    public var baseURL: String
+
     /// The API key used for authenticating requests to the OpenAI API.
     public var apiKey: String?
 
@@ -29,7 +32,8 @@ public class OpenAIService: LLMServiceProtocol {
         - apiKey: The API key used for authenticating requests to the OpenAI API.
         - maxTokenLimit: The maximum number of tokens allowed in a request.
      */
-    public init(apiKey: String?, maxTokenLimit: Int = 4096) {
+    public init(baseURL: String = "https://api.openai.com", apiKey: String?, maxTokenLimit: Int = 4096) {
+        self.baseURL = baseURL
         self.apiKey = apiKey
         self.maxTokenLimit = maxTokenLimit
     }
@@ -55,7 +59,7 @@ public class OpenAIService: LLMServiceProtocol {
         ]
 
         let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
-        var urlRequest = URLRequest(url: URL(string: "https://api.openai.com/v1/completions")!)
+        var urlRequest = URLRequest(url: URL(string: "\(baseURL)/v1/chat/completions")!)
         urlRequest.httpMethod = "POST"
         urlRequest.httpBody = jsonData
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")

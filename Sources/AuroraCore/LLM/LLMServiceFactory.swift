@@ -43,8 +43,7 @@ public class LLMServiceFactory {
             // Ollama typically doesn't need an API key but allows flexible base URLs for local or remote instances.
             // Retrieve the base URL from context metadata or use a default if not provided.
             let baseURLString = SecureStorage.getBaseURL(for: "Ollama") ?? "http://localhost:11400"
-            guard let baseURL = URL(string: baseURLString) else { return nil }
-            return OllamaService(baseURL: baseURL)
+            return OllamaService(baseURL: baseURLString)
 
         default:
             return nil
