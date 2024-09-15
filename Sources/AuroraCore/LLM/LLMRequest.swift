@@ -30,6 +30,12 @@ public struct LLMRequest {
     /// Additional less commonly used configuration options to influence the behavior of the LLM.
     public let options: LLMRequestOptions?
 
+    /// The suffix to add to the generated text (if applicable).
+    public let suffix: String?
+
+    /// Whether or not to stream the response (default is `false`).
+    public let stream: Bool
+
     /**
      Initializes a new `LLMRequest` with customizable parameters and reasonable defaults for most fields.
 

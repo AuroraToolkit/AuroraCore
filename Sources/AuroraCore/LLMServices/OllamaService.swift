@@ -113,7 +113,7 @@ public class OllamaService: LLMServiceProtocol {
             throw LLMServiceError.decodingError
         }
     }
-
+    
     /**
      Sends a request to the Ollama API using a completion handler.
 
