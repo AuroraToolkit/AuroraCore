@@ -76,7 +76,7 @@ public class LLMManager {
         context: String? = nil,
         buffer: Double = 0.05,
         strategy: String.TrimmingStrategy = .end,
-        completion: @escaping (LLMResponse?) -> Void
+        completion: @escaping (LLMResponseProtocol?) -> Void
     ) {
         guard let activeServiceName = activeServiceName, let service = services[activeServiceName] else {
             logger.error("No active service available to handle the request.")
@@ -107,14 +107,14 @@ public class LLMManager {
         - context: An optional string context to be included with the prompt.
         - buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
         - strategy: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
-     - Returns: An optional `LLMResponse` object.
+     - Returns: An optional `LLMResponseProtocol` object.
      */
     public func sendRequestAsync(
         _ request: LLMRequest,
         context: String? = nil,
         buffer: Double = 0.05,
         strategy: String.TrimmingStrategy = .end
-    ) async -> LLMResponse? {
+    ) async -> LLMResponseProtocol? {
         guard let activeServiceName = activeServiceName, let service = services[activeServiceName] else {
             logger.error("No active service available to handle the request.")
             return nil
@@ -143,14 +143,14 @@ public class LLMManager {
         - strategy: A closure that selects a service name based on the request.
         - buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
         - trimmingStrategy: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
-        - completion: A closure that receives an optional `LLMResponse`.
+        - completion: A closure that receives an optional `LLMResponseProtocol`.
      */
     public func sendRequestWithRouting(
         _ request: LLMRequest,
         usingRoutingStrategy strategy: @escaping (LLMRequest) -> String?,
         buffer: Double = 0.05,
         trimmingStrategy: String.TrimmingStrategy = .end,
-        completion: @escaping (LLMResponse?) -> Void
+        completion: @escaping (LLMResponseProtocol?) -> Void
     ) {
         if let selectedServiceName = strategy(request),
            let selectedService = services[selectedServiceName] {
@@ -182,14 +182,14 @@ public class LLMManager {
         - strategy: A closure that selects a service name based on the request.
         - buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
         - trimmingStrategy: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
-     - Returns: An optional `LLMResponse` object.
+     - Returns: An optional `LLMResponseProtocol` object.
      */
     public func sendRequestWithRoutingAsync(
         _ request: LLMRequest,
         usingRoutingStrategy strategy: @escaping (LLMRequest) -> String?,
         buffer: Double = 0.05,
         trimmingStrategy: String.TrimmingStrategy = .end
-    ) async -> LLMResponse? {
+    ) async -> LLMResponseProtocol? {
         if let selectedServiceName = strategy(request),
            let selectedService = services[selectedServiceName] {
 
@@ -220,14 +220,14 @@ public class LLMManager {
         - fallbackServiceName: The name of the service to fall back to if the active service fails.
         - buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
         - strategy: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
-        - completion: A closure that receives an optional `LLMResponse`.
+        - completion: A closure that receives an optional `LLMResponseProtocol`.
      */
     public func sendRequestWithFallback(
         _ request: LLMRequest,
         fallbackServiceName: String,
         buffer: Double = 0.05,
         strategy: String.TrimmingStrategy = .end,
-        completion: @escaping (LLMResponse?) -> Void
+        completion: @escaping (LLMResponseProtocol?) -> Void
     ) {
         logger.log("Attempting request with active service first.")
         sendRequest(request, buffer: buffer, strategy: strategy) { response in
@@ -265,14 +265,14 @@ public class LLMManager {
         - fallbackServiceName: The name of the service to fall back to if the active service fails.
         - buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
         - strategy: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
-     - Returns: An optional `LLMResponse` object.
+     - Returns: An optional `LLMResponseProtocol` object.
      */
     public func sendRequestWithFallbackAsync(
         _ request: LLMRequest,
         fallbackServiceName: String,
         buffer: Double = 0.05,
         strategy: String.TrimmingStrategy = .end
-    ) async -> LLMResponse? {
+    ) async -> LLMResponseProtocol? {
         logger.log("Attempting request with active service first.")
         if let response = await sendRequestAsync(request, buffer: buffer, strategy: strategy) {
             logger.log("Active service succeeded.")
@@ -305,9 +305,9 @@ public class LLMManager {
      - Parameters:
         - service: The `LLMServiceProtocol` conforming service.
         - request: The `LLMRequest` to send.
-        - completion: A closure that receives an optional `LLMResponse`.
+        - completion: A closure that receives an optional `LLMResponseProtocol`.
      */
-    private func sendRequestToService(_ service: LLMServiceProtocol, withRequest request: LLMRequest, completion: @escaping (LLMResponse?) -> Void) {
+    private func sendRequestToService(_ service: LLMServiceProtocol, withRequest request: LLMRequest, completion: @escaping (LLMResponseProtocol?) -> Void) {
         service.sendRequest(request) { [weak self] result in
             switch result {
             case .success(let response):
@@ -326,9 +326,9 @@ public class LLMManager {
      - Parameters:
         - service: The `LLMServiceProtocol` conforming service.
         - request: The `LLMRequest` to send.
-     - Returns: An optional `LLMResponse` object.
+     - Returns: An optional `LLMResponseProtocol` object.
      */
-    private func sendRequestToServiceAsync(_ service: LLMServiceProtocol, withRequest request: LLMRequest) async -> LLMResponse? {
+    private func sendRequestToServiceAsync(_ service: LLMServiceProtocol, withRequest request: LLMRequest) async -> LLMResponseProtocol? {
         do {
             let response = try await service.sendRequest(request)
             logger.log("Service succeeded with response: \(response.text, privacy: .public)")

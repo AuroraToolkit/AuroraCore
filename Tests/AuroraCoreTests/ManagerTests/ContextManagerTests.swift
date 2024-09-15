@@ -17,8 +17,8 @@ final class ContextManagerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        mockService = MockLLMService(name: "TestService", maxTokenLimit: 4096, expectedResult: .success(LLMResponse(text: "Test Output")))
-        mockService2 = MockLLMService(name: "TestService", maxTokenLimit: 2048, expectedResult: .success(LLMResponse(text: "Test Output")))
+        mockService = MockLLMService(name: "TestService", maxTokenLimit: 4096, expectedResult: .success(MockLLMResponse(text: "Test Output")))
+        mockService2 = MockLLMService(name: "TestService", maxTokenLimit: 2048, expectedResult: .success(MockLLMResponse(text: "Test Output")))
 
         mockFactory = MockLLMServiceFactory()
         mockFactory.registerMockService(mockService)

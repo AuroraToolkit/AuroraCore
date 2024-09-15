@@ -42,6 +42,12 @@ public struct LLMRequest {
     /// An optional user identifier, which can be used for tracking, moderation, or specific user-based adjustments.
     public let user: String?
 
+    /// The suffix to add to the generated text (if applicable).
+    public let suffix: String?
+
+    /// Whether or not to stream the response (default is `false`).
+    public let stream: Bool
+
     /**
      Initializes a new `LLMRequest` with customizable parameters and reasonable defaults for most fields.
 
@@ -56,6 +62,8 @@ public struct LLMRequest {
         - model: An optional string representing the model to use (default is nil, meaning the default model for the service will be used).
         - logitBias: An optional dictionary that maps tokens to biases, allowing adjustment of token probabilities (default is nil).
         - user: An optional string representing a user identifier for tracking purposes (default is nil).
+        - suffix: An optional string that will be added after the model's response (default is nil).
+        - stream: Whether or not the response should be streamed (default is `false`).
      */
     public init(prompt: String,
          temperature: Double = 0.7,
@@ -66,7 +74,9 @@ public struct LLMRequest {
          stopSequences: [String]? = nil,
          model: String? = nil,
          logitBias: [String: Double]? = nil,
-         user: String? = nil) {
+         user: String? = nil,
+         suffix: String? = nil,
+         stream: Bool = false) {
 
         self.prompt = prompt
         self.temperature = temperature
@@ -78,5 +88,7 @@ public struct LLMRequest {
         self.model = model
         self.logitBias = logitBias
         self.user = user
+        self.suffix = suffix
+        self.stream = stream
     }
 }

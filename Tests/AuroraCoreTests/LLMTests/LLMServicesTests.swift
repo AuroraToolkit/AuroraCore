@@ -1,6 +1,6 @@
 //
-//  LLMServicesTests.swift
-//  
+//  LLMServiceTests.swift
+//
 //
 //  Created by Dan Murrell Jr on 9/12/24.
 //
@@ -10,7 +10,7 @@ import XCTest
 
 final class LLMServiceTests: XCTestCase {
 
-    // MARK: - OpenAI Test
+    // MARK: - OpenAI Tests
 
     func testOpenAISendRequest() async throws {
         guard let apiKey = ProcessInfo.processInfo.environment["OPENAI_API_KEY"] else {
@@ -19,7 +19,7 @@ final class LLMServiceTests: XCTestCase {
         }
 
         let openAIService = OpenAIService(apiKey: apiKey)
-        let request = LLMRequest(prompt: "Test prompt for OpenAI", model: "text-davinci-003")
+        let request = LLMRequest(prompt: "Test prompt for OpenAI", model: "gpt-3.5-turbo")
 
         do {
             let response = try await openAIService.sendRequest(request)
@@ -29,12 +29,44 @@ final class LLMServiceTests: XCTestCase {
         }
     }
 
-    // MARK: - Ollama Test
+    func testOpenAIMissingAPIKey() async throws {
+        let openAIService = OpenAIService(apiKey: nil)  // API key is missing
+        let request = LLMRequest(prompt: "Test prompt with missing API key")
+
+        do {
+            _ = try await openAIService.sendRequest(request)
+            XCTFail("The request should fail due to missing API key.")
+        } catch let error as LLMServiceError {
+            XCTAssertEqual(error, .missingAPIKey, "Error should be missingAPIKey")
+        } catch {
+            XCTFail("Unexpected error: \(error)")
+        }
+    }
+
+    func testOpenAIInvalidURL() async throws {
+        guard let apiKey = ProcessInfo.processInfo.environment["OPENAI_API_KEY"] else {
+            print("OpenAI API key not found, skipping test.")
+            return
+        }
+
+        let openAIService = OpenAIService(baseURL: "invalid-url", apiKey: apiKey)
+        let request = LLMRequest(prompt: "Test prompt with invalid URL")
+
+        do {
+            _ = try await openAIService.sendRequest(request)
+            XCTFail("The request should fail due to an invalid URL.")
+        } catch let error as LLMServiceError {
+            XCTAssertEqual(error, .invalidURL, "Error should be invalidURL")
+        } catch {
+            XCTFail("Unexpected error: \(error)")
+        }
+    }
+
+    // MARK: - Ollama Tests
 
     func testOllamaSendRequest() async throws {
-        // Assuming Ollama doesn't require an API key
-        let ollamaService = OllamaService()
-        let request = LLMRequest(prompt: "Test prompt for Ollama", model: "llama2")
+        let ollamaService = OllamaService(baseURL: "http://localhost:11434")  // Assuming Ollama is running locally
+        let request = LLMRequest(prompt: "Test prompt for Ollama", model: "llama3.1")
 
         do {
             let response = try await ollamaService.sendRequest(request)
@@ -44,7 +76,21 @@ final class LLMServiceTests: XCTestCase {
         }
     }
 
-    // MARK: - Anthropic Test
+    func testOllamaInvalidURL() async throws {
+        let ollamaService = OllamaService(baseURL: "invalid-url")
+        let request = LLMRequest(prompt: "Test prompt for invalid URL", model: "llama2")
+
+        do {
+            _ = try await ollamaService.sendRequest(request)
+            XCTFail("The request should fail due to an invalid URL.")
+        } catch let error as LLMServiceError {
+            XCTAssertEqual(error, .invalidURL, "Error should be invalidURL")
+        } catch {
+            XCTFail("Unexpected error: \(error)")
+        }
+    }
+
+    // MARK: - Anthropic Tests
 
     func testAnthropicSendRequest() async throws {
         guard let apiKey = ProcessInfo.processInfo.environment["ANTHROPIC_API_KEY"] else {
@@ -60,6 +106,39 @@ final class LLMServiceTests: XCTestCase {
             XCTAssertFalse(response.text.isEmpty, "Anthropic response should not be empty")
         } catch {
             XCTFail("Failed to get a response from Anthropic: \(error)")
+        }
+    }
+
+    func testAnthropicMissingAPIKey() async throws {
+        let anthropicService = AnthropicService(apiKey: nil)  // API key is missing
+        let request = LLMRequest(prompt: "Test prompt with missing API key")
+
+        do {
+            _ = try await anthropicService.sendRequest(request)
+            XCTFail("The request should fail due to missing API key.")
+        } catch let error as LLMServiceError {
+            XCTAssertEqual(error, .missingAPIKey, "Error should be missingAPIKey")
+        } catch {
+            XCTFail("Unexpected error: \(error)")
+        }
+    }
+
+    func testAnthropicInvalidURL() async throws {
+        guard let apiKey = ProcessInfo.processInfo.environment["ANTHROPIC_API_KEY"] else {
+            print("Anthropic API key not found, skipping test.")
+            return
+        }
+
+        let anthropicService = AnthropicService(baseURL: "invalid-url", apiKey: apiKey)
+        let request = LLMRequest(prompt: "Test prompt with invalid URL")
+
+        do {
+            _ = try await anthropicService.sendRequest(request)
+            XCTFail("The request should fail due to an invalid URL.")
+        } catch let error as LLMServiceError {
+            XCTAssertEqual(error, .invalidURL, "Error should be invalidURL")
+        } catch {
+            XCTFail("Unexpected error: \(error)")
         }
     }
 }

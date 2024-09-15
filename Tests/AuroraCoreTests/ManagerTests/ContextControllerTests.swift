@@ -15,7 +15,7 @@ final class ContextControllerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        mockService = MockLLMService(name: "TestService", maxTokenLimit: 100, expectedResult: .success(LLMResponse(text: "Test Output")))
+        mockService = MockLLMService(name: "TestService", maxTokenLimit: 100, expectedResult: .success(MockLLMResponse(text: "Test Output")))
         mockSummarizer = MockSummarizer()
         contextController = ContextController(llmService: mockService, summarizer: mockSummarizer)
     }
@@ -242,7 +242,7 @@ final class ContextControllerTests: XCTestCase {
     // Test updating the LLM service
     func testUpdateLLMService() {
         // Given
-        let newMockService = MockLLMService(name: "NewTestService", maxTokenLimit: 150, expectedResult: .success(LLMResponse(text: "New Test Output")))
+        let newMockService = MockLLMService(name: "NewTestService", maxTokenLimit: 150, expectedResult: .success(MockLLMResponse(text: "New Test Output")))
 
         // When
         contextController.updateLLMService(newMockService)
@@ -257,7 +257,7 @@ final class ContextControllerTests: XCTestCase {
         let oldItem = ContextItem(text: "Old item", creationDate: Date().addingTimeInterval(-8 * 24 * 60 * 60)) // 8 days old
         contextController.addItem(content: oldItem.text, creationDate: oldItem.creationDate)
 
-        let newMockService = MockLLMService(name: "NewTestService", maxTokenLimit: 150, expectedResult: .success(LLMResponse(text: "New Test Output")))
+        let newMockService = MockLLMService(name: "NewTestService", maxTokenLimit: 150, expectedResult: .success(MockLLMResponse(text: "New Test Output")))
         contextController.updateLLMService(newMockService)
 
         // When
@@ -271,7 +271,7 @@ final class ContextControllerTests: XCTestCase {
     // Test that the LLM service is correctly persisted in the context after updating it
     func testContextPersistenceAfterUpdatingLLMService() {
         // Given
-        let newMockService = MockLLMService(name: "NewTestService", maxTokenLimit: 150, expectedResult: .success(LLMResponse(text: "New Test Output")))
+        let newMockService = MockLLMService(name: "NewTestService", maxTokenLimit: 150, expectedResult: .success(MockLLMResponse(text: "New Test Output")))
 
         // When
         contextController.updateLLMService(newMockService)
