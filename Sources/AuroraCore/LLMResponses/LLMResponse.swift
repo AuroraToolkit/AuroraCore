@@ -41,4 +41,11 @@ public struct LLMTokenUsage {
 
     /// The total number of tokens used in the request.
     public let totalTokens: Int
+
+    /// Initializes the `LLMTokenUsage` with the given token counts.
+    public init(promptTokens: Int, completionTokens: Int, totalTokens: Int) {
+        self.promptTokens = promptTokens
+        self.completionTokens = completionTokens
+        self.totalTokens = totalTokens
+    }
 }
