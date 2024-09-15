@@ -34,11 +34,11 @@ public protocol LLMResponseProtocol {
  */
 public struct LLMTokenUsage {
     /// The number of tokens used in the prompt.
-    let promptTokens: Int
+    public let promptTokens: Int
 
     /// The number of tokens used in the completion.
-    let completionTokens: Int
+    public let completionTokens: Int
 
     /// The total number of tokens used in the request.
-    let totalTokens: Int
+    public let totalTokens: Int
 }
