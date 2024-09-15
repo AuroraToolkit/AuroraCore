@@ -9,7 +9,8 @@ import Foundation
 
 /**
  `OpenAIService` implements the `LLMServiceProtocol` to interact with the OpenAI API.
- This service allows flexible configuration for different models and settings.
+ This service allows flexible configuration for different models and settings, and now provides
+ enhanced error handling using `LLMServiceError`.
  */
 public class OpenAIService: LLMServiceProtocol {
 
@@ -29,8 +30,9 @@ public class OpenAIService: LLMServiceProtocol {
      Initializes a new `OpenAIService` instance with the given API key and token limit.
 
      - Parameters:
+        - baseURL: The base URL for the OpenAI API. Defaults to "https://api.openai.com".
         - apiKey: The API key used for authenticating requests to the OpenAI API.
-        - maxTokenLimit: The maximum number of tokens allowed in a request.
+        - maxTokenLimit: The maximum number of tokens allowed in a request. Defaults to 4096.
      */
     public init(baseURL: String = "https://api.openai.com", apiKey: String?, maxTokenLimit: Int = 4096) {
         self.baseURL = baseURL
@@ -43,23 +45,40 @@ public class OpenAIService: LLMServiceProtocol {
 
      - Parameters:
         - request: The `LLMRequest` containing the prompt and model configuration.
-     - Returns: The `LLMResponse` containing the generated text or an error if the request fails.
-     - Throws: An error if the request to the OpenAI API fails.
+     - Returns: The `LLMResponseProtocol` containing the generated text or an error if the request fails.
+     - Throws: `LLMServiceError` if the request encounters an issue (e.g., missing API key, invalid response, etc.).
      */
-    public func sendRequest(_ request: LLMRequest) async throws -> LLMResponse {
+    public func sendRequest(_ request: LLMRequest) async throws -> LLMResponseProtocol {
         guard let apiKey = apiKey else {
-            throw NSError(domain: "OpenAIService", code: 1, userInfo: [NSLocalizedDescriptionKey: "API key is missing."])
+            throw LLMServiceError.missingAPIKey
         }
 
+
+        // Validate the URL
+        guard var components = URLComponents(string: baseURL) else {
+            throw LLMServiceError.invalidURL
+        }
+
+        if components.scheme == nil || components.host == nil {
+            throw LLMServiceError.invalidURL
+        }
+
+        components.path = "/v1/chat/completions"
+
+        guard let url = components.url else {
+            throw LLMServiceError.invalidURL
+        }
+        
         let body: [String: Any] = [
-            "model": request.model ?? "gpt-4o",
-            "prompt": request.prompt,
+            "model": request.model ?? "gpt-4",
+            "messages": [["role": "user", "content": request.prompt]],
             "max_tokens": request.maxTokens,
             "temperature": request.temperature
         ]
 
         let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
-        var urlRequest = URLRequest(url: URL(string: "\(baseURL)/v1/chat/completions")!)
+
+        var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         urlRequest.httpBody = jsonData
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -67,12 +86,20 @@ public class OpenAIService: LLMServiceProtocol {
 
         let (data, response) = try await URLSession.shared.data(for: urlRequest)
 
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            throw NSError(domain: "OpenAIService", code: 2, userInfo: [NSLocalizedDescriptionKey: "Invalid response from OpenAI API."])
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw LLMServiceError.invalidResponse(statusCode: -1)
         }
 
-        let decodedResponse = try JSONDecoder().decode(LLMResponse.self, from: data)
-        return decodedResponse
+        guard (200...299).contains(httpResponse.statusCode) else {
+            throw LLMServiceError.invalidResponse(statusCode: httpResponse.statusCode)
+        }
+
+        do {
+            let decodedResponse = try JSONDecoder().decode(OpenAILLMResponse.self, from: data)
+            return decodedResponse
+        } catch {
+            throw LLMServiceError.decodingError
+        }
     }
 
     /**
@@ -82,7 +109,7 @@ public class OpenAIService: LLMServiceProtocol {
         - request: The `LLMRequest` containing the prompt and model configuration.
         - completion: A closure that handles the result, returning a successful `LLMResponse` or an error.
      */
-    public func sendRequest(_ request: LLMRequest, completion: @escaping (Result<LLMResponse, Error>) -> Void) {
+    public func sendRequest(_ request: LLMRequest, completion: @escaping (Result<LLMResponseProtocol, Error>) -> Void) {
         Task {
             do {
                 let response = try await sendRequest(request)

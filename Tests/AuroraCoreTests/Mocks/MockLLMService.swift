@@ -13,15 +13,15 @@ final class MockLLMService: LLMServiceProtocol {
     let name: String
     var apiKey: String?
     var maxTokenLimit: Int
-    private let expectedResult: Result<LLMResponse, Error>
+    private let expectedResult: Result<LLMResponseProtocol, Error>
 
-    init(name: String, maxTokenLimit: Int = 4096, expectedResult: Result<LLMResponse, Error>) {
+    init(name: String, maxTokenLimit: Int = 4096, expectedResult: Result<LLMResponseProtocol, Error>) {
         self.name = name
         self.maxTokenLimit = maxTokenLimit
         self.expectedResult = expectedResult
     }
 
-    func sendRequest(_ request: LLMRequest) async throws -> LLMResponse {
+    func sendRequest(_ request: LLMRequest) async throws -> LLMResponseProtocol {
         switch expectedResult {
         case .success(let response):
             return response
@@ -30,7 +30,7 @@ final class MockLLMService: LLMServiceProtocol {
         }
     }
 
-    func sendRequest(_ request: LLMRequest, completion: @escaping (Result<LLMResponse, Error>) -> Void) {
+    func sendRequest(_ request: LLMRequest, completion: @escaping (Result<LLMResponseProtocol, Error>) -> Void) {
         completion(expectedResult)
     }
 }

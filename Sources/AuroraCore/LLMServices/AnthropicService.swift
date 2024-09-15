@@ -9,7 +9,8 @@ import Foundation
 
 /**
  `AnthropicService` implements the `LLMServiceProtocol` to interact with the Anthropic API.
- It allows for flexible configuration for different models and temperature settings.
+ It allows for flexible configuration for different models and temperature settings, and now provides
+ detailed error handling using `LLMServiceError`.
  */
 public class AnthropicService: LLMServiceProtocol {
 
@@ -44,12 +45,12 @@ public class AnthropicService: LLMServiceProtocol {
 
      - Parameters:
         - request: The `LLMRequest` containing the prompt and model configuration.
-     - Returns: The `LLMResponse` containing the generated text or an error if the request fails.
-     - Throws: An error if the request to the Anthropic API fails.
+     - Returns: The `LLMResponseProtocol` containing the generated text or an error if the request fails.
+     - Throws: `LLMServiceError` if the request encounters an issue (e.g., missing API key, invalid response, etc.).
      */
-    public func sendRequest(_ request: LLMRequest) async throws -> LLMResponse {
+    public func sendRequest(_ request: LLMRequest) async throws -> LLMResponseProtocol {
         guard let apiKey = apiKey else {
-            throw NSError(domain: "AnthropicService", code: 1, userInfo: [NSLocalizedDescriptionKey: "API key is missing."])
+            throw LLMServiceError.missingAPIKey
         }
 
         // Prepare the message request body
@@ -64,7 +65,11 @@ public class AnthropicService: LLMServiceProtocol {
 
         let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
 
-        var urlRequest = URLRequest(url: URL(string: "\(baseURL)/v1/messages")!)
+        guard let url = URL(string: "\(baseURL)/v1/messages") else {
+            throw LLMServiceError.invalidURL
+        }
+
+        var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         urlRequest.httpBody = jsonData
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -73,12 +78,20 @@ public class AnthropicService: LLMServiceProtocol {
 
         let (data, response) = try await URLSession.shared.data(for: urlRequest)
 
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            throw NSError(domain: "AnthropicService", code: 2, userInfo: [NSLocalizedDescriptionKey: "Invalid response from Anthropic API."])
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw LLMServiceError.invalidResponse(statusCode: -1)
         }
 
-        let decodedResponse = try JSONDecoder().decode(LLMResponse.self, from: data)
-        return decodedResponse
+        guard (200...299).contains(httpResponse.statusCode) else {
+            throw LLMServiceError.invalidResponse(statusCode: httpResponse.statusCode)
+        }
+
+        do {
+            let decodedResponse = try JSONDecoder().decode(AnthropicLLMResponse.self, from: data)
+            return decodedResponse
+        } catch {
+            throw LLMServiceError.decodingError
+        }
     }
 
     /**
@@ -86,9 +99,9 @@ public class AnthropicService: LLMServiceProtocol {
 
      - Parameters:
         - request: The `LLMRequest` containing the prompt and model configuration.
-        - completion: A closure that handles the result, returning a successful `LLMResponse` or an error.
+        - completion: A closure that handles the result, returning a successful `LLMResponseProtocol` or an error.
      */
-    public func sendRequest(_ request: LLMRequest, completion: @escaping (Result<LLMResponse, Error>) -> Void) {
+    public func sendRequest(_ request: LLMRequest, completion: @escaping (Result<LLMResponseProtocol, Error>) -> Void) {
         Task {
             do {
                 let response = try await sendRequest(request)

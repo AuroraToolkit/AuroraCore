@@ -16,7 +16,7 @@ final class SummarizeTaskTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        mockService = MockLLMService(name: "TestService", maxTokenLimit: 4096, expectedResult: .success(LLMResponse(text: "Summary")))
+        mockService = MockLLMService(name: "TestService", maxTokenLimit: 4096, expectedResult: .success(MockLLMResponse(text: "Summary")))
         contextController = ContextController(llmService: mockService)
     }
 

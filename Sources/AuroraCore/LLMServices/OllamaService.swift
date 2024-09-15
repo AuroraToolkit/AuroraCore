@@ -9,14 +9,14 @@ import Foundation
 
 /**
  `OllamaService` implements the `LLMServiceProtocol` to interact with the Ollama models via its API.
- This service allows for customizable API base URLs, making it flexible for different environments.
+ This service supports customizable API base URLs and allows interaction with models using both streaming and non-streaming modes.
  */
 public class OllamaService: LLMServiceProtocol {
 
     /// The name of the service, required by the protocol.
     public let name = "Ollama"
 
-    public var apiKey: String? // Not used for Ollama but included to satisfy the protocol
+    public var apiKey: String? // Not required for Ollama but included to satisfy the protocol
 
     /// The maximum token limit that can be processed by this service.
     public let maxTokenLimit: Int
@@ -24,16 +24,17 @@ public class OllamaService: LLMServiceProtocol {
     /// The base URL for the Ollama API (e.g., `http://localhost:11434`).
     private let baseURL: String
 
+    /// The URL session used to send requests.
     internal var urlSession: URLSession
 
     /**
      Initializes a new `OllamaService` instance.
 
      - Parameters:
-        - baseURL: The base URL for the Ollama API as a `String` (e.g., `"http://localhost:11434"`).
-        - maxTokenLimit: The maximum number of tokens allowed in a request.
-        - apiKey: An optional API key, though not typically required for local Ollama instances.
-        - urlSession: The URLSession instance used for network requests (default is URLSession.shared).
+        - baseURL: The base URL for the Ollama API (default is `"http://localhost:11434"`).
+        - maxTokenLimit: The maximum number of tokens allowed in a request (default is 4096).
+        - apiKey: An optional API key, though not required for local Ollama instances.
+        - urlSession: The `URLSession` instance used for network requests (default is `URLSession.shared`).
      */
     public init(baseURL: String = "http://localhost:11434", maxTokenLimit: Int = 4096, apiKey: String? = nil, urlSession: URLSession = .shared) {
         self.baseURL = baseURL
@@ -43,58 +44,75 @@ public class OllamaService: LLMServiceProtocol {
     }
 
     /**
-     Sends a request to the Ollama API asynchronously.
-
-     This method constructs the appropriate URL and HTTP request, sends the request to the Ollama service,
-     and then processes the response to return a summarized result.
+     Sends a request to the Ollama API and retrieves the response asynchronously.
 
      - Parameters:
-        - request: The `LLMRequest` containing the prompt and additional parameters for generating text.
-     - Returns: An `LLMResponse` containing the generated text from the Ollama API.
-     - Throws: An error if the request fails or the response is invalid.
+        - request: The `LLMRequest` containing the prompt and model configuration.
+     - Returns: The `LLMResponseProtocol` containing the generated text or an error if the request fails.
+     - Throws: `LLMServiceError` if the request encounters an issue (e.g., invalid response, decoding error, etc.).
      */
-    public func sendRequest(_ request: LLMRequest) async throws -> LLMResponse {
-        let prompt = request.prompt
+    public func sendRequest(_ request: LLMRequest) async throws -> LLMResponseProtocol {
 
-        // Create the full URL with the model path
-        guard let model = request.model else {
-            throw NSError(domain: "OllamaService", code: 1, userInfo: [NSLocalizedDescriptionKey: "Model name is required."])
-        }
-        guard let url = URL(string: "\(baseURL)/api/v1/models/\(model)/generate") else {
-            throw NSError(domain: "OllamaService", code: 3, userInfo: [NSLocalizedDescriptionKey: "Invalid base URL."])
+        // Validate the base URL
+        guard var components = URLComponents(string: baseURL) else {
+            throw LLMServiceError.invalidURL
         }
 
-        // Prepare the request body
+        // Ensure the URL is valid
+        if components.scheme == nil || components.host == nil {
+            throw LLMServiceError.invalidURL
+        }
+
+        components.path = "/api/generate"
+
+        guard let url = components.url else {
+            throw LLMServiceError.invalidURL
+        }
+
+        // Construct the request body as per Ollama API
         let body: [String: Any] = [
-            "model": model,
-            "prompt": prompt,
+            "model": request.model ?? "llama3.1",  // Default to llama3.1
+            "prompt": request.prompt,
+            "temperature": request.temperature,
             "max_tokens": request.maxTokens,
-            "temperature": request.temperature
+            "top_p": request.topP,
+            "frequency_penalty": request.frequencyPenalty,
+            "presence_penalty": request.presencePenalty,
+            "stop": request.stopSequences ?? [],
+            "stream": false  // Disable streaming for now
         ]
 
-        // Convert the body to JSON data
+        // Serialize the request body into JSON
         let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
 
-        // Create the URL request
+        // Configure the URLRequest
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         urlRequest.httpBody = jsonData
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        // Perform the network request
+        // Execute the request
         let (data, response) = try await urlSession.data(for: urlRequest)
 
-        // Validate the response
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            throw NSError(domain: "OllamaService", code: 2, userInfo: [NSLocalizedDescriptionKey: "Invalid response from Ollama API."])
+        // Ensure the response is a valid HTTP response
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw LLMServiceError.invalidResponse(statusCode: -1)
         }
 
-        // Decode the response data
-        let decodedResponse = try JSONDecoder().decode(LLMResponse.self, from: data)
+        // Check for successful status code
+        guard (200...299).contains(httpResponse.statusCode) else {
+            throw LLMServiceError.invalidResponse(statusCode: httpResponse.statusCode)
+        }
 
-        return decodedResponse
+        // Attempt to decode the response from the Ollama API
+        do {
+            let decodedResponse = try JSONDecoder().decode(OllamaLLMResponse.self, from: data)
+            return decodedResponse
+        } catch {
+            throw LLMServiceError.decodingError
+        }
     }
-
+    
     /**
      Sends a request to the Ollama API using a completion handler.
 
@@ -105,7 +123,7 @@ public class OllamaService: LLMServiceProtocol {
         - request: The `LLMRequest` containing the prompt and additional parameters for generating text.
         - completion: A closure that handles the result of the request, either a successful `LLMResponse` or an error.
      */
-    public func sendRequest(_ request: LLMRequest, completion: @escaping (Result<LLMResponse, Error>) -> Void) {
+    public func sendRequest(_ request: LLMRequest, completion: @escaping (Result<LLMResponseProtocol, Error>) -> Void) {
         Task {
             do {
                 let response = try await sendRequest(request)
