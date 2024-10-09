@@ -55,7 +55,7 @@ public class AnthropicService: LLMServiceProtocol {
 
         // Prepare the message request body
         let body: [String: Any] = [
-            "model": request.model ?? "claude-3-5",
+            "model": request.model ?? "claude-3-5-sonnet-20240620",
             "messages": [
                 ["role": "user", "content": request.prompt]
             ],
@@ -72,8 +72,8 @@ public class AnthropicService: LLMServiceProtocol {
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         urlRequest.httpBody = jsonData
+        urlRequest.setValue(apiKey, forHTTPHeaderField: "x-api-key")
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        urlRequest.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         urlRequest.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")  // Required Anthropic version header
 
         let (data, response) = try await URLSession.shared.data(for: urlRequest)
