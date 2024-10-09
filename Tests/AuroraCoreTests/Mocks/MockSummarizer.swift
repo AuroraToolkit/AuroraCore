@@ -10,11 +10,11 @@ import Foundation
 
 class MockSummarizer: SummarizerProtocol, Equatable {
 
-    func summarize(_ text: String, type: AuroraCore.SummaryType) async throws -> String {
+    func summarize(_ text: String, type: AuroraCore.SummaryType, options: LLMRequestOptions? = nil) async throws -> String {
         return "Summary"
     }
 
-    func summarizeGroup(_ texts: [String], type: AuroraCore.SummaryType) async throws -> String {
+    func summarizeGroup(_ texts: [String], type: AuroraCore.SummaryType, options: LLMRequestOptions? = nil) async throws -> String {
         return "Summary of \(texts.count) items"
     }
 

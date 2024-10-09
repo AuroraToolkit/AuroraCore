@@ -43,7 +43,7 @@ public class SummarizeTask: WorkflowTask {
         }
 
         // Summarize the items
-        let summaries = try await contextController.getSummarizer().summarizeGroup(itemsToSummarize.map { $0.text }, type: summaryType)
+        let summaries = try await contextController.getSummarizer().summarizeGroup(itemsToSummarize.map { $0.text }, type: summaryType, options: nil)
 
         // Store the summaries in the context
         contextController.addItem(content: summaries, isSummary: true)
