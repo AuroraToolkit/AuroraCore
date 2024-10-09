@@ -17,18 +17,20 @@ public protocol SummarizerProtocol {
 
      - Parameter text: The text to be summarized.
      - Parameter type: The type of summary to be performed (e.g., context, general text, etc.).
+     - Parameter options: Optional `LLMRequestOptions` to modify the request parameters.
      - Returns: A summarized version of the text.
      */
-    func summarize(_ text: String, type: SummaryType) async throws -> String
+    func summarize(_ text: String, type: SummaryType, options: LLMRequestOptions?) async throws -> String
 
     /**
      Summarizes a group of text strings using the LLM service.
 
      - Parameter texts: An array of strings to be summarized together.
      - Parameter type: The type of summary to be performed (e.g., context, general text, etc.).
+     - Parameter options: Optional `LLMRequestOptions` to modify the request parameters.
      - Returns: A summarized version of the combined texts.
      */
-    func summarizeGroup(_ texts: [String], type: SummaryType) async throws -> String
+    func summarizeGroup(_ texts: [String], type: SummaryType, options: LLMRequestOptions?) async throws -> String
 }
 
 /**

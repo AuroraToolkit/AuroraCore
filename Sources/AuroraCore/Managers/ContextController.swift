@@ -124,18 +124,18 @@ public class ContextController {
      - Parameters:
         - group: The array of `ContextItem` to be summarized.
      */
-    private func summarizeGroup(_ group: [ContextItem]) async throws {
+    private func summarizeGroup(_ group: [ContextItem], options: LLMRequestOptions? = nil) async throws {
         guard !group.isEmpty else { return }
 
         // Determine if we should summarize items individually or as a group
         let summary: String
         if group.count == 1 {
             // Summarize a single item
-            summary = try await summarizer.summarize(group[0].text, type: .context)
+            summary = try await summarizer.summarize(group[0].text, type: .context, options: options)
         } else {
             // Summarize multiple items
             let texts = group.map { $0.text }
-            summary = try await summarizer.summarizeGroup(texts, type: .context)
+            summary = try await summarizer.summarizeGroup(texts, type: .context, options: options)
         }
 
         // Create a new summary item
