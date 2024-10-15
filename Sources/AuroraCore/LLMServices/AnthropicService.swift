@@ -44,7 +44,7 @@ public class AnthropicService: LLMServiceProtocol {
      Sends a request to the Anthropic API and retrieves the response asynchronously.
 
      - Parameters:
-        - request: The `LLMRequest` containing the prompt and model configuration.
+        - request: The `LLMRequest` containing the messages and model configuration.
      - Returns: The `LLMResponseProtocol` containing the generated text or an error if the request fails.
      - Throws: `LLMServiceError` if the request encounters an issue (e.g., missing API key, invalid response, etc.).
      */
@@ -53,12 +53,15 @@ public class AnthropicService: LLMServiceProtocol {
             throw LLMServiceError.missingAPIKey
         }
 
+        // Map LLMMessage instances to the format expected by the API
+        let messagesPayload = request.messages.map { message in
+            ["role": message.role.rawValue, "content": message.content]
+        }
+
         // Prepare the message request body
         let body: [String: Any] = [
             "model": request.model ?? "claude-3-5-sonnet-20240620",
-            "messages": [
-                ["role": "user", "content": request.prompt]
-            ],
+            "messages": messagesPayload,
             "max_tokens": request.maxTokens,
             "temperature": request.temperature
         ]
@@ -98,7 +101,7 @@ public class AnthropicService: LLMServiceProtocol {
      Sends a request to the Anthropic API using a completion handler.
 
      - Parameters:
-        - request: The `LLMRequest` containing the prompt and model configuration.
+        - request: The `LLMRequest` containing the messages and model configuration.
         - completion: A closure that handles the result, returning a successful `LLMResponseProtocol` or an error.
      */
     public func sendRequest(_ request: LLMRequest, completion: @escaping (Result<LLMResponseProtocol, Error>) -> Void) {

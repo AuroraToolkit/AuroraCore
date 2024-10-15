@@ -47,7 +47,7 @@ public class OllamaService: LLMServiceProtocol {
      Sends a request to the Ollama API and retrieves the response asynchronously.
 
      - Parameters:
-        - request: The `LLMRequest` containing the prompt and model configuration.
+        - request: The `LLMRequest` containing the messages and model configuration.
      - Returns: The `LLMResponseProtocol` containing the generated text or an error if the request fails.
      - Throws: `LLMServiceError` if the request encounters an issue (e.g., invalid response, decoding error, etc.).
      */
@@ -69,10 +69,13 @@ public class OllamaService: LLMServiceProtocol {
             throw LLMServiceError.invalidURL
         }
 
+        // Combine all messages into a single prompt text, following Ollama’s expected format
+        let prompt = request.messages.map { "\($0.role.rawValue.capitalized): \($0.content)" }.joined(separator: "\n")
+
         // Construct the request body as per Ollama API
         let body: [String: Any] = [
             "model": request.model ?? "llama3.1",  // Default to llama3.1
-            "prompt": request.prompt,
+            "prompt": prompt,
             "temperature": request.temperature,
             "max_tokens": request.maxTokens,
             "top_p": request.topP,
@@ -112,7 +115,7 @@ public class OllamaService: LLMServiceProtocol {
             throw LLMServiceError.decodingError
         }
     }
-    
+
     /**
      Sends a request to the Ollama API using a completion handler.
 
@@ -120,7 +123,7 @@ public class OllamaService: LLMServiceProtocol {
      for handling the result or any errors that may occur during the request.
 
      - Parameters:
-        - request: The `LLMRequest` containing the prompt and additional parameters for generating text.
+        - request: The `LLMRequest` containing the messages and additional parameters for generating text.
         - completion: A closure that handles the result of the request, either a successful `LLMResponse` or an error.
      */
     public func sendRequest(_ request: LLMRequest, completion: @escaping (Result<LLMResponseProtocol, Error>) -> Void) {
