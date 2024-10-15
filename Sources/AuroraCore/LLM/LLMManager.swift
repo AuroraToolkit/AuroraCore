@@ -65,15 +65,13 @@ public class LLMManager {
      Sends a request to the active LLM service, applying token trimming strategies if necessary.
 
      - Parameters:
-        - request: The `LLMRequest` containing the prompt and parameters.
-        - context: An optional string context to be included with the prompt.
+        - request: The `LLMRequest` containing the messages and parameters.
         - buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
         - strategy: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
-        - completion: A closure that receives an optional `LLMResponse`.
+        - completion: A closure that receives an optional `LLMResponseProtocol`.
      */
     public func sendRequest(
         _ request: LLMRequest,
-        context: String? = nil,
         buffer: Double = 0.05,
         strategy: String.TrimmingStrategy = .end,
         completion: @escaping (LLMResponseProtocol?) -> Void
@@ -86,13 +84,8 @@ public class LLMManager {
 
         logger.log("Sending request to active service: \(activeServiceName, privacy: .public)")
 
-        // Trim tokens if necessary
-        let trimmedPrompt = request.prompt.trimmedToFit(
-            tokenLimit: service.maxTokenLimit,
-            buffer: buffer,
-            strategy: strategy
-        )
-        let optimizedRequest = LLMRequest(prompt: trimmedPrompt)
+        let trimmedMessages = trimMessages(request.messages, toFitTokenLimit: service.maxTokenLimit, buffer: buffer, strategy: strategy)
+        let optimizedRequest = LLMRequest(messages: trimmedMessages, model: request.model)
 
         self.sendRequestToService(service, withRequest: optimizedRequest, completion: completion)
     }
@@ -103,15 +96,13 @@ public class LLMManager {
      Sends a request to the active LLM service asynchronously, applying token trimming strategies if necessary.
 
      - Parameters:
-        - request: The `LLMRequest` containing the prompt and parameters.
-        - context: An optional string context to be included with the prompt.
+        - request: The `LLMRequest` containing the messages and parameters.
         - buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
         - strategy: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
      - Returns: An optional `LLMResponseProtocol` object.
      */
     public func sendRequestAsync(
         _ request: LLMRequest,
-        context: String? = nil,
         buffer: Double = 0.05,
         strategy: String.TrimmingStrategy = .end
     ) async -> LLMResponseProtocol? {
@@ -122,13 +113,8 @@ public class LLMManager {
 
         logger.log("Sending request to active service: \(activeServiceName, privacy: .public)")
 
-        // Trim tokens if necessary
-        let trimmedPrompt = request.prompt.trimmedToFit(
-            tokenLimit: service.maxTokenLimit,
-            buffer: buffer,
-            strategy: strategy
-        )
-        let optimizedRequest = LLMRequest(prompt: trimmedPrompt)
+        let trimmedMessages = trimMessages(request.messages, toFitTokenLimit: service.maxTokenLimit, buffer: buffer, strategy: strategy)
+        let optimizedRequest = LLMRequest(messages: trimmedMessages, model: request.model)
 
         return await self.sendRequestToServiceAsync(service, withRequest: optimizedRequest)
     }
@@ -139,7 +125,7 @@ public class LLMManager {
      Sends a request to a service chosen by the provided routing strategy.
 
      - Parameters:
-        - request: The `LLMRequest` containing the prompt and parameters.
+        - request: The `LLMRequest` containing the messages and parameters.
         - strategy: A closure that selects a service name based on the request.
         - buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
         - trimmingStrategy: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
@@ -157,13 +143,8 @@ public class LLMManager {
 
             logger.log("Routing request to service: \(selectedServiceName, privacy: .public)")
 
-            // Trim tokens if necessary
-            let trimmedPrompt = request.prompt.trimmedToFit(
-                tokenLimit: selectedService.maxTokenLimit,
-                buffer: buffer,
-                strategy: trimmingStrategy
-            )
-            let optimizedRequest = LLMRequest(prompt: trimmedPrompt)
+            let trimmedMessages = trimMessages(request.messages, toFitTokenLimit: selectedService.maxTokenLimit, buffer: buffer, strategy: trimmingStrategy)
+            let optimizedRequest = LLMRequest(messages: trimmedMessages, model: request.model)
 
             self.sendRequestToService(selectedService, withRequest: optimizedRequest, completion: completion)
         } else {
@@ -178,7 +159,7 @@ public class LLMManager {
      Sends a request to a service chosen by the provided routing strategy asynchronously.
 
      - Parameters:
-        - request: The `LLMRequest` containing the prompt and parameters.
+        - request: The `LLMRequest` containing the messages and parameters.
         - strategy: A closure that selects a service name based on the request.
         - buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
         - trimmingStrategy: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
@@ -195,13 +176,8 @@ public class LLMManager {
 
             logger.log("Routing request to service: \(selectedServiceName, privacy: .public)")
 
-            // Trim tokens if necessary
-            let trimmedPrompt = request.prompt.trimmedToFit(
-                tokenLimit: selectedService.maxTokenLimit,
-                buffer: buffer,
-                strategy: trimmingStrategy
-            )
-            let optimizedRequest = LLMRequest(prompt: trimmedPrompt)
+            let trimmedMessages = trimMessages(request.messages, toFitTokenLimit: selectedService.maxTokenLimit, buffer: buffer, strategy: trimmingStrategy)
+            let optimizedRequest = LLMRequest(messages: trimmedMessages, model: request.model)
 
             return await self.sendRequestToServiceAsync(selectedService, withRequest: optimizedRequest)
         } else {
@@ -216,7 +192,7 @@ public class LLMManager {
      Sends a request to the active service, with a fallback to another service if the request fails.
 
      - Parameters:
-        - request: The `LLMRequest` containing the prompt and parameters.
+        - request: The `LLMRequest` containing the messages and parameters.
         - fallbackServiceName: The name of the service to fall back to if the active service fails.
         - buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
         - strategy: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
@@ -238,13 +214,8 @@ public class LLMManager {
                 self.logger.error("Active service failed. Attempting fallback service: \(fallbackServiceName, privacy: .public)")
                 if let fallbackService = self.services[fallbackServiceName] {
 
-                    // Trim tokens if necessary
-                    let trimmedPrompt = request.prompt.trimmedToFit(
-                        tokenLimit: fallbackService.maxTokenLimit,
-                        buffer: buffer,
-                        strategy: strategy
-                    )
-                    let optimizedRequest = LLMRequest(prompt: trimmedPrompt)
+                    let trimmedMessages = self.trimMessages(request.messages, toFitTokenLimit: fallbackService.maxTokenLimit, buffer: buffer, strategy: strategy)
+                    let optimizedRequest = LLMRequest(messages: trimmedMessages, model: request.model)
 
                     self.sendRequestToService(fallbackService, withRequest: optimizedRequest, completion: completion)
                 } else {
@@ -261,7 +232,7 @@ public class LLMManager {
      Sends a request to the active service asynchronously, with a fallback to another service if the request fails.
 
      - Parameters:
-        - request: The `LLMRequest` containing the prompt and parameters.
+        - request: The `LLMRequest` containing the messages and parameters.
         - fallbackServiceName: The name of the service to fall back to if the active service fails.
         - buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
         - strategy: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
@@ -281,13 +252,8 @@ public class LLMManager {
             logger.error("Active service failed. Attempting fallback service: \(fallbackServiceName, privacy: .public)")
             if let fallbackService = services[fallbackServiceName] {
 
-                // Trim tokens if necessary
-                let trimmedPrompt = request.prompt.trimmedToFit(
-                    tokenLimit: fallbackService.maxTokenLimit,
-                    buffer: buffer,
-                    strategy: strategy
-                )
-                let optimizedRequest = LLMRequest(prompt: trimmedPrompt)
+                let trimmedMessages = trimMessages(request.messages, toFitTokenLimit: fallbackService.maxTokenLimit, buffer: buffer, strategy: strategy)
+                let optimizedRequest = LLMRequest(messages: trimmedMessages, model: request.model)
 
                 return await self.sendRequestToServiceAsync(fallbackService, withRequest: optimizedRequest)
             } else {
@@ -298,6 +264,25 @@ public class LLMManager {
     }
 
     // MARK: - Helper Methods
+
+    /**
+     Trims the content of the provided messages to fit within a token limit, applying a buffer and trimming strategy.
+
+     - Parameters:
+        - messages: The array of `LLMMessage` objects to trim.
+        - limit: The maximum token limit allowed for the message content.
+        - buffer: The buffer percentage to apply to the token limit.
+        - strategy: The trimming strategy to use if content exceeds the token limit.
+     - Returns: An array of trimmed `LLMMessage` objects fitting within the token limit.
+     */
+    private func trimMessages(_ messages: [LLMMessage], toFitTokenLimit limit: Int, buffer: Double, strategy: String.TrimmingStrategy) -> [LLMMessage] {
+        let trimmedContent = messages
+            .map { $0.content }
+            .joined(separator: " ")
+            .trimmedToFit(tokenLimit: limit, buffer: buffer, strategy: strategy)
+
+        return [LLMMessage(role: .user, content: trimmedContent)]
+    }
 
     /**
      Sends a request to a specific LLM service.

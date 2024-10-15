@@ -44,7 +44,7 @@ public class OpenAIService: LLMServiceProtocol {
      Sends a request to the OpenAI API and retrieves the response asynchronously.
 
      - Parameters:
-        - request: The `LLMRequest` containing the prompt and model configuration.
+        - request: The `LLMRequest` containing the messages and model configuration.
      - Returns: The `LLMResponseProtocol` containing the generated text or an error if the request fails.
      - Throws: `LLMServiceError` if the request encounters an issue (e.g., missing API key, invalid response, etc.).
      */
@@ -52,7 +52,6 @@ public class OpenAIService: LLMServiceProtocol {
         guard let apiKey = apiKey else {
             throw LLMServiceError.missingAPIKey
         }
-
 
         // Validate the URL
         guard var components = URLComponents(string: baseURL) else {
@@ -68,12 +67,22 @@ public class OpenAIService: LLMServiceProtocol {
         guard let url = components.url else {
             throw LLMServiceError.invalidURL
         }
-        
+
+        // Format the messages for OpenAI's API
+        let messagesPayload = request.messages.map { message in
+            ["role": message.role.rawValue, "content": message.content]
+        }
+
+        // Construct the request body as per OpenAI's API
         let body: [String: Any] = [
             "model": request.model ?? "gpt-4",
-            "messages": [["role": "user", "content": request.prompt]],
+            "messages": messagesPayload,
             "max_tokens": request.maxTokens,
-            "temperature": request.temperature
+            "temperature": request.temperature,
+            "top_p": request.topP,
+            "frequency_penalty": request.frequencyPenalty,
+            "presence_penalty": request.presencePenalty,
+            "stop": request.stopSequences ?? []
         ]
 
         let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
@@ -106,7 +115,7 @@ public class OpenAIService: LLMServiceProtocol {
      Sends a request to the OpenAI API using a completion handler.
 
      - Parameters:
-        - request: The `LLMRequest` containing the prompt and model configuration.
+        - request: The `LLMRequest` containing the messages and model configuration.
         - completion: A closure that handles the result, returning a successful `LLMResponse` or an error.
      */
     public func sendRequest(_ request: LLMRequest, completion: @escaping (Result<LLMResponseProtocol, Error>) -> Void) {

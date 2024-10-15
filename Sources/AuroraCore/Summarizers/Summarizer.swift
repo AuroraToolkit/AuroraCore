@@ -24,41 +24,49 @@ public class Summarizer: SummarizerProtocol {
     }
 
     public func summarize(_ text: String, type: SummaryType, options: LLMRequestOptions? = nil) async throws -> String {
-        let prompt: String
+        let messages: [LLMMessage] = [
+            LLMMessage(role: .system, content: summaryInstruction(for: type)),
+            LLMMessage(role: .user, content: text)
+        ]
 
-        switch type {
-        case .general:
-            prompt = "Summarize the following text:\n\(text)"
-        case .context:
-            prompt = "Summarize the following context:\n\(text)"
-        }
-
-        return try await sendToLLM(prompt, options: options)
+        return try await sendToLLM(messages, options: options)
     }
 
     public func summarizeGroup(_ texts: [String], type: SummaryType, options: LLMRequestOptions? = nil) async throws -> String {
         let combinedText = texts.joined(separator: "\n")
-        let prompt: String
+        let messages: [LLMMessage] = [
+            LLMMessage(role: .system, content: summaryInstruction(for: type)),
+            LLMMessage(role: .user, content: combinedText)
+        ]
 
-        switch type {
-        case .general:
-            prompt = "Summarize the following texts:\n\(combinedText)"
-        case .context:
-            prompt = "Summarize the following context items:\n\(combinedText)"
-        }
-
-        return try await sendToLLM(prompt, options: options)
+        return try await sendToLLM(messages, options: options)
     }
 
     /**
-     Sends the text to the LLM service for summarization and returns the result.
+     Constructs the appropriate system-level instruction based on the summary type.
 
-     - Parameter prompt: The prompt to be sent to the LLM service.
+     - Parameter type: The type of summary to generate (e.g., general, context).
+     - Returns: The appropriate system instruction for the summary type.
+     */
+    private func summaryInstruction(for type: SummaryType) -> String {
+        switch type {
+        case .general:
+            return "Summarize the following text."
+        case .context:
+            return "Summarize the following context."
+        }
+    }
+
+    /**
+     Sends the messages to the LLM service for summarization and returns the result.
+
+     - Parameter messages: The conversation messages to be sent to the LLM service.
+     - Parameter options: The request options to configure the LLM response.
      - Returns: The summarized result returned by the LLM service.
      */
-    private func sendToLLM(_ prompt: String, options: LLMRequestOptions? = nil) async throws -> String {
+    private func sendToLLM(_ messages: [LLMMessage], options: LLMRequestOptions? = nil) async throws -> String {
         let request = LLMRequest(
-            prompt: prompt,
+            messages: messages,
             temperature: options?.temperature ?? 0.7,
             maxTokens: options?.maxTokens ?? 256,
             topP: options?.topP ?? 1.0,
@@ -71,6 +79,7 @@ public class Summarizer: SummarizerProtocol {
             suffix: options?.suffix,
             stream: options?.stream ?? false
         )
+
         let response = try await llmService.sendRequest(request)
         return response.text
     }

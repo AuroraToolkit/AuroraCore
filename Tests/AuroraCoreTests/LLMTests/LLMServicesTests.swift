@@ -19,7 +19,7 @@ final class LLMServiceTests: XCTestCase {
         }
 
         let openAIService = OpenAIService(apiKey: apiKey)
-        let request = LLMRequest(prompt: "Test prompt for OpenAI", model: "gpt-3.5-turbo")
+        let request = LLMRequest(messages: [LLMMessage(role: .user, content: "Test prompt for OpenAI")], model: "gpt-3.5-turbo")
 
         do {
             let response = try await openAIService.sendRequest(request)
@@ -31,7 +31,7 @@ final class LLMServiceTests: XCTestCase {
 
     func testOpenAIMissingAPIKey() async throws {
         let openAIService = OpenAIService(apiKey: nil)  // API key is missing
-        let request = LLMRequest(prompt: "Test prompt with missing API key")
+        let request = LLMRequest(messages: [LLMMessage(role: .user, content: "Test prompt with missing API key")])
 
         do {
             _ = try await openAIService.sendRequest(request)
@@ -50,7 +50,7 @@ final class LLMServiceTests: XCTestCase {
         }
 
         let openAIService = OpenAIService(baseURL: "invalid-url", apiKey: apiKey)
-        let request = LLMRequest(prompt: "Test prompt with invalid URL")
+        let request = LLMRequest(messages: [LLMMessage(role: .user, content: "Test prompt with invalid URL")])
 
         do {
             _ = try await openAIService.sendRequest(request)
@@ -66,7 +66,7 @@ final class LLMServiceTests: XCTestCase {
 
     func testOllamaSendRequest() async throws {
         let ollamaService = OllamaService(baseURL: "http://localhost:11434")  // Assuming Ollama is running locally
-        let request = LLMRequest(prompt: "Test prompt for Ollama", model: "llama3.1")
+        let request = LLMRequest(messages: [LLMMessage(role: .user, content: "Test prompt for Ollama")], model: "llama3.1")
 
         do {
             let response = try await ollamaService.sendRequest(request)
@@ -78,7 +78,7 @@ final class LLMServiceTests: XCTestCase {
 
     func testOllamaInvalidURL() async throws {
         let ollamaService = OllamaService(baseURL: "invalid-url")
-        let request = LLMRequest(prompt: "Test prompt for invalid URL", model: "llama2")
+        let request = LLMRequest(messages: [LLMMessage(role: .user, content: "Test prompt for invalid URL")], model: "llama2")
 
         do {
             _ = try await ollamaService.sendRequest(request)
@@ -99,7 +99,7 @@ final class LLMServiceTests: XCTestCase {
         }
 
         let anthropicService = AnthropicService(apiKey: apiKey)
-        let request = LLMRequest(prompt: "Test prompt for Anthropic", model: "claude-v1")
+        let request = LLMRequest(messages: [LLMMessage(role: .user, content: "Test prompt for Anthropic")], model: "claude-v1")
 
         do {
             let response = try await anthropicService.sendRequest(request)
@@ -111,7 +111,7 @@ final class LLMServiceTests: XCTestCase {
 
     func testAnthropicMissingAPIKey() async throws {
         let anthropicService = AnthropicService(apiKey: nil)  // API key is missing
-        let request = LLMRequest(prompt: "Test prompt with missing API key")
+        let request = LLMRequest(messages: [LLMMessage(role: .user, content: "Test prompt with missing API key")])
 
         do {
             _ = try await anthropicService.sendRequest(request)
@@ -130,7 +130,7 @@ final class LLMServiceTests: XCTestCase {
         }
 
         let anthropicService = AnthropicService(baseURL: "invalid-url", apiKey: apiKey)
-        let request = LLMRequest(prompt: "Test prompt with invalid URL")
+        let request = LLMRequest(messages: [LLMMessage(role: .user, content: "Test prompt with invalid URL")])
 
         do {
             _ = try await anthropicService.sendRequest(request)

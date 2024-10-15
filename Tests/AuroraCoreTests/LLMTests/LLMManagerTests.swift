@@ -53,13 +53,13 @@ final class LLMManagerTests: XCTestCase {
         let mockService = MockLLMService(name: "TestService", maxTokenLimit: 20, expectedResult: .success(MockLLMResponse(text: "Test Output")))
         manager.registerService(mockService, withName: "TestService")
 
-        let longPrompt = String(repeating: "A", count: 100) // More than 20 tokens
+        let longMessage = String(repeating: "A", count: 100) // Exceeds token limit
+        let request = LLMRequest(messages: [LLMMessage(role: .user, content: longMessage)])
 
         // When
-        let request = LLMRequest(prompt: longPrompt)
         manager.sendRequest(request, strategy: .end) { response in
             // Then
-            XCTAssertEqual(response?.text, "Test Output", "Response should be successful with trimmed prompt.")
+            XCTAssertEqual(response?.text, "Test Output", "Response should be successful with trimmed message content.")
         }
     }
 
@@ -68,13 +68,13 @@ final class LLMManagerTests: XCTestCase {
         let mockService = MockLLMService(name: "TestService", maxTokenLimit: 20, expectedResult: .success(MockLLMResponse(text: "Test Output")))
         manager.registerService(mockService, withName: "TestService")
 
-        let longPrompt = String(repeating: "A", count: 100) // More than 20 tokens
+        let longMessage = String(repeating: "A", count: 100) // Exceeds token limit
+        let request = LLMRequest(messages: [LLMMessage(role: .user, content: longMessage)])
 
         // When
-        let request = LLMRequest(prompt: longPrompt)
         manager.sendRequest(request, strategy: .start) { response in
             // Then
-            XCTAssertEqual(response?.text, "Test Output", "Response should be successful with trimmed prompt.")
+            XCTAssertEqual(response?.text, "Test Output", "Response should be successful with trimmed message content.")
         }
     }
 
@@ -86,19 +86,19 @@ final class LLMManagerTests: XCTestCase {
         manager.registerService(service1, withName: "Service1")
         manager.registerService(service2, withName: "Service2")
 
-        let longPrompt = String(repeating: "B", count: 100)
+        let longMessage = String(repeating: "B", count: 100) // Exceeds token limits for both services
 
         // When
-        let request1 = LLMRequest(prompt: longPrompt)
+        let request1 = LLMRequest(messages: [LLMMessage(role: .user, content: longMessage)])
         manager.setActiveService(byName: "Service1")
         manager.sendRequest(request1, strategy: .middle) { response in
-            XCTAssertEqual(response?.text, "Service1 Output", "Service1 should handle trimmed prompt")
+            XCTAssertEqual(response?.text, "Service1 Output", "Service1 should handle trimmed message content")
         }
 
-        let request2 = LLMRequest(prompt: longPrompt)
+        let request2 = LLMRequest(messages: [LLMMessage(role: .user, content: longMessage)])
         manager.setActiveService(byName: "Service2")
         manager.sendRequest(request2, strategy: .end) { response in
-            XCTAssertEqual(response?.text, "Service2 Output", "Service2 should handle trimmed prompt")
+            XCTAssertEqual(response?.text, "Service2 Output", "Service2 should handle trimmed message content")
         }
     }
 
@@ -110,10 +110,10 @@ final class LLMManagerTests: XCTestCase {
         manager.registerService(mockService, withName: "TestService")
         manager.registerService(fallbackService, withName: "FallbackService")
 
-        let longPrompt = String(repeating: "C", count: 100)
+        let longMessage = String(repeating: "C", count: 100) // Exceeds token limit for TestService but fits in FallbackService
 
         // When
-        let request = LLMRequest(prompt: longPrompt)
+        let request = LLMRequest(messages: [LLMMessage(role: .user, content: longMessage)])
         manager.sendRequestWithFallback(request, fallbackServiceName: "FallbackService", strategy: .start) { response in
             // Then
             XCTAssertEqual(response?.text, "Fallback Output", "Should have fallen back to FallbackService and returned correct response.")
@@ -125,10 +125,10 @@ final class LLMManagerTests: XCTestCase {
         let mockService = MockLLMService(name: "TestService", maxTokenLimit: 25, expectedResult: .success(MockLLMResponse(text: "Test Output")))
         manager.registerService(mockService, withName: "TestService")
 
-        let longPrompt = String(repeating: "D", count: 100) // Exceeds the 20-token adjusted limit
+        let longMessage = String(repeating: "D", count: 100) // Exceeds the 25-token adjusted limit
 
         // When
-        let request = LLMRequest(prompt: longPrompt)
+        let request = LLMRequest(messages: [LLMMessage(role: .user, content: longMessage)])
         manager.sendRequest(request, strategy: .middle) { response in
             // Then
             XCTAssertEqual(response?.text, "Test Output", "Response should be successful after trimming within buffer.")
