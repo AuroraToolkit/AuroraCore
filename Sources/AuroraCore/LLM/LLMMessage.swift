@@ -44,14 +44,14 @@ public enum LLMRole: Codable, Equatable {
         case .system:
             try container.encode("system")
         case .custom(let role):
-            try container.encode(["custom": role])
+            try container.encode(role)
         }
     }
 
     // Custom decoding to handle associated value for the `.custom` case
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        let rawValue = try container.decode(String.self)
+        let rawValue = try container.decode(String.self).trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
 
         switch rawValue {
         case "user":
