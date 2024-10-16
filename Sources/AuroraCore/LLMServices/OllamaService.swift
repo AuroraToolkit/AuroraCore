@@ -58,7 +58,6 @@ public class OllamaService: LLMServiceProtocol {
             throw LLMServiceError.invalidURL
         }
 
-        // Ensure the URL is valid
         if components.scheme == nil || components.host == nil {
             throw LLMServiceError.invalidURL
         }
@@ -72,17 +71,17 @@ public class OllamaService: LLMServiceProtocol {
         // Combine all messages into a single prompt text, following Ollama’s expected format
         let prompt = request.messages.map { "\($0.role.rawValue.capitalized): \($0.content)" }.joined(separator: "\n")
 
-        // Construct the request body as per Ollama API
+        // Construct the request body as per Ollama API, utilizing options for configurable parameters
         let body: [String: Any] = [
-            "model": request.model ?? "llama3.1",  // Default to llama3.1
+            "model": request.model ?? "llama3.2",  // Default to llama3.2
             "prompt": prompt,
             "temperature": request.temperature,
             "max_tokens": request.maxTokens,
-            "top_p": request.topP,
-            "frequency_penalty": request.frequencyPenalty,
-            "presence_penalty": request.presencePenalty,
-            "stop": request.stopSequences ?? [],
-            "stream": false  // Disable streaming for now
+            "stream": request.stream,
+            "top_p": request.options?.topP ?? 1.0,
+            "frequency_penalty": request.options?.frequencyPenalty ?? 0.0,
+            "presence_penalty": request.options?.presencePenalty ?? 0.0,
+            "stop": request.options?.stopSequences ?? []
         ]
 
         // Serialize the request body into JSON
@@ -102,7 +101,6 @@ public class OllamaService: LLMServiceProtocol {
             throw LLMServiceError.invalidResponse(statusCode: -1)
         }
 
-        // Check for successful status code
         guard (200...299).contains(httpResponse.statusCode) else {
             throw LLMServiceError.invalidResponse(statusCode: httpResponse.statusCode)
         }
