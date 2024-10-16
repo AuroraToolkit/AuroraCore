@@ -21,32 +21,14 @@ public struct LLMRequest {
     /// The maximum number of tokens in the generated response.
     public let maxTokens: Int
 
-    /// Nucleus sampling parameter that limits sampling to the top percentile of tokens. Lower values narrow the scope of the sampling to the most likely tokens.
-    public let topP: Double
-
-    /// A penalty applied to reduce the repetition of the same tokens in the response.
-    public let frequencyPenalty: Double
-
-    /// A penalty applied to encourage the introduction of new tokens into the response, promoting variety.
-    public let presencePenalty: Double
-
-    /// Sequences of tokens that signal the LLM to stop generating further tokens when encountered in the response.
-    public let stopSequences: [String]?
-
     /// The specific LLM model to use for processing (e.g., "gpt-3.5-turbo", "davinci"). If not specified, the default model for the service will be used.
     public let model: String?
 
-    /// A map of token biases, allowing customization of the likelihood of specific tokens appearing in the response.
-    public let logitBias: [String: Double]?
-
-    /// An optional user identifier, which can be used for tracking, moderation, or specific user-based adjustments.
-    public let user: String?
-
-    /// The suffix to add to the generated text (if applicable).
-    public let suffix: String?
-
     /// Whether or not to stream the response (default is `false`).
     public let stream: Bool
+
+    /// Additional less commonly used configuration options to influence the behavior of the LLM.
+    public let options: LLMRequestOptions?
 
     /**
      Initializes a new `LLMRequest` with customizable parameters and reasonable defaults for most fields.
@@ -55,40 +37,23 @@ public struct LLMRequest {
         - messages: An array of `LLMMessage` objects representing the input, either as a single message or a conversation history.
         - temperature: A value between 0.0 and 1.0 controlling the randomness of the response (default is 0.7).
         - maxTokens: The maximum number of tokens to generate in the response (default is 256).
-        - topP: The top probability value used for nucleus sampling (default is 1.0, meaning no nucleus sampling is applied).
-        - frequencyPenalty: A penalty to discourage token repetition in the response (default is 0.0).
-        - presencePenalty: A penalty to encourage the introduction of new tokens in the response (default is 0.0).
-        - stopSequences: An optional array of strings that will stop the response generation when encountered.
         - model: An optional string representing the model to use (default is nil, meaning the default model for the service will be used).
-        - logitBias: An optional dictionary that maps tokens to biases, allowing adjustment of token probabilities (default is nil).
-        - user: An optional string representing a user identifier for tracking purposes (default is nil).
-        - suffix: An optional string that will be added after the model's response (default is nil).
         - stream: Whether or not the response should be streamed (default is `false`).
+        - options: An optional `LLMRequestOptions` object containing less commonly used parameters to customize the response generation.
      */
-    public init(messages: [LLMMessage],
-         temperature: Double = 0.7,
-         maxTokens: Int = 256,
-         topP: Double = 1.0,
-         frequencyPenalty: Double = 0.0,
-         presencePenalty: Double = 0.0,
-         stopSequences: [String]? = nil,
-         model: String? = nil,
-         logitBias: [String: Double]? = nil,
-         user: String? = nil,
-         suffix: String? = nil,
-         stream: Bool = false) {
-
+    public init(
+        messages: [LLMMessage],
+        temperature: Double = 0.7,
+        maxTokens: Int = 256,
+        model: String? = nil,
+        stream: Bool = false,
+        options: LLMRequestOptions? = nil
+    ) {
         self.messages = messages
         self.temperature = temperature
         self.maxTokens = maxTokens
-        self.topP = topP
-        self.frequencyPenalty = frequencyPenalty
-        self.presencePenalty = presencePenalty
-        self.stopSequences = stopSequences
         self.model = model
-        self.logitBias = logitBias
-        self.user = user
-        self.suffix = suffix
         self.stream = stream
+        self.options = options
     }
 }

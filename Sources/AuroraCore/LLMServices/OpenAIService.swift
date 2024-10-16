@@ -72,17 +72,17 @@ public class OpenAIService: LLMServiceProtocol {
         let messagesPayload = request.messages.map { message in
             ["role": message.role.rawValue, "content": message.content]
         }
-
-        // Construct the request body as per OpenAI's API
+        // Construct the request body, including both core parameters and options
         let body: [String: Any] = [
             "model": request.model ?? "gpt-4",
             "messages": messagesPayload,
             "max_tokens": request.maxTokens,
             "temperature": request.temperature,
-            "top_p": request.topP,
-            "frequency_penalty": request.frequencyPenalty,
-            "presence_penalty": request.presencePenalty,
-            "stop": request.stopSequences ?? []
+            "top_p": request.options?.topP ?? 1.0,
+            "frequency_penalty": request.options?.frequencyPenalty ?? 0.0,
+            "presence_penalty": request.options?.presencePenalty ?? 0.0,
+            "stop": request.options?.stopSequences ?? [],
+            "stream": request.stream
         ]
 
         let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])

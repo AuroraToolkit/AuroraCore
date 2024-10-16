@@ -23,7 +23,7 @@ public class Summarizer: SummarizerProtocol {
         self.llmService = llmService
     }
 
-    public func summarize(_ text: String, type: SummaryType, options: LLMRequestOptions? = nil) async throws -> String {
+    public func summarize(_ text: String, type: SummaryType, options: SummarizerOptions? = nil) async throws -> String {
         let messages: [LLMMessage] = [
             LLMMessage(role: .system, content: summaryInstruction(for: type)),
             LLMMessage(role: .user, content: text)
@@ -32,7 +32,7 @@ public class Summarizer: SummarizerProtocol {
         return try await sendToLLM(messages, options: options)
     }
 
-    public func summarizeGroup(_ texts: [String], type: SummaryType, options: LLMRequestOptions? = nil) async throws -> String {
+    public func summarizeGroup(_ texts: [String], type: SummaryType, options: SummarizerOptions? = nil) async throws -> String {
         let combinedText = texts.joined(separator: "\n")
         let messages: [LLMMessage] = [
             LLMMessage(role: .system, content: summaryInstruction(for: type)),
@@ -61,22 +61,15 @@ public class Summarizer: SummarizerProtocol {
      Sends the messages to the LLM service for summarization and returns the result.
 
      - Parameter messages: The conversation messages to be sent to the LLM service.
-     - Parameter options: The request options to configure the LLM response.
+     - Parameter options: The summarization options to configure the LLM response.
      - Returns: The summarized result returned by the LLM service.
      */
-    private func sendToLLM(_ messages: [LLMMessage], options: LLMRequestOptions? = nil) async throws -> String {
+    private func sendToLLM(_ messages: [LLMMessage], options: SummarizerOptions? = nil) async throws -> String {
         let request = LLMRequest(
             messages: messages,
             temperature: options?.temperature ?? 0.7,
             maxTokens: options?.maxTokens ?? 256,
-            topP: options?.topP ?? 1.0,
-            frequencyPenalty: options?.frequencyPenalty ?? 0.0,
-            presencePenalty: options?.presencePenalty ?? 0.0,
-            stopSequences: options?.stopSequences,
             model: options?.model,
-            logitBias: options?.logitBias,
-            user: options?.user,
-            suffix: options?.suffix,
             stream: options?.stream ?? false
         )
 
