@@ -54,17 +54,29 @@ public class AnthropicService: LLMServiceProtocol {
         }
 
         // Map LLMMessage instances to the format expected by the API
-        let messagesPayload = request.messages.map { message in
-            ["role": message.role.rawValue, "content": message.content]
+        // Separate system instruction and user messages
+        var systemMessage: String? = nil
+        let userMessages = request.messages.compactMap { message -> [String: String]? in
+            if message.role == .system {
+                systemMessage = message.content
+                return nil
+            } else {
+                return ["role": message.role.rawValue, "content": message.content]
+            }
         }
 
-        // Prepare the message request body
-        let body: [String: Any] = [
+        // Construct the body with a top-level system parameter
+        var body: [String: Any] = [
             "model": request.model ?? "claude-3-5-sonnet-20240620",
-            "messages": messagesPayload,
-            "max_tokens": request.maxTokens,
-            "temperature": request.temperature
+            "messages": userMessages,
+            "temperature": request.temperature,
+            "max_tokens": request.maxTokens
         ]
+
+        // Add the system message if available
+        if let systemMessage = systemMessage {
+            body["system"] = systemMessage
+        }
 
         let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
 
