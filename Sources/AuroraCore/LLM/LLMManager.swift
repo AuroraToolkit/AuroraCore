@@ -68,40 +68,9 @@ public class LLMManager {
         - request: The `LLMRequest` containing the messages and parameters.
         - buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
         - strategy: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
-        - completion: A closure that receives an optional `LLMResponseProtocol`.
-     */
-    public func sendRequest(
-        _ request: LLMRequest,
-        buffer: Double = 0.05,
-        strategy: String.TrimmingStrategy = .end,
-        completion: @escaping (LLMResponseProtocol?) -> Void
-    ) {
-        guard let activeServiceName = activeServiceName, let service = services[activeServiceName] else {
-            logger.error("No active service available to handle the request.")
-            completion(nil)
-            return
-        }
-
-        logger.log("Sending request to active service: \(activeServiceName, privacy: .public)")
-
-        let trimmedMessages = trimMessages(request.messages, toFitTokenLimit: service.maxTokenLimit, buffer: buffer, strategy: strategy)
-        let optimizedRequest = LLMRequest(messages: trimmedMessages, model: request.model)
-
-        self.sendRequestToService(service, withRequest: optimizedRequest, completion: completion)
-    }
-
-    // MARK: - Async Send Request
-
-    /**
-     Sends a request to the active LLM service asynchronously, applying token trimming strategies if necessary.
-
-     - Parameters:
-        - request: The `LLMRequest` containing the messages and parameters.
-        - buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
-        - strategy: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
      - Returns: An optional `LLMResponseProtocol` object.
      */
-    public func sendRequestAsync(
+    public func sendRequest(
         _ request: LLMRequest,
         buffer: Double = 0.05,
         strategy: String.TrimmingStrategy = .end
@@ -116,7 +85,38 @@ public class LLMManager {
         let trimmedMessages = trimMessages(request.messages, toFitTokenLimit: service.maxTokenLimit, buffer: buffer, strategy: strategy)
         let optimizedRequest = LLMRequest(messages: trimmedMessages, model: request.model)
 
-        return await self.sendRequestToServiceAsync(service, withRequest: optimizedRequest)
+        return await sendRequestToService(service, withRequest: optimizedRequest)
+    }
+
+    // MARK: - Streaming Request
+
+    /**
+     Sends a streaming request to the active LLM service, applying token trimming strategies if necessary.
+
+     - Parameters:
+        - request: The `LLMRequest` containing the messages and parameters.
+        - onPartialResponse: A closure that handles partial responses during streaming.
+        - buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
+        - strategy: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
+     - Returns: An optional `LLMResponseProtocol` object.
+     */
+    public func sendStreamingRequest(
+        _ request: LLMRequest,
+        onPartialResponse: ((String) -> Void)?,
+        buffer: Double = 0.05,
+        strategy: String.TrimmingStrategy = .end
+    ) async -> LLMResponseProtocol? {
+        guard let activeServiceName = activeServiceName, let service = services[activeServiceName] else {
+            logger.error("No active service available to handle the streaming request.")
+            return nil
+        }
+
+        logger.log("Sending streaming request to active service: \(activeServiceName, privacy: .public)")
+
+        let trimmedMessages = trimMessages(request.messages, toFitTokenLimit: service.maxTokenLimit, buffer: buffer, strategy: strategy)
+        let optimizedRequest = LLMRequest(messages: trimmedMessages, model: request.model)
+
+        return await sendRequestToService(service, withRequest: optimizedRequest, onPartialResponse: onPartialResponse)
     }
 
     // MARK: - Hybrid Routing
@@ -129,43 +129,9 @@ public class LLMManager {
         - strategy: A closure that selects a service name based on the request.
         - buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
         - trimmingStrategy: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
-        - completion: A closure that receives an optional `LLMResponseProtocol`.
-     */
-    public func sendRequestWithRouting(
-        _ request: LLMRequest,
-        usingRoutingStrategy strategy: @escaping (LLMRequest) -> String?,
-        buffer: Double = 0.05,
-        trimmingStrategy: String.TrimmingStrategy = .end,
-        completion: @escaping (LLMResponseProtocol?) -> Void
-    ) {
-        if let selectedServiceName = strategy(request),
-           let selectedService = services[selectedServiceName] {
-
-            logger.log("Routing request to service: \(selectedServiceName, privacy: .public)")
-
-            let trimmedMessages = trimMessages(request.messages, toFitTokenLimit: selectedService.maxTokenLimit, buffer: buffer, strategy: trimmingStrategy)
-            let optimizedRequest = LLMRequest(messages: trimmedMessages, model: request.model)
-
-            self.sendRequestToService(selectedService, withRequest: optimizedRequest, completion: completion)
-        } else {
-            logger.log("Routing strategy failed. Falling back to active service.")
-            self.sendRequest(request, buffer: buffer, strategy: trimmingStrategy, completion: completion)
-        }
-    }
-
-    // MARK: - Async Hybrid Routing
-
-    /**
-     Sends a request to a service chosen by the provided routing strategy asynchronously.
-
-     - Parameters:
-        - request: The `LLMRequest` containing the messages and parameters.
-        - strategy: A closure that selects a service name based on the request.
-        - buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
-        - trimmingStrategy: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
      - Returns: An optional `LLMResponseProtocol` object.
      */
-    public func sendRequestWithRoutingAsync(
+    public func sendRequestWithRouting(
         _ request: LLMRequest,
         usingRoutingStrategy strategy: @escaping (LLMRequest) -> String?,
         buffer: Double = 0.05,
@@ -179,10 +145,10 @@ public class LLMManager {
             let trimmedMessages = trimMessages(request.messages, toFitTokenLimit: selectedService.maxTokenLimit, buffer: buffer, strategy: trimmingStrategy)
             let optimizedRequest = LLMRequest(messages: trimmedMessages, model: request.model)
 
-            return await self.sendRequestToServiceAsync(selectedService, withRequest: optimizedRequest)
+            return await sendRequestToService(selectedService, withRequest: optimizedRequest)
         } else {
             logger.log("Routing strategy failed. Falling back to active service.")
-            return await self.sendRequestAsync(request, buffer: buffer, strategy: trimmingStrategy)
+            return await sendRequest(request, buffer: buffer, strategy: trimmingStrategy)
         }
     }
 
@@ -196,56 +162,16 @@ public class LLMManager {
         - fallbackServiceName: The name of the service to fall back to if the active service fails.
         - buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
         - strategy: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
-        - completion: A closure that receives an optional `LLMResponseProtocol`.
-     */
-    public func sendRequestWithFallback(
-        _ request: LLMRequest,
-        fallbackServiceName: String,
-        buffer: Double = 0.05,
-        strategy: String.TrimmingStrategy = .end,
-        completion: @escaping (LLMResponseProtocol?) -> Void
-    ) {
-        logger.log("Attempting request with active service first.")
-        sendRequest(request, buffer: buffer, strategy: strategy) { response in
-            if let response = response {
-                self.logger.log("Active service succeeded.")
-                completion(response)
-            } else {
-                self.logger.error("Active service failed. Attempting fallback service: \(fallbackServiceName, privacy: .public)")
-                if let fallbackService = self.services[fallbackServiceName] {
-
-                    let trimmedMessages = self.trimMessages(request.messages, toFitTokenLimit: fallbackService.maxTokenLimit, buffer: buffer, strategy: strategy)
-                    let optimizedRequest = LLMRequest(messages: trimmedMessages, model: request.model)
-
-                    self.sendRequestToService(fallbackService, withRequest: optimizedRequest, completion: completion)
-                } else {
-                    self.logger.error("Fallback service not found: \(fallbackServiceName, privacy: .public)")
-                    completion(nil)
-                }
-            }
-        }
-    }
-
-    // MARK: - Async Fallback Mechanism
-
-    /**
-     Sends a request to the active service asynchronously, with a fallback to another service if the request fails.
-
-     - Parameters:
-        - request: The `LLMRequest` containing the messages and parameters.
-        - fallbackServiceName: The name of the service to fall back to if the active service fails.
-        - buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
-        - strategy: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
      - Returns: An optional `LLMResponseProtocol` object.
      */
-    public func sendRequestWithFallbackAsync(
+    public func sendRequestWithFallback(
         _ request: LLMRequest,
         fallbackServiceName: String,
         buffer: Double = 0.05,
         strategy: String.TrimmingStrategy = .end
     ) async -> LLMResponseProtocol? {
         logger.log("Attempting request with active service first.")
-        if let response = await sendRequestAsync(request, buffer: buffer, strategy: strategy) {
+        if let response = await sendRequest(request, buffer: buffer, strategy: strategy) {
             logger.log("Active service succeeded.")
             return response
         } else {
@@ -255,7 +181,7 @@ public class LLMManager {
                 let trimmedMessages = trimMessages(request.messages, toFitTokenLimit: fallbackService.maxTokenLimit, buffer: buffer, strategy: strategy)
                 let optimizedRequest = LLMRequest(messages: trimmedMessages, model: request.model)
 
-                return await self.sendRequestToServiceAsync(fallbackService, withRequest: optimizedRequest)
+                return await sendRequestToService(fallbackService, withRequest: optimizedRequest)
             } else {
                 logger.error("Fallback service not found: \(fallbackServiceName, privacy: .public)")
                 return nil
@@ -290,34 +216,24 @@ public class LLMManager {
      - Parameters:
         - service: The `LLMServiceProtocol` conforming service.
         - request: The `LLMRequest` to send.
-        - completion: A closure that receives an optional `LLMResponseProtocol`.
-     */
-    private func sendRequestToService(_ service: LLMServiceProtocol, withRequest request: LLMRequest, completion: @escaping (LLMResponseProtocol?) -> Void) {
-        service.sendRequest(request) { [weak self] result in
-            switch result {
-            case .success(let response):
-                self?.logger.log("Service succeeded with response: \(response.text, privacy: .public)")
-                completion(response)
-            case .failure(let error):
-                self?.logger.error("Service failed with error: \(error.localizedDescription, privacy: .public)")
-                completion(nil)
-            }
-        }
-    }
-
-    /**
-     Sends a request to a specific LLM service asynchronously.
-
-     - Parameters:
-        - service: The `LLMServiceProtocol` conforming service.
-        - request: The `LLMRequest` to send.
+        - onPartialResponse: A closure that handles partial responses during streaming (optional).
      - Returns: An optional `LLMResponseProtocol` object.
      */
-    private func sendRequestToServiceAsync(_ service: LLMServiceProtocol, withRequest request: LLMRequest) async -> LLMResponseProtocol? {
+    private func sendRequestToService(
+        _ service: LLMServiceProtocol,
+        withRequest request: LLMRequest,
+        onPartialResponse: ((String) -> Void)? = nil
+    ) async -> LLMResponseProtocol? {
         do {
-            let response = try await service.sendRequest(request)
-            logger.log("Service succeeded with response: \(response.text, privacy: .public)")
-            return response
+            if let onPartialResponse = onPartialResponse {
+                let response = try await service.sendRequest(request, onPartialResponse: onPartialResponse)
+                logger.log("Service succeeded with streaming response.")
+                return response
+            } else {
+                let response = try await service.sendRequest(request)
+                logger.log("Service succeeded with response.")
+                return response
+            }
         } catch {
             logger.error("Service failed with error: \(error.localizedDescription, privacy: .public)")
             return nil

@@ -43,8 +43,25 @@ public class OllamaService: LLMServiceProtocol {
         self.urlSession = urlSession
     }
 
+    // MARK: - Actor for Streaming State
+
+    actor StreamingState {
+        var accumulatedContent = ""
+
+        // Helper methods to mutate the actor's state
+        func appendContent(_ content: String) {
+            accumulatedContent += content
+        }
+
+        func getFinalContent() -> String {
+            return accumulatedContent
+        }
+    }
+
+    // MARK: - Non-streaming Request
+
     /**
-     Sends a request to the Ollama API and retrieves the response asynchronously.
+     Sends a non-streaming request to the Ollama API and retrieves the response asynchronously.
 
      - Parameters:
         - request: The `LLMRequest` containing the messages and model configuration.
@@ -52,18 +69,12 @@ public class OllamaService: LLMServiceProtocol {
      - Throws: `LLMServiceError` if the request encounters an issue (e.g., invalid response, decoding error, etc.).
      */
     public func sendRequest(_ request: LLMRequest) async throws -> LLMResponseProtocol {
-
         // Validate the base URL
         guard var components = URLComponents(string: baseURL) else {
             throw LLMServiceError.invalidURL
         }
 
-        if components.scheme == nil || components.host == nil {
-            throw LLMServiceError.invalidURL
-        }
-
         components.path = "/api/generate"
-
         guard let url = components.url else {
             throw LLMServiceError.invalidURL
         }
@@ -77,7 +88,6 @@ public class OllamaService: LLMServiceProtocol {
             "prompt": prompt,
             "temperature": request.temperature,
             "max_tokens": request.maxTokens,
-            "stream": request.stream,
             "top_p": request.options?.topP ?? 1.0,
             "frequency_penalty": request.options?.frequencyPenalty ?? 0.0,
             "presence_penalty": request.options?.presencePenalty ?? 0.0,
@@ -113,25 +123,94 @@ public class OllamaService: LLMServiceProtocol {
             throw LLMServiceError.decodingError
         }
     }
-    
-    /**
-     Sends a request to the Ollama API using a completion handler.
 
      This method is similar to the asynchronous version but allows for a completion handler to be used
      for handling the result or any errors that may occur during the request.
+    // MARK: - Streaming Request
+
+    /**
+     Sends a streaming request to the Ollama API and retrieves partial responses asynchronously.
 
      - Parameters:
-        - request: The `LLMRequest` containing the messages and additional parameters for generating text.
-        - completion: A closure that handles the result of the request, either a successful `LLMResponse` or an error.
+        - request: The `LLMRequest` containing the messages and model configuration.
+        - onPartialResponse: A closure to handle partial responses during streaming.
+     - Returns: The `LLMResponseProtocol` containing the final text or an error if the request fails.
+     - Throws: `LLMServiceError` if the request encounters an issue (e.g., invalid response, decoding error, etc.).
      */
-    public func sendRequest(_ request: LLMRequest, completion: @escaping (Result<LLMResponseProtocol, Error>) -> Void) {
-        Task {
-            do {
-                let response = try await sendRequest(request)
-                completion(.success(response))
-            } catch {
-                completion(.failure(error))
+    public func sendRequest(_ request: LLMRequest, onPartialResponse: ((String) -> Void)? = nil) async throws -> LLMResponseProtocol {
+        // If streaming is set to false, route to the non-streaming version
+        guard request.stream else {
+            return try await sendRequest(request)
+        }
+
+        // Validate the base URL
+        guard var components = URLComponents(string: baseURL) else {
+            throw LLMServiceError.invalidURL
+        }
+
+        components.path = "/api/generate"
+        guard let url = components.url else {
+            throw LLMServiceError.invalidURL
+        }
+
+        // Combine all messages into a single prompt text, following Ollama’s expected format
+        let prompt = request.messages.map { "\($0.role.rawValue.capitalized): \($0.content)" }.joined(separator: "\n")
+
+        // Construct the request body as per Ollama API
+        let body: [String: Any] = [
+            "model": request.model ?? "llama3.2",  // Default to llama3.2
+            "prompt": prompt,
+            "temperature": request.temperature,
+            "max_tokens": request.maxTokens,
+            "stream": request.stream,
+            "top_p": request.options?.topP ?? 1.0,
+            "frequency_penalty": request.options?.frequencyPenalty ?? 0.0,
+            "presence_penalty": request.options?.presencePenalty ?? 0.0,
+            "stop": request.options?.stopSequences ?? []
+        ]
+
+        // Serialize the request body into JSON
+        let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
+
+        // Configure the URLRequest
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = "POST"
+        urlRequest.httpBody = jsonData
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        // Initialize the streaming state
+        let state = StreamingState()
+
+        // Streaming handling
+        return try await withCheckedThrowingContinuation { continuation in
+            let task = urlSession.dataTask(with: urlRequest) { data, response, error in
+                Task {
+                    if let error = error {
+                        continuation.resume(throwing: error)
+                        return
+                    }
+
+                    guard let data = data else {
+                        continuation.resume(throwing: LLMServiceError.invalidResponse(statusCode: -1))
+                        return
+                    }
+
+                    // Process the data asynchronously using the actor to update state
+                    if let partialContent = String(data: data, encoding: .utf8) {
+                        await state.appendContent(partialContent)
+                        onPartialResponse?(partialContent)
+                    }
+
+                    // Handle final response
+                    if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+                        let finalResponse = OllamaLLMResponse(response: await state.getFinalContent(), model: request.model)
+                        continuation.resume(returning: finalResponse)
+                    } else {
+                        continuation.resume(throwing: LLMServiceError.invalidResponse(statusCode: (response as? HTTPURLResponse)?.statusCode ?? -1))
+                    }
+                }
             }
+            task.resume()
         }
     }
 }
