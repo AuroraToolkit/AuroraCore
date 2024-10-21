@@ -69,6 +69,11 @@ public class OllamaService: LLMServiceProtocol {
      - Throws: `LLMServiceError` if the request encounters an issue (e.g., invalid response, decoding error, etc.).
      */
     public func sendRequest(_ request: LLMRequest) async throws -> LLMResponseProtocol {
+        // Check if streaming is enabled. If true, redirect to the streaming version.
+        guard request.stream == false else {
+            return try await sendRequest(request, onPartialResponse: nil) // Call the streaming version
+        }
+
         // Validate the base URL
         guard var components = URLComponents(string: baseURL) else {
             throw LLMServiceError.invalidURL
@@ -91,7 +96,8 @@ public class OllamaService: LLMServiceProtocol {
             "top_p": request.options?.topP ?? 1.0,
             "frequency_penalty": request.options?.frequencyPenalty ?? 0.0,
             "presence_penalty": request.options?.presencePenalty ?? 0.0,
-            "stop": request.options?.stopSequences ?? []
+            "stop": request.options?.stopSequences ?? [],
+            "stream": false
         ]
 
         // Serialize the request body into JSON
@@ -103,6 +109,8 @@ public class OllamaService: LLMServiceProtocol {
         urlRequest.httpBody = jsonData
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
+        print("OllamaService \(#function) Sending request: \(body)")
+
         // Execute the request
         let (data, response) = try await urlSession.data(for: urlRequest)
 
@@ -113,6 +121,10 @@ public class OllamaService: LLMServiceProtocol {
 
         guard (200...299).contains(httpResponse.statusCode) else {
             throw LLMServiceError.invalidResponse(statusCode: httpResponse.statusCode)
+        }
+
+        if let jsonString = String(data: data, encoding: .utf8) {
+            print("OllamaService \(#function) Received response: \(jsonString)")
         }
 
         // Attempt to decode the response from the Ollama API
@@ -169,6 +181,8 @@ public class OllamaService: LLMServiceProtocol {
             "stop": request.options?.stopSequences ?? []
         ]
 
+        print("OllamaService \(#function) Sending request: \(body)")
+
         // Serialize the request body into JSON
         let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
 
@@ -193,6 +207,10 @@ public class OllamaService: LLMServiceProtocol {
                     guard let data = data else {
                         continuation.resume(throwing: LLMServiceError.invalidResponse(statusCode: -1))
                         return
+                    }
+
+                    if let jsonString = String(data: data, encoding: .utf8) {
+                        print("OllamaService \(#function) Received response: \(jsonString)")
                     }
 
                     // Process the data asynchronously using the actor to update state

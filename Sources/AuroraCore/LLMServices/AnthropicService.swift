@@ -59,6 +59,70 @@ public class AnthropicService: LLMServiceProtocol {
         }
     }
 
+
+    // Non-streaming method
+    public func sendRequest(_ request: LLMRequest) async throws -> LLMResponseProtocol {
+        // Check if streaming is enabled. If true, redirect to the streaming version.
+        guard request.stream == false else {
+            return try await sendRequest(request, onPartialResponse: nil) // Call the streaming version
+        }
+
+        guard let apiKey = apiKey else {
+            throw LLMServiceError.missingAPIKey
+        }
+
+        // Map LLMMessage instances to the format expected by the API
+        var systemMessage: String? = nil
+        let userMessages = request.messages.compactMap { message -> [String: String]? in
+            if message.role == .system {
+                systemMessage = message.content
+                return nil
+            } else {
+                return ["role": message.role.rawValue, "content": message.content]
+            }
+        }
+
+        // Construct the body with a top-level system parameter
+        var body: [String: Any] = [
+            "model": request.model ?? "claude-3-5-sonnet-20240620",
+            "messages": userMessages,
+            "temperature": request.temperature,
+            "max_tokens": request.maxTokens
+        ]
+
+        if let systemMessage = systemMessage {
+            body["system"] = systemMessage
+        }
+
+        print("AnthropicService \(#function) Sending request: \(body)")
+
+        let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
+
+        guard let url = URL(string: "\(baseURL)/v1/messages") else {
+            throw LLMServiceError.invalidURL
+        }
+
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = "POST"
+        urlRequest.httpBody = jsonData
+        urlRequest.setValue(apiKey, forHTTPHeaderField: "x-api-key")
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        urlRequest.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")  // Required Anthropic version header
+
+        let (data, response) = try await URLSession.shared.data(for: urlRequest)
+
+        guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
+            throw LLMServiceError.invalidResponse(statusCode: (response as? HTTPURLResponse)?.statusCode ?? -1)
+        }
+
+        if let jsonString = String(data: data, encoding: .utf8) {
+            print("AntropicService \(#function) Received response: \(jsonString)")
+        }
+
+        let decodedResponse = try JSONDecoder().decode(AnthropicLLMResponse.self, from: data)
+        return decodedResponse
+    }
+
     /**
      Sends a request to the Anthropic API and retrieves the response asynchronously.
 
@@ -115,6 +179,8 @@ public class AnthropicService: LLMServiceProtocol {
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")  // Required Anthropic version header
 
+        print("AnthropicService \(#function) Sending request: \(body)")
+
         let state = StreamingState()
 
         // Handle streaming
@@ -129,6 +195,10 @@ public class AnthropicService: LLMServiceProtocol {
                     guard let data = data else {
                         continuation.resume(throwing: LLMServiceError.invalidResponse(statusCode: -1))
                         return
+                    }
+
+                    if let jsonString = String(data: data, encoding: .utf8) {
+                        print("AntropicService \(#function) Received response: \(jsonString)")
                     }
 
                     // Process the streaming data asynchronously
@@ -155,57 +225,5 @@ public class AnthropicService: LLMServiceProtocol {
             }
             task.resume()
         }
-    }
-
-    // Non-streaming method
-    public func sendRequest(_ request: LLMRequest) async throws -> LLMResponseProtocol {
-        guard let apiKey = apiKey else {
-            throw LLMServiceError.missingAPIKey
-        }
-
-        // Map LLMMessage instances to the format expected by the API
-        var systemMessage: String? = nil
-        let userMessages = request.messages.compactMap { message -> [String: String]? in
-            if message.role == .system {
-                systemMessage = message.content
-                return nil
-            } else {
-                return ["role": message.role.rawValue, "content": message.content]
-            }
-        }
-
-        // Construct the body with a top-level system parameter
-        var body: [String: Any] = [
-            "model": request.model ?? "claude-3-5-sonnet-20240620",
-            "messages": userMessages,
-            "temperature": request.temperature,
-            "max_tokens": request.maxTokens
-        ]
-
-        if let systemMessage = systemMessage {
-            body["system"] = systemMessage
-        }
-
-        let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
-
-        guard let url = URL(string: "\(baseURL)/v1/messages") else {
-            throw LLMServiceError.invalidURL
-        }
-
-        var urlRequest = URLRequest(url: url)
-        urlRequest.httpMethod = "POST"
-        urlRequest.httpBody = jsonData
-        urlRequest.setValue(apiKey, forHTTPHeaderField: "x-api-key")
-        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        urlRequest.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")  // Required Anthropic version header
-
-        let (data, response) = try await URLSession.shared.data(for: urlRequest)
-
-        guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
-            throw LLMServiceError.invalidResponse(statusCode: (response as? HTTPURLResponse)?.statusCode ?? -1)
-        }
-
-        let decodedResponse = try JSONDecoder().decode(AnthropicLLMResponse.self, from: data)
-        return decodedResponse
     }
 }

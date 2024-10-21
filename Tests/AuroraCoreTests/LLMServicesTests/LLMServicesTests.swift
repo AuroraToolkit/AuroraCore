@@ -1,15 +1,16 @@
 //
-//  LLMServiceSwiftTests.swift
+//  LLMServiceTests.swift
 //  AuroraCoreTests
 //
-//  Created by Dan Murrell Jr on 10/17/24.
+//  Created by Dan Murrell Jr on 9/12/24.
+//  Updated on 10/18/24
 //
 
 import Foundation
 import Testing
 @testable import AuroraCore
 
-struct LLMServiceSwiftTests {
+struct LLMServiceTests {
 
     // API Keys
     private let openAIAPIKey: String? = ProcessInfo.processInfo.environment["OPENAI_API_KEY"]
@@ -31,12 +32,23 @@ struct LLMServiceSwiftTests {
         return services
     }
 
+    // MARK: - Test cases
+
     @Test
     func testSendRequestWithBasicPrompt() async throws {
         let request = LLMRequest(messages: [LLMMessage(role: .user, content: "Test prompt")])
 
         for service in getServices() {
-            try await sendRequestAndCheckResponse(for: service, with: request)
+            do {
+                let response = try await service.sendRequest(request)
+                #expect(!response.text.isEmpty, "Response should not be empty for \(service.name)")
+            } catch let error as LLMServiceError {
+                print("Error for \(service.name): \(error.localizedDescription)")
+                throw error
+            } catch {
+                print("Unexpected error for \(service.name): \(error.localizedDescription)")
+                throw error
+            }
         }
     }
 
@@ -45,7 +57,16 @@ struct LLMServiceSwiftTests {
         let request = LLMRequest(messages: [LLMMessage(role: .user, content: "Testing special characters: @#%&* and emojis 🚀✨")])
 
         for service in getServices() {
-            try await sendRequestAndCheckResponse(for: service, with: request)
+            do {
+                let response = try await service.sendRequest(request)
+                #expect(!response.text.isEmpty, "Response should not be empty for \(service.name)")
+            } catch let error as LLMServiceError {
+                print("Error for \(service.name): \(error.localizedDescription)")
+                throw error
+            } catch {
+                print("Unexpected error for \(service.name): \(error.localizedDescription)")
+                throw error
+            }
         }
     }
 
@@ -55,7 +76,16 @@ struct LLMServiceSwiftTests {
         let request = LLMRequest(messages: [LLMMessage(role: .user, content: longText)], maxTokens: 512)
 
         for service in getServices() {
-            try await sendRequestAndCheckResponse(for: service, with: request)
+            do {
+                let response = try await service.sendRequest(request)
+                #expect(!response.text.isEmpty, "Response should not be empty for \(service.name)")
+            } catch let error as LLMServiceError {
+                print("Error for \(service.name): \(error.localizedDescription)")
+                throw error
+            } catch {
+                print("Unexpected error for \(service.name): \(error.localizedDescription)")
+                throw error
+            }
         }
     }
 
@@ -70,7 +100,16 @@ struct LLMServiceSwiftTests {
         let request = LLMRequest(messages: messages)
 
         for service in getServices() {
-            try await sendRequestAndCheckResponse(for: service, with: request)
+            do {
+                let response = try await service.sendRequest(request)
+                #expect(!response.text.isEmpty, "Response should not be empty for \(service.name)")
+            } catch let error as LLMServiceError {
+                print("Error for \(service.name): \(error.localizedDescription)")
+                throw error
+            } catch {
+                print("Unexpected error for \(service.name): \(error.localizedDescription)")
+                throw error
+            }
         }
     }
 
@@ -85,25 +124,37 @@ struct LLMServiceSwiftTests {
             do {
                 let response = try await service.sendRequest(request)
                 #expect(!response.text.isEmpty, "Streaming response should not be empty for \(service.name)")
-                print("Service: \(service.name), Streaming Response: \(response.text.prefix(100))...")
-            } catch {
+            } catch let error as LLMServiceError {
                 print("Streaming failed for \(service.name) with error: \(error.localizedDescription)")
-                // Log error message for further investigation
+                throw error
+            } catch {
+                print("Unexpected streaming error for \(service.name): \(error.localizedDescription)")
+                throw error
             }
         }
     }
-    
+
     @Test
     func testTokenBias() async throws {
         let logitBias = ["bacon": 2.0]
         let request = LLMRequest(messages: [LLMMessage(role: .user, content: "What is your favorite breakfast food?")], options: .init(logitBias: logitBias))
 
         for service in getServices() {
-            try await sendRequestAndCheckResponse(for: service, with: request)
+            do {
+                let response = try await service.sendRequest(request)
+                #expect(!response.text.isEmpty, "Response should not be empty for \(service.name)")
+            } catch let error as LLMServiceError {
+                print("Error for \(service.name): \(error.localizedDescription)")
+                throw error
+            } catch {
+                print("Unexpected error for \(service.name): \(error.localizedDescription)")
+                throw error
+            }
         }
     }
 
-    // Helper function to streamline the request and response checks across services
+    // MARK: - Helper function
+
     private func sendRequestAndCheckResponse(for service: LLMServiceProtocol, with request: LLMRequest) async throws {
         let response = try await service.sendRequest(request)
 

@@ -80,6 +80,11 @@ public class OpenAIService: LLMServiceProtocol {
      - Throws: `LLMServiceError` if the request encounters an issue (e.g., missing API key, invalid response, etc.).
      */
     public func sendRequest(_ request: LLMRequest) async throws -> LLMResponseProtocol {
+        // Check if streaming is enabled. If true, redirect to the streaming version.
+        guard request.stream == false else {
+            return try await sendRequest(request, onPartialResponse: nil) // Call the streaming version
+        }
+
         guard let apiKey = apiKey else {
             throw LLMServiceError.missingAPIKey
         }
@@ -118,11 +123,17 @@ public class OpenAIService: LLMServiceProtocol {
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
 
+        print("OpenAIService \(#function) Sending request: \(body)")
+
         // Non-streaming response handling
         let (data, response) = try await URLSession.shared.data(for: urlRequest)
 
         guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
             throw LLMServiceError.invalidResponse(statusCode: (response as? HTTPURLResponse)?.statusCode ?? -1)
+        }
+
+        if let jsonString = String(data: data, encoding: .utf8) {
+            print("OpenAIService \(#function) Received response: \(jsonString)")
         }
 
         let decodedResponse = try JSONDecoder().decode(OpenAILLMResponse.self, from: data)
@@ -182,6 +193,8 @@ public class OpenAIService: LLMServiceProtocol {
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
 
+        print("OpenAIService \(#function) Sending request: \(body)")
+
         // Actor to manage streaming state
         let state = StreamingState()
 
@@ -199,6 +212,10 @@ public class OpenAIService: LLMServiceProtocol {
                         return
                     }
 
+                    if let jsonString = String(data: data, encoding: .utf8) {
+                        print("OpenAIService \(#function) Received response: \(jsonString)")
+                    }
+
                     // Process the streaming data asynchronously
                     if let partialContent = String(data: data, encoding: .utf8) {
                         await state.appendContent(partialContent)
@@ -214,6 +231,7 @@ public class OpenAIService: LLMServiceProtocol {
                     if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
                         let usage = await state.getUsage()
                         let finalResponse = OpenAILLMResponse(choices: await state.choices, usage: usage, model: request.model)
+                        print("OpenAIService \(#function) Final response: \(finalResponse)")
                         continuation.resume(returning: finalResponse)
                     } else {
                         continuation.resume(throwing: LLMServiceError.invalidResponse(statusCode: (response as? HTTPURLResponse)?.statusCode ?? -1))
