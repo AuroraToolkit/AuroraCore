@@ -136,8 +136,6 @@ public class OllamaService: LLMServiceProtocol {
         }
     }
 
-     This method is similar to the asynchronous version but allows for a completion handler to be used
-     for handling the result or any errors that may occur during the request.
     // MARK: - Streaming Request
 
     /**
