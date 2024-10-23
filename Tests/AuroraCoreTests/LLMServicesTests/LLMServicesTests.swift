@@ -12,21 +12,28 @@ import Testing
 
 struct LLMServiceTests {
 
-    // API Keys
-    private let openAIAPIKey: String? = ProcessInfo.processInfo.environment["OPENAI_API_KEY"]
-    private let anthropicAPIKey: String? = ProcessInfo.processInfo.environment["ANTHROPIC_API_KEY"]
+    // API Keys: Testers should add their own API keys below for OpenAI and Anthropic.
+    // Important: Make sure to not commit these keys to the repository!
+    private let openAIAPIKey: String? = "" // Insert your OpenAI API key here
+    private let anthropicAPIKey: String? = "" // Insert your Anthropic API key here
 
     // Services to be tested
     private func getServices() -> [LLMServiceProtocol] {
         var services: [LLMServiceProtocol] = []
 
-        if let apiKey = openAIAPIKey {
+        if let apiKey = openAIAPIKey, !apiKey.isEmpty {
             services.append(OpenAIService(apiKey: apiKey))
-        }
-        if let apiKey = anthropicAPIKey {
-            services.append(AnthropicService(apiKey: apiKey))
+        } else {
+            print("Skipping OpenAIService tests - API key not provided")
         }
 
+        if let apiKey = anthropicAPIKey, !apiKey.isEmpty {
+            services.append(AnthropicService(apiKey: apiKey))
+        } else {
+            print("Skipping AnthropicService tests - API key not provided")
+        }
+
+        // Ollama service doesn't need an API key
         services.append(OllamaService(baseURL: "http://localhost:11434"))
 
         return services
