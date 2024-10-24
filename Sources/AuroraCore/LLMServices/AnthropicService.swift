@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import os.log
 
 /**
  `AnthropicService` implements the `LLMServiceProtocol` to interact with the Anthropic API.
@@ -13,6 +14,9 @@ import Foundation
  detailed error handling using `LLMServiceError`.
  */
 public class AnthropicService: LLMServiceProtocol {
+
+    /// A logger for recording information and errors within the `AnthropicService`.
+    private let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "AnthropicService")
 
     /// The name of the service, required by the protocol.
     public let name = "Anthropic"
@@ -60,7 +64,16 @@ public class AnthropicService: LLMServiceProtocol {
     }
 
 
-    // Non-streaming method
+    // MARK: - Non-streaming Request
+
+    /**
+     Sends a non-streaming request to the Anthropic API and retrieves the response asynchronously.
+
+     - Parameters:
+        - request: The `LLMRequest` containing the messages and model configuration.
+     - Returns: The `LLMResponseProtocol` containing the generated text or an error if the request fails.
+     - Throws: `LLMServiceError` if the request encounters an issue (e.g., invalid response, decoding error, etc.).
+     */
     public func sendRequest(_ request: LLMRequest) async throws -> LLMResponseProtocol {
         // Check if streaming is enabled. If true, redirect to the streaming version.
         guard request.stream == false else {
@@ -86,15 +99,17 @@ public class AnthropicService: LLMServiceProtocol {
         var body: [String: Any] = [
             "model": request.model ?? "claude-3-5-sonnet-20240620",
             "messages": userMessages,
+            "max_tokens": request.maxTokens,
             "temperature": request.temperature,
-            "max_tokens": request.maxTokens
+            "top_p": request.options?.topP ?? 1.0
         ]
 
+        // Add the system message if available
         if let systemMessage = systemMessage {
             body["system"] = systemMessage
         }
 
-        print("AnthropicService \(#function) Sending request: \(body)")
+        logger.log("AnthropicService \(#function) Sending request: \(body)")
 
         let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
 
@@ -116,12 +131,14 @@ public class AnthropicService: LLMServiceProtocol {
         }
 
         if let jsonString = String(data: data, encoding: .utf8) {
-            print("AntropicService \(#function) Received response: \(jsonString)")
+            logger.log("AntropicService \(#function) Received response: \(jsonString)")
         }
 
         let decodedResponse = try JSONDecoder().decode(AnthropicLLMResponse.self, from: data)
         return decodedResponse
     }
+
+    // MARK: - Streaming Request
 
     /**
      Sends a request to the Anthropic API and retrieves the response asynchronously.
@@ -156,9 +173,10 @@ public class AnthropicService: LLMServiceProtocol {
         var body: [String: Any] = [
             "model": request.model ?? "claude-3-5-sonnet-20240620",
             "messages": userMessages,
-            "temperature": request.temperature,
             "max_tokens": request.maxTokens,
-            "stream": request.stream
+            "temperature": request.temperature,
+            "top_p": request.options?.topP ?? 1.0,
+            "stream": true
         ]
 
         // Add the system message if available
@@ -179,13 +197,14 @@ public class AnthropicService: LLMServiceProtocol {
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")  // Required Anthropic version header
 
-        print("AnthropicService \(#function) Sending request: \(body)")
+        logger.log("AnthropicService \(#function) Sending request: \(body)")
 
         let state = StreamingState()
 
         // Handle streaming
         return try await withCheckedThrowingContinuation { continuation in
-            let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+            let task = URLSession.shared.dataTask(with: urlRequest) { [weak self] data, response, error in
+                guard let self = self else { return }
                 Task {
                     if let error = error {
                         continuation.resume(throwing: error)
@@ -198,7 +217,7 @@ public class AnthropicService: LLMServiceProtocol {
                     }
 
                     if let jsonString = String(data: data, encoding: .utf8) {
-                        print("AntropicService \(#function) Received response: \(jsonString)")
+                        self.logger.log("AntropicService \(#function) Received response: \(jsonString)")
                     }
 
                     // Process the streaming data asynchronously

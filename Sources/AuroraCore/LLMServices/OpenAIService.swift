@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import os.log
 
 /**
  `OpenAIService` implements the `LLMServiceProtocol` to interact with the OpenAI API.
@@ -13,6 +14,9 @@ import Foundation
  enhanced error handling using `LLMServiceError`.
  */
 public class OpenAIService: LLMServiceProtocol {
+
+    /// A logger for recording information and errors within the `AnthropicService`.
+    private let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "OpenAIService")
 
     /// The name of the service, required by the protocol.
     public let name = "OpenAI"
@@ -71,6 +75,8 @@ public class OpenAIService: LLMServiceProtocol {
         }
     }
 
+    // MARK: - Non-streaming Request
+
     /**
      Sends a request to the OpenAI API asynchronously without streaming.
 
@@ -123,7 +129,7 @@ public class OpenAIService: LLMServiceProtocol {
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
 
-        print("OpenAIService \(#function) Sending request: \(body)")
+        logger.log("OpenAIService \(#function) Sending request: \(body)")
 
         // Non-streaming response handling
         let (data, response) = try await URLSession.shared.data(for: urlRequest)
@@ -133,12 +139,14 @@ public class OpenAIService: LLMServiceProtocol {
         }
 
         if let jsonString = String(data: data, encoding: .utf8) {
-            print("OpenAIService \(#function) Received response: \(jsonString)")
+            logger.log("OpenAIService \(#function) Received response: \(jsonString)")
         }
 
         let decodedResponse = try JSONDecoder().decode(OpenAILLMResponse.self, from: data)
         return decodedResponse
     }
+
+    // MARK: - Streaming Request
 
     /**
      Sends a request to the OpenAI API asynchronously with streaming support.
@@ -182,7 +190,7 @@ public class OpenAIService: LLMServiceProtocol {
             "frequency_penalty": request.options?.frequencyPenalty ?? 0.0,
             "presence_penalty": request.options?.presencePenalty ?? 0.0,
             "stop": request.options?.stopSequences ?? [],
-            "stream": request.stream
+            "stream": true
         ]
 
         let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
@@ -193,14 +201,15 @@ public class OpenAIService: LLMServiceProtocol {
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
 
-        print("OpenAIService \(#function) Sending request: \(body)")
+        logger.log("OpenAIService \(#function) Sending request: \(body)")
 
         // Actor to manage streaming state
         let state = StreamingState()
 
         // Handle streaming response
         return try await withCheckedThrowingContinuation { continuation in
-            let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+            let task = URLSession.shared.dataTask(with: urlRequest) { [weak self] data, response, error in
+                guard let self = self else { return }
                 Task {
                     if let error = error {
                         continuation.resume(throwing: error)
@@ -213,7 +222,7 @@ public class OpenAIService: LLMServiceProtocol {
                     }
 
                     if let jsonString = String(data: data, encoding: .utf8) {
-                        print("OpenAIService \(#function) Received response: \(jsonString)")
+                        self.logger.log("OpenAIService \(#function) Received response: \(jsonString)")
                     }
 
                     // Process the streaming data asynchronously
@@ -231,7 +240,6 @@ public class OpenAIService: LLMServiceProtocol {
                     if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
                         let usage = await state.getUsage()
                         let finalResponse = OpenAILLMResponse(choices: await state.choices, usage: usage, model: request.model)
-                        print("OpenAIService \(#function) Final response: \(finalResponse)")
                         continuation.resume(returning: finalResponse)
                     } else {
                         continuation.resume(throwing: LLMServiceError.invalidResponse(statusCode: (response as? HTTPURLResponse)?.statusCode ?? -1))

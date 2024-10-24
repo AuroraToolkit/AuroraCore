@@ -6,12 +6,16 @@
 //
 
 import Foundation
+import os.log
 
 /**
  `OllamaService` implements the `LLMServiceProtocol` to interact with the Ollama models via its API.
  This service supports customizable API base URLs and allows interaction with models using both streaming and non-streaming modes.
  */
 public class OllamaService: LLMServiceProtocol {
+
+    /// A logger for recording information and errors within the `AnthropicService`.
+    private let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "OllamaService")
 
     /// The name of the service, required by the protocol.
     public let name = "Ollama"
@@ -91,8 +95,8 @@ public class OllamaService: LLMServiceProtocol {
         let body: [String: Any] = [
             "model": request.model ?? "llama3.2",  // Default to llama3.2
             "prompt": prompt,
-            "temperature": request.temperature,
             "max_tokens": request.maxTokens,
+            "temperature": request.temperature,
             "top_p": request.options?.topP ?? 1.0,
             "frequency_penalty": request.options?.frequencyPenalty ?? 0.0,
             "presence_penalty": request.options?.presencePenalty ?? 0.0,
@@ -109,7 +113,7 @@ public class OllamaService: LLMServiceProtocol {
         urlRequest.httpBody = jsonData
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        print("OllamaService \(#function) Sending request: \(body)")
+        logger.log("OllamaService \(#function) Sending request: \(body)")
 
         // Execute the request
         let (data, response) = try await urlSession.data(for: urlRequest)
@@ -124,7 +128,7 @@ public class OllamaService: LLMServiceProtocol {
         }
 
         if let jsonString = String(data: data, encoding: .utf8) {
-            print("OllamaService \(#function) Received response: \(jsonString)")
+            logger.log("OllamaService \(#function) Received response: \(jsonString)")
         }
 
         // Attempt to decode the response from the Ollama API
@@ -170,16 +174,16 @@ public class OllamaService: LLMServiceProtocol {
         let body: [String: Any] = [
             "model": request.model ?? "llama3.2",  // Default to llama3.2
             "prompt": prompt,
-            "temperature": request.temperature,
             "max_tokens": request.maxTokens,
-            "stream": request.stream,
+            "temperature": request.temperature,
             "top_p": request.options?.topP ?? 1.0,
             "frequency_penalty": request.options?.frequencyPenalty ?? 0.0,
             "presence_penalty": request.options?.presencePenalty ?? 0.0,
-            "stop": request.options?.stopSequences ?? []
+            "stop": request.options?.stopSequences ?? [],
+            "stream": true
         ]
 
-        print("OllamaService \(#function) Sending request: \(body)")
+        logger.log("OllamaService \(#function) Sending request: \(body)")
 
         // Serialize the request body into JSON
         let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
@@ -195,7 +199,8 @@ public class OllamaService: LLMServiceProtocol {
 
         // Streaming handling
         return try await withCheckedThrowingContinuation { continuation in
-            let task = urlSession.dataTask(with: urlRequest) { data, response, error in
+            let task = urlSession.dataTask(with: urlRequest) { [weak self] data, response, error in
+                guard let self = self else { return }
                 Task {
                     if let error = error {
                         continuation.resume(throwing: error)
@@ -208,7 +213,7 @@ public class OllamaService: LLMServiceProtocol {
                     }
 
                     if let jsonString = String(data: data, encoding: .utf8) {
-                        print("OllamaService \(#function) Received response: \(jsonString)")
+                        self.logger.log("OllamaService \(#function) Received response: \(jsonString)")
                     }
 
                     // Process the data asynchronously using the actor to update state
