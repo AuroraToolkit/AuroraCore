@@ -34,6 +34,17 @@ public class SummarizeTask: WorkflowTask {
      - Throws: An error if the summarization fails.
      */
     public override func execute() async throws {
+        try await execute(with: nil)
+    }
+
+    /**
+     Executes the summarization task with options, summarizing the context items and storing the result.
+
+     - Parameters:
+     - with options: Optional `SummarizerOptions` to provide additional configuration options (e.g. model, temperature).
+     - Throws: An error if the summarization fails.
+     */
+    public func execute(with options: SummarizerOptions? = nil) async throws {
         // Retrieve all context items to be summarized
         let itemsToSummarize = contextController.getItems()
 

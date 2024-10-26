@@ -14,12 +14,6 @@ import Foundation
  */
 public class SaveContextTask: WorkflowTask {
 
-    /// The context to be saved.
-    private let context: Context
-
-    /// The filename used to store the context.
-    private let filename: String
-
     /**
      Initializes a `SaveContextTask` with the context and filename.
 
@@ -28,18 +22,31 @@ public class SaveContextTask: WorkflowTask {
         - filename: The name of the file (without extension) used for saving the context.
      */
     public init(context: Context, filename: String) {
-        self.context = context
-        self.filename = filename
-        super.init(name: "Save Context", description: "Save the context to disk")
+        var inputs: [String: Any?] = [:]
+        inputs["context"] = context
+        inputs["filename"] = filename.hasSuffix(".json") ? filename : "\(filename).json"
+        super.init(name: "Save Context", description: "Save the context to disk", inputs: inputs)
     }
 
+    /**
+     Executes the `SaveContextTask` by encoding the context and writing it to disk.
+
+     - Throws: An error if encoding or saving fails.
+     */
     public override func execute() async throws {
+        guard let context = inputs["context"] as? Context,
+              let filename = inputs["filename"] as? String else {
+            markFailed()
+            throw NSError(domain: "SaveContextTask", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid inputs for SaveContextTask"])
+        }
+
         do {
             // Ensure the contexts directory exists
             let documentDirectory = try FileManager.default.createContextsDirectory()
 
-            // Prepare the file URL
-            let fileURL = documentDirectory.appendingPathComponent("\(filename).json")
+            // Avoid appending .json if it already exists
+            let properFilename = filename.hasSuffix(".json") ? filename : "\(filename).json"
+            let fileURL = documentDirectory.appendingPathComponent(properFilename)
 
             // Encode the context to JSON and save to file
             let encoder = JSONEncoder()

@@ -1,6 +1,6 @@
 //
 //  TrimmingTaskTests.swift
-//  
+//
 //
 //  Created by Dan Murrell Jr on 9/1/24.
 //
@@ -19,15 +19,12 @@ final class TrimmingTaskTests: XCTestCase {
         let lowerBound = adjustedLimit - 2
         let upperBound = adjustedLimit + 2
 
-        let task = TrimmingTask(
-            name: "Trim Default",
-            description: "Trim input using default values",
-            input: input
-        )
+        let task = TrimmingTask(string: input)
 
         // When
         try await task.execute()
-        let tokenCount = task.output?.estimatedTokenCount()
+        let trimmedString = task.outputs["trimmedStrings"] as? [String]
+        let tokenCount = trimmedString?.first?.estimatedTokenCount()
 
         // Then
         XCTAssertTrue((lowerBound...upperBound).contains(tokenCount!), "Trimmed string should have between \(lowerBound) and \(upperBound) tokens, but has \(tokenCount!).")
@@ -43,16 +40,15 @@ final class TrimmingTaskTests: XCTestCase {
         let upperBound = adjustedLimit + 2
 
         let task = TrimmingTask(
-            name: "Trim Custom",
-            description: "Trim input using custom values",
-            input: input,
+            string: input,
             tokenLimit: tokenLimit,
             strategy: .start
         )
 
         // When
         try await task.execute()
-        let tokenCount = task.output?.estimatedTokenCount()
+        let trimmedString = task.outputs["trimmedStrings"] as? [String]
+        let tokenCount = trimmedString?.first?.estimatedTokenCount()
 
         // Then
         XCTAssertTrue((lowerBound...upperBound).contains(tokenCount!), "Trimmed string should have between \(lowerBound) and \(upperBound) tokens, but has \(tokenCount!).")
@@ -68,28 +64,53 @@ final class TrimmingTaskTests: XCTestCase {
         let upperBound = adjustedLimit + 2
 
         let task = TrimmingTask(
-            name: "Trim End Strategy",
-            description: "Trim input using end strategy",
-            input: input,
+            string: input,
             tokenLimit: tokenLimit,
             strategy: .end
         )
 
         // When
         try await task.execute()
-        let tokenCount = task.output?.estimatedTokenCount()
+        let trimmedString = task.outputs["trimmedStrings"] as? [String]
+        let tokenCount = trimmedString?.first?.estimatedTokenCount()
 
         // Then
         XCTAssertTrue((lowerBound...upperBound).contains(tokenCount!), "Trimmed string should have between \(lowerBound) and \(upperBound) tokens, but has \(tokenCount!).")
     }
 
+    func testTrimmingTaskWithMultipleStrings() async throws {
+        // Given
+        let inputs = [
+            String(repeating: "X", count: 4096 * 5),  // Very long string, ~1024 tokens * 5
+            String(repeating: "Y", count: 512)        // Short string, ~128 tokens
+        ]
+        let tokenLimit = 1024
+        let buffer = 0.05
+        let adjustedLimit = Int(floor(Double(tokenLimit) * (1 - buffer)))
+        let lowerBound = adjustedLimit - 2
+        let upperBound = adjustedLimit + 2
+
+        let task = TrimmingTask(strings: inputs)
+
+        // When
+        try await task.execute()
+        let trimmedStrings = task.outputs["trimmedStrings"] as? [String]
+
+        // Then
+        XCTAssertEqual(trimmedStrings?.count, 2, "Expected two trimmed strings in the output.")
+        XCTAssertEqual(trimmedStrings?.last, inputs[1], "The shorter string should not be modified.")
+
+        if let firstTrimmedString = trimmedStrings?.first {
+            let tokenCount = firstTrimmedString.estimatedTokenCount()
+            XCTAssertTrue((lowerBound...upperBound).contains(tokenCount), "Trimmed string should have between \(lowerBound) and \(upperBound) tokens, but has \(tokenCount).")
+        } else {
+            XCTFail("First trimmed string is missing in the output.")
+        }
+    }
+
     func testTrimmingTaskFailsWithoutRequiredInputs() async {
         // Given
-        let task = TrimmingTask(
-            name: "Trim Missing Inputs",
-            description: "Trim input without required inputs",
-            inputs: [:]
-        )
+        let task = TrimmingTask(strings: [])
 
         // When
         do {
