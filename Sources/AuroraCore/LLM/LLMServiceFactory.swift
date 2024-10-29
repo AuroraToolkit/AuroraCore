@@ -25,25 +25,25 @@ public class LLMServiceFactory {
      */
     public func createService(for context: Context) -> LLMServiceProtocol? {
         // Retrieve the API key (if applicable) from secure storage for services like OpenAI or Anthropic
-        let apiKey = SecureStorage.getAPIKey(for: context.llmServiceName)
+        let apiKey = SecureStorage.getAPIKey(for: context.llmServiceVendor)
 
-        switch context.llmServiceName {
+        switch context.llmServiceVendor {
         case "OpenAI":
             // Create an OpenAI service instance using the retrieved API key
             guard let apiKey = apiKey else { return nil }
-            return OpenAIService(apiKey: apiKey)
+            return OpenAIService(name: "OpenAI" + UUID().uuidString, apiKey: apiKey)
 
         case "Anthropic":
             // Create an Anthropic service instance using the retrieved API key
             guard let apiKey = apiKey else { return nil }
-            return AnthropicService(apiKey: apiKey)
+            return AnthropicService(name: "Anthropic" + UUID().uuidString, apiKey: apiKey)
 
         case "Ollama":
             // Create an Ollama service with flexible baseURL handling
             // Ollama typically doesn't need an API key but allows flexible base URLs for local or remote instances.
             // Retrieve the base URL from context metadata or use a default if not provided.
             let baseURLString = SecureStorage.getBaseURL(for: "Ollama") ?? "http://localhost:11400"
-            return OllamaService(baseURL: baseURLString)
+            return OllamaService(name: "Ollama" + UUID().uuidString, baseURL: baseURLString)
 
         default:
             return nil

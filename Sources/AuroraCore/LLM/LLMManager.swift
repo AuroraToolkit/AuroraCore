@@ -23,23 +23,58 @@ public class LLMManager {
     /// The name of the currently active service.
     private(set) var activeServiceName: String?
 
-    // MARK: - Register Services
+    // MARK: - Registering Services
 
     /**
-     Registers a new LLM service with a specified name.
+     Registers a new LLM service.
 
      - Parameters:
         - service: The service conforming to `LLMServiceProtocol` to be registered.
-        - name: The name under which to register the service.
      */
     public func registerService(_ service: LLMServiceProtocol, withName name: String) {
         logger.log("Registering service: \(name, privacy: .public)")
-        services[name] = service
+        services[name.lowercased()] = service
 
         // Set as active service if no active service is set
         if activeServiceName == nil {
             activeServiceName = name
-            logger.log("Active service set to: \(name, privacy: .public)")
+            logger.log("Active service set to: \(self.activeServiceName ?? "nil", privacy: .public)")
+        }
+    }
+
+    /**
+     Replaces an existing service, and makes the new service active if necessary.
+
+     - Parameters:
+     - service: The service conforming to `LLMServiceProtocol` to be replaced.
+
+     Note: The service will be replaced by service.name.
+     */
+    public func replaceService(_ newService: LLMServiceProtocol, withName name: String) {
+        logger.log("Replacing service: \(name, privacy: .public)")
+        services[name.lowercased()] = newService
+
+        // Set active service if none is currently set
+        if activeServiceName == nil {
+            activeServiceName = name
+            logger.log("Active service set to: \(self.activeServiceName ?? "nil", privacy: .public)")
+        }
+    }
+
+    /**
+     Unregisters an LLM service with a specified name.
+
+     - Parameters:
+     - name: The name under which the service is registered.
+     */
+    public func unregisterService(withName name: String) {
+        logger.log("Unregistering service: \(name, privacy: .public)")
+        services[name.lowercased()] = nil
+
+        // Reset the active service if it was the one removed
+        if activeServiceName == name {
+            activeServiceName = services.keys.first // Set to another service if available, or nil if empty
+            logger.log("Active service set to: \(self.activeServiceName ?? "nil", privacy: .public)")
         }
     }
 
@@ -51,12 +86,12 @@ public class LLMManager {
      - Parameter name: The name of the service to be set as active.
      */
     public func setActiveService(byName name: String) {
-        guard services[name] != nil else {
+        guard services[name.lowercased()] != nil else {
             logger.error("Attempted to set active service to unknown service: \(name, privacy: .public)")
             return
         }
         activeServiceName = name
-        logger.log("Active service switched to: \(name, privacy: .public)")
+        logger.log("Active service switched to: \(self.activeServiceName ?? "nil", privacy: .public)")
     }
 
     // MARK: - Send Request
@@ -75,7 +110,7 @@ public class LLMManager {
         buffer: Double = 0.05,
         strategy: String.TrimmingStrategy = .end
     ) async -> LLMResponseProtocol? {
-        guard let activeServiceName = activeServiceName, let service = services[activeServiceName] else {
+        guard let activeServiceName = activeServiceName, let service = services[activeServiceName.lowercased()] else {
             logger.error("No active service available to handle the request.")
             return nil
         }
@@ -106,7 +141,7 @@ public class LLMManager {
         buffer: Double = 0.05,
         strategy: String.TrimmingStrategy = .end
     ) async -> LLMResponseProtocol? {
-        guard let activeServiceName = activeServiceName, let service = services[activeServiceName] else {
+        guard let activeServiceName = activeServiceName, let service = services[activeServiceName.lowercased()] else {
             logger.error("No active service available to handle the streaming request.")
             return nil
         }
@@ -138,7 +173,7 @@ public class LLMManager {
         trimmingStrategy: String.TrimmingStrategy = .end
     ) async -> LLMResponseProtocol? {
         if let selectedServiceName = strategy(request),
-           let selectedService = services[selectedServiceName] {
+           let selectedService = services[selectedServiceName.lowercased()] {
 
             logger.log("Routing request to service: \(selectedServiceName, privacy: .public)")
 
@@ -176,7 +211,7 @@ public class LLMManager {
             return response
         } else {
             logger.error("Active service failed. Attempting fallback service: \(fallbackServiceName, privacy: .public)")
-            if let fallbackService = services[fallbackServiceName] {
+            if let fallbackService = services[fallbackServiceName.lowercased()] {
 
                 let trimmedMessages = trimMessages(request.messages, toFitTokenLimit: fallbackService.maxTokenLimit, buffer: buffer, strategy: strategy)
                 let optimizedRequest = LLMRequest(messages: trimmedMessages, model: request.model)

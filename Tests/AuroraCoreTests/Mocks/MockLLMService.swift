@@ -16,6 +16,12 @@ final class MockLLMService: LLMServiceProtocol {
     private let expectedResult: Result<LLMResponseProtocol, Error>
     private let streamingExpectedResult: String?
 
+    // Properties to track calls and parameters for verification
+    var receivedRequests: [LLMRequest] = []
+    var receivedStreamingRequests: [LLMRequest] = []
+    var receivedRoutingStrategy: String.TrimmingStrategy?
+    var receivedFallbackCount = 0
+
     init(name: String, maxTokenLimit: Int = 4096, expectedResult: Result<LLMResponseProtocol, Error>, streamingExpectedResult: String? = nil) {
         self.name = name
         self.maxTokenLimit = maxTokenLimit
@@ -25,6 +31,10 @@ final class MockLLMService: LLMServiceProtocol {
 
     /// Non-streaming request handler
     func sendRequest(_ request: LLMRequest) async throws -> LLMResponseProtocol {
+        // Track received request for verification in tests
+        receivedRequests.append(request)
+
+        // Simulate returning the expected result
         switch expectedResult {
         case .success(let response):
             return response
@@ -35,6 +45,9 @@ final class MockLLMService: LLMServiceProtocol {
 
     /// Streaming request handler
     func sendRequest(_ request: LLMRequest, onPartialResponse: ((String) -> Void)?) async throws -> LLMResponseProtocol {
+        // Track received request for streaming verification in tests
+        receivedStreamingRequests.append(request)
+
         if let streamingExpectedResult = streamingExpectedResult, let onPartialResponse = onPartialResponse {
             // Simulate partial response streaming
             onPartialResponse(streamingExpectedResult)
@@ -47,5 +60,15 @@ final class MockLLMService: LLMServiceProtocol {
         case .failure(let error):
             throw error
         }
+    }
+
+    /// Simulate routing and trimming strategy handling
+    func setRoutingStrategy(_ strategy: String.TrimmingStrategy) {
+        receivedRoutingStrategy = strategy
+    }
+
+    /// Simulate fallback mechanism invocation count for testing
+    func incrementFallbackCount() {
+        receivedFallbackCount += 1
     }
 }

@@ -18,8 +18,11 @@ public class OpenAIService: LLMServiceProtocol {
     /// A logger for recording information and errors within the `AnthropicService`.
     private let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "OpenAIService")
 
-    /// The name of the service, required by the protocol.
-    public let name = "OpenAI"
+    /// The name of the service vendor, required by the protocol.
+    public let vendor = "OpenAI"
+
+    /// The name of the service instance, which can be customized during initialization
+    public var name: String
 
     /// The base url for the OpenAI API.
     public var baseURL: String
@@ -34,11 +37,13 @@ public class OpenAIService: LLMServiceProtocol {
      Initializes a new `OpenAIService` instance with the given API key and token limit.
 
      - Parameters:
+        - name: The name of the service instance (default is `"OpenAI"`).
         - baseURL: The base URL for the OpenAI API. Defaults to "https://api.openai.com".
         - apiKey: The API key used for authenticating requests to the OpenAI API.
         - maxTokenLimit: The maximum number of tokens allowed in a request. Defaults to 4096.
      */
-    public init(baseURL: String = "https://api.openai.com", apiKey: String?, maxTokenLimit: Int = 4096) {
+    public init(name: String = "OpenAI", baseURL: String = "https://api.openai.com", apiKey: String?, maxTokenLimit: Int = 4096) {
+        self.name = name
         self.baseURL = baseURL
         self.apiKey = apiKey
         self.maxTokenLimit = maxTokenLimit

@@ -18,8 +18,11 @@ public class AnthropicService: LLMServiceProtocol {
     /// A logger for recording information and errors within the `AnthropicService`.
     private let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "AnthropicService")
 
-    /// The name of the service, required by the protocol.
-    public let name = "Anthropic"
+    /// The name of the service vendor, required by the protocol.
+    public let vendor = "Anthropic"
+
+    /// The name of the service instance, which can be customized during initialization
+    public var name: String
 
     /// The base URL for the Anthropic API.
     private let baseURL: String
@@ -34,11 +37,13 @@ public class AnthropicService: LLMServiceProtocol {
      Initializes a new `AnthropicService` instance with the given API key and token limit.
 
      - Parameters:
+        - name: The name of the service instance (default is `"Anthropic"`).
         - baseURL: The base URL for the Anthropic API. Defaults to "https://api.anthropic.com".
         - apiKey: The API key used for authenticating requests to the Anthropic API.
         - maxTokenLimit: The maximum number of tokens allowed in a request. Defaults to 4096.
      */
-    public init(baseURL: String = "https://api.anthropic.com", apiKey: String?, maxTokenLimit: Int = 4096) {
+    public init(name: String = "Anthropic", baseURL: String = "https://api.anthropic.com", apiKey: String?, maxTokenLimit: Int = 4096) {
+        self.name = name
         self.baseURL = baseURL
         self.apiKey = apiKey
         self.maxTokenLimit = maxTokenLimit

@@ -24,7 +24,7 @@ final class LLMManagerTests: XCTestCase {
 
     func testServiceRegistration() async {
         // Given
-        let mockService = MockLLMService(name: "TestService", maxTokenLimit: 4096, expectedResult: .success(MockLLMResponse(text: "Test Output")))
+        let mockService = newMockService(id: "1")
 
         // When
         manager.registerService(mockService, withName: "TestService")
@@ -34,10 +34,22 @@ final class LLMManagerTests: XCTestCase {
         XCTAssertEqual(manager.activeServiceName, "TestService", "Active service should be the first registered service.")
     }
 
+    func testUnregisterService() async {
+        // Given
+        let service1 = newMockService(id: "1")
+        manager.registerService(service1, withName: "Service1")
+
+        // When
+        manager.unregisterService(withName: "Service1")
+
+        // Then
+        XCTAssertEqual(manager.services.count, 0, "Service count should be 0 after unregistering")
+    }
+
     func testSettingActiveService() async {
         // Given
-        let service1 = MockLLMService(name: "Service1", maxTokenLimit: 4096, expectedResult: .success(MockLLMResponse(text: "Service1 Output")))
-        let service2 = MockLLMService(name: "Service2", maxTokenLimit: 2048, expectedResult: .success(MockLLMResponse(text: "Service2 Output")))
+        let service1 = newMockService(id: "1")
+        let service2 = newMockService(id: "2")
 
         // When
         manager.registerService(service1, withName: "Service1")
@@ -135,5 +147,30 @@ final class LLMManagerTests: XCTestCase {
 
         // Then
         XCTAssertEqual(response?.text, "Test Output", "Response should be successful after trimming within buffer.")
+    }
+
+    func testSendRequestWithRoutingStrategy() async {
+        // Given
+        let service1 = MockLLMService(name: "Service1", maxTokenLimit: 25, expectedResult: .success(MockLLMResponse(text: "Service1 Output")))
+        let service2 = MockLLMService(name: "Service2", maxTokenLimit: 50, expectedResult: .success(MockLLMResponse(text: "Service2 Output")))
+
+        manager.registerService(service1, withName: "Service1")
+        manager.registerService(service2, withName: "Service2")
+
+        let longMessage = String(repeating: "E", count: 100) // Exceeds the limit of Service1 but not Service2
+
+        // When
+        let request = LLMRequest(messages: [LLMMessage(role: .user, content: longMessage)])
+        let response = await manager.sendRequestWithRouting(request, usingRoutingStrategy: .tokenLimit)
+
+        // Then
+        XCTAssertEqual(response?.text, "Service2 Output", "Should have routed to Service2 based on token limit.")
+    }
+
+    private func newMockService(id: String) -> MockLLMService {
+        MockLLMService(
+            name: "MockService\(id)",
+            expectedResult: .success(MockLLMResponse(text: "Mock response from Service \(id)"))
+        )
     }
 }

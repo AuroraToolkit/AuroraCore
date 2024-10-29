@@ -36,7 +36,7 @@ public class ContextController {
         - summarizer: Optional `Summarizer` instance. If none is provided, a default summarizer will be created.
      */
     public init(context: Context? = nil, llmService: LLMServiceProtocol, summarizer: SummarizerProtocol? = nil) {
-        self.context = context ?? Context(llmServiceName: llmService.name)
+        self.context = context ?? Context(llmServiceVendor: llmService.vendor)
         self.id = self.context.id  // Use the context's ID as the controller ID
         self.llmService = llmService
         self.summarizer = summarizer ?? Summarizer(llmService: llmService)
@@ -193,7 +193,7 @@ public class ContextController {
      */
     public func getContext() -> Context {
         var contextToReturn = context
-        contextToReturn.llmServiceName = llmService.name
+        contextToReturn.llmServiceVendor = llmService.vendor
         return contextToReturn
     }
 

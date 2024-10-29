@@ -17,8 +17,11 @@ public class OllamaService: LLMServiceProtocol {
     /// A logger for recording information and errors within the `AnthropicService`.
     private let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "OllamaService")
 
-    /// The name of the service, required by the protocol.
-    public let name = "Ollama"
+    /// The name of the service vendor, required by the protocol.
+    public let vendor = "Ollama"
+
+    /// The name of the service instance, which can be customized during initialization
+    public var name: String
 
     public var apiKey: String? // Not required for Ollama but included to satisfy the protocol
 
@@ -35,12 +38,14 @@ public class OllamaService: LLMServiceProtocol {
      Initializes a new `OllamaService` instance.
 
      - Parameters:
+        - name: The name of the service instance (default is `"Ollama"`).
         - baseURL: The base URL for the Ollama API (default is `"http://localhost:11434"`).
         - maxTokenLimit: The maximum number of tokens allowed in a request (default is 4096).
         - apiKey: An optional API key, though not required for local Ollama instances.
         - urlSession: The `URLSession` instance used for network requests (default is `URLSession.shared`).
      */
-    public init(baseURL: String = "http://localhost:11434", maxTokenLimit: Int = 4096, apiKey: String? = nil, urlSession: URLSession = .shared) {
+    public init(name: String = "Ollama", baseURL: String = "http://localhost:11434", maxTokenLimit: Int = 4096, apiKey: String? = nil, urlSession: URLSession = .shared) {
+        self.name = name
         self.baseURL = baseURL
         self.maxTokenLimit = maxTokenLimit
         self.apiKey = apiKey

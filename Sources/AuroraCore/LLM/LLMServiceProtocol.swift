@@ -19,8 +19,15 @@ import Foundation
  - Note: Each service can define its own token limits and handle authentication in its unique way.
  */
 public protocol LLMServiceProtocol {
-    // The name of the LLM service (e.g., "OpenAI", "Anthropic", "Ollama").
-    var name: String { get }
+    /**
+     The name of the LLM service vendor (e.g., "OpenAI", "Anthropic", "Ollama").
+     */
+    var vendor: String { get }
+
+    /**
+     The name of the service instance, which can be customized during initialization
+     */
+    var name: String { get set }
 
     /**
      The API key or authentication token required to interact with the LLM service.

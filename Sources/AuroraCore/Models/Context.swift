@@ -25,8 +25,8 @@ public struct Context: Codable, Equatable {
     /// A collection of `Bookmark` instances within the context.
     public private(set) var bookmarks: [Bookmark] = []
 
-    /// The name of the LLM service associated with this context.
-    public var llmServiceName: String
+    /// The name of the LLM service vendor associated with this context.
+    public var llmServiceVendor: String
 
     /// The creation date for the context.
     public let creationDate: Date
@@ -35,12 +35,12 @@ public struct Context: Codable, Equatable {
      Initializes a new `Context` with a unique identifier and associated LLM service information.
 
      - Parameters:
-        - llmServiceName: The name of the LLM service associated with this context.
+        - llmServiceVendor: The name of the LLM service vendor associated with this context.
         - creationDate: The date when the context was created. Defaults to the current date.
      */
-    public init(llmServiceName: String, creationDate: Date = Date()) {
+    public init(llmServiceVendor: String, creationDate: Date = Date()) {
         self.id = UUID()
-        self.llmServiceName = llmServiceName
+        self.llmServiceVendor = llmServiceVendor
         self.creationDate = creationDate
     }
 
@@ -149,7 +149,7 @@ public struct Context: Codable, Equatable {
         return lhs.id == rhs.id &&
             lhs.items == rhs.items &&
             lhs.bookmarks == rhs.bookmarks &&
-            lhs.llmServiceName == rhs.llmServiceName &&
+            lhs.llmServiceVendor == rhs.llmServiceVendor &&
             abs(lhs.creationDate.timeIntervalSince(rhs.creationDate)) < 1.0 // Ignore differences smaller than 1 second
     }
 }
