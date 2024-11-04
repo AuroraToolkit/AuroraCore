@@ -13,10 +13,10 @@ public class MockLLMServiceFactory: LLMServiceFactory {
     private var mockServices: [String: LLMServiceProtocol] = [:]
 
     public func registerMockService(_ service: LLMServiceProtocol) {
-        mockServices[service.name] = service
+        mockServices[service.vendor] = service
     }
 
     public override func createService(for context: Context) -> LLMServiceProtocol? {
-        return mockServices[context.llmServiceName] ?? nil
+        return mockServices[context.llmServiceVendor] ?? nil
     }
 }

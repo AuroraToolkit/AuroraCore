@@ -56,4 +56,9 @@ public struct LLMRequest {
         self.stream = stream
         self.options = options
     }
+
+    // Method to estimate the token count of the request messages
+    public func estimatedTokenCount() -> Int {
+        return messages.reduce(0) { $0 + $1.content.estimatedTokenCount() }
+    }
 }

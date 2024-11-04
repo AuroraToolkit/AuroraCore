@@ -79,7 +79,7 @@ final class ContextControllerTests: XCTestCase {
 
     func testGetContext() {
         // Given
-        let context = Context(llmServiceName: mockService.name)
+        let context = Context(llmServiceVendor: mockService.name)
         let contextController = ContextController(context: context, llmService: mockService)
 
         // When
@@ -139,7 +139,7 @@ final class ContextControllerTests: XCTestCase {
 
     func testSummarizedContextRetrieval() async throws {
         // Given
-        var context = Context(llmServiceName: mockService.name)
+        var context = Context(llmServiceVendor: mockService.name)
         let content1 = String(repeating: "Item 1 ", count: 10)
         let content2 = String(repeating: "Item 2 ", count: 1000)
         context.addItem(content: content1, creationDate: Date().addingTimeInterval(-8 * 24 * 60 * 60)) // 8 days old
@@ -168,7 +168,7 @@ final class ContextControllerTests: XCTestCase {
 
     func testSummarizeOlderContextAllSummarized() async throws {
         // Given
-        var context = Context(llmServiceName: "TestService")
+        var context = Context(llmServiceVendor: "TestService")
         context.addItem(content: "Old item", creationDate: Date().addingTimeInterval(-8 * 24 * 60 * 60), isSummary: true)
         let contextController = ContextController(context: context, llmService: mockService)
 
@@ -271,13 +271,13 @@ final class ContextControllerTests: XCTestCase {
     // Test that the LLM service is correctly persisted in the context after updating it
     func testContextPersistenceAfterUpdatingLLMService() {
         // Given
-        let newMockService = MockLLMService(name: "NewTestService", maxTokenLimit: 150, expectedResult: .success(MockLLMResponse(text: "New Test Output")))
+        let newMockService = MockLLMService(name: "NewTestService", vendor: "NewTestLLMVendor", maxTokenLimit: 150, expectedResult: .success(MockLLMResponse(text: "New Test Output")))
 
         // When
         contextController.updateLLMService(newMockService)
         let persistedContext = contextController.getContext()
 
         // Then
-        XCTAssertEqual(persistedContext.llmServiceName, "NewTestService", "The LLM service name should be persisted in the context after updating the service.")
+        XCTAssertEqual(persistedContext.llmServiceVendor, "NewTestLLMVendor", "The LLM service name should be persisted in the context after updating the service.")
     }
 }

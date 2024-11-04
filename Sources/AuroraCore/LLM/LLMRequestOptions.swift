@@ -32,6 +32,9 @@ public struct LLMRequestOptions {
     /// The suffix to add to the generated text (if applicable).
     public var suffix: String?
 
+    /// Preferred domains for the request, used for selecting the most suitable service during routing.
+    public var preferredDomains: [String]?
+
     /**
      Initializes a new `LLMRequestOptions` with default values for all fields.
 
@@ -43,6 +46,7 @@ public struct LLMRequestOptions {
         - logitBias: An optional dictionary that maps tokens to biases, allowing adjustment of token probabilities.
         - user: An optional string representing a user identifier for tracking purposes.
         - suffix: An optional string that will be added after the model's response.
+        - preferredDomains: An optional array of strings representing preferred domains for routing.
      */
     public init(
         topP: Double? = nil,
@@ -51,7 +55,8 @@ public struct LLMRequestOptions {
         stopSequences: [String]? = nil,
         logitBias: [String: Double]? = nil,
         user: String? = nil,
-        suffix: String? = nil
+        suffix: String? = nil,
+        preferredDomains: [String]? = nil
     ) {
         self.topP = topP
         self.frequencyPenalty = frequencyPenalty
@@ -60,5 +65,6 @@ public struct LLMRequestOptions {
         self.logitBias = logitBias
         self.user = user
         self.suffix = suffix
+        self.preferredDomains = preferredDomains
     }
 }

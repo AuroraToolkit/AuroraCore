@@ -38,7 +38,7 @@ final class LoadContextTaskTests: XCTestCase {
     // Test case for loading a valid context from a specific file
     func testLoadContextFromFile() async throws {
         // Create a sample context and save it to disk
-        var context = Context(llmServiceName: "TestService")
+        var context = Context(llmServiceVendor: "TestService")
         context.addItem(content: "Test content")
         let filename = "test_context.json"
         try saveContextToFile(context, filename: filename)
@@ -59,7 +59,7 @@ final class LoadContextTaskTests: XCTestCase {
     // Test case for loading a context from a default file when no filename is provided
     func testLoadContextFromDefaultFile() async throws {
         // Create a sample context and save it to a default file
-        var context = Context(llmServiceName: "DefaultService")
+        var context = Context(llmServiceVendor: "DefaultService")
         context.addItem(content: "Default content")
         let defaultFilename = "default_context.json"
         try saveContextToFile(context, filename: defaultFilename)

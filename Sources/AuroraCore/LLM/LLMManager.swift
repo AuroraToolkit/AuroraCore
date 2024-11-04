@@ -8,17 +8,35 @@
 import Foundation
 import os.log
 
-/**
- `LLMManager` is responsible for managing multiple Language Learning Model (LLM) services, handling requests, routing, and fallback mechanisms.
- It allows registering services, sending requests, and managing token usage with trimming strategies.
- */
 public class LLMManager {
+
+    /// Routing options for selecting an appropriate LLM service.
+    public enum Routing: CustomStringConvertible {
+        case tokenLimit
+        case domain([String])
+        case fallback
+        case `default`
+
+        /// A human-readable description of each routing strategy.
+        public var description: String {
+            switch self {
+            case .tokenLimit:
+                return "Token Limit"
+            case .domain(let domains):
+                return "Domain (\(domains.joined(separator: ", ")))"
+            case .fallback:
+                return "Fallback"
+            case .default:
+                return "Default"
+            }
+        }
+    }
 
     /// A logger for recording information and errors within the `LLMManager`.
     private let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "LLMManager")
 
-    /// A dictionary mapping service names to their respective `LLMServiceProtocol` instances.
-    private(set) var services: [String: LLMServiceProtocol] = [:]
+    /// A dictionary mapping service names to their respective `LLMServiceProtocol` instances with `Routing` options.
+    private(set) var services: [String: (service: LLMServiceProtocol, routingOptions: [Routing])] = [:]
 
     /// The name of the currently active service.
     private(set) var activeServiceName: String?
@@ -26,38 +44,28 @@ public class LLMManager {
     // MARK: - Registering Services
 
     /**
-     Registers a new LLM service.
+     Registers a new LLM service or replaces an existing one with the same name.
 
      - Parameters:
-        - service: The service conforming to `LLMServiceProtocol` to be registered.
-     */
-    public func registerService(_ service: LLMServiceProtocol, withName name: String) {
-        logger.log("Registering service: \(name, privacy: .public)")
-        services[name.lowercased()] = service
+     - service: The service conforming to `LLMServiceProtocol` to be registered.
+     - withRouting: The `Routing` options, if any, for the service.
 
-        // Set as active service if no active service is set
-        if activeServiceName == nil {
-            activeServiceName = name
-            logger.log("Active service set to: \(self.activeServiceName ?? "nil", privacy: .public)")
+     If a service with the same name already exists, it is replaced. Sets the first registered service as the active service if no active service is set.
+     */
+    public func registerService(_ service: LLMServiceProtocol, withRouting routing: [Routing] = [.default]) {
+        let serviceName = service.name.lowercased()
+
+        if services[serviceName] != nil {
+            logger.log("Replacing existing service with name '\(serviceName)'")
+        } else {
+            logger.log("Registering new service with name '\(serviceName)'")
         }
-    }
 
-    /**
-     Replaces an existing service, and makes the new service active if necessary.
+        services[serviceName] = (service, routing)
 
-     - Parameters:
-     - service: The service conforming to `LLMServiceProtocol` to be replaced.
-
-     Note: The service will be replaced by service.name.
-     */
-    public func replaceService(_ newService: LLMServiceProtocol, withName name: String) {
-        logger.log("Replacing service: \(name, privacy: .public)")
-        services[name.lowercased()] = newService
-
-        // Set active service if none is currently set
         if activeServiceName == nil {
-            activeServiceName = name
-            logger.log("Active service set to: \(self.activeServiceName ?? "nil", privacy: .public)")
+            activeServiceName = serviceName
+            logger.log("Active service set to: \(self.activeServiceName ?? "nil", privacy: .auto)")
         }
     }
 
@@ -66,14 +74,17 @@ public class LLMManager {
 
      - Parameters:
      - name: The name under which the service is registered.
+
+     If the service being unregistered is the active service, the active service is reset to the first available service or nil if no services are left.
      */
     public func unregisterService(withName name: String) {
-        logger.log("Unregistering service: \(name, privacy: .public)")
-        services[name.lowercased()] = nil
+        let serviceName = name.lowercased()
+        logger.log("Unregistering service: \(serviceName, privacy: .public)")
 
-        // Reset the active service if it was the one removed
-        if activeServiceName == name {
-            activeServiceName = services.keys.first // Set to another service if available, or nil if empty
+        services[serviceName] = nil
+
+        if activeServiceName == serviceName {
+            activeServiceName = services.keys.first
             logger.log("Active service set to: \(self.activeServiceName ?? "nil", privacy: .public)")
         }
     }
@@ -84,6 +95,8 @@ public class LLMManager {
      Sets the active LLM service by its registered name.
 
      - Parameter name: The name of the service to be set as active.
+
+     Logs an error if the specified name does not correspond to a registered service.
      */
     public func setActiveService(byName name: String) {
         guard services[name.lowercased()] != nil else {
@@ -97,27 +110,33 @@ public class LLMManager {
     // MARK: - Send Request
 
     /**
-     Sends a request to the active LLM service, applying token trimming strategies if necessary.
+     Sends a request to an LLM service, applying the specified routing and token trimming strategies if necessary.
 
      - Parameters:
-        - request: The `LLMRequest` containing the messages and parameters.
-        - buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
-        - strategy: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
+     - request: The `LLMRequest` containing the messages and parameters.
+     - routing: The routing option to select the appropriate service. Defaults to `.default`.
+     - buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
+     - trimming: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
      - Returns: An optional `LLMResponseProtocol` object.
+
+     This function trims the content if it exceeds the token limit of the selected service and sends the request.
      */
     public func sendRequest(
         _ request: LLMRequest,
+        routing: Routing = .default,
         buffer: Double = 0.05,
-        strategy: String.TrimmingStrategy = .end
+        trimming: String.TrimmingStrategy = .end
     ) async -> LLMResponseProtocol? {
-        guard let activeServiceName = activeServiceName, let service = services[activeServiceName.lowercased()] else {
-            logger.error("No active service available to handle the request.")
+        let selectedService = selectService(basedOn: routing, for: request)
+
+        guard let service = selectedService else {
+            logger.error("No service available for the specified routing strategy.")
             return nil
         }
 
-        logger.log("Sending request to active service: \(activeServiceName, privacy: .public)")
+        logger.log("Sending request to service: \(service.name, privacy: .public)")
 
-        let trimmedMessages = trimMessages(request.messages, toFitTokenLimit: service.maxTokenLimit, buffer: buffer, strategy: strategy)
+        let trimmedMessages = trimMessages(request.messages, toFitTokenLimit: service.maxTokenLimit, buffer: buffer, strategy: trimming)
         let optimizedRequest = LLMRequest(messages: trimmedMessages, model: request.model)
 
         return await sendRequestToService(service, withRequest: optimizedRequest)
@@ -126,102 +145,38 @@ public class LLMManager {
     // MARK: - Streaming Request
 
     /**
-     Sends a streaming request to the active LLM service, applying token trimming strategies if necessary.
+     Sends a streaming request to an LLM service, applying the specified routing and token trimming strategies if necessary.
 
      - Parameters:
-        - request: The `LLMRequest` containing the messages and parameters.
-        - onPartialResponse: A closure that handles partial responses during streaming.
-        - buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
-        - strategy: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
+     - request: The `LLMRequest` containing the messages and parameters.
+     - onPartialResponse: A closure that handles partial responses during streaming.
+     - routing: The routing option to select the appropriate service. Defaults to `.default`.
+     - buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
+     - trimming: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
      - Returns: An optional `LLMResponseProtocol` object.
+
+     This function trims the content if it exceeds the token limit of the selected service and sends the streaming request.
      */
     public func sendStreamingRequest(
         _ request: LLMRequest,
         onPartialResponse: ((String) -> Void)?,
+        routing: Routing = .default,
         buffer: Double = 0.05,
-        strategy: String.TrimmingStrategy = .end
+        trimming: String.TrimmingStrategy = .end
     ) async -> LLMResponseProtocol? {
-        guard let activeServiceName = activeServiceName, let service = services[activeServiceName.lowercased()] else {
-            logger.error("No active service available to handle the streaming request.")
+        let selectedService = selectService(basedOn: routing, for: request)
+
+        guard let service = selectedService else {
+            logger.error("No service available for the specified routing strategy.")
             return nil
         }
 
-        logger.log("Sending streaming request to active service: \(activeServiceName, privacy: .public)")
+        logger.log("Sending streaming request to service: \(service.name, privacy: .public)")
 
-        let trimmedMessages = trimMessages(request.messages, toFitTokenLimit: service.maxTokenLimit, buffer: buffer, strategy: strategy)
+        let trimmedMessages = trimMessages(request.messages, toFitTokenLimit: service.maxTokenLimit, buffer: buffer, strategy: trimming)
         let optimizedRequest = LLMRequest(messages: trimmedMessages, model: request.model)
 
         return await sendRequestToService(service, withRequest: optimizedRequest, onPartialResponse: onPartialResponse)
-    }
-
-    // MARK: - Hybrid Routing
-
-    /**
-     Sends a request to a service chosen by the provided routing strategy.
-
-     - Parameters:
-        - request: The `LLMRequest` containing the messages and parameters.
-        - strategy: A closure that selects a service name based on the request.
-        - buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
-        - trimmingStrategy: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
-     - Returns: An optional `LLMResponseProtocol` object.
-     */
-    public func sendRequestWithRouting(
-        _ request: LLMRequest,
-        usingRoutingStrategy strategy: @escaping (LLMRequest) -> String?,
-        buffer: Double = 0.05,
-        trimmingStrategy: String.TrimmingStrategy = .end
-    ) async -> LLMResponseProtocol? {
-        if let selectedServiceName = strategy(request),
-           let selectedService = services[selectedServiceName.lowercased()] {
-
-            logger.log("Routing request to service: \(selectedServiceName, privacy: .public)")
-
-            let trimmedMessages = trimMessages(request.messages, toFitTokenLimit: selectedService.maxTokenLimit, buffer: buffer, strategy: trimmingStrategy)
-            let optimizedRequest = LLMRequest(messages: trimmedMessages, model: request.model)
-
-            return await sendRequestToService(selectedService, withRequest: optimizedRequest)
-        } else {
-            logger.log("Routing strategy failed. Falling back to active service.")
-            return await sendRequest(request, buffer: buffer, strategy: trimmingStrategy)
-        }
-    }
-
-    // MARK: - Fallback Mechanism
-
-    /**
-     Sends a request to the active service, with a fallback to another service if the request fails.
-
-     - Parameters:
-        - request: The `LLMRequest` containing the messages and parameters.
-        - fallbackServiceName: The name of the service to fall back to if the active service fails.
-        - buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
-        - strategy: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
-     - Returns: An optional `LLMResponseProtocol` object.
-     */
-    public func sendRequestWithFallback(
-        _ request: LLMRequest,
-        fallbackServiceName: String,
-        buffer: Double = 0.05,
-        strategy: String.TrimmingStrategy = .end
-    ) async -> LLMResponseProtocol? {
-        logger.log("Attempting request with active service first.")
-        if let response = await sendRequest(request, buffer: buffer, strategy: strategy) {
-            logger.log("Active service succeeded.")
-            return response
-        } else {
-            logger.error("Active service failed. Attempting fallback service: \(fallbackServiceName, privacy: .public)")
-            if let fallbackService = services[fallbackServiceName.lowercased()] {
-
-                let trimmedMessages = trimMessages(request.messages, toFitTokenLimit: fallbackService.maxTokenLimit, buffer: buffer, strategy: strategy)
-                let optimizedRequest = LLMRequest(messages: trimmedMessages, model: request.model)
-
-                return await sendRequestToService(fallbackService, withRequest: optimizedRequest)
-            } else {
-                logger.error("Fallback service not found: \(fallbackServiceName, privacy: .public)")
-                return nil
-            }
-        }
     }
 
     // MARK: - Helper Methods
@@ -230,10 +185,10 @@ public class LLMManager {
      Trims the content of the provided messages to fit within a token limit, applying a buffer and trimming strategy.
 
      - Parameters:
-        - messages: The array of `LLMMessage` objects to trim.
-        - limit: The maximum token limit allowed for the message content.
-        - buffer: The buffer percentage to apply to the token limit.
-        - strategy: The trimming strategy to use if content exceeds the token limit.
+     - messages: The array of `LLMMessage` objects to trim.
+     - limit: The maximum token limit allowed for the message content.
+     - buffer: The buffer percentage to apply to the token limit.
+     - strategy: The trimming strategy to use if content exceeds the token limit.
      - Returns: An array of trimmed `LLMMessage` objects fitting within the token limit.
      */
     private func trimMessages(_ messages: [LLMMessage], toFitTokenLimit limit: Int, buffer: Double, strategy: String.TrimmingStrategy) -> [LLMMessage] {
@@ -249,9 +204,9 @@ public class LLMManager {
      Sends a request to a specific LLM service.
 
      - Parameters:
-        - service: The `LLMServiceProtocol` conforming service.
-        - request: The `LLMRequest` to send.
-        - onPartialResponse: A closure that handles partial responses during streaming (optional).
+     - service: The `LLMServiceProtocol` conforming service.
+     - request: The `LLMRequest` to send.
+     - onPartialResponse: A closure that handles partial responses during streaming (optional).
      - Returns: An optional `LLMResponseProtocol` object.
      */
     private func sendRequestToService(
@@ -272,6 +227,75 @@ public class LLMManager {
         } catch {
             logger.error("Service failed with error: \(error.localizedDescription, privacy: .public)")
             return nil
+        }
+    }
+
+    /**
+     Chooses an LLM service based on the provided routing strategy.
+
+     - Parameters:
+     - routing: The routing strategy to be applied for selection.
+     - request: The request being sent, used for analyzing compatibility.
+     - Returns: The `LLMServiceProtocol` that matches the given routing strategy, if available.
+     */
+    private func selectService(basedOn routing: Routing, for request: LLMRequest) -> LLMServiceProtocol? {
+        // First, try to find a service that meets the specific criteria of the routing strategy.
+        if let matchingService = services.values.first(where: { serviceMeetsCriteria($0.service, routing: routing, for: request) })?.service {
+            logger.log("Routing to service matching strategy \(routing): \(matchingService.name)")
+            return matchingService
+        }
+
+        // If no service meets the criteria, attempt to use a fallback service.
+        if let fallbackService = services.values.first(where: { serviceMeetsCriteria($0.service, routing: .fallback, for: request) })?.service {
+            logger.log("Routing to fallback service as no match found for strategy \(routing): \(fallbackService.name)")
+            return fallbackService
+        }
+
+        // No suitable or fallback service was found.
+        logger.log("No suitable service found for routing strategy \(routing), and no fallback available.")
+        return nil
+    }
+
+    /**
+     Evaluates whether a given `LLMServiceProtocol` service meets the criteria specified by a routing strategy for the given request.
+
+     - Parameters:
+        - service: The service being evaluated.
+        - routing: The routing strategy that specifies which criteria to evaluate.
+        - request: The `LLMRequest` providing details such as token count and preferred domains.
+
+     - Returns: `true` if the service meets the criteria specified by the routing strategy; `false` otherwise.
+
+     - Routing criteria:
+        - **Default**: Checks that the service is available and meets the basic token limit for the request.
+        - **TokenLimit**: Confirms that the service's token capacity can handle the estimated token count in the request.
+        - **Domain**: Ensures the service covers the preferred domains specified in the request.
+        - **Fallback**: Only verifies that the service has a valid API key, allowing it to serve as a fallback option.
+     */
+    private func serviceMeetsCriteria(_ service: LLMServiceProtocol, routing: Routing, for request: LLMRequest) -> Bool {
+        switch routing {
+        case .default:
+            // Default routing checks if the service is valid and meets basic criteria
+            return service.apiKey != nil && service.maxTokenLimit >= request.estimatedTokenCount()
+
+        case .tokenLimit:
+            // Token limit routing checks if the service can handle the token count in the request
+            let requestTokenCount = request.estimatedTokenCount()
+            return service.apiKey != nil && service.maxTokenLimit >= requestTokenCount
+
+        case .domain(let preferredDomains):
+            // Domain routing checks if the service covers the preferred domains
+            let lowercasePreferredDomains = Set(preferredDomains.map { $0.lowercased() })
+            let serviceDomains = services[service.name.lowercased()]?.routingOptions.compactMap { option in
+                if case let .domain(domains) = option { return domains.map { $0.lowercased() } }
+                return nil
+            }.flatMap { $0 } ?? []
+
+            return service.apiKey != nil && lowercasePreferredDomains.isSubset(of: Set(serviceDomains))
+
+        case .fallback:
+            // Fallback routing only checks that the service is available and does not enforce API key requirement
+            return !service.requiresAPIKey || service.apiKey != nil
         }
     }
 }

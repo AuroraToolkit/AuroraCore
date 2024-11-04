@@ -63,7 +63,7 @@ final class ContextManagerTests: XCTestCase {
     // Test adding a new context with a custom context
     func testAddNewContextWithCustomContext() {
         // Given
-        let customContext = Context(llmServiceName: mockService.name)
+        let customContext = Context(llmServiceVendor: mockService.vendor)
 
         // When
         let contextID = contextManager.addNewContext(customContext, llmService: mockService)
@@ -87,7 +87,7 @@ final class ContextManagerTests: XCTestCase {
     // Test adding a new context with both custom context and summarizer
     func testAddNewContextWithCustomContextAndSummarizer() {
         // Given
-        let customContext = Context(llmServiceName: mockService.name)
+        let customContext = Context(llmServiceVendor: mockService.vendor)
         let customSummarizer = MockSummarizer()
 
         // When
@@ -119,7 +119,7 @@ final class ContextManagerTests: XCTestCase {
 
     func testAddNewContextWithProvidedContext() {
         // Given
-        var preCreatedContext = Context(llmServiceName: mockService.name)
+        var preCreatedContext = Context(llmServiceVendor: mockService.vendor)
         preCreatedContext.addItem(content: "Pre-created content")
 
         // When
@@ -271,7 +271,7 @@ final class ContextManagerTests: XCTestCase {
 
         // When
         try await contextManager.saveAllContexts()
-        contextManager.contextControllers.removeAll() // we should have a contextManager.removeAllContexts() that clears active context id
+        contextManager.removeAllContexts()
         try await contextManager.loadAllContexts()
 
         // Then
@@ -314,12 +314,12 @@ final class ContextManagerTests: XCTestCase {
         let contextID2 = UUID()
 
         // Simulate saving two contexts to the file system using SaveContextTask
-        var context1 = Context(llmServiceName: mockService.name)
+        var context1 = Context(llmServiceVendor: mockService.vendor)
         context1.addItem(content: "Item in context 1")
         let saveTask1 = SaveContextTask(context: context1, filename: "context_\(contextID1.uuidString)")
         try await saveTask1.execute()
 
-        var context2 = Context(llmServiceName: mockService2.name)
+        var context2 = Context(llmServiceVendor: mockService2.vendor)
         context2.addItem(content: "Item in context 2")
         let saveTask2 = SaveContextTask(context: context2, filename: "context_\(contextID2.uuidString)")
         try await saveTask2.execute()

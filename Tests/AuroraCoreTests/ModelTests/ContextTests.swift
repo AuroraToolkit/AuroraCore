@@ -14,7 +14,7 @@ final class ContextTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        context = Context(llmServiceName: "openai")
+        context = Context(llmServiceVendor: "openai")
     }
 
     override func tearDown() {
@@ -28,7 +28,7 @@ final class ContextTests: XCTestCase {
         let expectedDate = Date()
 
         // When
-        let context = Context(llmServiceName: "openai", creationDate: expectedDate)
+        let context = Context(llmServiceVendor: "openai", creationDate: expectedDate)
 
         // Then
         let calendar = Calendar.current
@@ -56,7 +56,7 @@ final class ContextTests: XCTestCase {
     func testContextPersistenceWithCreationDate() {
         // Given
         let expectedDate = Date(timeIntervalSince1970: 1000) // Use a fixed timestamp for the test
-        context = Context(llmServiceName: "openai", creationDate: expectedDate)
+        context = Context(llmServiceVendor: "openai", creationDate: expectedDate)
 
         let encoder = JSONEncoder()
         let decoder = JSONDecoder()

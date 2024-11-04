@@ -30,6 +30,9 @@ public class AnthropicService: LLMServiceProtocol {
     /// The API key used for authenticating requests to the Anthropic API.
     public var apiKey: String?
 
+    /// Anthropic requires an API key for authentication.
+    public let requiresAPIKey = true
+
     /// The maximum token limit that can be processed by this service.
     public let maxTokenLimit: Int
 

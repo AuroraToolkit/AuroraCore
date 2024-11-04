@@ -28,7 +28,7 @@ final class SaveContextTaskTests: XCTestCase {
 
     // Test for successfully saving a context to a specified file
     func testSaveContextSuccess() async throws {
-        let context = Context(llmServiceName: "TestService")
+        let context = Context(llmServiceVendor: "TestService")
         let filename = "test_context.json"
 
         // Initialize and execute the task
@@ -48,7 +48,7 @@ final class SaveContextTaskTests: XCTestCase {
 
     // Test for invalid `context` input to simulate a failure
     func testSaveContextMissingContextInput() async throws {
-        let context = Context(llmServiceName: "OpenAI") // Sample context
+        let context = Context(llmServiceVendor: "OpenAI") // Sample context
         let task = SaveContextTask(context: context, filename: "test_context")
 
         // Set context input to nil
@@ -65,7 +65,7 @@ final class SaveContextTaskTests: XCTestCase {
 
     // Test for invalid `filename` input to simulate a failure
     func testSaveContextMissingFilenameInput() async throws {
-        let context = Context(llmServiceName: "OpenAI") // Sample context
+        let context = Context(llmServiceVendor: "OpenAI") // Sample context
         let task = SaveContextTask(context: context, filename: "test_context")
 
         // Set filename input to nil

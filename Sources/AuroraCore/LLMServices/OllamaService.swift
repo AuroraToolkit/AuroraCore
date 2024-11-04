@@ -25,6 +25,9 @@ public class OllamaService: LLMServiceProtocol {
 
     public var apiKey: String? // Not required for Ollama but included to satisfy the protocol
 
+    /// Ollama does not require an API key for authentication.
+    public let requiresAPIKey = false
+
     /// The maximum token limit that can be processed by this service.
     public let maxTokenLimit: Int
 

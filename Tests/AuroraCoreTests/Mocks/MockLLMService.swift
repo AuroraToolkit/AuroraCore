@@ -10,8 +10,10 @@ import XCTest
 @testable import AuroraCore
 
 final class MockLLMService: LLMServiceProtocol {
-    let name: String
+    var name: String
+    let vendor: String
     var apiKey: String?
+    let requiresAPIKey = false
     var maxTokenLimit: Int
     private let expectedResult: Result<LLMResponseProtocol, Error>
     private let streamingExpectedResult: String?
@@ -22,8 +24,9 @@ final class MockLLMService: LLMServiceProtocol {
     var receivedRoutingStrategy: String.TrimmingStrategy?
     var receivedFallbackCount = 0
 
-    init(name: String, maxTokenLimit: Int = 4096, expectedResult: Result<LLMResponseProtocol, Error>, streamingExpectedResult: String? = nil) {
+    init(name: String, vendor: String = "MockLLM", maxTokenLimit: Int = 4096, expectedResult: Result<LLMResponseProtocol, Error>, streamingExpectedResult: String? = nil) {
         self.name = name
+        self.vendor = vendor
         self.maxTokenLimit = maxTokenLimit
         self.expectedResult = expectedResult
         self.streamingExpectedResult = streamingExpectedResult

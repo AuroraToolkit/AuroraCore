@@ -37,6 +37,11 @@ public protocol LLMServiceProtocol {
     var apiKey: String? { get set }
 
     /**
+     Not all LLM services require an API key for authentication. This property indicates whether the service requires one.
+     */
+    var requiresAPIKey: Bool { get }
+
+    /**
      The maximum number of tokens allowed in a single request by the LLM service.
 
      - Important: This value may differ between services. For example, OpenAI may have a higher token limit compared to other LLMs.
