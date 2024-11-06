@@ -110,24 +110,25 @@ final class LLMManagerTests: XCTestCase {
         manager.registerService(service1)
         manager.registerService(service2)
 
-        let longMessage = String(repeating: "B", count: 100) // Exceeds token limits for both services
+        // Test 1: Message that fits within Service1's limit after trimming
+        let shorterMessage = String(repeating: "B", count: 25 * 4) // Estimated to fit within 30-token limit after trimming
+        let request1 = LLMRequest(messages: [LLMMessage(role: .user, content: shorterMessage)])
 
-        // When
-        let request1 = LLMRequest(messages: [LLMMessage(role: .user, content: longMessage)])
-        manager.setActiveService(byName: "Service1")
         let response1 = await manager.sendRequest(request1, trimming: .middle)
 
         // Then
-        XCTAssertEqual(response1?.text, "Service1 Output", "Service1 should handle trimmed message content")
+        XCTAssertEqual(response1?.text, "Service1 Output", "Service1 should handle trimmed message content that fits within its token limit.")
 
-        let request2 = LLMRequest(messages: [LLMMessage(role: .user, content: longMessage)])
-        manager.setActiveService(byName: "Service2")
+        // Test 2: Message that exceeds Service1's limit but fits within Service2's limit
+        let longerMessage = String(repeating: "B", count: 40 * 4) // Exceeds Service1's 30-token limit, fits within Service2's 50-token limit
+        let request2 = LLMRequest(messages: [LLMMessage(role: .user, content: longerMessage)])
+
         let response2 = await manager.sendRequest(request2, trimming: .end)
 
         // Then
-        XCTAssertEqual(response2?.text, "Service2 Output", "Service2 should handle trimmed message content")
+        XCTAssertEqual(response2?.text, "Service2 Output", "Service2 should handle trimmed message content when Service1 limit is exceeded.")
     }
-
+    
     func testFallbackServiceWithTokenLimits() async {
         // Given
         let mockService = MockLLMService(name: "TestService", maxTokenLimit: 20, expectedResult: .failure(NSError(domain: "Test", code: 1, userInfo: nil)))
@@ -169,7 +170,7 @@ final class LLMManagerTests: XCTestCase {
         manager.registerService(service1)
         manager.registerService(service2)
 
-        let longMessage = String(repeating: "E", count: 100) // Exceeds the limit of Service1 but not Service2
+        let longMessage = String(repeating: "E", count: 26 * 4) // Exceeds the limit of Service1 but not Service2
 
         // When
         let request = LLMRequest(messages: [LLMMessage(role: .user, content: longMessage)])

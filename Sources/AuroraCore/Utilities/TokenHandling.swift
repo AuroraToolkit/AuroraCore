@@ -56,6 +56,8 @@ public extension String {
                 trimmedString = String(trimmedString[..<firstHalfEndIndex]) + String(trimmedString[secondHalfStartIndex...])
             case .end:
                 trimmedString = String(trimmedString.dropLast(10))
+            case .none:
+                return self
             }
         }
 
@@ -67,5 +69,6 @@ public extension String {
         case start
         case middle
         case end
+        case none
     }
 }
