@@ -8,13 +8,16 @@
 import Foundation
 import os.log
 
+/**
+ `LLMManager` is responsible for managing multiple LLM services and routing requests to the appropriate service based on the specified criteria.
+ It allows registering, unregistering, and selecting services based on routing options such as token limit or domain, as well as providing fallback service support.
+ */
 public class LLMManager {
 
     /// Routing options for selecting an appropriate LLM service.
-    public enum Routing: CustomStringConvertible {
+    public enum Routing: CustomStringConvertible, Equatable {
         case tokenLimit
         case domain([String])
-        case fallback
 
         /// A human-readable description of each routing strategy.
         public var description: String {
@@ -23,8 +26,6 @@ public class LLMManager {
                 return "Token Limit"
             case .domain(let domains):
                 return "Domain (\(domains.joined(separator: ", ")))"
-            case .fallback:
-                return "Fallback"
             }
         }
     }
@@ -37,6 +38,9 @@ public class LLMManager {
 
     /// The name of the currently active service.
     private(set) var activeServiceName: String?
+
+    /// The designated fallback service.
+    private(set) var fallbackService: LLMServiceProtocol?
 
     // MARK: - Registering Services
 
@@ -62,9 +66,26 @@ public class LLMManager {
 
         if activeServiceName == nil {
             activeServiceName = serviceName
-            logger.log("Active service set to: \(self.activeServiceName ?? "nil", privacy: .auto)")
+            logger.log("Active service set to: \(self.activeServiceName ?? "nil")")
         }
     }
+
+    /**
+        Registers a new fallback LLM service or replaces an existing one.
+
+        - Parameter service: The service conforming to `LLMServiceProtocol` to be registered as a fallback.
+     */
+    public func registerFallbackService(_ service: LLMServiceProtocol) {
+        if fallbackService != nil {
+            logger.log("Replacing existing fallback service with name '\(service.name)'")
+        } else {
+            logger.log("Registering new fallback service with name '\(service.name)'")
+        }
+
+        fallbackService = service
+    }
+
+
 
     /**
      Unregisters an LLM service with a specified name.
@@ -76,13 +97,13 @@ public class LLMManager {
      */
     public func unregisterService(withName name: String) {
         let serviceName = name.lowercased()
-        logger.log("Unregistering service: \(serviceName, privacy: .public)")
+        logger.log("Unregistering service: \(serviceName)")
 
         services[serviceName] = nil
 
         if activeServiceName == serviceName {
             activeServiceName = services.keys.first
-            logger.log("Active service set to: \(self.activeServiceName ?? "nil", privacy: .public)")
+            logger.log("Active service set to: \(self.activeServiceName ?? "nil")")
         }
     }
 
@@ -97,11 +118,11 @@ public class LLMManager {
      */
     public func setActiveService(byName name: String) {
         guard services[name.lowercased()] != nil else {
-            logger.error("Attempted to set active service to unknown service: \(name, privacy: .public)")
+            logger.error("Attempted to set active service to unknown service: \(name)")
             return
         }
         activeServiceName = name
-        logger.log("Active service switched to: \(self.activeServiceName ?? "nil", privacy: .public)")
+        logger.log("Active service switched to: \(self.activeServiceName ?? "nil")")
     }
 
     // MARK: - Send Request
@@ -218,7 +239,14 @@ public class LLMManager {
 
             // Trim messages to fit within the maximum token limit across all services
             let trimmedMessages = trimMessages(request.messages, toFitTokenLimit: maxTokenLimit, buffer: buffer, strategy: trimming)
-            optimizedRequest = LLMRequest(messages: trimmedMessages, model: request.model)
+            optimizedRequest = LLMRequest(
+                messages: trimmedMessages,
+                temperature: request.temperature,
+                maxTokens: request.maxTokens,
+                model: request.model,
+                stream: request.stream,
+                options: request.options
+            )
         }
         return optimizedRequest
     }
@@ -246,17 +274,20 @@ public class LLMManager {
      Sends a request to a specific LLM service.
 
      - Parameters:
-         - service: The `LLMServiceProtocol` conforming service.
-         - request: The `LLMRequest` to send.
-         - onPartialResponse: A closure that handles partial responses during streaming (optional).
+        - service: The `LLMServiceProtocol` conforming service.
+        - request: The `LLMRequest` to send.
+        - onPartialResponse: A closure that handles partial responses during streaming (optional).
+        - isRetryingWithFallback: A flag indicating whether the request is a retry with a fallback service.
      - Returns: An optional `LLMResponseProtocol` object.
      */
     private func sendRequestToService(
         _ service: LLMServiceProtocol,
         withRequest request: LLMRequest,
-        onPartialResponse: ((String) -> Void)? = nil
+        onPartialResponse: ((String) -> Void)? = nil,
+        isRetryingWithFallback: Bool = false
     ) async -> LLMResponseProtocol? {
         do {
+            // Attempt sending request with the active or selected service
             if let onPartialResponse = onPartialResponse {
                 let response = try await service.sendRequest(request, onPartialResponse: onPartialResponse)
                 logger.log("Service succeeded with streaming response.")
@@ -267,7 +298,17 @@ public class LLMManager {
                 return response
             }
         } catch {
-            logger.error("Service failed with error: \(error.localizedDescription, privacy: .public)")
+            // Log the failure
+            logger.error("Service \(service.name) failed with error: \(error.localizedDescription)")
+
+            // Attempt to retry with a fallback service if available
+            if let fallbackService, !isRetryingWithFallback {
+                logger.log("Retrying request with fallback service: \(fallbackService.name)")
+                return await sendRequestToService(fallbackService, withRequest: request, onPartialResponse: onPartialResponse, isRetryingWithFallback: true)
+            }
+
+            // If no fallback service is available or both fail, return nil
+            logger.error("No fallback service succeeded or available after failure of \(service.name).")
             return nil
         }
     }
@@ -284,29 +325,29 @@ public class LLMManager {
         // Sort services by name to ensure deterministic ordering
         let sortedServices = services.values.sorted { $0.service.name < $1.service.name }
 
-        // Step 1: Prioritize the active service if it meets the criteria
+        // Try the active service if it meets the criteria
         if let activeServiceName = activeServiceName,
            let activeService = services[activeServiceName]?.service,
            serviceMeetsCriteria(activeService, routing: routing, for: request) {
-            logger.log("Routing to active service: \(activeService.name, privacy: .public)")
+            logger.log("Routing to active service: \(activeService.name)")
             return activeService
         }
 
-        // Step 2: Look for any other service that meets the routing criteria specifically
-        let matchingService = sortedServices.first { serviceMeetsCriteria($0.service, routing: routing, for: request) }?.service
-
-        if let matchingService = matchingService {
+        // Try any other matching service
+        if let matchingService = sortedServices.first(where: {
+            serviceMeetsCriteria($0.service, routing: routing, for: request)
+        })?.service {
             logger.log("Routing to service matching strategy \(routing): \(matchingService.name)")
             return matchingService
         }
 
-        // Step 3: If no service meets the specific criteria, attempt to use a fallback service if available
-        if let fallbackService = sortedServices.first(where: { serviceMeetsCriteria($0.service, routing: .fallback, for: request) })?.service {
-            logger.log("Routing to fallback service as no match found for strategy \(routing): \(fallbackService.name)")
+        // Attempt fallback routing if available
+        if let fallbackService {
+            logger.log("Routing to fallback service: \(fallbackService.name)")
             return fallbackService
         }
 
-        // No suitable or fallback service was found
+        // No suitable service found
         logger.log("No suitable service found for routing strategy \(routing), and no fallback available.")
         return nil
     }
@@ -324,7 +365,6 @@ public class LLMManager {
      - Routing criteria:
         - **TokenLimit**: Confirms that the service's token capacity can handle the estimated token count in the request.
         - **Domain**: Ensures the service covers the preferred domains specified in the request.
-        - **Fallback**: Only verifies that the service has a valid API key, allowing it to serve as a fallback option.
      */
     private func serviceMeetsCriteria(_ service: LLMServiceProtocol, routing: Routing, for request: LLMRequest) -> Bool {
         let apiKeyRequirementMet = !service.requiresAPIKey || service.apiKey != nil
@@ -351,11 +391,6 @@ public class LLMManager {
 
             logger.log(".domain() APIKey requirement met: \(apiKeyRequirementMet) Preferred domains: \(lowercasePreferredDomains) Service domains met: \(serviceDomainsRequirementMet)")
             return apiKeyRequirementMet && serviceDomainsRequirementMet
-
-        case .fallback:
-            // Fallback routing only checks that the service is available and does not enforce API key requirement
-            logger.log(".fallback APIKey requirement met: \(apiKeyRequirementMet)")
-            return apiKeyRequirementMet
         }
     }
 }
