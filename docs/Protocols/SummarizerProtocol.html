@@ -56,6 +56,9 @@
                 <a href="../Classes/LLMManager.html">LLMManager</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Classes/LLMManager/Routing.html">– Routing</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Classes/LLMServiceFactory.html">LLMServiceFactory</a>
               </li>
               <li class="nav-group-task">
@@ -100,6 +103,12 @@
             <a href="../Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="../Enums/LLMRole.html">LLMRole</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/LLMServiceError.html">LLMServiceError</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Enums/SummaryType.html">SummaryType</a>
               </li>
               <li class="nav-group-task">
@@ -125,6 +134,9 @@
             <a href="../Protocols.html">Protocols</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="../Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a>
               </li>
               <li class="nav-group-task">
@@ -145,6 +157,15 @@
             <a href="../Structs.html">Structures</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="../Structs/AnthropicLLMResponse.html">AnthropicLLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/AnthropicLLMResponse.html#/s:10AuroraCore20AnthropicLLMResponseV7ContentV">– Content</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/AnthropicLLMResponse.html#/s:10AuroraCore20AnthropicLLMResponseV5UsageV">– Usage</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/Bookmark.html">Bookmark</a>
               </li>
               <li class="nav-group-task">
@@ -154,10 +175,31 @@
                 <a href="../Structs/ContextItem.html">ContextItem</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/LLMMessage.html">LLMMessage</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/LLMRequest.html">LLMRequest</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/LLMResponse.html">LLMResponse</a>
+                <a href="../Structs/LLMRequestOptions.html">LLMRequestOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/LLMTokenUsage.html">LLMTokenUsage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/OllamaLLMResponse.html">OllamaLLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/OpenAILLMResponse.html">OpenAILLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/OpenAILLMResponse/Choice.html">– Choice</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/OpenAILLMResponse.html#/s:10AuroraCore17OpenAILLMResponseV5UsageV">– Usage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SummarizerOptions.html">SummarizerOptions</a>
               </li>
             </ul>
           </li>
@@ -183,9 +225,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10AuroraCore18SummarizerProtocolP9summarize_4typeS2S_AA11SummaryTypeOtYaKF"></a>
-                    <a name="//apple_ref/swift/Method/summarize(_:type:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10AuroraCore18SummarizerProtocolP9summarize_4typeS2S_AA11SummaryTypeOtYaKF">summarize(_:<wbr>type:<wbr>)</a>
+                    <a name="/s:10AuroraCore18SummarizerProtocolP9summarize_4type7optionsS2S_AA11SummaryTypeOAA0C7OptionsVSgtYaKF"></a>
+                    <a name="//apple_ref/swift/Method/summarize(_:type:options:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore18SummarizerProtocolP9summarize_4type7optionsS2S_AA11SummaryTypeOAA0C7OptionsVSgtYaKF">summarize(_:<wbr>type:<wbr>options:<wbr>)</a>
                     </code>
                       <span class="declaration-note">
                         Asynchronous
@@ -203,7 +245,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">summarize</span><span class="p">(</span><span class="n">_</span> <span class="nv">text</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">type</span><span class="p">:</span> <span class="kt"><a href="../Enums/SummaryType.html">SummaryType</a></span><span class="p">)</span> <span class="k">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">summarize</span><span class="p">(</span><span class="n">_</span> <span class="nv">text</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">type</span><span class="p">:</span> <span class="kt"><a href="../Enums/SummaryType.html">SummaryType</a></span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Structs/SummarizerOptions.html">SummarizerOptions</a></span><span class="p">?)</span> <span class="k">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
 
                         </div>
                       </div>
@@ -235,6 +277,18 @@
                                 </div>
                               </td>
                             </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>options</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Optional <code><a href="../Structs/SummarizerOptions.html">SummarizerOptions</a></code> to modify the request parameters.</p>
+                                </div>
+                              </td>
+                            </tr>
                           </tbody>
                         </table>
                       </div>
@@ -248,9 +302,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10AuroraCore18SummarizerProtocolP14summarizeGroup_4typeSSSaySSG_AA11SummaryTypeOtYaKF"></a>
-                    <a name="//apple_ref/swift/Method/summarizeGroup(_:type:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10AuroraCore18SummarizerProtocolP14summarizeGroup_4typeSSSaySSG_AA11SummaryTypeOtYaKF">summarizeGroup(_:<wbr>type:<wbr>)</a>
+                    <a name="/s:10AuroraCore18SummarizerProtocolP14summarizeGroup_4type7optionsSSSaySSG_AA11SummaryTypeOAA0C7OptionsVSgtYaKF"></a>
+                    <a name="//apple_ref/swift/Method/summarizeGroup(_:type:options:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore18SummarizerProtocolP14summarizeGroup_4type7optionsSSSaySSG_AA11SummaryTypeOAA0C7OptionsVSgtYaKF">summarizeGroup(_:<wbr>type:<wbr>options:<wbr>)</a>
                     </code>
                       <span class="declaration-note">
                         Asynchronous
@@ -268,7 +322,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">summarizeGroup</span><span class="p">(</span><span class="n">_</span> <span class="nv">texts</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">],</span> <span class="nv">type</span><span class="p">:</span> <span class="kt"><a href="../Enums/SummaryType.html">SummaryType</a></span><span class="p">)</span> <span class="k">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">summarizeGroup</span><span class="p">(</span><span class="n">_</span> <span class="nv">texts</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">],</span> <span class="nv">type</span><span class="p">:</span> <span class="kt"><a href="../Enums/SummaryType.html">SummaryType</a></span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Structs/SummarizerOptions.html">SummarizerOptions</a></span><span class="p">?)</span> <span class="k">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
 
                         </div>
                       </div>
@@ -300,6 +354,18 @@
                                 </div>
                               </td>
                             </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>options</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Optional <code><a href="../Structs/SummarizerOptions.html">SummarizerOptions</a></code> to modify the request parameters.</p>
+                                </div>
+                              </td>
+                            </tr>
                           </tbody>
                         </table>
                       </div>
@@ -315,7 +381,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-09-12)</p>
+          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-11-08)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>

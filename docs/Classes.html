@@ -54,6 +54,9 @@
                 <a href="Classes/LLMManager.html">LLMManager</a>
               </li>
               <li class="nav-group-task">
+                <a href="Classes/LLMManager/Routing.html">– Routing</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Classes/LLMServiceFactory.html">LLMServiceFactory</a>
               </li>
               <li class="nav-group-task">
@@ -98,6 +101,12 @@
             <a href="Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="Enums/LLMRole.html">LLMRole</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/LLMServiceError.html">LLMServiceError</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Enums/SummaryType.html">SummaryType</a>
               </li>
               <li class="nav-group-task">
@@ -123,6 +132,9 @@
             <a href="Protocols.html">Protocols</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a>
               </li>
               <li class="nav-group-task">
@@ -143,6 +155,15 @@
             <a href="Structs.html">Structures</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="Structs/AnthropicLLMResponse.html">AnthropicLLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/AnthropicLLMResponse.html#/s:10AuroraCore20AnthropicLLMResponseV7ContentV">– Content</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/AnthropicLLMResponse.html#/s:10AuroraCore20AnthropicLLMResponseV5UsageV">– Usage</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Structs/Bookmark.html">Bookmark</a>
               </li>
               <li class="nav-group-task">
@@ -152,10 +173,31 @@
                 <a href="Structs/ContextItem.html">ContextItem</a>
               </li>
               <li class="nav-group-task">
+                <a href="Structs/LLMMessage.html">LLMMessage</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Structs/LLMRequest.html">LLMRequest</a>
               </li>
               <li class="nav-group-task">
-                <a href="Structs/LLMResponse.html">LLMResponse</a>
+                <a href="Structs/LLMRequestOptions.html">LLMRequestOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/LLMTokenUsage.html">LLMTokenUsage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/OllamaLLMResponse.html">OllamaLLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/OpenAILLMResponse.html">OpenAILLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/OpenAILLMResponse/Choice.html">– Choice</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/OpenAILLMResponse.html#/s:10AuroraCore17OpenAILLMResponseV5UsageV">– Usage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/SummarizerOptions.html">SummarizerOptions</a>
               </li>
             </ul>
           </li>
@@ -184,8 +226,8 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p><code>LLMManager</code> is responsible for managing multiple Language Learning Model (LLM) services, handling requests, routing, and fallback mechanisms.
-It allows registering services, sending requests, and managing token usage with trimming strategies.</p>
+                        <p><code>LLMManager</code> is responsible for managing multiple LLM services and routing requests to the appropriate service based on the specified criteria.
+It allows registering, unregistering, and selecting services based on routing options such as token limit or domain, as well as providing fallback service support.</p>
 
                         <a href="Classes/LLMManager.html" class="slightly-smaller">See more</a>
                       </div>
@@ -285,7 +327,8 @@ and processes the response.</p>
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p><code>AnthropicService</code> implements the <code><a href="Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></code> to interact with the Anthropic API.
-It allows for flexible configuration for different models and temperature settings.</p>
+It allows for flexible configuration for different models and temperature settings, and now provides
+detailed error handling using <code><a href="Enums/LLMServiceError.html">LLMServiceError</a></code>.</p>
 
                         <a href="Classes/AnthropicService.html" class="slightly-smaller">See more</a>
                       </div>
@@ -314,7 +357,7 @@ It allows for flexible configuration for different models and temperature settin
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p><code>OllamaService</code> implements the <code><a href="Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></code> to interact with the Ollama models via its API.
-This service allows for customizable API base URLs, making it flexible for different environments.</p>
+This service supports customizable API base URLs and allows interaction with models using both streaming and non-streaming modes.</p>
 
                         <a href="Classes/OllamaService.html" class="slightly-smaller">See more</a>
                       </div>
@@ -343,7 +386,8 @@ This service allows for customizable API base URLs, making it flexible for diffe
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p><code>OpenAIService</code> implements the <code><a href="Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></code> to interact with the OpenAI API.
-This service allows flexible configuration for different models and settings.</p>
+This service allows flexible configuration for different models and settings, and now provides
+enhanced error handling using <code><a href="Enums/LLMServiceError.html">LLMServiceError</a></code>.</p>
 
                         <a href="Classes/OpenAIService.html" class="slightly-smaller">See more</a>
                       </div>
@@ -569,9 +613,9 @@ This is useful for storing sensitive information like API keys and custom base U
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p><code>FetchContextsTask</code> is responsible for retrieving a list of all stored contexts from the disk.</p>
+                        <p><code>FetchContextsTask</code> is responsible for retrieving a list of stored contexts from the disk.</p>
 
-<p>This task can be integrated into a workflow where a list of all available contexts needs to be fetched.</p>
+<p>This task can be used in workflows requiring access to multiple stored contexts. If a list of specific filenames is provided, only those contexts will be fetched. Otherwise, all contexts will be retrieved.</p>
 
                         <a href="Classes/FetchContextsTask.html" class="slightly-smaller">See more</a>
                       </div>
@@ -706,7 +750,7 @@ This is useful for storing sensitive information like API keys and custom base U
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-09-12)</p>
+          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-11-08)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>

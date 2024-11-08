@@ -54,6 +54,9 @@
                 <a href="Classes/LLMManager.html">LLMManager</a>
               </li>
               <li class="nav-group-task">
+                <a href="Classes/LLMManager/Routing.html">– Routing</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Classes/LLMServiceFactory.html">LLMServiceFactory</a>
               </li>
               <li class="nav-group-task">
@@ -98,6 +101,12 @@
             <a href="Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="Enums/LLMRole.html">LLMRole</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/LLMServiceError.html">LLMServiceError</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Enums/SummaryType.html">SummaryType</a>
               </li>
               <li class="nav-group-task">
@@ -123,6 +132,9 @@
             <a href="Protocols.html">Protocols</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a>
               </li>
               <li class="nav-group-task">
@@ -143,6 +155,15 @@
             <a href="Structs.html">Structures</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="Structs/AnthropicLLMResponse.html">AnthropicLLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/AnthropicLLMResponse.html#/s:10AuroraCore20AnthropicLLMResponseV7ContentV">– Content</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/AnthropicLLMResponse.html#/s:10AuroraCore20AnthropicLLMResponseV5UsageV">– Usage</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Structs/Bookmark.html">Bookmark</a>
               </li>
               <li class="nav-group-task">
@@ -152,10 +173,31 @@
                 <a href="Structs/ContextItem.html">ContextItem</a>
               </li>
               <li class="nav-group-task">
+                <a href="Structs/LLMMessage.html">LLMMessage</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Structs/LLMRequest.html">LLMRequest</a>
               </li>
               <li class="nav-group-task">
-                <a href="Structs/LLMResponse.html">LLMResponse</a>
+                <a href="Structs/LLMRequestOptions.html">LLMRequestOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/LLMTokenUsage.html">LLMTokenUsage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/OllamaLLMResponse.html">OllamaLLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/OpenAILLMResponse.html">OpenAILLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/OpenAILLMResponse/Choice.html">– Choice</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/OpenAILLMResponse.html#/s:10AuroraCore17OpenAILLMResponseV5UsageV">– Usage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/SummarizerOptions.html">SummarizerOptions</a>
               </li>
             </ul>
           </li>
@@ -171,6 +213,37 @@
           <section class="section task-group-section">
             <div class="task-group">
               <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore10LLMMessageV"></a>
+                    <a name="//apple_ref/swift/Struct/LLMMessage" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore10LLMMessageV">LLMMessage</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Represents a single message within a conversation for LLM interactions.</p>
+
+<p><code>LLMMessage</code> instances capture both user inputs and responses from the LLM. They help provide context
+for multi-turn conversations, allowing the LLM to generate more coherent and contextually aware responses.</p>
+
+                        <a href="Structs/LLMMessage.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">LLMMessage</span> <span class="p">:</span> <span class="kt">Codable</span><span class="p">,</span> <span class="kt">Equatable</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -203,9 +276,9 @@ This structure allows customization of various parameters to influence the respo
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10AuroraCore11LLMResponseV"></a>
-                    <a name="//apple_ref/swift/Struct/LLMResponse" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10AuroraCore11LLMResponseV">LLMResponse</a>
+                    <a name="/s:10AuroraCore17LLMRequestOptionsV"></a>
+                    <a name="//apple_ref/swift/Struct/LLMRequestOptions" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore17LLMRequestOptionsV">LLMRequestOptions</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -213,15 +286,136 @@ This structure allows customization of various parameters to influence the respo
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A struct representing the output generated by the Language Learning Model (LLM) in response to a given <code><a href="Structs/LLMRequest.html">LLMRequest</a></code>.</p>
+                        <p><code>LLMRequestOptions</code> provides a way to configure additional options for LLM requests in a structured manner.
+This struct encapsulates less common parameters that can be used to further customize the behavior of the language model.</p>
 
-                        <a href="Structs/LLMResponse.html" class="slightly-smaller">See more</a>
+                        <a href="Structs/LLMRequestOptions.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">LLMResponse</span> <span class="p">:</span> <span class="kt">Codable</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">LLMRequestOptions</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore20AnthropicLLMResponseV"></a>
+                    <a name="//apple_ref/swift/Struct/AnthropicLLMResponse" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore20AnthropicLLMResponseV">AnthropicLLMResponse</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Represents the response from Anthropic&rsquo;s LLM models, conforming to <code><a href="Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a></code>.</p>
+
+<p>This struct captures relevant fields from the response, including generated content, message metadata, and token usage statistics if provided by the API.</p>
+
+                        <a href="Structs/AnthropicLLMResponse.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">AnthropicLLMResponse</span> <span class="p">:</span> <span class="kt"><a href="Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a></span><span class="p">,</span> <span class="kt">Codable</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore13LLMTokenUsageV"></a>
+                    <a name="//apple_ref/swift/Struct/LLMTokenUsage" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore13LLMTokenUsageV">LLMTokenUsage</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A structure representing token usage information.
+This is used to track the number of tokens used for prompts, completions, and the total request.</p>
+
+                        <a href="Structs/LLMTokenUsage.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">LLMTokenUsage</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore17OllamaLLMResponseV"></a>
+                    <a name="//apple_ref/swift/Struct/OllamaLLMResponse" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore17OllamaLLMResponseV">OllamaLLMResponse</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Represents the response from Ollama&rsquo;s LLM models, conforming to <code><a href="Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a></code>.</p>
+
+<p>The Ollama API returns a generated text directly in the <code>response</code> field, along with model metadata.</p>
+
+                        <a href="Structs/OllamaLLMResponse.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">OllamaLLMResponse</span> <span class="p">:</span> <span class="kt"><a href="Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a></span><span class="p">,</span> <span class="kt">Codable</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore17OpenAILLMResponseV"></a>
+                    <a name="//apple_ref/swift/Struct/OpenAILLMResponse" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore17OpenAILLMResponseV">OpenAILLMResponse</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Represents the response from OpenAI&rsquo;s LLM models, conforming to <code><a href="Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a></code>.</p>
+
+<p>The OpenAI API returns a list of choices, and this struct captures the first choice as the primary response.
+It also tracks usage statistics such as prompt and completion tokens.</p>
+
+                        <a href="Structs/OpenAILLMResponse.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">OpenAILLMResponse</span> <span class="p">:</span> <span class="kt"><a href="Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a></span><span class="p">,</span> <span class="kt">Codable</span></code></pre>
 
                         </div>
                       </div>
@@ -321,12 +515,41 @@ a creation date, a flag indicating whether it is a summary, and an estimated tok
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore17SummarizerOptionsV"></a>
+                    <a name="//apple_ref/swift/Struct/SummarizerOptions" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore17SummarizerOptionsV">SummarizerOptions</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>SummarizerOptions</code> provides a way to configure options specifically for summarization tasks.
+This struct encapsulates parameters that influence how the summary is generated.</p>
+
+                        <a href="Structs/SummarizerOptions.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SummarizerOptions</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-09-12)</p>
+          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-11-08)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>

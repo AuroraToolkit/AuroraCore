@@ -54,6 +54,9 @@
                 <a href="Classes/LLMManager.html">LLMManager</a>
               </li>
               <li class="nav-group-task">
+                <a href="Classes/LLMManager/Routing.html">– Routing</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Classes/LLMServiceFactory.html">LLMServiceFactory</a>
               </li>
               <li class="nav-group-task">
@@ -98,6 +101,12 @@
             <a href="Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="Enums/LLMRole.html">LLMRole</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/LLMServiceError.html">LLMServiceError</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Enums/SummaryType.html">SummaryType</a>
               </li>
               <li class="nav-group-task">
@@ -123,6 +132,9 @@
             <a href="Protocols.html">Protocols</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a>
               </li>
               <li class="nav-group-task">
@@ -143,6 +155,15 @@
             <a href="Structs.html">Structures</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="Structs/AnthropicLLMResponse.html">AnthropicLLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/AnthropicLLMResponse.html#/s:10AuroraCore20AnthropicLLMResponseV7ContentV">– Content</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/AnthropicLLMResponse.html#/s:10AuroraCore20AnthropicLLMResponseV5UsageV">– Usage</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Structs/Bookmark.html">Bookmark</a>
               </li>
               <li class="nav-group-task">
@@ -152,10 +173,31 @@
                 <a href="Structs/ContextItem.html">ContextItem</a>
               </li>
               <li class="nav-group-task">
+                <a href="Structs/LLMMessage.html">LLMMessage</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Structs/LLMRequest.html">LLMRequest</a>
               </li>
               <li class="nav-group-task">
-                <a href="Structs/LLMResponse.html">LLMResponse</a>
+                <a href="Structs/LLMRequestOptions.html">LLMRequestOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/LLMTokenUsage.html">LLMTokenUsage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/OllamaLLMResponse.html">OllamaLLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/OpenAILLMResponse.html">OpenAILLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/OpenAILLMResponse/Choice.html">– Choice</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/OpenAILLMResponse.html#/s:10AuroraCore17OpenAILLMResponseV5UsageV">– Usage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/SummarizerOptions.html">SummarizerOptions</a>
               </li>
             </ul>
           </li>
@@ -211,6 +253,44 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">LLMServiceProtocol</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore19LLMResponseProtocolP"></a>
+                    <a name="//apple_ref/swift/Protocol/LLMResponseProtocol" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore19LLMResponseProtocolP">LLMResponseProtocol</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A protocol that defines a common interface for the response of different LLM services.</p>
+
+<p>Conforming types must implement:</p>
+
+<ul>
+<li><code>text</code>: The main textual response generated by the LLM.</li>
+<li><code>model</code>: The model used to generate the response, if available.</li>
+<li><code>tokenUsage</code>: Optional token usage data, providing information about token consumption during the request.</li>
+</ul>
+
+<p>This protocol allows for consistent interaction with different LLM services while accommodating their unique response formats.</p>
+
+                        <a href="Protocols/LLMResponseProtocol.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">LLMResponseProtocol</span></code></pre>
 
                         </div>
                       </div>
@@ -334,7 +414,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-09-12)</p>
+          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-11-08)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>

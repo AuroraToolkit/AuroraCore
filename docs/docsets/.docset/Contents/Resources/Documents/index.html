@@ -51,6 +51,9 @@
                 <a href="Classes/LLMManager.html">LLMManager</a>
               </li>
               <li class="nav-group-task">
+                <a href="Classes/LLMManager/Routing.html">– Routing</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Classes/LLMServiceFactory.html">LLMServiceFactory</a>
               </li>
               <li class="nav-group-task">
@@ -95,6 +98,12 @@
             <a href="Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="Enums/LLMRole.html">LLMRole</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/LLMServiceError.html">LLMServiceError</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Enums/SummaryType.html">SummaryType</a>
               </li>
               <li class="nav-group-task">
@@ -120,6 +129,9 @@
             <a href="Protocols.html">Protocols</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a>
               </li>
               <li class="nav-group-task">
@@ -140,6 +152,15 @@
             <a href="Structs.html">Structures</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="Structs/AnthropicLLMResponse.html">AnthropicLLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/AnthropicLLMResponse.html#/s:10AuroraCore20AnthropicLLMResponseV7ContentV">– Content</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/AnthropicLLMResponse.html#/s:10AuroraCore20AnthropicLLMResponseV5UsageV">– Usage</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Structs/Bookmark.html">Bookmark</a>
               </li>
               <li class="nav-group-task">
@@ -149,10 +170,31 @@
                 <a href="Structs/ContextItem.html">ContextItem</a>
               </li>
               <li class="nav-group-task">
+                <a href="Structs/LLMMessage.html">LLMMessage</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Structs/LLMRequest.html">LLMRequest</a>
               </li>
               <li class="nav-group-task">
-                <a href="Structs/LLMResponse.html">LLMResponse</a>
+                <a href="Structs/LLMRequestOptions.html">LLMRequestOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/LLMTokenUsage.html">LLMTokenUsage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/OllamaLLMResponse.html">OllamaLLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/OpenAILLMResponse.html">OpenAILLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/OpenAILLMResponse/Choice.html">– Choice</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/OpenAILLMResponse.html#/s:10AuroraCore17OpenAILLMResponseV5UsageV">– Usage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/SummarizerOptions.html">SummarizerOptions</a>
               </li>
             </ul>
           </li>
@@ -233,6 +275,30 @@
     <span class="nf">print</span><span class="p">(</span><span class="n">response</span><span class="p">?</span><span class="o">.</span><span class="n">text</span> <span class="p">??</span> <span class="s">"No response"</span><span class="p">)</span>
 <span class="p">}</span>
 </code></pre>
+<h2 id='running-tests' class='heading'>Running Tests</h2>
+
+<p>AuroraCore includes tests for multiple language model services. The Ollama tests will always run, as they do not require any API keys. For testing OpenAI or Anthropic services, you will need to manually provide your API keys.</p>
+<h3 id='adding-api-keys-for-openai-and-anthropic' class='heading'>Adding API Keys for OpenAI and Anthropic:</h3>
+
+<p>In the test files that involve OpenAI or Anthropic services, there are placeholders where you can insert your API keys.</p>
+
+<ol>
+<li>Open the <code>LLMServiceTests.swift</code> file.</li>
+<li>Locate the following lines near the top of the file:
+<code>swift
+private let openAIAPIKey: String? = &quot;&quot; // Insert your OpenAI API key here
+private let anthropicAPIKey: String? = &quot;&quot; // Insert your Anthropic API key here
+</code></li>
+<li>Add your keys between the quotation marks (<code>&quot;&quot;</code>) to enable the tests for those services.</li>
+</ol>
+<h3 id='important' class='heading'>Important:</h3>
+
+<ul>
+<li><strong>Do not commit your API keys to the repository</strong>. The tests are designed to run with Ollama by default, and you can enable additional tests for OpenAI and Anthropic by manually adding your keys for local testing.</li>
+<li>Be sure to remove or replace your keys with empty strings before committing any changes.</li>
+</ul>
+
+<p>With this setup, you can run the tests without relying on environment variables, and ensure your sensitive keys are not inadvertently shared.</p>
 <h2 id='contributing' class='heading'>Contributing</h2>
 
 <p>Contributions are welcome! Please feel free to submit a pull request or open an issue.</p>
@@ -243,7 +309,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-09-12)</p>
+          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-11-08)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>

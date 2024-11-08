@@ -56,6 +56,9 @@
                 <a href="../Classes/LLMManager.html">LLMManager</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Classes/LLMManager/Routing.html">– Routing</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Classes/LLMServiceFactory.html">LLMServiceFactory</a>
               </li>
               <li class="nav-group-task">
@@ -100,6 +103,12 @@
             <a href="../Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="../Enums/LLMRole.html">LLMRole</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/LLMServiceError.html">LLMServiceError</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Enums/SummaryType.html">SummaryType</a>
               </li>
               <li class="nav-group-task">
@@ -125,6 +134,9 @@
             <a href="../Protocols.html">Protocols</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="../Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a>
               </li>
               <li class="nav-group-task">
@@ -145,6 +157,15 @@
             <a href="../Structs.html">Structures</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="../Structs/AnthropicLLMResponse.html">AnthropicLLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/AnthropicLLMResponse.html#/s:10AuroraCore20AnthropicLLMResponseV7ContentV">– Content</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/AnthropicLLMResponse.html#/s:10AuroraCore20AnthropicLLMResponseV5UsageV">– Usage</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/Bookmark.html">Bookmark</a>
               </li>
               <li class="nav-group-task">
@@ -154,10 +175,31 @@
                 <a href="../Structs/ContextItem.html">ContextItem</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/LLMMessage.html">LLMMessage</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/LLMRequest.html">LLMRequest</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/LLMResponse.html">LLMResponse</a>
+                <a href="../Structs/LLMRequestOptions.html">LLMRequestOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/LLMTokenUsage.html">LLMTokenUsage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/OllamaLLMResponse.html">OllamaLLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/OpenAILLMResponse.html">OpenAILLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/OpenAILLMResponse/Choice.html">– Choice</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/OpenAILLMResponse.html#/s:10AuroraCore17OpenAILLMResponseV5UsageV">– Usage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SummarizerOptions.html">SummarizerOptions</a>
               </li>
             </ul>
           </li>
@@ -174,9 +216,9 @@
 
                 </div>
               </div>
-            <p><code>FetchContextsTask</code> is responsible for retrieving a list of all stored contexts from the disk.</p>
+            <p><code>FetchContextsTask</code> is responsible for retrieving a list of stored contexts from the disk.</p>
 
-<p>This task can be integrated into a workflow where a list of all available contexts needs to be fetched.</p>
+<p>This task can be used in workflows requiring access to multiple stored contexts. If a list of specific filenames is provided, only those contexts will be fetched. Otherwise, all contexts will be retrieved.</p>
 
           </section>
           <section class="section task-group-section">
@@ -185,9 +227,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10AuroraCore17FetchContextsTaskCACycfc"></a>
-                    <a name="//apple_ref/swift/Method/init()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10AuroraCore17FetchContextsTaskCACycfc">init()</a>
+                    <a name="/s:10AuroraCore17FetchContextsTaskC9filenamesACSaySSGSg_tcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(filenames:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore17FetchContextsTaskC9filenamesACSaySSGSg_tcfc">init(filenames:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -195,16 +237,35 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Initializes a <code>FetchContextsTask</code> to retrieve all stored contexts.</p>
+                        <p>Initializes a <code>FetchContextsTask</code> with an optional list of filenames.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">()</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">filenames</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">]?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>filenames</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>An optional array of filenames (without extensions) specifying which contexts to retrieve.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                       <div>
                         <h4>Return Value</h4>
@@ -229,7 +290,17 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>Executes the task, fetching the specified contexts from the disk.</p>
+
+<ul>
+<li>If specific filenames are provided in <code>inputs</code>, only those files will be retrieved.</li>
+<li><p>If no filenames are provided, all context files with a <code>.json</code> extension in the directory will be fetched.</p></li>
+</ul><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p>An error if the contexts directory cannot be accessed or any of the specified files cannot be retrieved.</p>
+
+</div>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
@@ -247,7 +318,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-09-12)</p>
+          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-11-08)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
