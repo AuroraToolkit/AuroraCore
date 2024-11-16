@@ -1,0 +1,3 @@
+module: AuroraCore
+output: docs/
+theme: apple

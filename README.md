@@ -110,8 +110,16 @@ With this setup, you can run the tests without relying on environment variables,
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a pull request or open an issue.
+Contributions are welcome! Please feel free to submit a pull request or open an issue. For more details on how to contribute, please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file.
+
+## Code of Conduct
+
+We expect all participants to adhere to our [Code of Conduct](CODE_OF_CONDUCT.md) to ensure a welcoming and inclusive environment for everyone.
 
 ## License
 
-AuroraCore is released under the Apache 2.0 License.
+AuroraCore is released under the [Apache 2.0 License](LICENSE).
+
+## Contact
+
+For any inquiries or feedback, please reach out to us at [aurora.core.project@gmail.com](mailto:aurora.core.project@gmail.com).
