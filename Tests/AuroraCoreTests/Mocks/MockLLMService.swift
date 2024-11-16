@@ -47,7 +47,7 @@ final class MockLLMService: LLMServiceProtocol {
     }
 
     /// Streaming request handler
-    func sendRequest(_ request: LLMRequest, onPartialResponse: ((String) -> Void)?) async throws -> LLMResponseProtocol {
+    func sendStreamingRequest(_ request: LLMRequest, onPartialResponse: ((String) -> Void)?) async throws -> LLMResponseProtocol {
         // Track received request for streaming verification in tests
         receivedStreamingRequests.append(request)
 

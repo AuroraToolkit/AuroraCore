@@ -81,9 +81,9 @@ public class OllamaService: LLMServiceProtocol {
      - Throws: `LLMServiceError` if the request encounters an issue (e.g., invalid response, decoding error, etc.).
      */
     public func sendRequest(_ request: LLMRequest) async throws -> LLMResponseProtocol {
-        // Check if streaming is enabled. If true, redirect to the streaming version.
+        // Ensure streaming is disabled for this method
         guard request.stream == false else {
-            return try await sendRequest(request, onPartialResponse: nil) // Call the streaming version
+            throw LLMServiceError.custom(message: "Streaming is not supported in sendRequest(). Use sendStreamingRequest() instead.")
         }
 
         // Validate the base URL
@@ -159,10 +159,10 @@ public class OllamaService: LLMServiceProtocol {
      - Returns: The `LLMResponseProtocol` containing the final text or an error if the request fails.
      - Throws: `LLMServiceError` if the request encounters an issue (e.g., invalid response, decoding error, etc.).
      */
-    public func sendRequest(_ request: LLMRequest, onPartialResponse: ((String) -> Void)? = nil) async throws -> LLMResponseProtocol {
-        // If streaming is set to false, route to the non-streaming version
+    public func sendStreamingRequest(_ request: LLMRequest, onPartialResponse: ((String) -> Void)? = nil) async throws -> LLMResponseProtocol {
+        // Ensure streaming is enabled for this method
         guard request.stream else {
-            return try await sendRequest(request)
+            throw LLMServiceError.custom(message: "Streaming is required in sendStreamingRequest(). Set request.stream to true.")
         }
 
         // Validate the base URL

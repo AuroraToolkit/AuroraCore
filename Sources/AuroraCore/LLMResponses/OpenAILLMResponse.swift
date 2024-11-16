@@ -14,26 +14,29 @@ import Foundation
  It also tracks usage statistics such as prompt and completion tokens.
  */
 public struct OpenAILLMResponse: LLMResponseProtocol, Codable {
-
-    /// Nested structure to represent the message and role.
     public struct Choice: Codable {
         public struct Message: Codable {
-            let role: String
-            let content: String
+            let role: String?
+            let content: String?
         }
-        let message: Message
+        /// Incremental response during streaming.
+        let delta: Message?
+        /// Complete response for non-streaming.
+        let message: Message?
+        /// Reason for completion.
+        let finish_reason: String?
     }
 
-    /// An array of choices returned by the OpenAI API.
+    /// Array of choices.
     public let choices: [Choice]
 
-    /// Token usage statistics.
+    /// Token usage statistics (optional for streaming).
     public let usage: Usage?
 
-    /// The model used for generating the response.
+    /// The model used.
     public var model: String?
 
-    /// Nested structure to represent token usage data.
+    /// Token usage structure.
     public struct Usage: Codable {
         let prompt_tokens: Int
         let completion_tokens: Int
@@ -42,12 +45,16 @@ public struct OpenAILLMResponse: LLMResponseProtocol, Codable {
 
     // MARK: - LLMResponseProtocol Conformance
 
-    /// Returns the content from the first choice in the response.
+    /// Extracts and concatenates content from streaming or non-streaming responses.
     public var text: String {
-        return choices.first?.message.content ?? ""
+        let deltaContent = choices.compactMap { $0.delta?.content }.joined()
+        if !deltaContent.isEmpty {
+            return deltaContent
+        }
+        return choices.first?.message?.content ?? ""
     }
 
-    /// Returns token usage statistics as an `LLMTokenUsage` object.
+    /// Returns token usage.
     public var tokenUsage: LLMTokenUsage? {
         guard let usage = usage else { return nil }
         return LLMTokenUsage(promptTokens: usage.prompt_tokens, completionTokens: usage.completion_tokens, totalTokens: usage.total_tokens)

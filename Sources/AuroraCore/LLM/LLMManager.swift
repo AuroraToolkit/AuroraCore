@@ -42,6 +42,8 @@ public class LLMManager {
     /// The designated fallback service.
     private(set) var fallbackService: LLMServiceProtocol?
 
+    public init() {}
+
     // MARK: - Registering Services
 
     /**
@@ -289,7 +291,7 @@ public class LLMManager {
         do {
             // Attempt sending request with the active or selected service
             if let onPartialResponse = onPartialResponse {
-                let response = try await service.sendRequest(request, onPartialResponse: onPartialResponse)
+                let response = try await service.sendStreamingRequest(request, onPartialResponse: onPartialResponse)
                 logger.log("Service succeeded with streaming response.")
                 return response
             } else {

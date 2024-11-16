@@ -121,8 +121,21 @@ struct LLMServiceTests {
     // MARK: - Helper function
 
     private func sendRequestAndCheckResponse(for service: LLMServiceProtocol, with request: LLMRequest) async throws {
-        let response = try await service.sendRequest(request)
-        #expect(!response.text.isEmpty, "Response should not be empty for \(service.name)")
-        print("Service: \(service.name), Response: \(response.text.prefix(100))...")
+        if request.stream {
+            // Handle streaming request
+            var accumulatedResponse = ""
+            _ = try await service.sendStreamingRequest(request) { partialText in
+                accumulatedResponse += partialText
+                print("Partial Response: \(partialText)")
+            }
+
+            #expect(!accumulatedResponse.isEmpty, "Accumulated response should not be empty for \(service.name)")
+            print("Service: \(service.name), Final Streaming Response: \(accumulatedResponse.prefix(100))...")
+        } else {
+            // Handle non-streaming request
+            let response = try await service.sendRequest(request)
+            #expect(!response.text.isEmpty, "Response should not be empty for \(service.name)")
+            print("Service: \(service.name), Response: \(response.text.prefix(100))...")
+        }
     }
 }

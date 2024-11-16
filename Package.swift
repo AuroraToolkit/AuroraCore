@@ -12,6 +12,9 @@ let package = Package(
         .library(
             name: "AuroraCore",
             targets: ["AuroraCore"]),
+        .executable(
+            name: "Examples",
+            targets: ["Examples"]),
     ],
     dependencies: [],
     targets: [
@@ -24,6 +27,11 @@ let package = Package(
             name: "AuroraCoreTests",
             dependencies: ["AuroraCore"],
             path: "Tests/AuroraCoreTests"
+        ),
+        .executableTarget(
+            name: "Examples",
+            dependencies: ["AuroraCore"],
+            path: "Sources/Examples"
         )
     ]
 )
