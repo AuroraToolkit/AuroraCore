@@ -193,53 +193,74 @@ public class OllamaService: LLMServiceProtocol {
 
         logger.log("OllamaService \(#function) Sending request: \(body)")
 
-        // Serialize the request body into JSON
         let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
-
-        // Configure the URLRequest
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         urlRequest.httpBody = jsonData
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        // Initialize the streaming state
-        let state = StreamingState()
+        logger.log("OllamaService \(#function) Sending streaming request.")
 
-        // Streaming handling
         return try await withCheckedThrowingContinuation { continuation in
-            let task = urlSession.dataTask(with: urlRequest) { [weak self] data, response, error in
-                guard let self = self else { return }
-                Task {
-                    if let error = error {
-                        continuation.resume(throwing: error)
-                        return
-                    }
-
-                    guard let data = data else {
-                        continuation.resume(throwing: LLMServiceError.invalidResponse(statusCode: -1))
-                        return
-                    }
-
-                    if let jsonString = String(data: data, encoding: .utf8) {
-                        self.logger.log("OllamaService \(#function) Received response: \(jsonString)")
-                    }
-
-                    // Process the data asynchronously using the actor to update state
-                    if let partialContent = String(data: data, encoding: .utf8) {
-                        await state.appendContent(partialContent)
-                        onPartialResponse?(partialContent)
-                    }
-
-                    // Handle final response
-                    if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
-                        let finalResponse = OllamaLLMResponse(response: await state.getFinalContent(), model: request.model)
-                        continuation.resume(returning: finalResponse)
-                    } else {
-                        continuation.resume(throwing: LLMServiceError.invalidResponse(statusCode: (response as? HTTPURLResponse)?.statusCode ?? -1))
-                    }
-                }
-            }
+            let streamingDelegate = StreamingDelegate(
+                model: request.model ?? "gpt-4o",
+                onPartialResponse: onPartialResponse ?? { _ in },
+                continuation: continuation
+            )
+            let session = URLSession(configuration: .default, delegate: streamingDelegate, delegateQueue: nil)
+            let task = session.dataTask(with: urlRequest)
             task.resume()
+        }
+    }
+
+    internal class StreamingDelegate: NSObject, URLSessionDataDelegate {
+        private let model: String
+        private let onPartialResponse: (String) -> Void
+        private let continuation: CheckedContinuation<LLMResponseProtocol, Error>
+        private var accumulatedContent = ""
+        private var finalResponse: LLMResponseProtocol?
+        private let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "OpenAI.StreamingDelegate")
+        
+        init(model: String,
+             onPartialResponse: @escaping (String) -> Void,
+             continuation: CheckedContinuation<LLMResponseProtocol, Error>) {
+            self.model = model
+            self.onPartialResponse = onPartialResponse
+            self.continuation = continuation
+        }
+
+        func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+            guard let responseText = String(data: data, encoding: .utf8) else { return }
+
+            logger.log("OllamaService \(#function) Received response: \(responseText)")
+
+            do {
+                let partialResponse = try JSONDecoder().decode(OllamaLLMResponse.self, from: data)
+                let partialContent = partialResponse.response
+                accumulatedContent += partialContent
+                onPartialResponse(partialContent)
+
+                if partialResponse.done {
+                    // Finalize the response
+                    let finalResponse = OllamaLLMResponse(
+                        model: model,
+                        created_at: partialResponse.created_at,
+                        response: accumulatedContent,
+                        done: true,
+                        eval_count: partialResponse.eval_count
+                    )
+                    continuation.resume(returning: finalResponse)
+                    return
+                }
+            } catch {
+                logger.log("Decoding error: \(error)")
+            }
+        }
+
+        func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+            if let error = error {
+                continuation.resume(throwing: error)
+            }
         }
     }
 }
