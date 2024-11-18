@@ -166,6 +166,18 @@
                 <a href="../Structs/AnthropicLLMResponse.html#/s:10AuroraCore20AnthropicLLMResponseV5UsageV">– Usage</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/AnthropicLLMStreamingResponse.html">AnthropicLLMStreamingResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/AnthropicLLMStreamingResponse/Delta.html">– Delta</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/AnthropicLLMStreamingResponse/ContentBlock.html">– ContentBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/AnthropicLLMStreamingResponse/Usage.html">– Usage</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/Bookmark.html">Bookmark</a>
               </li>
               <li class="nav-group-task">
@@ -374,6 +386,13 @@ detailed error handling using <code><a href="../Enums/LLMServiceError.html">LLMS
                       <div class="abstract">
                         <p>Initializes a new <code>AnthropicService</code> instance with the given API key and token limit.</p>
 
+<ul>
+<li>name: The name of the service instance (default is <code>&quot;Anthropic&quot;</code>).</li>
+<li>baseURL: The base URL for the Anthropic API. Defaults to &ldquo;<a href="https://api.anthropic.com">https://api.anthropic.com</a>&rdquo;.</li>
+<li>apiKey: The API key used for authenticating requests to the Anthropic API.</li>
+<li>maxTokenLimit: The maximum number of tokens allowed in a request. Defaults to 4096.</li>
+</ul>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
@@ -382,61 +401,6 @@ detailed error handling using <code><a href="../Enums/LLMServiceError.html">LLMS
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"Anthropic"</span><span class="p">,</span> <span class="nv">baseURL</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"https://api.anthropic.com"</span><span class="p">,</span> <span class="nv">apiKey</span><span class="p">:</span> <span class="kt">String</span><span class="p">?,</span> <span class="nv">maxTokenLimit</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">4096</span><span class="p">)</span></code></pre>
 
                         </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>name</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The name of the service instance (default is <code>&quot;Anthropic&quot;</code>).</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>baseURL</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The base URL for the Anthropic API. Defaults to &ldquo;<a href="https://api.anthropic.com">https://api.anthropic.com</a>&rdquo;.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>apiKey</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The API key used for authenticating requests to the Anthropic API.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>maxTokenLimit</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The maximum number of tokens allowed in a request. Defaults to 4096.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
                       </div>
                     </section>
                   </div>
@@ -471,7 +435,10 @@ detailed error handling using <code><a href="../Enums/LLMServiceError.html">LLMS
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p>Sends a non-streaming request to the Anthropic API and retrieves the response asynchronously.</p>
-<div class="aside aside-throws">
+
+<ul>
+<li>request: The <code><a href="../Structs/LLMRequest.html">LLMRequest</a></code> containing the messages and model configuration.</li>
+</ul><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
     <code><a href="../Enums/LLMServiceError.html">LLMServiceError</a></code> if the request encounters an issue (e.g., invalid response, decoding error, etc.).
 
@@ -485,25 +452,6 @@ detailed error handling using <code><a href="../Enums/LLMServiceError.html">LLMS
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">sendRequest</span><span class="p">(</span><span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Structs/LLMRequest.html">LLMRequest</a></span><span class="p">)</span> <span class="k">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a></span></code></pre>
 
                         </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>request</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The <code><a href="../Structs/LLMRequest.html">LLMRequest</a></code> containing the messages and model configuration.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
                       </div>
                       <div>
                         <h4>Return Value</h4>
@@ -528,9 +476,9 @@ detailed error handling using <code><a href="../Enums/LLMServiceError.html">LLMS
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10AuroraCore16AnthropicServiceC11sendRequest_17onPartialResponseAA19LLMResponseProtocol_pAA10LLMRequestV_ySScSgtYaKF"></a>
-                    <a name="//apple_ref/swift/Method/sendRequest(_:onPartialResponse:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10AuroraCore16AnthropicServiceC11sendRequest_17onPartialResponseAA19LLMResponseProtocol_pAA10LLMRequestV_ySScSgtYaKF">sendRequest(_:<wbr>onPartialResponse:<wbr>)</a>
+                    <a name="/s:10AuroraCore16AnthropicServiceC20sendStreamingRequest_17onPartialResponseAA19LLMResponseProtocol_pAA10LLMRequestV_ySScSgtYaKF"></a>
+                    <a name="//apple_ref/swift/Method/sendStreamingRequest(_:onPartialResponse:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore16AnthropicServiceC20sendStreamingRequest_17onPartialResponseAA19LLMResponseProtocol_pAA10LLMRequestV_ySScSgtYaKF">sendStreamingRequest(_:<wbr>onPartialResponse:<wbr>)</a>
                     </code>
                       <span class="declaration-note">
                         Asynchronous
@@ -542,7 +490,10 @@ detailed error handling using <code><a href="../Enums/LLMServiceError.html">LLMS
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p>Sends a request to the Anthropic API and retrieves the response asynchronously.</p>
-<div class="aside aside-throws">
+
+<ul>
+<li>request: The <code><a href="../Structs/LLMRequest.html">LLMRequest</a></code> containing the messages and model configuration.</li>
+</ul><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
     <code><a href="../Enums/LLMServiceError.html">LLMServiceError</a></code> if the request encounters an issue (e.g., missing API key, invalid response, etc.).
 
@@ -553,28 +504,9 @@ detailed error handling using <code><a href="../Enums/LLMServiceError.html">LLMS
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">sendRequest</span><span class="p">(</span><span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Structs/LLMRequest.html">LLMRequest</a></span><span class="p">,</span> <span class="nv">onPartialResponse</span><span class="p">:</span> <span class="p">((</span><span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="k">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">sendStreamingRequest</span><span class="p">(</span><span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Structs/LLMRequest.html">LLMRequest</a></span><span class="p">,</span> <span class="nv">onPartialResponse</span><span class="p">:</span> <span class="p">((</span><span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="k">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a></span></code></pre>
 
                         </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>request</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The <code><a href="../Structs/LLMRequest.html">LLMRequest</a></code> containing the messages and model configuration.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
                       </div>
                       <div>
                         <h4>Return Value</h4>
@@ -588,7 +520,7 @@ detailed error handling using <code><a href="../Enums/LLMServiceError.html">LLMS
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-11-09)</p>
+          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-11-18)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>

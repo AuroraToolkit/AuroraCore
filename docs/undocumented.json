@@ -15,6 +15,13 @@
       "warning": "undocumented"
     },
     {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/LLM/LLMManager.swift",
+      "line": 45,
+      "symbol": "LLMManager.init()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/LLM/LLMMessage.swift",
       "line": 17,
       "symbol": "LLMRole.user",
@@ -51,7 +58,14 @@
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/LLMResponses/OpenAILLMResponse.swift",
-      "line": 20,
+      "line": 17,
+      "symbol": "OpenAILLMResponse.Choice",
+      "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/LLMResponses/OpenAILLMResponse.swift",
+      "line": 18,
       "symbol": "OpenAILLMResponse.Choice.Message",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"

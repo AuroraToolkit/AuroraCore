@@ -166,6 +166,18 @@
                 <a href="../Structs/AnthropicLLMResponse.html#/s:10AuroraCore20AnthropicLLMResponseV5UsageV">– Usage</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/AnthropicLLMStreamingResponse.html">AnthropicLLMStreamingResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/AnthropicLLMStreamingResponse/Delta.html">– Delta</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/AnthropicLLMStreamingResponse/ContentBlock.html">– ContentBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/AnthropicLLMStreamingResponse/Usage.html">– Usage</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/Bookmark.html">Bookmark</a>
               </li>
               <li class="nav-group-task">
@@ -227,6 +239,60 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:10AuroraCore17OllamaLLMResponseV5modelSSSgvp"></a>
+                    <a name="//apple_ref/swift/Property/model" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore17OllamaLLMResponseV5modelSSSgvp">model</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The model used for generating the response, made optional as per the protocol.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">model</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore17OllamaLLMResponseV10created_atSSvp"></a>
+                    <a name="//apple_ref/swift/Property/created_at" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore17OllamaLLMResponseV10created_atSSvp">created_at</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The timestamp when the response was created.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">created_at</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:10AuroraCore17OllamaLLMResponseV8responseSSvp"></a>
                     <a name="//apple_ref/swift/Property/response" class="dashAnchor"></a>
                     <a class="token" href="#/s:10AuroraCore17OllamaLLMResponseV8responseSSvp">response</a>
@@ -254,9 +320,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10AuroraCore17OllamaLLMResponseV5modelSSSgvp"></a>
-                    <a name="//apple_ref/swift/Property/model" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10AuroraCore17OllamaLLMResponseV5modelSSSgvp">model</a>
+                    <a name="/s:10AuroraCore17OllamaLLMResponseV4doneSbvp"></a>
+                    <a name="//apple_ref/swift/Property/done" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore17OllamaLLMResponseV4doneSbvp">done</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -264,14 +330,41 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The model used for generating the response, made optional as per the protocol.</p>
+                        <p>A boolean indicating if the model has finished generating the response.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">model</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">done</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore17OllamaLLMResponseV10eval_countSiSgvp"></a>
+                    <a name="//apple_ref/swift/Property/eval_count" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore17OllamaLLMResponseV10eval_countSiSgvp">eval_count</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The number of tokens in the generated response.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">eval_count</span><span class="p">:</span> <span class="kt">Int</span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
@@ -350,7 +443,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-11-09)</p>
+          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-11-18)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
