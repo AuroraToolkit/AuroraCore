@@ -219,7 +219,7 @@ public class OllamaService: LLMServiceProtocol {
         private let continuation: CheckedContinuation<LLMResponseProtocol, Error>
         private var accumulatedContent = ""
         private var finalResponse: LLMResponseProtocol?
-        private let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "OpenAI.StreamingDelegate")
+        private let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "OllamaService.StreamingDelegate")
         
         init(model: String,
              onPartialResponse: @escaping (String) -> Void,

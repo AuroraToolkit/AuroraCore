@@ -40,10 +40,10 @@ public class AnthropicService: LLMServiceProtocol {
      Initializes a new `AnthropicService` instance with the given API key and token limit.
 
      - Parameters:
-        - name: The name of the service instance (default is `"Anthropic"`).
-        - baseURL: The base URL for the Anthropic API. Defaults to "https://api.anthropic.com".
-        - apiKey: The API key used for authenticating requests to the Anthropic API.
-        - maxTokenLimit: The maximum number of tokens allowed in a request. Defaults to 4096.
+     - name: The name of the service instance (default is `"Anthropic"`).
+     - baseURL: The base URL for the Anthropic API. Defaults to "https://api.anthropic.com".
+     - apiKey: The API key used for authenticating requests to the Anthropic API.
+     - maxTokenLimit: The maximum number of tokens allowed in a request. Defaults to 4096.
      */
     public init(name: String = "Anthropic", baseURL: String = "https://api.anthropic.com", apiKey: String?, maxTokenLimit: Int = 4096) {
         self.name = name
@@ -78,7 +78,7 @@ public class AnthropicService: LLMServiceProtocol {
      Sends a non-streaming request to the Anthropic API and retrieves the response asynchronously.
 
      - Parameters:
-        - request: The `LLMRequest` containing the messages and model configuration.
+     - request: The `LLMRequest` containing the messages and model configuration.
      - Returns: The `LLMResponseProtocol` containing the generated text or an error if the request fails.
      - Throws: `LLMServiceError` if the request encounters an issue (e.g., invalid response, decoding error, etc.).
      */
@@ -152,8 +152,8 @@ public class AnthropicService: LLMServiceProtocol {
      Sends a request to the Anthropic API and retrieves the response asynchronously.
 
      - Parameters:
-        - request: The `LLMRequest` containing the messages and model configuration.
-        - Returns: The `LLMResponseProtocol` containing the generated text or an error if the request fails.
+     - request: The `LLMRequest` containing the messages and model configuration.
+     - Returns: The `LLMResponseProtocol` containing the generated text or an error if the request fails.
      - Throws: `LLMServiceError` if the request encounters an issue (e.g., missing API key, invalid response, etc.).
      */
     public func sendStreamingRequest(_ request: LLMRequest, onPartialResponse: ((String) -> Void)? = nil) async throws -> LLMResponseProtocol {
@@ -195,6 +195,7 @@ public class AnthropicService: LLMServiceProtocol {
         let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
 
         guard let url = URL(string: "\(baseURL)/v1/messages") else {
+            logger.log("Invalid URL: \(self.baseURL)/v1/messages")
             throw LLMServiceError.invalidURL
         }
 
@@ -205,52 +206,104 @@ public class AnthropicService: LLMServiceProtocol {
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")  // Required Anthropic version header
 
-        logger.log("AnthropicService \(#function) Sending request: \(body)")
+        logger.log("AnthropicService \(#function) Sending streaming request: \(body)")
 
-        let state = StreamingState()
-
-        // Handle streaming
         return try await withCheckedThrowingContinuation { continuation in
-            let task = URLSession.shared.dataTask(with: urlRequest) { [weak self] data, response, error in
-                guard let self = self else { return }
-                Task {
-                    if let error = error {
-                        continuation.resume(throwing: error)
-                        return
-                    }
+            let streamingDelegate = StreamingDelegate(
+                model: request.model ?? "claude-3-5-sonnet-20240620",
+                onPartialResponse: onPartialResponse ?? { _ in },
+                continuation: continuation
+            )
+            let session = URLSession(configuration: .default, delegate: streamingDelegate, delegateQueue: nil)
+            let task = session.dataTask(with: urlRequest)
+            task.resume()
+        }
+    }
 
-                    guard let data = data else {
-                        continuation.resume(throwing: LLMServiceError.invalidResponse(statusCode: -1))
-                        return
-                    }
+    internal class StreamingDelegate: NSObject, URLSessionDataDelegate {
+        private let model: String
+        private let onPartialResponse: (String) -> Void
+        private let continuation: CheckedContinuation<LLMResponseProtocol, Error>
+        private var accumulatedContent: [AnthropicLLMResponse.Content] = []
+        private var inputTokens: Int = 0
+        private var outputTokens: Int = 0
+        private var isComplete = false
+        private let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "AnthropicService.StreamingDelegate")
 
-                    if let jsonString = String(data: data, encoding: .utf8) {
-                        self.logger.log("AntropicService \(#function) Received response: \(jsonString)")
-                    }
+        init(model: String,
+             onPartialResponse: @escaping (String) -> Void,
+             continuation: CheckedContinuation<LLMResponseProtocol, Error>) {
+            self.model = model
+            self.onPartialResponse = onPartialResponse
+            self.continuation = continuation
+            logger.log("AnthropicService \(#function) StreamingDelegate initialized for model: \(model)")
+        }
 
-                    // Process the streaming data asynchronously
-                    if let partialContent = String(data: data, encoding: .utf8) {
-                        await state.appendContent(partialContent)
-                        onPartialResponse?(partialContent)
-                    }
+        func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+            guard let eventText = String(data: data, encoding: .utf8) else {
+                logger.log("AnthropicService \(#function) Failed to decode data as UTF-8")
+                return
+            }
 
-                    if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
-                        let usage = await state.getUsage()
-                        let finalResponse = AnthropicLLMResponse(
-                            id: UUID().uuidString,  // Placeholder for actual ID from API if available
-                            type: "response",
-                            role: "assistant",
-                            content: [AnthropicLLMResponse.Content(type: "text", text: await state.accumulatedContent)],
-                            stopReason: nil,  // Assuming we don't have this in streaming
-                            usage: usage
-                        )
-                        continuation.resume(returning: finalResponse)
-                    } else {
-                        continuation.resume(throwing: LLMServiceError.invalidResponse(statusCode: (response as? HTTPURLResponse)?.statusCode ?? -1))
+            logger.log("AnthropicService \(#function) Received event: \(eventText)")
+
+            let events = eventText.components(separatedBy: "\n\n")
+            for event in events {
+                guard !event.isEmpty else { continue }
+
+                if event.contains("event: message_stop") {
+                    logger.log("AnthropicService \(#function) Received message_stop event.")
+                    isComplete = true
+                    break
+                } else if let dataRange = event.range(of: "data: ") {
+                    let jsonString = event[dataRange.upperBound...].trimmingCharacters(in: .whitespacesAndNewlines)
+                    if let jsonData = jsonString.data(using: .utf8) {
+                        do {
+                            let streamingResponse = try JSONDecoder().decode(AnthropicLLMStreamingResponse.self, from: jsonData)
+
+                            if let delta = streamingResponse.delta, let text = delta.text {
+                                let content = AnthropicLLMResponse.Content(type: delta.type, text: text)
+                                accumulatedContent.append(content)
+                                onPartialResponse(text)
+
+                                logger.log("AnthropicService \(#function) Partial response: \(text)")
+                            }
+
+                            if let usage = streamingResponse.usage {
+                                inputTokens = usage.inputTokens ?? 0
+                                outputTokens = usage.outputTokens ?? 0
+                            }
+                        } catch {
+                            logger.log("AnthropicService \(#function) Failed to decode partial response: \(error.localizedDescription)")
+                        }
                     }
+                } else {
+                    logger.log("AnthropicService \(#function) Unhandled event type: \(event)")
                 }
             }
-            task.resume()
+
+            if isComplete {
+                let finalResponse = AnthropicLLMResponse(
+                    id: UUID().uuidString,  // Replace with actual ID from the API if available
+                    type: "response",
+                    role: "assistant",
+                    model: model,
+                    content: accumulatedContent,
+                    stopReason: "end_turn",  // Replace with actual stop reason if available
+                    usage: AnthropicLLMResponse.Usage(input_tokens: inputTokens, output_tokens: outputTokens)
+                )
+                continuation.resume(returning: finalResponse)
+            }
+        }
+
+        func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+            if let error = error {
+                logger.log("AnthropicService \(#function) Task completed with error: \(error.localizedDescription)")
+                continuation.resume(throwing: error)
+            } else if !isComplete {
+                logger.log("AnthropicService \(#function) Task completed without receiving a message_stop event.")
+                continuation.resume(throwing: LLMServiceError.custom(message: "Streaming response ended prematurely."))
+            }
         }
     }
 }

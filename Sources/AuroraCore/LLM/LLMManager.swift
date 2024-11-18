@@ -216,7 +216,7 @@ public class LLMManager {
             return nil
         }
 
-        logger.log("Sending request to service: \(service.name)")
+        logger.log("Sending request to service: \(service.name), model: \(optimizedRequest.model ?? "Not specified")")
 
         return await sendRequestToService(service, withRequest: optimizedRequest, onPartialResponse: onPartialResponse)
     }

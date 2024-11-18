@@ -29,7 +29,13 @@ public struct AnthropicLLMResponse: LLMResponseProtocol, Codable {
     /// The content returned by the Anthropic API.
     public let content: [Content]
 
-    /// The reason why the response was stopped (optional).
+    /** The reason why the response was stopped (optional).
+
+     - `end_turn`: the model reached a natural stopping point
+     - `max_tokens`: we exceeded the requested `max_tokens` or the model's maximum
+     - `stop_sequence`: one of your provided custom stop_sequences was generated
+     - `tool_use`: the model invoked one or more tools
+     */
     public let stopReason: String?
 
     /// Token usage statistics (optional).
@@ -54,7 +60,7 @@ public struct AnthropicLLMResponse: LLMResponseProtocol, Codable {
 
     /// Returns the concatenated text content from the Anthropic content field.
     public var text: String {
-        return content.compactMap { $0.text }.joined(separator: " ")
+        return content.compactMap { $0.text }.joined()
     }
 
     /// Returns token usage statistics as an `LLMTokenUsage` object.

@@ -11,9 +11,9 @@ import AuroraCore
 struct BasicRequestExample {
 
     func execute() async {
-        let apiKey = ProcessInfo.processInfo.environment["OPENAI_API_KEY"] ?? ""
+        let apiKey = ProcessInfo.processInfo.environment["ANTHROPIC_API_KEY"] ?? ""
         if apiKey.isEmpty {
-            print("No API key provided. Please set the OPENAI_API_KEY environment variable.")
+            print("No API key provided. Please set the ANTHROPIC_API_KEY environment variable.")
             return
         }
 
@@ -21,7 +21,7 @@ struct BasicRequestExample {
         let manager = LLMManager()
 
         // Create and register a service
-        let realService = OpenAIService(apiKey: apiKey)
+        let realService = AnthropicService(apiKey: apiKey)
         manager.registerService(realService)
 
         // Create a basic request

@@ -11,9 +11,9 @@ import AuroraCore
 struct StreamingRequestExample {
 
     func execute() async {
-        let apiKey = ProcessInfo.processInfo.environment["OPENAI_API_KEY"] ?? ""
+        let apiKey = ProcessInfo.processInfo.environment["ANTHROPIC_API_KEY"] ?? ""
         if apiKey.isEmpty {
-            print("No API key provided. Please set the OPENAI_API_KEY environment variable.")
+            print("No API key provided. Please set the ANTHROPIC_API_KEY environment variable.")
             return
         }
 
@@ -21,7 +21,7 @@ struct StreamingRequestExample {
         let manager = LLMManager()
 
         // Create and register a service
-        let realService = OpenAIService(apiKey: apiKey)
+        let realService = AnthropicService(apiKey: apiKey)
         manager.registerService(realService)
 
         // Create a request for streaming response
@@ -35,8 +35,7 @@ struct StreamingRequestExample {
         var partialResponses = [String]()
         let onPartialResponse: (String) -> Void = { partialText in
             partialResponses.append(partialText)
-            print("Partial response count: \(partialResponses.count)")
-            print("Partial response received: \(partialResponses.joined())")
+            print("Partial response: \(partialText)")
         }
 
         if let response = await manager.sendStreamingRequest(request, onPartialResponse: onPartialResponse) {
