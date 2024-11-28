@@ -65,10 +65,19 @@ public extension String {
     }
 
     /// Enum defining trimming strategies.
-    enum TrimmingStrategy {
+    enum TrimmingStrategy: CustomStringConvertible {
         case start
         case middle
         case end
         case none
+
+        public var description: String {
+            switch self {
+            case .start: return "start"
+            case .middle: return "middle"
+            case .end: return "end"
+            case .none: return "none"
+            }
+        }
     }
 }

@@ -7,6 +7,38 @@
 
 import Foundation
 
+// MARK: - TokenAdjustmentPolicy
+
+/**
+ The `TokenAdjustmentPolicy` enum specifies how input and output token limits are handled for an LLM service.
+
+ This policy provides flexibility in managing requests when they exceed the token constraints of a specific service, ensuring developers can configure behavior that aligns with their use case.
+
+ - Note: Each service can have separate policies for input and output tokens, allowing fine-grained control over request handling.
+ */
+public enum TokenAdjustmentPolicy {
+    /**
+     Automatically adjusts the token limits to match the service's constraints.
+
+     - For input tokens: The request's content is trimmed to fit within the service's input token limit using the specified trimming strategy.
+     - For output tokens: The request's `maxTokens` is reduced to the service's `maxOutputTokens`.
+
+     - Use Case: This policy is ideal when ensuring compatibility with the service is more important than strict adherence to the original request's configuration.
+     */
+    case adjustToServiceLimits
+
+    /**
+     Strictly enforces the token limits defined in the request.
+
+     - For input tokens: If the request exceeds the service's input token limit, the request will fail.
+     - For output tokens: If the request's `maxTokens` exceeds the service's `maxOutputTokens`, the request will fail.
+
+     - Use Case: This policy is ideal for debugging or when the integrity of the original request must be preserved without any modifications.
+     */
+    case strictRequestLimits
+}
+
+
 // MARK: - LLMServiceProtocol
 
 /**
@@ -42,11 +74,34 @@ public protocol LLMServiceProtocol {
     var requiresAPIKey: Bool { get }
 
     /**
-     The maximum number of tokens allowed in a single request by the LLM service.
+     The maximum context window size (total tokens, input + output) supported by the service.
+
+     - Note: Requests should not exceed this limit to ensure they are processed correctly.
+     */
+    var contextWindowSize: Int { get }
+
+    /**
+     The maximum number of tokens allowed for output (completion) in a single request.
 
      - Important: This value may differ between services. For example, OpenAI may have a higher token limit compared to other LLMs.
+     This value must be less than or equal to `contextWindowSize` to ensure the request fits within the service's capacity.
+     - Note: Many services have a max output token limit lower than the context window size.
      */
-    var maxTokenLimit: Int { get }
+    var maxOutputTokens: Int { get }
+
+    /**
+     Specifies the policy to handle input tokens when they exceed the service's input token limit.
+
+     - SeeAlso: `TokenAdjustmentPolicy`
+     */
+    var inputTokenPolicy: TokenAdjustmentPolicy { get set }
+
+    /**
+     Specifies the policy to handle output tokens when they exceed the service's max output token limit.
+
+     - SeeAlso: `TokenAdjustmentPolicy`
+     */
+    var outputTokenPolicy: TokenAdjustmentPolicy { get set }
 
     /**
      Sends a request to the LLM service asynchronously and returns the response.

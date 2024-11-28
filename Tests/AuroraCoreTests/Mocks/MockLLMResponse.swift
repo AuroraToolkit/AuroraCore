@@ -18,6 +18,9 @@ public struct MockLLMResponse: LLMResponseProtocol {
     /// The mock text content returned by the mock LLM.
     public var text: String
 
+    /// The vendor of the model used for generating the response
+    public var vendor: String
+
     /// The model name for the mock LLM (optional).
     public var model: String?
 
@@ -29,11 +32,13 @@ public struct MockLLMResponse: LLMResponseProtocol {
 
      - Parameters:
         - text: The mock text content.
+        - vendor: The vendor of the mock LLM.
         - model: The model name (optional).
         - tokenUsage: The mock token usage statistics (optional).
      */
-    public init(text: String, model: String? = nil, tokenUsage: LLMTokenUsage? = nil) {
+    public init(text: String, vendor: String = "Test Vendor", model: String? = nil, tokenUsage: LLMTokenUsage? = nil) {
         self.text = text
+        self.vendor = vendor
         self.model = model
         self.tokenUsage = tokenUsage
     }

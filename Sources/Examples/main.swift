@@ -17,3 +17,5 @@ await StreamingRequestExample().execute()
 
 print("--------------------")
 
+print("LLM Routing Example:\n")
+await LLMRoutingExample().execute()

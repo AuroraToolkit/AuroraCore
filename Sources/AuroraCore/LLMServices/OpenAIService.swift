@@ -33,23 +33,43 @@ public class OpenAIService: LLMServiceProtocol {
     /// OpenAI requires an API key for authentication.
     public let requiresAPIKey = true
 
-    /// The maximum token limit that can be processed by this service.
-    public let maxTokenLimit: Int
+    /// The maximum context window size (total tokens, input + output) supported by the service, defaults to 128k.
+    public var contextWindowSize: Int
+
+    /// The maximum number of tokens allowed for output (completion) in a single request, defaults to 4k.
+    public let maxOutputTokens: Int
+
+    /// Specifies the policy to handle input tokens when they exceed the service's input token limit, defaults to `.adjustToServiceLimits`.
+    public var inputTokenPolicy: TokenAdjustmentPolicy
+
+    /// Specifies the policy to handle output tokens when they exceed the service's max output token limit, defaults to `adjustToServiceLimits`.
+    public var outputTokenPolicy: TokenAdjustmentPolicy
+
+    /// The URL session used to send basic requests.
+    internal var urlSession: URLSession
 
     /**
-     Initializes a new `OpenAIService` instance with the given API key and token limit.
+     Initializes a new `OpenAIService` instance with the given API key.
 
      - Parameters:
      - name: The name of the service instance (default is `"OpenAI"`).
-     - baseURL: The base URL for the OpenAI API. Defaults to "https://api.openai.com".
      - apiKey: The API key used for authenticating requests to the OpenAI API.
-     - maxTokenLimit: The maximum number of tokens allowed in a request. Defaults to 4096.
+     - baseURL: The base URL for the OpenAI API. Defaults to "https://api.openai.com".
+     - contextWindowSize: The size of the context window used by the service. Defaults to 128k.
+     - maxOutputTokens: The maximum number of tokens allowed in a request. Defaults to 16k.
+     - inputTokenPolicy: The policy to handle input tokens exceeding the service's limit. Defaults to `.adjustToServiceLimits`.
+     - outputTokenPolicy: The policy to handle output tokens exceeding the service's limit. Defaults to `.adjustToServiceLimits`.
+     - urlSession: The `URLSession` instance used for network requests. Defaults to a `.default` configuration.
      */
-    public init(name: String = "OpenAI", baseURL: String = "https://api.openai.com", apiKey: String?, maxTokenLimit: Int = 4096) {
+    public init(name: String = "OpenAI", baseURL: String = "https://api.openai.com", apiKey: String?, contextWindowSize: Int = 128_000, maxOutputTokens: Int = 16384, inputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, outputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, urlSession: URLSession = URLSession(configuration: .default)) {
         self.name = name
         self.baseURL = baseURL
         self.apiKey = apiKey
-        self.maxTokenLimit = maxTokenLimit
+        self.contextWindowSize = contextWindowSize
+        self.maxOutputTokens = maxOutputTokens
+        self.inputTokenPolicy = inputTokenPolicy
+        self.outputTokenPolicy = outputTokenPolicy
+        self.urlSession = urlSession
     }
 
     // MARK: - Non-streaming Request

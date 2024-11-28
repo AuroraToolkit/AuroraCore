@@ -72,28 +72,13 @@ final class LLMManagerTests: XCTestCase {
         XCTAssertEqual(manager.activeServiceName, "Service2", "Active service should be Service2.")
     }
 
-    func testTokenTrimmingOnRequest() async {
-        // Given
-        let mockService = MockLLMService(name: "TestService", maxTokenLimit: 20, expectedResult: .success(MockLLMResponse(text: "Test Output")))
-        manager.registerService(mockService)
-
-        let longMessage = String(repeating: "A", count: 100) // Exceeds token limit
-        let request = LLMRequest(messages: [LLMMessage(role: .user, content: longMessage)])
-
-        // When
-        let response = await manager.sendRequest(request, trimming: .end)
-
-        // Then
-        XCTAssertEqual(response?.text, "Test Output", "Response should be successful with trimmed message content.")
-    }
-
     func testTokenTrimmingWithStartStrategy() async {
         // Given
-        let mockService = MockLLMService(name: "TestService", maxTokenLimit: 20, expectedResult: .success(MockLLMResponse(text: "Test Output")))
+        let mockService = MockLLMService(name: "TestService", maxOutputTokens: 100, expectedResult: .success(MockLLMResponse(text: "Test Output")))
         manager.registerService(mockService)
 
-        let longMessage = String(repeating: "A", count: 100) // Exceeds token limit
-        let request = LLMRequest(messages: [LLMMessage(role: .user, content: longMessage)])
+        let longMessage = String(repeating: "A", count: 300) // Exceeds token limit
+        let request = LLMRequest(messages: [LLMMessage(role: .user, content: longMessage)], maxTokens: 30)
 
         // When
         let response = await manager.sendRequest(request, trimming: .start)
@@ -102,39 +87,12 @@ final class LLMManagerTests: XCTestCase {
         XCTAssertEqual(response?.text, "Test Output", "Response should be successful with trimmed message content.")
     }
 
-    func testTokenTrimmingOnMultipleServices() async {
-        // Given
-        let service1 = MockLLMService(name: "Service1", maxTokenLimit: 30, expectedResult: .success(MockLLMResponse(text: "Service1 Output")))
-        let service2 = MockLLMService(name: "Service2", maxTokenLimit: 50, expectedResult: .success(MockLLMResponse(text: "Service2 Output")))
-
-        manager.registerService(service1)
-        manager.registerService(service2)
-
-        // Test 1: Message that fits within Service1's limit after trimming
-        let shorterMessage = String(repeating: "B", count: 25 * 4) // Estimated to fit within 30-token limit after trimming
-        let request1 = LLMRequest(messages: [LLMMessage(role: .user, content: shorterMessage)])
-
-        let response1 = await manager.sendRequest(request1, trimming: .middle)
-
-        // Then
-        XCTAssertEqual(response1?.text, "Service1 Output", "Service1 should handle trimmed message content that fits within its token limit.")
-
-        // Test 2: Message that exceeds Service1's limit but fits within Service2's limit
-        let longerMessage = String(repeating: "B", count: 40 * 4) // Exceeds Service1's 30-token limit, fits within Service2's 50-token limit
-        let request2 = LLMRequest(messages: [LLMMessage(role: .user, content: longerMessage)])
-
-        let response2 = await manager.sendRequest(request2, trimming: .end)
-
-        // Then
-        XCTAssertEqual(response2?.text, "Service2 Output", "Service2 should handle trimmed message content when Service1 limit is exceeded.")
-    }
-    
     func testFallbackServiceWithTokenLimits() async {
         // Given
-        let mockService = MockLLMService(name: "TestService", maxTokenLimit: 20, expectedResult: .failure(NSError(domain: "Test", code: 1, userInfo: nil)))
-        let fallbackService = MockLLMService(name: "FallbackService", maxTokenLimit: 30, expectedResult: .success(MockLLMResponse(text: "Fallback Output")))
+        let mockService = MockLLMService(name: "TestService", maxOutputTokens: 20, expectedResult: .failure(NSError(domain: "Test", code: 1, userInfo: nil)))
+        let fallbackService = MockLLMService(name: "FallbackService", maxOutputTokens: 30, expectedResult: .success(MockLLMResponse(text: "Fallback Output")))
 
-        manager.registerService(mockService, withRouting: [.tokenLimit])
+        manager.registerService(mockService, withRouting: [.inputTokenLimit(30)])
         manager.registerFallbackService(fallbackService)
 
         let longMessage = String(repeating: "C", count: 100) // Exceeds token limit for TestService but fits in FallbackService
@@ -147,46 +105,13 @@ final class LLMManagerTests: XCTestCase {
         XCTAssertEqual(response?.text, "Fallback Output", "Should have fallen back to FallbackService and returned correct response.")
     }
 
-    func testBufferedTrimmingWithExactTokenLimit() async {
-        // Given
-        let mockService = MockLLMService(name: "TestService", maxTokenLimit: 25, expectedResult: .success(MockLLMResponse(text: "Test Output")))
-        manager.registerService(mockService)
-
-        let longMessage = String(repeating: "D", count: 100) // Exceeds the 25-token adjusted limit
-
-        // When
-        let request = LLMRequest(messages: [LLMMessage(role: .user, content: longMessage)])
-        let response = await manager.sendRequest(request, trimming: .middle)
-
-        // Then
-        XCTAssertEqual(response?.text, "Test Output", "Response should be successful after trimming within buffer.")
-    }
-
-    func testSendRequestWithRoutingStrategy() async {
-        // Given
-        let service1 = MockLLMService(name: "Service1", maxTokenLimit: 25, expectedResult: .success(MockLLMResponse(text: "Service1 Output")))
-        let service2 = MockLLMService(name: "Service2", maxTokenLimit: 50, expectedResult: .success(MockLLMResponse(text: "Service2 Output")))
-
-        manager.registerService(service1)
-        manager.registerService(service2)
-
-        let longMessage = String(repeating: "E", count: 26 * 4) // Exceeds the limit of Service1 but not Service2
-
-        // When
-        let request = LLMRequest(messages: [LLMMessage(role: .user, content: longMessage)])
-        let response = await manager.sendRequest(request, routing: .tokenLimit)
-
-        // Then
-        XCTAssertEqual(response?.text, "Service2 Output", "Should have routed to Service2 based on token limit.")
-    }
-
     func testStreamingRequest() async {
         // Given
         let streamingResultText = "Partial response from streaming"
         let finalResponseText = "Streaming Response"
         let mockService = MockLLMService(
             name: "StreamingService",
-            maxTokenLimit: 50,
+            maxOutputTokens: 500,
             expectedResult: .success(MockLLMResponse(text: finalResponseText)),
             streamingExpectedResult: streamingResultText
         )
@@ -210,8 +135,18 @@ final class LLMManagerTests: XCTestCase {
 
     func testTokenLimitRouting() async {
         // Given
-        let limitedService = MockLLMService(name: "LimitedService", maxTokenLimit: 20, expectedResult: .success(MockLLMResponse(text: "Limited Response")))
-        let extendedService = MockLLMService(name: "ExtendedService", maxTokenLimit: 100, expectedResult: .success(MockLLMResponse(text: "Extended Response")))
+        let limitedService = MockLLMService(
+            name: "LimitedService",
+            maxOutputTokens: 20,
+            inputTokenPolicy: .strictRequestLimits,
+            outputTokenPolicy: .strictRequestLimits,
+            expectedResult: .success(MockLLMResponse(text: "Limited Response")))
+        let extendedService = MockLLMService(
+            name: "ExtendedService",
+            maxOutputTokens: 500,
+            inputTokenPolicy: .adjustToServiceLimits,
+            outputTokenPolicy: .adjustToServiceLimits,
+            expectedResult: .success(MockLLMResponse(text: "Extended Response")))
 
         manager.registerService(limitedService)
         manager.registerService(extendedService)
@@ -220,7 +155,7 @@ final class LLMManagerTests: XCTestCase {
         let request = LLMRequest(messages: [LLMMessage(role: .user, content: longMessage)])
 
         // When
-        let response = await manager.sendRequest(request, routing: .tokenLimit)
+        let response = await manager.sendRequest(request, routing: .inputTokenLimit(30), trimming: .end)
 
         // Then
         XCTAssertEqual(response?.text, "Extended Response", "Should route to the service with a higher token limit")
@@ -245,10 +180,10 @@ final class LLMManagerTests: XCTestCase {
 
     func testFallbackRouting() async {
         // Given
-        let primaryService = MockLLMService(name: "PrimaryService", maxTokenLimit: 20, expectedResult: .failure(NSError(domain: "Test", code: 1)))
-        let fallbackService = MockLLMService(name: "FallbackService", maxTokenLimit: 30, expectedResult: .success(MockLLMResponse(text: "Fallback Response")))
+        let primaryService = MockLLMService(name: "PrimaryService", maxOutputTokens: 20, expectedResult: .failure(NSError(domain: "Test", code: 1)))
+        let fallbackService = MockLLMService(name: "FallbackService", maxOutputTokens: 30, expectedResult: .success(MockLLMResponse(text: "Fallback Response")))
 
-        manager.registerService(primaryService, withRouting: [.tokenLimit])
+        manager.registerService(primaryService, withRouting: [.inputTokenLimit(30)])
         manager.registerFallbackService(fallbackService)
 
         let message = String(repeating: "F", count: 25 * 4) // Exceeds PrimaryService limit
@@ -261,70 +196,10 @@ final class LLMManagerTests: XCTestCase {
         XCTAssertEqual(response?.text, "Fallback Response", "Should route to the fallback service")
     }
 
-    func testStartTrimming() async {
-        // Given
-        let mockService = MockLLMService(name: "TrimStartService", maxTokenLimit: 20, expectedResult: .success(MockLLMResponse(text: "Trimmed Start Response")))
-        manager.registerService(mockService)
-
-        let longMessage = String(repeating: "S", count: 50 * 4) // Well beyond 20 tokens
-        let request = LLMRequest(messages: [LLMMessage(role: .user, content: longMessage)])
-
-        // When
-        let response = await manager.sendRequest(request, trimming: .start)
-
-        // Then
-        XCTAssertEqual(response?.text, "Trimmed Start Response", "Should trim from the start to fit within the token limit")
-    }
-
-    func testMiddleTrimming() async {
-        // Given
-        let mockService = MockLLMService(name: "TrimMiddleService", maxTokenLimit: 20, expectedResult: .success(MockLLMResponse(text: "Trimmed Middle Response")))
-        manager.registerService(mockService)
-
-        let longMessage = String(repeating: "M", count: 50 * 4)
-        let request = LLMRequest(messages: [LLMMessage(role: .user, content: longMessage)])
-
-        // When
-        let response = await manager.sendRequest(request, trimming: .middle)
-
-        // Then
-        XCTAssertEqual(response?.text, "Trimmed Middle Response", "Should trim from the middle to fit within the token limit")
-    }
-
-    func testEndTrimming() async {
-        // Given
-        let mockService = MockLLMService(name: "TrimEndService", maxTokenLimit: 20, expectedResult: .success(MockLLMResponse(text: "Trimmed End Response")))
-        manager.registerService(mockService)
-
-        let longMessage = String(repeating: "E", count: 50 * 4)
-        let request = LLMRequest(messages: [LLMMessage(role: .user, content: longMessage)])
-
-        // When
-        let response = await manager.sendRequest(request, trimming: .end)
-
-        // Then
-        XCTAssertEqual(response?.text, "Trimmed End Response", "Should trim from the end to fit within the token limit")
-    }
-
-    func testNoTrimming() async {
-        // Given
-        let mockService = MockLLMService(name: "NoTrimService", maxTokenLimit: 50, expectedResult: .success(MockLLMResponse(text: "Untrimmed Response")))
-        manager.registerService(mockService)
-
-        let shorterMessage = String(repeating: "N", count: 40 * 4) // Fits within 50-token limit without trimming
-        let request = LLMRequest(messages: [LLMMessage(role: .user, content: shorterMessage)])
-
-        // When
-        let response = await manager.sendRequest(request, trimming: .none)
-
-        // Then
-        XCTAssertEqual(response?.text, "Untrimmed Response", "Message should be untrimmed and fit within the limit")
-    }
-
     /// Test to verify behavior when there is no fallback service available and the primary service fails.
     func testNoFallbackServiceAvailable() async {
         // Given
-        let primaryService = MockLLMService(name: "PrimaryService", maxTokenLimit: 20, expectedResult: .failure(NSError(domain: "TestError", code: 1)))
+        let primaryService = MockLLMService(name: "PrimaryService", maxOutputTokens: 20, expectedResult: .failure(NSError(domain: "TestError", code: 1)))
         manager.registerService(primaryService)
 
         let message = String(repeating: "F", count: 25 * 4) // Exceeds PrimaryService limit
@@ -341,8 +216,8 @@ final class LLMManagerTests: XCTestCase {
     /// Test to verify behavior when both primary and fallback services fail.
     func testFallbackServiceFailure() async {
         // Given
-        let primaryService = MockLLMService(name: "PrimaryService", maxTokenLimit: 20, expectedResult: .failure(NSError(domain: "PrimaryError", code: 1)))
-        let fallbackService = MockLLMService(name: "FallbackService", maxTokenLimit: 30, expectedResult: .failure(NSError(domain: "FallbackError", code: 1)))
+        let primaryService = MockLLMService(name: "PrimaryService", maxOutputTokens: 20, expectedResult: .failure(NSError(domain: "PrimaryError", code: 1)))
+        let fallbackService = MockLLMService(name: "FallbackService", maxOutputTokens: 30, expectedResult: .failure(NSError(domain: "FallbackError", code: 1)))
 
         manager.registerService(primaryService)
         manager.registerFallbackService(fallbackService)
@@ -361,8 +236,8 @@ final class LLMManagerTests: XCTestCase {
     /// Test to ensure fallback routing is activated in `selectService()` when no services meet the routing criteria.
     func testSelectServiceActivatesFallback() async {
         // Given
-        let domainService = MockLLMService(name: "DomainService", maxTokenLimit: 50, expectedResult: .success(MockLLMResponse(text: "Domain Response")))
-        let fallbackService = MockLLMService(name: "FallbackService", maxTokenLimit: 30, expectedResult: .success(MockLLMResponse(text: "Fallback Response")))
+        let domainService = MockLLMService(name: "DomainService", maxOutputTokens: 50, expectedResult: .success(MockLLMResponse(text: "Domain Response")))
+        let fallbackService = MockLLMService(name: "FallbackService", maxOutputTokens: 30, expectedResult: .success(MockLLMResponse(text: "Fallback Response")))
 
         manager.registerService(domainService, withRouting: [.domain(["otherDomain"])])
         manager.registerFallbackService(fallbackService)
@@ -378,10 +253,10 @@ final class LLMManagerTests: XCTestCase {
 
     func testNoSuitableServiceFound() async {
         // Given
-        let limitedService = MockLLMService(name: "LimitedService", maxTokenLimit: 10, expectedResult: .failure(NSError(domain: "Test", code: 1, userInfo: nil)))
+        let limitedService = MockLLMService(name: "LimitedService", maxOutputTokens: 10, expectedResult: .failure(NSError(domain: "Test", code: 1, userInfo: nil)))
 
         // Register a service that does not meet the criteria due to its low token limit
-        manager.registerService(limitedService, withRouting: [.tokenLimit])
+        manager.registerService(limitedService, withRouting: [.inputTokenLimit(10)])
 
         // Set the active service to this limited service
         manager.setActiveService(byName: "LimitedService")
@@ -398,5 +273,327 @@ final class LLMManagerTests: XCTestCase {
 
         // Then
         XCTAssertNil(response, "Expected no suitable service to be found, so response should be nil.")
+    }
+
+    func testInputTokenTrimming() async {
+        // Given
+        let service = MockLLMService(
+            name: "TestService",
+            maxOutputTokens: 50,
+            expectedResult: .success(MockLLMResponse(text: "Trimmed Input Response"))
+        )
+        manager.registerService(service, withRouting: [.inputTokenLimit(40)])
+
+        // Case 1: Input tokens exceed the limit and are trimmed
+        let longMessage = String(repeating: "X", count: 60 * 4) // Exceeds 40-token limit
+        let request = LLMRequest(messages: [LLMMessage(role: .user, content: longMessage)], maxTokens: 30)
+
+        // When
+        let response = await manager.sendRequest(request, trimming: .end)
+
+        // Then
+        XCTAssertEqual(response?.text, "Trimmed Input Response", "Response should succeed with trimmed input tokens.")
+    }
+
+    func testOutputTokenLimit() async {
+        // Given
+        let service = MockLLMService(
+            name: "TestService",
+            maxOutputTokens: 30,
+            expectedResult: .success(MockLLMResponse(text: "Valid Output Response"))
+        )
+        manager.registerService(service)
+
+        // Case 1: Request with output tokens exceeding service capacity
+        let validMessage = String(repeating: "A", count: 10 * 4) // Fits within input limit
+        let request = LLMRequest(messages: [LLMMessage(role: .user, content: validMessage)], maxTokens: 50)
+
+        // When
+        let response = await manager.sendRequest(request, trimming: .none)
+
+        // Then
+        XCTAssertEqual(response?.text, "Valid Output Response", "Service should constrain output tokens to its limit.")
+    }
+
+    func testStartTrimming() async {
+        // Given
+        let service = MockLLMService(
+            name: "StartTrimService",
+            maxOutputTokens: 20,
+            expectedResult: .success(MockLLMResponse(text: "Start Trimmed"))
+        )
+        manager.registerService(service)
+
+        let longMessage = String(repeating: "S", count: 50 * 4) // Exceeds input limit
+        let request = LLMRequest(messages: [LLMMessage(role: .user, content: longMessage)], maxTokens: 10)
+
+        // When
+        let response = await manager.sendRequest(request, trimming: .start)
+
+        // Then
+        XCTAssertEqual(response?.text, "Start Trimmed", "Should trim from the start and succeed.")
+    }
+
+    func testRoutingBasedOnInputTokens() async {
+        // Given
+        let service1 = MockLLMService(
+            name: "Service1",
+            maxOutputTokens: 30,
+            inputTokenPolicy: .strictRequestLimits,
+            outputTokenPolicy: .strictRequestLimits,
+            expectedResult: .success(MockLLMResponse(text: "Service1 Response"))
+        )
+        let service2 = MockLLMService(
+            name: "Service2",
+            maxOutputTokens: 50,
+            inputTokenPolicy: .adjustToServiceLimits,
+            outputTokenPolicy: .adjustToServiceLimits,
+            expectedResult: .success(MockLLMResponse(text: "Service2 Response"))
+        )
+
+        manager.registerService(service1, withRouting: [.inputTokenLimit(20)])
+        manager.registerService(service2, withRouting: [.inputTokenLimit(40)])
+        manager.setActiveService(byName: "") // Clear active service to ensure proper routing logic
+
+        // Case 1: Fits within Service1's limit
+        let shortMessage = String(repeating: "X", count: 15 * 4) // Fits Service1
+        let request1 = LLMRequest(messages: [LLMMessage(role: .user, content: shortMessage)], maxTokens: 30)
+        let response1 = await manager.sendRequest(request1, routing: .inputTokenLimit(20)) // Explicitly use Service1's routing
+
+        // Case 2: Exceeds Service1 but fits Service2
+        let longerMessage = String(repeating: "X", count: 35 * 4) // Fits Service2
+        let request2 = LLMRequest(messages: [LLMMessage(role: .user, content: longerMessage)], maxTokens: 50)
+        let response2 = await manager.sendRequest(request2, routing: .inputTokenLimit(40)) // Explicitly use Service2's routing
+
+        // Then
+        XCTAssertEqual(response1?.text, "Service1 Response", "Service1 should handle the smaller message.")
+        XCTAssertEqual(response2?.text, "Service2 Response", "Service2 should handle the larger message.")
+    }
+
+    func testDynamicTokenPolicySwitching() async {
+        // Given
+        let service = MockLLMService(
+            name: "DynamicPolicyService",
+            contextWindowSize: 80,
+            maxOutputTokens: 50,
+            inputTokenPolicy: .strictRequestLimits,
+            outputTokenPolicy: .strictRequestLimits,
+            expectedResult: .success(MockLLMResponse(text: "Dynamic Policy Response"))
+        )
+        manager.registerService(service)
+
+        // Case 1: Input exceeds limit with strict policy
+        let longMessage = String(repeating: "X", count: 60 * 4) // Exceeds input limit
+        let request = LLMRequest(messages: [LLMMessage(role: .user, content: longMessage)], maxTokens: 50)
+        let response1 = await manager.sendRequest(request)
+
+        XCTAssertNil(response1, "Expected nil response with strict policy and input exceeding limits.")
+
+        // Update policies
+        service.inputTokenPolicy = .adjustToServiceLimits
+        service.outputTokenPolicy = .adjustToServiceLimits
+        service.contextWindowSize = 120
+
+        // Case 2: Input exceeds limit but should now be adjusted
+        let response2 = await manager.sendRequest(request)
+
+        XCTAssertEqual(response2?.text, "Dynamic Policy Response", "Expected valid response with adjusted policies.")
+    }
+
+    func testFallbackServiceWithDynamicTokenPolicySwitching() async {
+        // Given
+        let primaryService = MockLLMService(
+            name: "PrimaryService",
+            contextWindowSize: 80, // Smaller context window
+            maxOutputTokens: 40,
+            inputTokenPolicy: .strictRequestLimits,
+            outputTokenPolicy: .strictRequestLimits,
+            expectedResult: .failure(NSError(domain: "PrimaryServiceError", code: 1))
+        )
+        let fallbackService = MockLLMService(
+            name: "FallbackService",
+            contextWindowSize: 120, // Larger context window
+            maxOutputTokens: 60,
+            inputTokenPolicy: .adjustToServiceLimits,
+            outputTokenPolicy: .adjustToServiceLimits,
+            expectedResult: .success(MockLLMResponse(text: "Fallback Service Response"))
+        )
+
+        manager.registerService(primaryService)
+        manager.registerFallbackService(fallbackService)
+
+        // Case: Request that exceeds the primary service's limits but fits fallback's adjusted limits
+        let longMessage = String(repeating: "X", count: 60 * 4) // Exceeds primary's input limit
+        let request = LLMRequest(messages: [LLMMessage(role: .user, content: longMessage)], maxTokens: 50)
+
+        // When
+        let response = await manager.sendRequest(request)
+
+        // Then
+        XCTAssertNotNil(response, "Expected fallback service to handle the request.")
+        XCTAssertEqual(response?.text, "Fallback Service Response", "Expected response from fallback service with adjusted policies.")
+    }
+
+    func testRoutingAndPolicyConflictResolution() async {
+        // Given
+        let serviceWithStrictPolicy = MockLLMService(
+            name: "StrictPolicyService",
+            contextWindowSize: 100,
+            maxOutputTokens: 30,
+            inputTokenPolicy: .strictRequestLimits,
+            outputTokenPolicy: .strictRequestLimits,
+            expectedResult: .success(MockLLMResponse(text: "Strict Policy Response"))
+        )
+        let serviceWithFlexiblePolicy = MockLLMService(
+            name: "FlexiblePolicyService",
+            contextWindowSize: 200,
+            maxOutputTokens: 50,
+            inputTokenPolicy: .adjustToServiceLimits,
+            outputTokenPolicy: .adjustToServiceLimits,
+            expectedResult: .success(MockLLMResponse(text: "Flexible Policy Response"))
+        )
+
+        manager.registerService(serviceWithStrictPolicy, withRouting: [.domain(["strictDomain"])])
+        manager.registerService(serviceWithFlexiblePolicy, withRouting: [.domain(["flexibleDomain"])])
+
+        // Case: Request satisfies token limit for strict service but not domain
+        let request = LLMRequest(
+            messages: [LLMMessage(role: .user, content: "Request for flexible domain.")],
+            maxTokens: 40 // Exceeds strict output tokens but fits flexible tokens
+        )
+
+        // When
+        let response = await manager.sendRequest(request, routing: .domain(["flexibleDomain"]))
+
+        // Then
+        XCTAssertEqual(response?.text, "Flexible Policy Response", "Expected routing to flexible policy service based on domain match.")
+    }
+
+    func testMultipleServicesWithFallbacksAndConflicts() async {
+        // Given
+        let service1 = MockLLMService(
+            name: "StrictService",
+            contextWindowSize: 80,
+            maxOutputTokens: 30,
+            inputTokenPolicy: .strictRequestLimits,
+            outputTokenPolicy: .strictRequestLimits,
+            expectedResult: .failure(NSError(domain: "StrictServiceError", code: 1))
+        )
+        let service2 = MockLLMService(
+            name: "FlexibleService",
+            contextWindowSize: 100,
+            maxOutputTokens: 40,
+            inputTokenPolicy: .adjustToServiceLimits,
+            outputTokenPolicy: .strictRequestLimits,
+            expectedResult: .failure(NSError(domain: "FlexibleServiceError", code: 1))
+        )
+        let fallbackService = MockLLMService(
+            name: "FallbackService",
+            contextWindowSize: 120,
+            maxOutputTokens: 50,
+            inputTokenPolicy: .adjustToServiceLimits,
+            outputTokenPolicy: .adjustToServiceLimits,
+            expectedResult: .success(MockLLMResponse(text: "Fallback Response"))
+        )
+
+        manager.registerService(service1, withRouting: [.inputTokenLimit(40)])
+        manager.registerService(service2, withRouting: [.inputTokenLimit(60)])
+        manager.registerFallbackService(fallbackService)
+
+        let longMessage = String(repeating: "X", count: 90 * 4) // Exceeds both service1 and service2 limits
+        let request = LLMRequest(messages: [LLMMessage(role: .user, content: longMessage)], maxTokens: 50)
+
+        // When
+        let response = await manager.sendRequest(request)
+
+        // Then
+        XCTAssertEqual(response?.text, "Fallback Response", "Expected fallback service to handle the request.")
+    }
+
+    func testNearBoundaryTokenRequests() async {
+        // Given
+        let boundaryService = MockLLMService(
+            name: "BoundaryService",
+            contextWindowSize: 100,
+            maxOutputTokens: 50,
+            inputTokenPolicy: .adjustToServiceLimits,
+            outputTokenPolicy: .adjustToServiceLimits,
+            expectedResult: .success(MockLLMResponse(text: "Boundary Response"))
+        )
+        manager.registerService(boundaryService)
+
+        // Case 1: Request barely within the limits
+        let nearLimitMessage = String(repeating: "X", count: 25 * 4) // Fits within input token limit
+        let requestWithinLimits = LLMRequest(messages: [LLMMessage(role: .user, content: nearLimitMessage)], maxTokens: 50)
+
+        // Case 2: Request slightly exceeding the limits
+        let overLimitMessage = String(repeating: "X", count: 30 * 4) // Exceeds input token limit
+        let requestOverLimits = LLMRequest(messages: [LLMMessage(role: .user, content: overLimitMessage)], maxTokens: 60)
+
+        // When
+        let responseWithinLimits = await manager.sendRequest(requestWithinLimits)
+        let responseOverLimits = await manager.sendRequest(requestOverLimits, trimming: .end)
+
+        // Then
+        XCTAssertEqual(responseWithinLimits?.text, "Boundary Response", "Expected successful response for request within limits.")
+        XCTAssertEqual(responseOverLimits?.text, "Boundary Response", "Expected successful response with trimmed input.")
+    }
+
+    func testInvalidOrMissingConfigurations() async {
+        // Given
+        let validService = MockLLMService(
+            name: "ValidService",
+            apiKey: "valid_api_key", // Proper configuration
+            requiresAPIKey: true,
+            contextWindowSize: 100,
+            maxOutputTokens: 50,
+            expectedResult: .success(MockLLMResponse(text: "Valid Response"))
+        )
+        let invalidService = MockLLMService(
+            name: "InvalidService",
+            apiKey: nil, // Missing API key
+            requiresAPIKey: true,
+            contextWindowSize: 100,
+            maxOutputTokens: 50,
+            expectedResult: .failure(NSError(domain: "TestError", code: 1))
+        )
+
+        manager.registerService(validService)
+        manager.registerService(invalidService)
+
+        let request = LLMRequest(messages: [LLMMessage(role: .user, content: "Test message")])
+
+        // When
+        let response = await manager.sendRequest(request)
+
+        // Then
+        XCTAssertEqual(response?.text, "Valid Response", "Expected valid service to handle the request.")
+    }
+
+    func testStressWithManyServices() async {
+        // Given
+        let numServices = 20
+        for i in 1...numServices {
+            let serviceName = "Service\(i)"
+            let service = MockLLMService(
+                name: serviceName,
+                contextWindowSize: 100 + i * 10, // Incremental limits
+                maxOutputTokens: 20 + i * 5,
+                inputTokenPolicy: .adjustToServiceLimits,
+                outputTokenPolicy: .adjustToServiceLimits,
+                expectedResult: .success(MockLLMResponse(text: "\(serviceName) Response"))
+            )
+            manager.registerService(service)
+        }
+
+        let testMessage = String(repeating: "A", count: 200) // Will fit into a mid-tier service
+        let request = LLMRequest(messages: [LLMMessage(role: .user, content: testMessage)], maxTokens: 50)
+
+        // When
+        let response = await manager.sendRequest(request)
+
+        // Then
+        XCTAssertNotNil(response, "Expected a response to be returned from one of the services.")
+        XCTAssertTrue(response?.text.contains("Service") ?? false, "Expected response to come from a valid service.")
     }
 }

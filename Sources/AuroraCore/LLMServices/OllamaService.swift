@@ -28,30 +28,45 @@ public class OllamaService: LLMServiceProtocol {
     /// Ollama does not require an API key for authentication.
     public let requiresAPIKey = false
 
-    /// The maximum token limit that can be processed by this service.
-    public let maxTokenLimit: Int
+    /// The maximum context window size (total tokens, input + output) supported by the service, defaults to 4k.
+    public var contextWindowSize: Int
+
+    /// The maximum number of tokens allowed for output (completion) in a single request, defaults to 4k.
+    public let maxOutputTokens: Int
+
+    /// Specifies the policy to handle input tokens when they exceed the service's input token limit, defaults to `.adjustToServiceLimits`.
+    public var inputTokenPolicy: TokenAdjustmentPolicy
+
+    /// Specifies the policy to handle output tokens when they exceed the service's max output token limit, defaults to `adjustToServiceLimits`.
+    public var outputTokenPolicy: TokenAdjustmentPolicy
 
     /// The base URL for the Ollama API (e.g., `http://localhost:11434`).
     private let baseURL: String
 
-    /// The URL session used to send requests.
+    /// The URL session used to send basic requests.
     internal var urlSession: URLSession
 
     /**
      Initializes a new `OllamaService` instance.
 
      - Parameters:
-        - name: The name of the service instance (default is `"Ollama"`).
-        - baseURL: The base URL for the Ollama API (default is `"http://localhost:11434"`).
-        - maxTokenLimit: The maximum number of tokens allowed in a request (default is 4096).
-        - apiKey: An optional API key, though not required for local Ollama instances.
-        - urlSession: The `URLSession` instance used for network requests (default is `URLSession.shared`).
+     - name: The name of the service instance (default is `"Ollama"`).
+     - baseURL: The base URL for the Ollama API (default is `"http://localhost:11434"`).
+     - apiKey: An optional API key, though not required for local Ollama instances.
+     - contextWindowSize: The size of the context window used by the service. Defaults to 4096.
+     - maxOutputTokens: The maximum number of tokens allowed for output in a single request. Defaults to 4096.
+     - inputTokenPolicy: The policy to handle input tokens exceeding the service's limit. Defaults to `.adjustToServiceLimits`.
+     - outputTokenPolicy: The policy to handle output tokens exceeding the service's limit. Defaults to `.adjustToServiceLimits`.
+     - urlSession: The `URLSession` instance used for network requests. Defaults to a `.default` configuration.
      */
-    public init(name: String = "Ollama", baseURL: String = "http://localhost:11434", maxTokenLimit: Int = 4096, apiKey: String? = nil, urlSession: URLSession = .shared) {
+    public init(name: String = "Ollama", baseURL: String = "http://localhost:11434", apiKey: String? = nil, contextWindowSize: Int = 4096, maxOutputTokens: Int = 4096, inputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, outputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, urlSession: URLSession = URLSession(configuration: .default)) {
         self.name = name
         self.baseURL = baseURL
-        self.maxTokenLimit = maxTokenLimit
         self.apiKey = apiKey
+        self.contextWindowSize = contextWindowSize
+        self.maxOutputTokens = maxOutputTokens
+        self.inputTokenPolicy = inputTokenPolicy
+        self.outputTokenPolicy = outputTokenPolicy
         self.urlSession = urlSession
     }
 

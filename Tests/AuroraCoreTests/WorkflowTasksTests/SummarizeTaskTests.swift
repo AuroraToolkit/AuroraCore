@@ -16,7 +16,7 @@ final class SummarizeTaskTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        mockService = MockLLMService(name: "TestService", maxTokenLimit: 4096, expectedResult: .success(MockLLMResponse(text: "Summary")))
+        mockService = MockLLMService(name: "TestService", maxOutputTokens: 4096, expectedResult: .success(MockLLMResponse(text: "Summary")))
         contextController = ContextController(llmService: mockService)
     }
 
@@ -70,7 +70,7 @@ final class SummarizeTaskTests: XCTestCase {
 
     func testSummarizeTaskWithFailureResponse() async throws {
         // Given
-        let failingService = MockLLMService(name: "FailingService", maxTokenLimit: 4096, expectedResult: .failure(NSError(domain: "Test", code: -1, userInfo: nil)))
+        let failingService = MockLLMService(name: "FailingService", maxOutputTokens: 4096, expectedResult: .failure(NSError(domain: "Test", code: -1, userInfo: nil)))
         contextController = ContextController(llmService: failingService)
         contextController.addItem(content: "Content that will not be summarized.")
         summarizeTask = SummarizeTask(contextController: contextController, summaryType: .context)
