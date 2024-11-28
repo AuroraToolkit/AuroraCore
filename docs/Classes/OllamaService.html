@@ -115,6 +115,9 @@
                 <a href="../Enums/TaskStatus.html">TaskStatus</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Enums/TokenAdjustmentPolicy.html">TokenAdjustmentPolicy</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Enums/WorkflowState.html">WorkflowState</a>
               </li>
             </ul>
@@ -345,9 +348,9 @@ This service supports customizable API base URLs and allows interaction with mod
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10AuroraCore13OllamaServiceC13maxTokenLimitSivp"></a>
-                    <a name="//apple_ref/swift/Property/maxTokenLimit" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10AuroraCore13OllamaServiceC13maxTokenLimitSivp">maxTokenLimit</a>
+                    <a name="/s:10AuroraCore13OllamaServiceC17contextWindowSizeSivp"></a>
+                    <a name="//apple_ref/swift/Property/contextWindowSize" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore13OllamaServiceC17contextWindowSizeSivp">contextWindowSize</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -355,14 +358,14 @@ This service supports customizable API base URLs and allows interaction with mod
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The maximum token limit that can be processed by this service.</p>
+                        <p>The maximum context window size (total tokens, input + output) supported by the service, defaults to 4k.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">maxTokenLimit</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">contextWindowSize</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
 
                         </div>
                       </div>
@@ -372,9 +375,90 @@ This service supports customizable API base URLs and allows interaction with mod
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10AuroraCore13OllamaServiceC4name7baseURL13maxTokenLimit6apiKey10urlSessionACSS_SSSiSSSgSo12NSURLSessionCtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(name:baseURL:maxTokenLimit:apiKey:urlSession:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10AuroraCore13OllamaServiceC4name7baseURL13maxTokenLimit6apiKey10urlSessionACSS_SSSiSSSgSo12NSURLSessionCtcfc">init(name:<wbr>baseURL:<wbr>maxTokenLimit:<wbr>apiKey:<wbr>urlSession:<wbr>)</a>
+                    <a name="/s:10AuroraCore13OllamaServiceC15maxOutputTokensSivp"></a>
+                    <a name="//apple_ref/swift/Property/maxOutputTokens" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore13OllamaServiceC15maxOutputTokensSivp">maxOutputTokens</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The maximum number of tokens allowed for output (completion) in a single request, defaults to 4k.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">maxOutputTokens</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore13OllamaServiceC16inputTokenPolicyAA0f10AdjustmentG0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/inputTokenPolicy" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore13OllamaServiceC16inputTokenPolicyAA0f10AdjustmentG0Ovp">inputTokenPolicy</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Specifies the policy to handle input tokens when they exceed the service&rsquo;s input token limit, defaults to <code>.adjustToServiceLimits</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">inputTokenPolicy</span><span class="p">:</span> <span class="kt"><a href="../Enums/TokenAdjustmentPolicy.html">TokenAdjustmentPolicy</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore13OllamaServiceC17outputTokenPolicyAA0f10AdjustmentG0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/outputTokenPolicy" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore13OllamaServiceC17outputTokenPolicyAA0f10AdjustmentG0Ovp">outputTokenPolicy</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Specifies the policy to handle output tokens when they exceed the service&rsquo;s max output token limit, defaults to <code>adjustToServiceLimits</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">outputTokenPolicy</span><span class="p">:</span> <span class="kt"><a href="../Enums/TokenAdjustmentPolicy.html">TokenAdjustmentPolicy</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore13OllamaServiceC4name7baseURL6apiKey17contextWindowSize15maxOutputTokens16inputTokenPolicy06outputqR010urlSessionACSS_S2SSgS2iAA0q10AdjustmentR0OANSo12NSURLSessionCtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(name:baseURL:apiKey:contextWindowSize:maxOutputTokens:inputTokenPolicy:outputTokenPolicy:urlSession:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore13OllamaServiceC4name7baseURL6apiKey17contextWindowSize15maxOutputTokens16inputTokenPolicy06outputqR010urlSessionACSS_S2SSgS2iAA0q10AdjustmentR0OANSo12NSURLSessionCtcfc">init(name:<wbr>baseURL:<wbr>apiKey:<wbr>contextWindowSize:<wbr>maxOutputTokens:<wbr>inputTokenPolicy:<wbr>outputTokenPolicy:<wbr>urlSession:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -384,81 +468,25 @@ This service supports customizable API base URLs and allows interaction with mod
                       <div class="abstract">
                         <p>Initializes a new <code>OllamaService</code> instance.</p>
 
+<ul>
+<li>name: The name of the service instance (default is <code>&quot;Ollama&quot;</code>).</li>
+<li>baseURL: The base URL for the Ollama API (default is <code>&quot;http://localhost:11434&quot;</code>).</li>
+<li>apiKey: An optional API key, though not required for local Ollama instances.</li>
+<li>contextWindowSize: The size of the context window used by the service. Defaults to 4096.</li>
+<li>maxOutputTokens: The maximum number of tokens allowed for output in a single request. Defaults to 4096.</li>
+<li>inputTokenPolicy: The policy to handle input tokens exceeding the service&rsquo;s limit. Defaults to <code>.adjustToServiceLimits</code>.</li>
+<li>outputTokenPolicy: The policy to handle output tokens exceeding the service&rsquo;s limit. Defaults to <code>.adjustToServiceLimits</code>.</li>
+<li>urlSession: The <code>URLSession</code> instance used for network requests. Defaults to a <code>.default</code> configuration.</li>
+</ul>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"Ollama"</span><span class="p">,</span> <span class="nv">baseURL</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"http://localhost:11434"</span><span class="p">,</span> <span class="nv">maxTokenLimit</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">4096</span><span class="p">,</span> <span class="nv">apiKey</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">urlSession</span><span class="p">:</span> <span class="kt">URLSession</span> <span class="o">=</span> <span class="o">.</span><span class="n">shared</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"Ollama"</span><span class="p">,</span> <span class="nv">baseURL</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"http://localhost:11434"</span><span class="p">,</span> <span class="nv">apiKey</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">contextWindowSize</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">4096</span><span class="p">,</span> <span class="nv">maxOutputTokens</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">4096</span><span class="p">,</span> <span class="nv">inputTokenPolicy</span><span class="p">:</span> <span class="kt"><a href="../Enums/TokenAdjustmentPolicy.html">TokenAdjustmentPolicy</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">adjustToServiceLimits</span><span class="p">,</span> <span class="nv">outputTokenPolicy</span><span class="p">:</span> <span class="kt"><a href="../Enums/TokenAdjustmentPolicy.html">TokenAdjustmentPolicy</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">adjustToServiceLimits</span><span class="p">,</span> <span class="nv">urlSession</span><span class="p">:</span> <span class="kt">URLSession</span> <span class="o">=</span> <span class="kt">URLSession</span><span class="p">(</span><span class="nv">configuration</span><span class="p">:</span> <span class="o">.</span><span class="k">default</span><span class="p">))</span></code></pre>
 
                         </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>name</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The name of the service instance (default is <code>&quot;Ollama&quot;</code>).</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>baseURL</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The base URL for the Ollama API (default is <code>&quot;http://localhost:11434&quot;</code>).</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>maxTokenLimit</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The maximum number of tokens allowed in a request (default is 4096).</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>apiKey</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>An optional API key, though not required for local Ollama instances.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>urlSession</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The <code>URLSession</code> instance used for network requests (default is <code>URLSession.shared</code>).</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
                       </div>
                     </section>
                   </div>
@@ -622,7 +650,7 @@ This service supports customizable API base URLs and allows interaction with mod
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-11-18)</p>
+          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-11-28)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>

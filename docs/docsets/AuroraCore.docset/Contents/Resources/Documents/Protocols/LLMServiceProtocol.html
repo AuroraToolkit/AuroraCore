@@ -115,6 +115,9 @@
                 <a href="../Enums/TaskStatus.html">TaskStatus</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Enums/TokenAdjustmentPolicy.html">TokenAdjustmentPolicy</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Enums/WorkflowState.html">WorkflowState</a>
               </li>
             </ul>
@@ -359,9 +362,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10AuroraCore18LLMServiceProtocolP13maxTokenLimitSivp"></a>
-                    <a name="//apple_ref/swift/Property/maxTokenLimit" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10AuroraCore18LLMServiceProtocolP13maxTokenLimitSivp">maxTokenLimit</a>
+                    <a name="/s:10AuroraCore18LLMServiceProtocolP17contextWindowSizeSivp"></a>
+                    <a name="//apple_ref/swift/Property/contextWindowSize" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore18LLMServiceProtocolP17contextWindowSizeSivp">contextWindowSize</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -369,10 +372,10 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The maximum number of tokens allowed in a single request by the LLM service.</p>
-<div class="aside aside-important">
-    <p class="aside-title">Important</p>
-    This value may differ between services. For example, OpenAI may have a higher token limit compared to other LLMs.
+                        <p>The maximum context window size (total tokens, input + output) supported by the service.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    Requests should not exceed this limit to ensure they are processed correctly.
 
 </div>
 
@@ -381,7 +384,108 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">maxTokenLimit</span><span class="p">:</span> <span class="kt">Int</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">contextWindowSize</span><span class="p">:</span> <span class="kt">Int</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore18LLMServiceProtocolP15maxOutputTokensSivp"></a>
+                    <a name="//apple_ref/swift/Property/maxOutputTokens" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore18LLMServiceProtocolP15maxOutputTokensSivp">maxOutputTokens</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The maximum number of tokens allowed for output (completion) in a single request.</p>
+<div class="aside aside-important">
+    <p class="aside-title">Important</p>
+    This value may differ between services. For example, OpenAI may have a higher token limit compared to other LLMs.
+This value must be less than or equal to <code><a href="../Protocols/LLMServiceProtocol.html#/s:10AuroraCore18LLMServiceProtocolP17contextWindowSizeSivp">contextWindowSize</a></code> to ensure the request fits within the service&rsquo;s capacity.
+
+</div><div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    Many services have a max output token limit lower than the context window size.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">maxOutputTokens</span><span class="p">:</span> <span class="kt">Int</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore18LLMServiceProtocolP16inputTokenPolicyAA0f10AdjustmentG0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/inputTokenPolicy" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore18LLMServiceProtocolP16inputTokenPolicyAA0f10AdjustmentG0Ovp">inputTokenPolicy</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Specifies the policy to handle input tokens when they exceed the service&rsquo;s input token limit.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Enums/TokenAdjustmentPolicy.html">TokenAdjustmentPolicy</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">inputTokenPolicy</span><span class="p">:</span> <span class="kt"><a href="../Enums/TokenAdjustmentPolicy.html">TokenAdjustmentPolicy</a></span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore18LLMServiceProtocolP17outputTokenPolicyAA0f10AdjustmentG0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/outputTokenPolicy" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore18LLMServiceProtocolP17outputTokenPolicyAA0f10AdjustmentG0Ovp">outputTokenPolicy</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Specifies the policy to handle output tokens when they exceed the service&rsquo;s max output token limit.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Enums/TokenAdjustmentPolicy.html">TokenAdjustmentPolicy</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">outputTokenPolicy</span><span class="p">:</span> <span class="kt"><a href="../Enums/TokenAdjustmentPolicy.html">TokenAdjustmentPolicy</a></span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -521,7 +625,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-11-18)</p>
+          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-11-28)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
