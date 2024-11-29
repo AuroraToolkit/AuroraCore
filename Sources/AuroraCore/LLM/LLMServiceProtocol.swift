@@ -103,6 +103,9 @@ public protocol LLMServiceProtocol {
      */
     var outputTokenPolicy: TokenAdjustmentPolicy { get set }
 
+    /// The default system prompt for this service, used to set the behavior or persona of the model.
+    var systemPrompt: String? { get set }
+
     /**
      Sends a request to the LLM service asynchronously and returns the response.
 

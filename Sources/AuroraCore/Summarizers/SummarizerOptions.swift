@@ -27,11 +27,10 @@ public struct SummarizerOptions {
     /**
      Initializes a new `SummarizerOptions` with default values for all fields.
 
-     - Parameters:
-        - temperature: A value between 0.0 and 1.0 controlling the randomness of the summary.
-        - maxTokens: The maximum number of tokens to generate in the summary.
-        - model: An optional string representing the model to use.
-        - stream: Whether or not the summary should be streamed.
+     - Parameter temperature: A value between 0.0 and 1.0 controlling the randomness of the summary.
+     - Parameter maxTokens: The maximum number of tokens to generate in the summary.
+     - Parameter model: An optional string representing the model to use.
+     - Parameter stream: Whether or not the summary should be streamed.
      */
     public init(
         temperature: Double? = nil,

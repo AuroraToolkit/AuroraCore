@@ -77,8 +77,7 @@ public class Workflow: WorkflowProtocol {
     /**
      Initializes a new workflow with a specified name, description, and tasks.
 
-     - Parameters:
-        - tasks: An optional array of tasks to be added to the workflow (default is an empty array).
+     - Parameter tasks: An optional array of tasks to be added to the workflow (default is an empty array).
      */
     public init(name: String, description: String, tasks: [WorkflowTaskProtocol] = []) {
         self.id = UUID()
@@ -128,9 +127,8 @@ public class Workflow: WorkflowProtocol {
     /**
      Updates a task at a given index in the workflow.
 
-     - Parameters:
-        - task: The updated task to be placed at the given index.
-        - index: The index of the task to be updated.
+     - Parameter task: The updated task to be placed at the given index.
+     - Parameter index: The index of the task to be updated.
      */
     public func updateTask(_ task: WorkflowTaskProtocol, at index: Int) {
         guard index >= 0 && index < tasks.count else { return }

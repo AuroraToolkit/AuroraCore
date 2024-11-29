@@ -30,10 +30,9 @@ public class ContextController {
     /**
      Initializes a new `ContextController` instance.
 
-     - Parameters:
-        - context: Optional `Context` object. If none is provided, a new context will be created automatically.
-        - llmService: The LLM service to be used for summarization.
-        - summarizer: Optional `Summarizer` instance. If none is provided, a default summarizer will be created.
+     - Parameter context: Optional `Context` object. If none is provided, a new context will be created automatically.
+     - Parameter llmService: The LLM service to be used for summarization.
+     - Parameter summarizer: Optional `Summarizer` instance. If none is provided, a default summarizer will be created.
      */
     public init(context: Context? = nil, llmService: LLMServiceProtocol, summarizer: SummarizerProtocol? = nil) {
         self.context = context ?? Context(llmServiceVendor: llmService.vendor)
@@ -46,8 +45,7 @@ public class ContextController {
     /**
      Updates the LLM service used by the `ContextController`.
 
-     - Parameters:
-        - newService: The new `LLMServiceProtocol` to use for summarization.
+     - Parameter newService: The new `LLMServiceProtocol` to use for summarization.
 
      This method is useful for switching between different LLM services during runtime.
      Note: The `Summarizer` instance will be updated to use the new LLM service.
@@ -60,10 +58,9 @@ public class ContextController {
     /**
      Adds a new item to the context.
 
-     - Parameters:
-        - content: The content of the item to be added.
-        - creationDate: The date when the item was created. Defaults to the current date.
-        - isSummary: A boolean flag indicating whether the item being added is a summary. Defaults to `false`.
+     - Parameter content: The content of the item to be added.
+     - Parameter creationDate: The date when the item was created. Defaults to the current date.
+     - Parameter isSummary: A boolean flag indicating whether the item being added is a summary. Defaults to `false`.
      */
     public func addItem(content: String, creationDate: Date = Date(), isSummary: Bool = false) {
         context.addItem(content: content, creationDate: creationDate, isSummary: isSummary)
@@ -72,9 +69,8 @@ public class ContextController {
     /**
      Adds a bookmark to the context for a specific item.
 
-     - Parameters:
-        - item: The `ContextItem` to be bookmarked.
-        - label: A label for the bookmark.
+     - Parameter item: The `ContextItem` to be bookmarked.
+     - Parameter label: A label for the bookmark.
      */
     public func addBookmark(for item: ContextItem, label: String) {
         context.addBookmark(for: item, label: label)
@@ -83,8 +79,7 @@ public class ContextController {
     /**
      Removes items from the context based on their offsets.
 
-     - Parameters:
-        - offsets: The index set of the items to be removed.
+     - Parameter offsets: The index set of the items to be removed.
      */
     public func removeItems(atOffsets offsets: IndexSet) {
         context.removeItems(atOffsets: offsets)
@@ -93,8 +88,7 @@ public class ContextController {
     /**
      Updates an existing item in the context.
 
-     - Parameters:
-        - updatedItem: The updated `ContextItem` to replace the old item.
+     - Parameter updatedItem: The updated `ContextItem` to replace the old item.
      */
     public func updateItem(_ updatedItem: ContextItem) {
         context.updateItem(updatedItem)
@@ -103,8 +97,7 @@ public class ContextController {
     /**
      Summarizes older context items based on a given age threshold.
 
-     - Parameters:
-        - daysThreshold: The number of days after which items are considered "old". Defaults to 7 days.
+     - Parameter daysThreshold: The number of days after which items are considered "old". Defaults to 7 days.
      */
     public func summarizeOlderContext(daysThreshold: Int = 7) async throws {
         guard !context.items.isEmpty else { return }
@@ -121,8 +114,7 @@ public class ContextController {
     /**
      Summarizes a group of context items using the connected LLM service and stores the result in `summarizedItems`.
 
-     - Parameters:
-        - group: The array of `ContextItem` to be summarized.
+     - Parameter group: The array of `ContextItem` to be summarized.
      */
     private func summarizeGroup(_ group: [ContextItem], options: SummarizerOptions? = nil) async throws {
         guard !group.isEmpty else { return }

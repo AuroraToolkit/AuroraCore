@@ -31,13 +31,13 @@ public class AnthropicService: LLMServiceProtocol {
     public var apiKey: String?
 
     /// Anthropic requires an API key for authentication.
-    public let requiresAPIKey = true
+    public var requiresAPIKey = true
 
     /// The maximum context window size (total tokens, input + output) supported by the service, defaults to 200k.
     public var contextWindowSize: Int
 
     /// The maximum number of tokens allowed for output (completion) in a single request, defaults to 4k.
-    public let maxOutputTokens: Int
+    public var maxOutputTokens: Int
 
     /// Specifies the policy to handle input tokens when they exceed the service's input token limit, defaults to `.adjustToServiceLimits`.
     public var inputTokenPolicy: TokenAdjustmentPolicy
@@ -45,23 +45,26 @@ public class AnthropicService: LLMServiceProtocol {
     /// Specifies the policy to handle output tokens when they exceed the service's max output token limit, defaults to `adjustToServiceLimits`.
     public var outputTokenPolicy: TokenAdjustmentPolicy
 
+    /// The default system prompt for this service, used to set the behavior or persona of the model.
+    public var systemPrompt: String?
+
     /// The URL session used to send basic requests.
     internal var urlSession: URLSession
 
     /**
      Initializes a new `AnthropicService` instance with the given API key and token limit.
 
-     - Parameters:
-     - name: The name of the service instance (default is `"Anthropic"`).
-     - baseURL: The base URL for the Anthropic API. Defaults to "https://api.anthropic.com".
-     - apiKey: The API key used for authenticating requests to the Anthropic API.
-     - contextWindowSize: The size of the context window used by the service. Defaults to 200k.
-     - maxOutputTokens: The maximum number of tokens allowed for output in a single request. Defaults to 4096.
-     - inputTokenPolicy: The policy to handle input tokens exceeding the service's limit. Defaults to `.adjustToServiceLimits`.
-     - outputTokenPolicy: The policy to handle output tokens exceeding the service's limit. Defaults to `.adjustToServiceLimits`.
-     - urlSession: The `URLSession` instance used for network requests. Defaults to a `.default` configuration.
+     - Parameter name: The name of the service instance (default is `"Anthropic"`).
+     - Parameter baseURL: The base URL for the Anthropic API. Defaults to "https://api.anthropic.com".
+     - Parameter apiKey: The API key used for authenticating requests to the Anthropic API.
+     - Parameter contextWindowSize: The size of the context window used by the service. Defaults to 200k.
+     - Parameter maxOutputTokens: The maximum number of tokens allowed for output in a single request. Defaults to 4096.
+     - Parameter inputTokenPolicy: The policy to handle input tokens exceeding the service's limit. Defaults to `.adjustToServiceLimits`.
+     - Parameter outputTokenPolicy: The policy to handle output tokens exceeding the service's limit. Defaults to `.adjustToServiceLimits`.
+     - Parameter systemPrompt: The default system prompt for this service, used to set the behavior or persona of the model.
+     - Parameter urlSession: The `URLSession` instance used for network requests. Defaults to a `.default` configuration.
      */
-    public init(name: String = "Anthropic", baseURL: String = "https://api.anthropic.com", apiKey: String?, contextWindowSize: Int = 200_000, maxOutputTokens: Int = 4096, inputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, outputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, urlSession: URLSession = URLSession(configuration: .default)) {
+    public init(name: String = "Anthropic", baseURL: String = "https://api.anthropic.com", apiKey: String?, contextWindowSize: Int = 200_000, maxOutputTokens: Int = 4096, inputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, outputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, systemPrompt: String? = nil, urlSession: URLSession = URLSession(configuration: .default)) {
         self.name = name
         self.baseURL = baseURL
         self.apiKey = apiKey
@@ -69,6 +72,7 @@ public class AnthropicService: LLMServiceProtocol {
         self.maxOutputTokens = maxOutputTokens
         self.inputTokenPolicy = inputTokenPolicy
         self.outputTokenPolicy = outputTokenPolicy
+        self.systemPrompt = systemPrompt
         self.urlSession = urlSession
     }
 
@@ -97,8 +101,7 @@ public class AnthropicService: LLMServiceProtocol {
     /**
      Sends a non-streaming request to the Anthropic API and retrieves the response asynchronously.
 
-     - Parameters:
-     - request: The `LLMRequest` containing the messages and model configuration.
+     - Parameter request: The `LLMRequest` containing the messages and model configuration.
      - Returns: The `LLMResponseProtocol` containing the generated text or an error if the request fails.
      - Throws: `LLMServiceError` if the request encounters an issue (e.g., invalid response, decoding error, etc.).
      */
@@ -171,8 +174,7 @@ public class AnthropicService: LLMServiceProtocol {
     /**
      Sends a request to the Anthropic API and retrieves the response asynchronously.
 
-     - Parameters:
-     - request: The `LLMRequest` containing the messages and model configuration.
+     - Parameter request: The `LLMRequest` containing the messages and model configuration.
      - Returns: The `LLMResponseProtocol` containing the generated text or an error if the request fails.
      - Throws: `LLMServiceError` if the request encounters an issue (e.g., missing API key, invalid response, etc.).
      */

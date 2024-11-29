@@ -18,6 +18,7 @@ final class MockLLMService: LLMServiceProtocol {
     var maxOutputTokens: Int
     var inputTokenPolicy: TokenAdjustmentPolicy
     var outputTokenPolicy: TokenAdjustmentPolicy
+    var systemPrompt: String?
     private let expectedResult: Result<LLMResponseProtocol, Error>
     private let streamingExpectedResult: String?
 
@@ -27,7 +28,7 @@ final class MockLLMService: LLMServiceProtocol {
     var receivedRoutingStrategy: String.TrimmingStrategy?
     var receivedFallbackCount = 0
 
-    init(name: String, vendor: String = "MockLLM", apiKey: String? = nil, requiresAPIKey: Bool = false, contextWindowSize: Int = 8192, maxOutputTokens: Int = 4096, inputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, outputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, expectedResult: Result<LLMResponseProtocol, Error>, streamingExpectedResult: String? = nil) {
+    init(name: String, vendor: String = "MockLLM", apiKey: String? = nil, requiresAPIKey: Bool = false, contextWindowSize: Int = 8192, maxOutputTokens: Int = 4096, inputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, outputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, systemPrompt: String? = nil, expectedResult: Result<LLMResponseProtocol, Error>, streamingExpectedResult: String? = nil) {
         self.name = name
         self.vendor = vendor
         self.apiKey = apiKey
@@ -36,6 +37,7 @@ final class MockLLMService: LLMServiceProtocol {
         self.maxOutputTokens = maxOutputTokens
         self.inputTokenPolicy = inputTokenPolicy
         self.outputTokenPolicy = outputTokenPolicy
+        self.systemPrompt = systemPrompt
         self.expectedResult = expectedResult
         self.streamingExpectedResult = streamingExpectedResult
     }

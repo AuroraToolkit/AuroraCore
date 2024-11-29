@@ -31,13 +31,13 @@ public class OpenAIService: LLMServiceProtocol {
     public var apiKey: String?
 
     /// OpenAI requires an API key for authentication.
-    public let requiresAPIKey = true
+    public var requiresAPIKey = true
 
     /// The maximum context window size (total tokens, input + output) supported by the service, defaults to 128k.
     public var contextWindowSize: Int
 
     /// The maximum number of tokens allowed for output (completion) in a single request, defaults to 4k.
-    public let maxOutputTokens: Int
+    public var maxOutputTokens: Int
 
     /// Specifies the policy to handle input tokens when they exceed the service's input token limit, defaults to `.adjustToServiceLimits`.
     public var inputTokenPolicy: TokenAdjustmentPolicy
@@ -45,23 +45,26 @@ public class OpenAIService: LLMServiceProtocol {
     /// Specifies the policy to handle output tokens when they exceed the service's max output token limit, defaults to `adjustToServiceLimits`.
     public var outputTokenPolicy: TokenAdjustmentPolicy
 
+    /// The default system prompt for this service, used to set the behavior or persona of the model.
+    public var systemPrompt: String?
+
     /// The URL session used to send basic requests.
     internal var urlSession: URLSession
 
     /**
      Initializes a new `OpenAIService` instance with the given API key.
 
-     - Parameters:
-     - name: The name of the service instance (default is `"OpenAI"`).
-     - apiKey: The API key used for authenticating requests to the OpenAI API.
-     - baseURL: The base URL for the OpenAI API. Defaults to "https://api.openai.com".
-     - contextWindowSize: The size of the context window used by the service. Defaults to 128k.
-     - maxOutputTokens: The maximum number of tokens allowed in a request. Defaults to 16k.
-     - inputTokenPolicy: The policy to handle input tokens exceeding the service's limit. Defaults to `.adjustToServiceLimits`.
-     - outputTokenPolicy: The policy to handle output tokens exceeding the service's limit. Defaults to `.adjustToServiceLimits`.
-     - urlSession: The `URLSession` instance used for network requests. Defaults to a `.default` configuration.
+     - Parameter name: The name of the service instance (default is `"OpenAI"`).
+     - Parameter apiKey: The API key used for authenticating requests to the OpenAI API.
+     - Parameter baseURL: The base URL for the OpenAI API. Defaults to "https://api.openai.com".
+     - Parameter contextWindowSize: The size of the context window used by the service. Defaults to 128k.
+     - Parameter maxOutputTokens: The maximum number of tokens allowed in a request. Defaults to 16k.
+     - Parameter inputTokenPolicy: The policy to handle input tokens exceeding the service's limit. Defaults to `.adjustToServiceLimits`.
+     - Parameter outputTokenPolicy: The policy to handle output tokens exceeding the service's limit. Defaults to `.adjustToServiceLimits`.
+     - Parameter systemPrompt: The default system prompt for this service, used to set the behavior or persona of the model.
+     - Parameter urlSession: The `URLSession` instance used for network requests. Defaults to a `.default` configuration.
      */
-    public init(name: String = "OpenAI", baseURL: String = "https://api.openai.com", apiKey: String?, contextWindowSize: Int = 128_000, maxOutputTokens: Int = 16384, inputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, outputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, urlSession: URLSession = URLSession(configuration: .default)) {
+    public init(name: String = "OpenAI", baseURL: String = "https://api.openai.com", apiKey: String?, contextWindowSize: Int = 128_000, maxOutputTokens: Int = 16384, inputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, outputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, systemPrompt: String? = nil, urlSession: URLSession = URLSession(configuration: .default)) {
         self.name = name
         self.baseURL = baseURL
         self.apiKey = apiKey
@@ -69,6 +72,7 @@ public class OpenAIService: LLMServiceProtocol {
         self.maxOutputTokens = maxOutputTokens
         self.inputTokenPolicy = inputTokenPolicy
         self.outputTokenPolicy = outputTokenPolicy
+        self.systemPrompt = systemPrompt
         self.urlSession = urlSession
     }
 
@@ -77,8 +81,7 @@ public class OpenAIService: LLMServiceProtocol {
     /**
      Sends a request to the OpenAI API asynchronously without streaming.
 
-     - Parameters:
-     - request: The `LLMRequest` containing the messages and model configuration.
+     - Parameter request: The `LLMRequest` containing the messages and model configuration.
      - Returns: The `LLMResponseProtocol` containing the generated text or an error if the request fails.
      - Throws: `LLMServiceError` if the request encounters an issue (e.g., missing API key, invalid response, etc.).
      */
@@ -148,9 +151,8 @@ public class OpenAIService: LLMServiceProtocol {
     /**
      Sends a request to the OpenAI API asynchronously with streaming support.
 
-     - Parameters:
-     - request: The `LLMRequest` containing the messages and model configuration.
-     - onPartialResponse: A closure that handles partial responses during streaming.
+     - Parameter request: The `LLMRequest` containing the messages and model configuration.
+     - Parameter onPartialResponse: A closure that handles partial responses during streaming.
      - Returns: The `LLMResponseProtocol` containing the final text generated by the LLM.
      - Throws: `LLMServiceError` if the request encounters an issue (e.g., missing API key, invalid response, etc.).
      */

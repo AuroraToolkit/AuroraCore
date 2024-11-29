@@ -17,9 +17,8 @@ public class SaveContextTask: WorkflowTask {
     /**
      Initializes a `SaveContextTask` with the context and filename.
 
-     - Parameters:
-        - context: The `Context` object to save.
-        - filename: The name of the file (without extension) used for saving the context.
+     - Parameter context: The `Context` object to save.
+     - Parameter filename: The name of the file (without extension) used for saving the context.
      */
     public init(context: Context, filename: String) {
         var inputs: [String: Any?] = [:]

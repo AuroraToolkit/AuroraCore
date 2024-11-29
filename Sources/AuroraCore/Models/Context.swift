@@ -34,9 +34,8 @@ public struct Context: Codable, Equatable {
     /**
      Initializes a new `Context` with a unique identifier and associated LLM service information.
 
-     - Parameters:
-        - llmServiceVendor: The name of the LLM service vendor associated with this context.
-        - creationDate: The date when the context was created. Defaults to the current date.
+     - Parameter llmServiceVendor: The name of the LLM service vendor associated with this context.
+     - Parameter creationDate: The date when the context was created. Defaults to the current date.
      */
     public init(llmServiceVendor: String, creationDate: Date = Date()) {
         self.id = UUID()
@@ -47,10 +46,9 @@ public struct Context: Codable, Equatable {
     /**
      Adds a new item to the context.
 
-     - Parameters:
-        - content: The content of the new `ContextItem`.
-        - creationDate: The date the item was created (default is the current date).
-        - isSummary: A flag indicating whether the item is a summary (default is `false`).
+     - Parameter content: The content of the new `ContextItem`.
+     - Parameter creationDate: The date the item was created (default is the current date).
+     - Parameter isSummary: A flag indicating whether the item is a summary (default is `false`).
      */
     public mutating func addItem(content: String, creationDate: Date = Date(), isSummary: Bool = false) {
         let newItem = ContextItem(text: content, creationDate: creationDate, isSummary: isSummary)
@@ -60,9 +58,8 @@ public struct Context: Codable, Equatable {
     /**
      Adds a new bookmark to the context for a specific item.
 
-     - Parameters:
-        - item: The `ContextItem` to be bookmarked.
-        - label: A label describing the purpose of the bookmark.
+     - Parameter item: The `ContextItem` to be bookmarked.
+     - Parameter label: A label describing the purpose of the bookmark.
      */
     public mutating func addBookmark(for item: ContextItem, label: String) {
         let newBookmark = Bookmark(contextItemID: item.id, label: label)
@@ -124,9 +121,8 @@ public struct Context: Codable, Equatable {
     /**
      Summarizes a range of items within the context and replaces them with a summary item.
 
-     - Parameters:
-        - range: The range of items to summarize.
-        - summarizer: A closure that summarizes the text content of the items.
+     - Parameter range: The range of items to summarize.
+     - Parameter summarizer: A closure that summarizes the text content of the items.
      */
     public mutating func summarizeItemsInRange(range: Range<Int>, summarizer: (String) -> String) {
         let groupText = items[range].map { $0.text }.joined(separator: "\n")
@@ -140,9 +136,8 @@ public struct Context: Codable, Equatable {
     /**
      Conformance to `Equatable` for comparison between contexts.
 
-     - Parameters:
-        - lhs: The left-hand side `Context` to compare.
-        - rhs: The right-hand side `Context` to compare.
+     - Parameter lhs: The left-hand side `Context` to compare.
+     - Parameter rhs: The right-hand side `Context` to compare.
      - Returns: `true` if the contexts are equal, otherwise `false`.
      */
     public static func == (lhs: Context, rhs: Context) -> Bool {

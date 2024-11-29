@@ -17,9 +17,8 @@ public class SecureStorage {
     /**
      Saves an API key to the secure storage (Keychain) for a specific service.
 
-     - Parameters:
-        - key: The API key to be saved.
-        - serviceName: The name of the service associated with the API key (e.g., "OpenAI", "Anthropic", "Ollama").
+     - Parameter key: The API key to be saved.
+     - Parameter serviceName: The name of the service associated with the API key (e.g., "OpenAI", "Anthropic", "Ollama").
      - Returns: A boolean indicating whether the key was saved successfully.
      */
     @discardableResult
@@ -75,9 +74,8 @@ public class SecureStorage {
     /**
      Saves the base URL to the secure storage (Keychain) for a specific service.
 
-     - Parameters:
-        - url: The base URL to be saved.
-        - serviceName: The name of the service associated with the base URL (e.g., "Ollama").
+     - Parameter url: The base URL to be saved.
+     - Parameter serviceName: The name of the service associated with the base URL (e.g., "Ollama").
      - Returns: A boolean indicating whether the base URL was saved successfully.
      */
     @discardableResult

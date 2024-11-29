@@ -30,11 +30,10 @@ public struct MockLLMResponse: LLMResponseProtocol {
     /**
      Initializes a `MockLLMResponse` instance.
 
-     - Parameters:
-        - text: The mock text content.
-        - vendor: The vendor of the mock LLM.
-        - model: The model name (optional).
-        - tokenUsage: The mock token usage statistics (optional).
+     - Parameter text: The mock text content.
+     - Parameter vendor: The vendor of the mock LLM.
+     - Parameter model: The model name (optional).
+     - Parameter tokenUsage: The mock token usage statistics (optional).
      */
     public init(text: String, vendor: String = "Test Vendor", model: String? = nil, tokenUsage: LLMTokenUsage? = nil) {
         self.text = text

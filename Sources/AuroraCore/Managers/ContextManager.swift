@@ -28,10 +28,9 @@ public class ContextManager {
     /**
      Adds a new context to the manager and returns the unique identifier of the new context.
 
-     - Parameters:
-        - context: An optional `Context` object. If none is provided, a new one will be created automatically.
-        - llmService: The LLM service used for summarization in this context.
-        - summarizer: An optional `Summarizer` instance to handle text summarization. If none is provided, a default summarizer will be created.
+     - Parameter context: An optional `Context` object. If none is provided, a new one will be created automatically.
+     - Parameter llmService: The LLM service used for summarization in this context.
+     - Parameter summarizer: An optional `Summarizer` instance to handle text summarization. If none is provided, a default summarizer will be created.
      - Returns: The unique identifier (`UUID`) for the newly created `ContextController`.
      */
     @discardableResult

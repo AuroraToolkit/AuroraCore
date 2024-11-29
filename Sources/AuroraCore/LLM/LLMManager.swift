@@ -49,9 +49,8 @@ public class LLMManager {
     /**
      Registers a new LLM service or replaces an existing one with the same name.
 
-     - Parameters:
-     - service: The service conforming to `LLMServiceProtocol` to be registered.
-     - withRouting: The `Routing` options, if any, for the service. Defaults to `[.inputTokenLimit(256)]`.
+     - Parameter service: The service conforming to `LLMServiceProtocol` to be registered.
+     - Parameter withRouting: The `Routing` options, if any, for the service. Defaults to `[.inputTokenLimit(256)]`.
 
      If a service with the same name already exists, it is replaced. Sets the first registered service as the active service if no active service is set.
      */
@@ -92,8 +91,7 @@ public class LLMManager {
     /**
      Unregisters an LLM service with a specified name.
 
-     - Parameters:
-     - name: The name under which the service is registered.
+     - Parameter name: The name under which the service is registered.
 
      If the service being unregistered is the active service, the active service is reset to the first available service or nil if no services are left.
      */
@@ -132,11 +130,10 @@ public class LLMManager {
     /**
      Sends a request to an LLM service, applying the specified routing and token trimming strategies if necessary.
 
-     - Parameters:
-     - request: The `LLMRequest` containing the messages and parameters.
-     - routing: The routing option to select the appropriate service. Defaults to `.inputTokenLimit(256)`.
-     - buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
-     - trimming: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
+     - Parameter request: The `LLMRequest` containing the messages and parameters.
+     - Parameter routing: The routing option to select the appropriate service. Defaults to `.inputTokenLimit(256)`.
+     - Parameter buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
+     - Parameter trimming: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
      - Returns: An optional `LLMResponseProtocol` object.
 
      This function trims the content if it exceeds the token limit of the selected service and sends the request.
@@ -155,12 +152,11 @@ public class LLMManager {
     /**
      Sends a streaming request to an LLM service, applying the specified routing and token trimming strategies if necessary.
 
-     - Parameters:
-     - request: The `LLMRequest` containing the messages and parameters.
-     - onPartialResponse: A closure that handles partial responses during streaming.
-     - routing: The routing option to select the appropriate service. Defaults to `.inputTokenLimit(256)`.
-     - buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
-     - trimming: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
+     - Parameter request: The `LLMRequest` containing the messages and parameters.
+     - Parameter onPartialResponse: A closure that handles partial responses during streaming.
+     - Parameter routing: The routing option to select the appropriate service. Defaults to `.inputTokenLimit(256)`.
+     - Parameter buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
+     - Parameter trimming: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
      - Returns: An optional `LLMResponseProtocol` object.
 
      This function trims the content if it exceeds the token limit of the selected service and sends the streaming request.
@@ -189,12 +185,11 @@ public class LLMManager {
     /**
      Sends a streaming request to an LLM service, applying the specified routing and token trimming strategies if necessary.
 
-     - Parameters:
-     - request: The `LLMRequest` containing the messages and parameters.
-     - onPartialResponse: A closure that handles partial responses during streaming.
-     - routing: The routing option to select the appropriate service. Defaults to `.inputTokenLimit(256)`.
-     - buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
-     - trimming: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
+     - Parameter request: The `LLMRequest` containing the messages and parameters.
+     - Parameter onPartialResponse: A closure that handles partial responses during streaming.
+     - Parameter routing: The routing option to select the appropriate service. Defaults to `.inputTokenLimit(256)`.
+     - Parameter buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
+     - Parameter trimming: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
      - Returns: An optional `LLMResponseProtocol` object.
 
      This function trims the content if it exceeds the token limit of the selected service and sends the streaming request.
@@ -225,11 +220,10 @@ public class LLMManager {
     /**
      Optimizes the `LLMRequest` to fit within the constraints of the selected service.
 
-     - Parameters:
-     - request: The `LLMRequest` to optimize.
-     - service: The `LLMServiceProtocol` instance representing the selected service.
-     - trimming: The trimming strategy to apply when tokens exceed the limit.
-     - buffer: The buffer percentage to apply to the token limit, reducing the effective token limit slightly to allow for safer usage. Defaults to `0.05` (5%).
+     - Parameter request: The `LLMRequest` to optimize.
+     - Parameter service: The `LLMServiceProtocol` instance representing the selected service.
+     - Parameter trimming: The trimming strategy to apply when tokens exceed the limit.
+     - Parameter buffer: The buffer percentage to apply to the token limit, reducing the effective token limit slightly to allow for safer usage. Defaults to `0.05` (5%).
 
      - Returns: An optimized `LLMRequest` object, adjusted to ensure input and output tokens fit within the service's constraints.
 
@@ -265,6 +259,13 @@ public class LLMManager {
 
         let maxInputTokens = adjustedContextWindow - adjustedMaxOutputTokens
 
+
+        // Insert the system prompt if it exists
+        var allMessages = request.messages
+        if let systemPrompt = service.systemPrompt {
+            allMessages.insert(LLMMessage(role: .system, content: systemPrompt), at: 0)
+        }
+
         // Trim input messages based on policy
         let trimmedMessages: [LLMMessage]
         switch service.inputTokenPolicy {
@@ -296,11 +297,10 @@ public class LLMManager {
     /**
      Trims the content of the provided messages to fit within a token limit, applying a buffer and trimming strategy.
 
-     - Parameters:
-     - messages: The array of `LLMMessage` objects to trim.
-     - limit: The maximum token limit allowed for the message content.
-     - buffer: The buffer percentage to apply to the token limit.
-     - strategy: The trimming strategy to use if content exceeds the token limit.
+     - Parameter messages: The array of `LLMMessage` objects to trim.
+     - Parameter limit: The maximum token limit allowed for the message content.
+     - Parameter buffer: The buffer percentage to apply to the token limit.
+     - Parameter strategy: The trimming strategy to use if content exceeds the token limit.
      - Returns: An array of trimmed `LLMMessage` objects fitting within the token limit.
      */
     private func trimMessages(_ messages: [LLMMessage], toFitTokenLimit limit: Int, buffer: Double, strategy: String.TrimmingStrategy) -> [LLMMessage] {
@@ -315,11 +315,10 @@ public class LLMManager {
     /**
      Sends a request to a specific LLM service.
 
-     - Parameters:
-     - service: The `LLMServiceProtocol` conforming service.
-     - request: The `LLMRequest` to send.
-     - onPartialResponse: A closure that handles partial responses during streaming (optional).
-     - isRetryingWithFallback: A flag indicating whether the request is a retry with a fallback service.
+     - Parameter service: The `LLMServiceProtocol` conforming service.
+     - Parameter request: The `LLMRequest` to send.
+     - Parameter onPartialResponse: A closure that handles partial responses during streaming (optional).
+     - Parameter isRetryingWithFallback: A flag indicating whether the request is a retry with a fallback service.
      - Returns: An optional `LLMResponseProtocol` object.
      */
     private func sendRequestToService(
@@ -358,9 +357,8 @@ public class LLMManager {
     /**
      Chooses an LLM service based on the provided routing strategy.
 
-     - Parameters:
-     - routing: The routing strategy to be applied for selection.
-     - request: The request being sent, used for analyzing compatibility.
+     - Parameter routing: The routing strategy to be applied for selection.
+     - Parameter request: The request being sent, used for analyzing compatibility.
      - Returns: The `LLMServiceProtocol` that matches the given routing strategy, if available.
      */
     private func selectService(
@@ -419,10 +417,9 @@ public class LLMManager {
     /**
      Evaluates whether a given `LLMServiceProtocol` service meets the criteria specified by a routing strategy for the given request.
 
-     - Parameters:
-     - service: The service being evaluated.
-     - routing: The routing strategy that specifies which criteria to evaluate.
-     - request: The `LLMRequest` providing details such as token count and maximum output tokens.
+     - Parameter service: The service being evaluated.
+     - Parameter routing: The routing strategy that specifies which criteria to evaluate.
+     - Parameter request: The `LLMRequest` providing details such as token count and maximum output tokens.
 
      - Returns: `true` if the service meets the criteria specified by the routing strategy; `false` otherwise.
 
