@@ -53,16 +53,17 @@ public class OllamaService: LLMServiceProtocol {
     /**
      Initializes a new `OllamaService` instance.
 
-     - Parameter vendor: The name of the service vendor (default is `"Ollama"`).
-     - Parameter name: The name of the service instance (default is `"Ollama"`).
-     - Parameter baseURL: The base URL for the Ollama API (default is `"http://localhost:11434"`).
-     - Parameter apiKey: An optional API key, though not required for local Ollama instances.
-     - Parameter contextWindowSize: The size of the context window used by the service. Defaults to 4096.
-     - Parameter maxOutputTokens: The maximum number of tokens allowed for output in a single request. Defaults to 4096.
-     - Parameter inputTokenPolicy: The policy to handle input tokens exceeding the service's limit. Defaults to `.adjustToServiceLimits`.
-     - Parameter outputTokenPolicy: The policy to handle output tokens exceeding the service's limit. Defaults to `.adjustToServiceLimits`.
-     - Parameter systemPrompt: The default system prompt for this service, used to set the behavior or persona of the model.
-     - Parameter urlSession: The `URLSession` instance used for network requests. Defaults to a `.default` configuration.
+     - Parameters:
+        - vendor: The name of the service vendor (default is `"Ollama"`).
+        - name: The name of the service instance (default is `"Ollama"`).
+        - baseURL: The base URL for the Ollama API (default is `"http://localhost:11434"`).
+        - apiKey: An optional API key, though not required for local Ollama instances.
+        - contextWindowSize: The size of the context window used by the service. Defaults to 4096.
+        - maxOutputTokens: The maximum number of tokens allowed for output in a single request. Defaults to 4096.
+        - inputTokenPolicy: The policy to handle input tokens exceeding the service's limit. Defaults to `.adjustToServiceLimits`.
+        - outputTokenPolicy: The policy to handle output tokens exceeding the service's limit. Defaults to `.adjustToServiceLimits`.
+        - systemPrompt: The default system prompt for this service, used to set the behavior or persona of the model.
+        - urlSession: The `URLSession` instance used for network requests. Defaults to a `.default` configuration.
      */
     public init(vendor: String = "Ollama", name: String = "Ollama", baseURL: String = "http://localhost:11434", contextWindowSize: Int = 4096, maxOutputTokens: Int = 4096, inputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, outputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, systemPrompt: String? = nil, urlSession: URLSession = URLSession(configuration: .default)) {
         self.vendor = vendor
@@ -97,6 +98,7 @@ public class OllamaService: LLMServiceProtocol {
      Sends a non-streaming request to the Ollama API and retrieves the response asynchronously.
 
      - Parameter request: The `LLMRequest` containing the messages and model configuration.
+     
      - Returns: The `LLMResponseProtocol` containing the generated text or an error if the request fails.
      - Throws: `LLMServiceError` if the request encounters an issue (e.g., invalid response, decoding error, etc.).
      */
@@ -173,8 +175,10 @@ public class OllamaService: LLMServiceProtocol {
     /**
      Sends a streaming request to the Ollama API and retrieves partial responses asynchronously.
 
-     - Parameter request: The `LLMRequest` containing the messages and model configuration.
-     - Parameter onPartialResponse: A closure to handle partial responses during streaming.
+     - Parameters:
+        - request: The `LLMRequest` containing the messages and model configuration.
+        - onPartialResponse: A closure to handle partial responses during streaming.
+
      - Returns: The `LLMResponseProtocol` containing the final text or an error if the request fails.
      - Throws: `LLMServiceError` if the request encounters an issue (e.g., invalid response, decoding error, etc.).
      */

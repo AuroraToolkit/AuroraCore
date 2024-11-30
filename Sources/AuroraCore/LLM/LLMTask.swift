@@ -31,10 +31,11 @@ public class LLMTask: WorkflowTask {
     /**
      Initializes a new `LLMTask`.
 
-     - Parameter name: The name of the task.
-     - Parameter description: A detailed description of the task.
-     - Parameter prompt: The prompt that will be sent to the LLM service.
-     - Parameter llmService: The LLM service that will handle the request.
+     - Parameters:
+        - name: The name of the task.
+        - description: A detailed description of the task.
+        - prompt: The prompt that will be sent to the LLM service.
+        - llmService: The LLM service that will handle the request.
      */
     public init(name: String, description: String, inputs: [String: Any?] = [:], llmService: LLMServiceProtocol, request: LLMRequest, maxRetries: Int = 0) {
         self.llmService = llmService

@@ -34,7 +34,7 @@ public class LLMManager {
     private let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "LLMManager")
 
     /// A dictionary mapping service names to their respective `LLMServiceProtocol` instances with `Routing` options.
-    private(set) var services: [String: (service: LLMServiceProtocol, routingOptions: [Routing])] = [:]
+    private(set) var services: [String: (service: LLMServiceProtocol, routings: [Routing])] = [:]
 
     /// The name of the currently active service.
     private(set) var activeServiceName: String?
@@ -49,12 +49,13 @@ public class LLMManager {
     /**
      Registers a new LLM service or replaces an existing one with the same name.
 
-     - Parameter service: The service conforming to `LLMServiceProtocol` to be registered.
-     - Parameter withRouting: The `Routing` options, if any, for the service. Defaults to `[.inputTokenLimit(256)]`.
+     - Parameters:
+        -  service: The service conforming to `LLMServiceProtocol` to be registered.
+        -  withRoutings routing: The `Routing` options, if any, for the service. Defaults to `[.inputTokenLimit(256)]`.
 
      If a service with the same name already exists, it is replaced. Sets the first registered service as the active service if no active service is set.
      */
-    public func registerService(_ service: LLMServiceProtocol, withRouting routing: [Routing] = [.inputTokenLimit(256)]) {
+    public func registerService(_ service: LLMServiceProtocol, withRoutings routing: [Routing] = [.inputTokenLimit(256)]) {
         let serviceName = service.name.lowercased()
 
         if services[serviceName] != nil {
@@ -130,21 +131,23 @@ public class LLMManager {
     /**
      Sends a request to an LLM service, applying the specified routing and token trimming strategies if necessary.
 
-     - Parameter request: The `LLMRequest` containing the messages and parameters.
-     - Parameter routing: The routing option to select the appropriate service. Defaults to `.inputTokenLimit(256)`.
-     - Parameter buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
-     - Parameter trimming: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
+     - Parameters:
+        -  request: The `LLMRequest` containing the messages and parameters.
+        -  routings: The routing options to select the appropriate service. Defaults to `[.inputTokenLimit(256)]`.
+        -  buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
+        -  trimming: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
+
      - Returns: An optional `LLMResponseProtocol` object.
 
      This function trims the content if it exceeds the token limit of the selected service and sends the request.
      */
     public func sendRequest(
         _ request: LLMRequest,
-        routing: Routing = .inputTokenLimit(256),
+        routings: [Routing] = [.inputTokenLimit(256)],
         buffer: Double = 0.05,
         trimming: String.TrimmingStrategy = .end
     ) async -> LLMResponseProtocol? {
-        return await optimizeAndSendRequest(request, onPartialResponse: nil, routing: routing, buffer: buffer, trimming: trimming)
+        return await optimizeAndSendRequest(request, onPartialResponse: nil, routings: routings, buffer: buffer, trimming: trimming)
     }
 
     // MARK: - Streaming Request
@@ -152,11 +155,13 @@ public class LLMManager {
     /**
      Sends a streaming request to an LLM service, applying the specified routing and token trimming strategies if necessary.
 
-     - Parameter request: The `LLMRequest` containing the messages and parameters.
-     - Parameter onPartialResponse: A closure that handles partial responses during streaming.
-     - Parameter routing: The routing option to select the appropriate service. Defaults to `.inputTokenLimit(256)`.
-     - Parameter buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
-     - Parameter trimming: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
+     - Parameters:
+        -  request: The `LLMRequest` containing the messages and parameters.
+        -  onPartialResponse: A closure that handles partial responses during streaming.
+        -  routing: The routing options to select the appropriate service. Defaults to `[.inputTokenLimit(256)]`.
+        -  buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
+        -  trimming: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
+
      - Returns: An optional `LLMResponseProtocol` object.
 
      This function trims the content if it exceeds the token limit of the selected service and sends the streaming request.
@@ -164,7 +169,7 @@ public class LLMManager {
     public func sendStreamingRequest(
         _ request: LLMRequest,
         onPartialResponse: ((String) -> Void)?,
-        routing: Routing = .inputTokenLimit(256),
+        routings: [Routing] = [.inputTokenLimit(256)],
         buffer: Double = 0.05,
         trimming: String.TrimmingStrategy = .end
     ) async -> LLMResponseProtocol? {
@@ -177,7 +182,7 @@ public class LLMManager {
             stream: true,   // Ensure streaming is enabled
             options: request.options
         )
-        return await optimizeAndSendRequest(streamingRequest, onPartialResponse: onPartialResponse, routing: routing, buffer: buffer, trimming: trimming)
+        return await optimizeAndSendRequest(streamingRequest, onPartialResponse: onPartialResponse, routings: routings, buffer: buffer, trimming: trimming)
     }
 
     // MARK: - Helper Methods
@@ -185,11 +190,13 @@ public class LLMManager {
     /**
      Sends a streaming request to an LLM service, applying the specified routing and token trimming strategies if necessary.
 
-     - Parameter request: The `LLMRequest` containing the messages and parameters.
-     - Parameter onPartialResponse: A closure that handles partial responses during streaming.
-     - Parameter routing: The routing option to select the appropriate service. Defaults to `.inputTokenLimit(256)`.
-     - Parameter buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
-     - Parameter trimming: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
+     - Parameters:
+        -  request: The `LLMRequest` containing the messages and parameters.
+        -  onPartialResponse: A closure that handles partial responses during streaming.
+        -  routing: The routing options to select the appropriate service. Defaults to `[.inputTokenLimit(256)]`.
+        -  buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
+        -  trimming: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
+
      - Returns: An optional `LLMResponseProtocol` object.
 
      This function trims the content if it exceeds the token limit of the selected service and sends the streaming request.
@@ -197,22 +204,28 @@ public class LLMManager {
     private func optimizeAndSendRequest(
         _ request: LLMRequest,
         onPartialResponse: ((String) -> Void)?,
-        routing: Routing = .inputTokenLimit(256),
+        routings: [Routing] = [.inputTokenLimit(256)],
         buffer: Double = 0.05,
         trimming: String.TrimmingStrategy = .end
     ) async -> LLMResponseProtocol? {
         logger.log("Selecting service based on request...")
 
-        guard let selectedService = selectService(basedOn: routing, for: request, trimming: trimming) else {
+        guard let selectedService = selectService(basedOn: routings, for: request, trimming: trimming) else {
             logger.error("No service available for the specified routing strategy.")
             return nil
         }
 
         logger.log("Sending request to service: \(selectedService.name), model: \(request.model ?? "Not specified")").self
+        print("Sending request to service: \(selectedService.name), model: \(request.model ?? "Not specified")").self
+
+        print("Original request: \(request)")
 
         // Optimize request for the selected service
         logger.log("Optimizing request for service...")
+        print("Optimizing request for service...")
         let optimizedRequest = optimizeRequest(request, for: selectedService, trimming: trimming, buffer: buffer)
+
+        print("Optimized request: \(optimizedRequest)")
 
         return await sendRequestToService(selectedService, withRequest: optimizedRequest, onPartialResponse: onPartialResponse)
     }
@@ -220,10 +233,11 @@ public class LLMManager {
     /**
      Optimizes the `LLMRequest` to fit within the constraints of the selected service.
 
-     - Parameter request: The `LLMRequest` to optimize.
-     - Parameter service: The `LLMServiceProtocol` instance representing the selected service.
-     - Parameter trimming: The trimming strategy to apply when tokens exceed the limit.
-     - Parameter buffer: The buffer percentage to apply to the token limit, reducing the effective token limit slightly to allow for safer usage. Defaults to `0.05` (5%).
+     - Parameters:
+        -  request: The `LLMRequest` to optimize.
+        -  service: The `LLMServiceProtocol` instance representing the selected service.
+        -  trimming: The trimming strategy to apply when tokens exceed the limit.
+        -  buffer: The buffer percentage to apply to the token limit, reducing the effective token limit slightly to allow for safer usage. Defaults to `0.05` (5%).
 
      - Returns: An optimized `LLMRequest` object, adjusted to ensure input and output tokens fit within the service's constraints.
 
@@ -246,6 +260,12 @@ public class LLMManager {
         let adjustedContextWindow = Int(Double(service.contextWindowSize) * (1 - buffer))
         var adjustedMaxOutputTokens = Int(Double(service.maxOutputTokens) * (1 - buffer))
 
+        // Estimate token count for the system prompt
+        let systemPromptTokenCount = service.systemPrompt?.estimatedTokenCount() ?? 0
+
+        // Calculate remaining token budget after reserving space for the system prompt
+        let maxInputTokens = adjustedContextWindow - adjustedMaxOutputTokens - systemPromptTokenCount
+
         // Apply output token policy
         switch service.outputTokenPolicy {
         case .adjustToServiceLimits:
@@ -257,17 +277,8 @@ public class LLMManager {
             }
         }
 
-        let maxInputTokens = adjustedContextWindow - adjustedMaxOutputTokens
-
-
-        // Insert the system prompt if it exists
-        var allMessages = request.messages
-        if let systemPrompt = service.systemPrompt {
-            allMessages.insert(LLMMessage(role: .system, content: systemPrompt), at: 0)
-        }
-
-        // Trim input messages based on policy
-        let trimmedMessages: [LLMMessage]
+        // Trim messages if necessary
+        var trimmedMessages: [LLMMessage]
         switch service.inputTokenPolicy {
         case .adjustToServiceLimits:
             trimmedMessages = trimMessages(
@@ -284,6 +295,13 @@ public class LLMManager {
             trimmedMessages = request.messages
         }
 
+        // Construct the final request by appending the system prompt if it exists
+        if let systemPrompt = service.systemPrompt {
+            logger.log("Inserting system prompt for service \(service.name): \(systemPrompt.prefix(50))...")
+            print("Inserting system prompt for service \(service.name): \(systemPrompt.prefix(50))...")
+            trimmedMessages.insert(LLMMessage(role: .system, content: systemPrompt), at: 0)
+        }
+
         return LLMRequest(
             messages: trimmedMessages,
             temperature: request.temperature,
@@ -297,28 +315,55 @@ public class LLMManager {
     /**
      Trims the content of the provided messages to fit within a token limit, applying a buffer and trimming strategy.
 
-     - Parameter messages: The array of `LLMMessage` objects to trim.
-     - Parameter limit: The maximum token limit allowed for the message content.
-     - Parameter buffer: The buffer percentage to apply to the token limit.
-     - Parameter strategy: The trimming strategy to use if content exceeds the token limit.
+     - Parameters:
+        -  messages: The array of `LLMMessage` objects to trim.
+        -  limit: The maximum token limit allowed for the message content.
+        -  buffer: The buffer percentage to apply to the token limit.
+        -  strategy: The trimming strategy to use if content exceeds the token limit.
+
      - Returns: An array of trimmed `LLMMessage` objects fitting within the token limit.
      */
-    private func trimMessages(_ messages: [LLMMessage], toFitTokenLimit limit: Int, buffer: Double, strategy: String.TrimmingStrategy) -> [LLMMessage] {
-        let trimmedContent = messages
-            .map { $0.content }
-            .joined(separator: " ")
-            .trimmedToFit(tokenLimit: limit, buffer: buffer, strategy: strategy)
+    private func trimMessages(
+        _ messages: [LLMMessage],
+        toFitTokenLimit limit: Int,
+        buffer: Double,
+        strategy: String.TrimmingStrategy
+    ) -> [LLMMessage] {
+        var totalTokenCount = 0
+        let adjustedLimit = Int(Double(limit) * (1 - buffer))
 
-        return [LLMMessage(role: .user, content: trimmedContent)]
+        return messages.map { message in
+            let currentTokenCount = message.content.estimatedTokenCount()
+
+            // Check if adding this message exceeds the budget
+            if totalTokenCount + currentTokenCount > adjustedLimit {
+                // Calculate remaining tokens in the budget
+                let remainingTokens = adjustedLimit - totalTokenCount
+                // Trim the message content to fit within the remaining budget
+                let trimmedContent = message.content.trimmedToFit(
+                    tokenLimit: remainingTokens,
+                    buffer: 0.0, // Buffer was already accounted for in the adjusted limit
+                    strategy: strategy
+                )
+                totalTokenCount += trimmedContent.estimatedTokenCount()
+                return LLMMessage(role: message.role, content: trimmedContent)
+            } else {
+                // No trimming needed; add the full message
+                totalTokenCount += currentTokenCount
+                return message
+            }
+        }
     }
 
     /**
      Sends a request to a specific LLM service.
 
-     - Parameter service: The `LLMServiceProtocol` conforming service.
-     - Parameter request: The `LLMRequest` to send.
-     - Parameter onPartialResponse: A closure that handles partial responses during streaming (optional).
-     - Parameter isRetryingWithFallback: A flag indicating whether the request is a retry with a fallback service.
+     - Parameters:
+        -  service: The `LLMServiceProtocol` conforming service.
+        -  request: The `LLMRequest` to send.
+        -  onPartialResponse: A closure that handles partial responses during streaming (optional).
+        -  isRetryingWithFallback: A flag indicating whether the request is a retry with a fallback service.
+
      - Returns: An optional `LLMResponseProtocol` object.
      */
     private func sendRequestToService(
@@ -357,146 +402,192 @@ public class LLMManager {
     /**
      Chooses an LLM service based on the provided routing strategy.
 
-     - Parameter routing: The routing strategy to be applied for selection.
-     - Parameter request: The request being sent, used for analyzing compatibility.
+     - Parameters:
+        -  basedOn routings: The routing strategies to be applied for selection.
+        -  request: The request being sent, used for analyzing compatibility.
+        -  trimming: The trimming strategy to apply if tokens exceed the limit.
+
      - Returns: The `LLMServiceProtocol` that matches the given routing strategy, if available.
      */
     private func selectService(
-        basedOn routing: Routing,
+        basedOn routings: [Routing],
         for request: LLMRequest,
         trimming: String.TrimmingStrategy = .none
     ) -> LLMServiceProtocol? {
-        // Sort services by routing specificity (e.g., tighter input token limits first)
+        logger.log("Selecting service based on multiple routing strategies: \(routings)")
+
+        // Sort services by routing specificity or priority
         let sortedServices = services.values.sorted { lhs, rhs in
-            switch routing {
-            case .inputTokenLimit(_):
-                let lhsLimit = lhs.routingOptions
-                    .compactMap { if case let .inputTokenLimit(val) = $0 { return val } else { return nil } }
-                    .first ?? Int.max
-                let rhsLimit = rhs.routingOptions
-                    .compactMap { if case let .inputTokenLimit(val) = $0 { return val } else { return nil } }
-                    .first ?? Int.max
-                return lhsLimit < rhsLimit // Prefer tighter token limits
-            case .domain:
-                return lhs.service.name < rhs.service.name // Default alphabetical sort for domain routing
-            }
+            lhs.routings.count > rhs.routings.count // Prefer more specific services
         }
-        
-        logger.log("Selecting service based on routing strategy: \(routing)")
 
-        logger.log("Active service: \(self.activeServiceName ?? "nil"), Fallback service: \(self.fallbackService?.name ?? "nil")")
-
-        // Try the active service if it meets the criteria
+        // Step 1: Try the active service if it meets the criteria
         if let activeServiceName = activeServiceName,
            let activeService = services[activeServiceName]?.service,
-           serviceMeetsCriteria(activeService, routing: routing, for: request, trimming: trimming) {
+           serviceMeetsCriteria(activeService, routings: routings, for: request, trimming: trimming) {
             logger.log("Routing to active service: \(activeService.name)")
             return activeService
         }
 
-        // Try any other matching service, excluding the active service
+        // Step 2: Try any other matching service, excluding the active service
         if let matchingService = sortedServices.first(where: {
             $0.service.name.lowercased() != activeServiceName?.lowercased() &&
-            serviceMeetsCriteria($0.service, routing: routing, for: request, trimming: trimming)
+            serviceMeetsCriteria($0.service, routings: routings, for: request, trimming: trimming)
         })?.service {
-            logger.log("Routing to service matching strategy \(routing): \(matchingService.name)")
+            logger.log("Routing to service matching strategies \(routings): \(matchingService.name)")
             return matchingService
         }
 
-        // Attempt fallback routing if available
+        // Step 3: Attempt fallback routing if available
         if let fallbackService {
             logger.log("Routing to fallback service: \(fallbackService.name)")
             return fallbackService
         }
 
-        // No suitable service found
-        logger.log("No suitable service found for routing strategy \(routing), and no fallback available.")
+        // Step 4: No suitable service found
+        logger.log("No suitable service found for routing strategies \(routings), and no fallback available.")
         return nil
     }
 
     /**
      Evaluates whether a given `LLMServiceProtocol` service meets the criteria specified by a routing strategy for the given request.
 
-     - Parameter service: The service being evaluated.
-     - Parameter routing: The routing strategy that specifies which criteria to evaluate.
-     - Parameter request: The `LLMRequest` providing details such as token count and maximum output tokens.
+     - Parameters:
+        -  service: The service being evaluated.
+        -  routings: The routing strategies that specifies which criteria to evaluate.
+        -  request: The `LLMRequest` providing details such as token count and maximum output tokens.
 
      - Returns: `true` if the service meets the criteria specified by the routing strategy; `false` otherwise.
 
-     - Routing Criteria:
-     - **InputTokenLimit**: Ensures that the input tokens in the request fit within the effective input token limit of the service.
-     - **Domain**: Ensures that the service supports the specified domain(s).
-
      - Discussion:
-     - `contextWindowSize` defines the total token budget for both input and output tokens.
-     - `maxOutputTokens` defines the maximum allowable tokens for generating a response.
-     - The function validates that the service's `contextWindowSize` can accommodate the sum of input and output tokens in the request and ensures `maxOutputTokens` is not exceeded.
+        - Routing Criteria:
+            - `inputTokenLimit`: Ensures that the input tokens in the request fit within the effective input token limit of the service.
+            - `Domain`: Ensures that the service supports the specified domain(s).
+        - `contextWindowSize` defines the total token budget for both input and output tokens.
+        - `maxOutputTokens` defines the maximum allowable tokens for generating a response.
+        - The function validates that the service's `contextWindowSize` can accommodate the sum of input and output tokens in the request and ensures `maxOutputTokens` is not exceeded.
      */
     private func serviceMeetsCriteria(
         _ service: LLMServiceProtocol,
-        routing: Routing,
+        routings: [Routing],
         for request: LLMRequest,
         trimming: String.TrimmingStrategy = .none
     ) -> Bool {
         let apiKeyRequirementMet = !service.requiresAPIKey || service.apiKey != nil
 
-        logger.log("Evaluating service \(service.name) for routing strategy \(routing) with trimming strategy \(trimming)")
-        logger.log("Request details:\n - Estimated input tokens: \(request.estimatedTokenCount())\n - Max output tokens: \(request.maxTokens)")
+        logger.log("Evaluating service \(service.name) for multiple routing strategies: \(routings)")
 
-        switch routing {
-        case .inputTokenLimit(let limit):
-            let originalInputTokens = request.estimatedTokenCount()
-            var adjustedOutputTokens = request.maxTokens
-
-            // Apply output token policy
-            switch service.outputTokenPolicy {
-            case .adjustToServiceLimits:
-                if adjustedOutputTokens > service.maxOutputTokens {
-                    logger.log("Warning: Adjusting output tokens to match service's limit (\(service.maxOutputTokens)).")
-                    adjustedOutputTokens = service.maxOutputTokens
+        for routing in routings {
+            switch routing {
+            case .inputTokenLimit(let limit):
+                if !evaluateTokenLimits(service, request: request, limit: limit, trimming: trimming) {
+                    return false
                 }
-            case .strictRequestLimits:
-                if adjustedOutputTokens > service.maxOutputTokens {
-                    logger.log("Strict limit enforced: Requested output tokens exceed service's limit.")
+            case .domain(let preferredDomains):
+                if !evaluateDomainSupport(service, preferredDomains: preferredDomains) {
                     return false
                 }
             }
-
-            let totalOriginalTokens = originalInputTokens + adjustedOutputTokens
-
-            // Effective input token limit
-            let effectiveInputTokenLimit = min(limit, service.contextWindowSize - service.maxOutputTokens)
-
-            // Apply input token policy
-            let inputTokenRequirementMet: Bool
-            switch service.inputTokenPolicy {
-            case .adjustToServiceLimits:
-                inputTokenRequirementMet = true // Trimming will handle adjustments
-            case .strictRequestLimits:
-                inputTokenRequirementMet = originalInputTokens <= effectiveInputTokenLimit
-            }
-
-            let outputTokenRequirementMet = adjustedOutputTokens <= service.maxOutputTokens
-            let contextWindowRequirementMet = totalOriginalTokens <= service.contextWindowSize
-
-            logger.log("Service \(service.name) - Effective input token limit: \(effectiveInputTokenLimit), Effective output token limit: \(service.maxOutputTokens), Context window: \(service.contextWindowSize)")
-            logger.log("Input tokens: \(originalInputTokens), Adjusted output tokens: \(adjustedOutputTokens), Total tokens required: \(totalOriginalTokens)")
-            logger.log("Input token requirement met: \(inputTokenRequirementMet), Output token requirement met: \(outputTokenRequirementMet), Context window requirement met: \(contextWindowRequirementMet)")
-
-            return apiKeyRequirementMet && inputTokenRequirementMet && outputTokenRequirementMet && contextWindowRequirementMet
-
-        case .domain(let preferredDomains):
-            // Check domain support (unchanged)
-            let lowercasePreferredDomains = Set(preferredDomains.map { $0.lowercased() })
-            let serviceDomains = services[service.name.lowercased()]?.routingOptions.compactMap { option in
-                if case let .domain(domains) = option { return domains.map { $0.lowercased() } }
-                return nil
-            }.flatMap { $0 } ?? []
-            let serviceDomainsRequirementMet = lowercasePreferredDomains.isSubset(of: Set(serviceDomains))
-
-            logger.log("Service \(service.name) - APIKey requirement met: \(apiKeyRequirementMet), Preferred domains: \(lowercasePreferredDomains), Service domains met: \(serviceDomainsRequirementMet)")
-
-            return apiKeyRequirementMet && serviceDomainsRequirementMet
         }
+
+        return apiKeyRequirementMet
+    }
+
+    /**
+     Evaluates whether a service meets the token limit requirements for a given request.
+
+     - Parameters:
+        - service: The `LLMServiceProtocol` instance representing the service being evaluated.
+        - request: The `LLMRequest` containing the input tokens, output tokens, and other parameters.
+        - limit: The input token limit for the routing strategy.
+        - trimming: The trimming strategy to apply if tokens exceed the limit.
+
+     - Returns: `true` if the service meets all token-related constraints (input tokens, output tokens, and context window size); `false` otherwise.
+
+     This function validates the following:
+       - Input tokens: Ensures the request's input tokens fit within the effective input token limit of the service.
+       - Output tokens: Ensures the `maxTokens` in the request does not exceed the service's `maxOutputTokens`.
+       - Context window: Verifies that the total token budget (input + output) fits within the service's `contextWindowSize`.
+       - Adjustment policies: Applies the service's `TokenAdjustmentPolicy` for input and output tokens.
+     */
+    private func evaluateTokenLimits(
+        _ service: LLMServiceProtocol,
+        request: LLMRequest,
+        limit: Int,
+        trimming: String.TrimmingStrategy
+    ) -> Bool {
+        let originalInputTokens = request.estimatedTokenCount()
+        var adjustedOutputTokens = request.maxTokens
+
+        // Apply output token policy
+        switch service.outputTokenPolicy {
+        case .adjustToServiceLimits:
+            if adjustedOutputTokens > service.maxOutputTokens {
+                logger.log("Warning: Adjusting output tokens to match service's limit (\(service.maxOutputTokens)).")
+                adjustedOutputTokens = service.maxOutputTokens
+            }
+        case .strictRequestLimits:
+            if adjustedOutputTokens > service.maxOutputTokens {
+                logger.log("Strict limit enforced: Requested output tokens exceed service's limit.")
+                return false
+            }
+        }
+
+        let totalOriginalTokens = originalInputTokens + adjustedOutputTokens
+
+        // Effective input token limit
+        let effectiveInputTokenLimit = min(limit, service.contextWindowSize - service.maxOutputTokens)
+
+        // Apply input token policy
+        let inputTokenRequirementMet: Bool
+        switch service.inputTokenPolicy {
+        case .adjustToServiceLimits:
+            inputTokenRequirementMet = true // Trimming will handle adjustments
+        case .strictRequestLimits:
+            inputTokenRequirementMet = originalInputTokens <= effectiveInputTokenLimit
+        }
+
+        let outputTokenRequirementMet = adjustedOutputTokens <= service.maxOutputTokens
+        let contextWindowRequirementMet = totalOriginalTokens <= service.contextWindowSize
+
+        logger.log("Service \(service.name) - Effective input token limit: \(effectiveInputTokenLimit), Effective output token limit: \(service.maxOutputTokens), Context window: \(service.contextWindowSize)")
+        logger.log("Input tokens: \(originalInputTokens), Adjusted output tokens: \(adjustedOutputTokens), Total tokens required: \(totalOriginalTokens)")
+        logger.log("Input token requirement met: \(inputTokenRequirementMet), Output token requirement met: \(outputTokenRequirementMet), Context window requirement met: \(contextWindowRequirementMet)")
+
+        return inputTokenRequirementMet && outputTokenRequirementMet && contextWindowRequirementMet
+    }
+
+    /**
+     Evaluates whether a service supports the specified domains for routing.
+
+     - Parameters:
+        - service: The `LLMServiceProtocol` instance representing the service being evaluated.
+        - preferredDomains: An array of preferred domains to be matched with the service's capabilities.
+
+     - Returns: `true` if the service supports at least one of the preferred domains; `false` otherwise.
+
+     - Discussion:
+     This function compares the domains specified in the routing strategy with the service's registered domains.
+     It ensures that the service can handle requests within the specified domain(s).
+
+     - Notes:
+       - Domain matching is case-insensitive.
+       - Services can support multiple domains, and this function checks for intersection between the preferred domains and the service's supported domains.
+     */
+    private func evaluateDomainSupport(
+        _ service: LLMServiceProtocol,
+        preferredDomains: [String]
+    ) -> Bool {
+        let lowercasePreferredDomains = Set(preferredDomains.map { $0.lowercased() })
+        let serviceDomains = services[service.name.lowercased()]?.routings.compactMap { option in
+            if case let .domain(domains) = option { return domains.map { $0.lowercased() } }
+            return nil
+        }.flatMap { $0 } ?? []
+
+        let serviceDomainsRequirementMet = lowercasePreferredDomains.isSubset(of: Set(serviceDomains))
+
+        logger.log("Service \(service.name) - Preferred domains: \(lowercasePreferredDomains), Service domains met: \(serviceDomainsRequirementMet)")
+
+        return serviceDomainsRequirementMet
     }
 }

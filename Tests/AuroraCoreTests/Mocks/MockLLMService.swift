@@ -74,14 +74,4 @@ final class MockLLMService: LLMServiceProtocol {
             throw error
         }
     }
-
-    /// Simulate routing and trimming strategy handling
-    func setRoutingStrategy(_ strategy: String.TrimmingStrategy) {
-        receivedRoutingStrategy = strategy
-    }
-
-    /// Simulate fallback mechanism invocation count for testing
-    func incrementFallbackCount() {
-        receivedFallbackCount += 1
-    }
 }

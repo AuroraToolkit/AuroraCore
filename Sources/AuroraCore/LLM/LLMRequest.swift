@@ -33,12 +33,13 @@ public struct LLMRequest {
     /**
      Initializes a new `LLMRequest` with customizable parameters and reasonable defaults for most fields.
 
-     - Parameter messages: An array of `LLMMessage` objects representing the input, either as a single message or a conversation history.
-     - Parameter temperature: A value between 0.0 and 1.0 controlling the randomness of the response (default is 0.7).
-     - Parameter maxTokens: The maximum number of tokens to generate in the response (default is 256).
-     - Parameter model: An optional string representing the model to use (default is nil, meaning the default model for the service will be used).
-     - Parameter stream: Whether or not the response should be streamed (default is `false`).
-     - Parameter options: An optional `LLMRequestOptions` object containing less commonly used parameters to customize the response generation.
+     - Parameters:
+        -  messages: An array of `LLMMessage` objects representing the input, either as a single message or a conversation history.
+        -  temperature: A value between 0.0 and 1.0 controlling the randomness of the response (default is 0.7).
+        -  maxTokens: The maximum number of tokens to generate in the response (default is 256).
+        -  model: An optional string representing the model to use (default is nil, meaning the default model for the service will be used).
+        -  stream: Whether or not the response should be streamed (default is `false`).
+        -  options: An optional `LLMRequestOptions` object containing less commonly used parameters to customize the response generation.
      */
     public init(
         messages: [LLMMessage],

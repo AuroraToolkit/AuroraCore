@@ -127,8 +127,9 @@ public class Workflow: WorkflowProtocol {
     /**
      Updates a task at a given index in the workflow.
 
-     - Parameter task: The updated task to be placed at the given index.
-     - Parameter index: The index of the task to be updated.
+     - Parameters:
+        - task: The updated task to be placed at the given index.
+        - index: The index of the task to be updated.
      */
     public func updateTask(_ task: WorkflowTaskProtocol, at index: Int) {
         guard index >= 0 && index < tasks.count else { return }

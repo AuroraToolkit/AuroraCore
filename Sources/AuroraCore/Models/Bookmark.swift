@@ -29,8 +29,9 @@ public struct Bookmark: Identifiable, Codable, Equatable {
     /**
      Initializes a new bookmark for a given context item with a specified label.
 
-     - Parameter contextItemID: The ID of the `ContextItem` this bookmark refers to.
-     - Parameter label: A descriptive label for the bookmark.
+     - Parameters:
+        - contextItemID: The ID of the `ContextItem` this bookmark refers to.
+        - label: A descriptive label for the bookmark.
      */
     public init(contextItemID: UUID, label: String) {
         self.id = UUID()
@@ -44,8 +45,10 @@ public struct Bookmark: Identifiable, Codable, Equatable {
 
      Two bookmarks are considered equal if they have the same ID, context item ID, label, and timestamp.
 
-     - Parameter lhs: The first bookmark to compare.
-     - Parameter rhs: The second bookmark to compare.
+     - Parameters:
+        - lhs: The first bookmark to compare.
+        - rhs: The second bookmark to compare.
+     
      - Returns: `true` if the bookmarks are equal, otherwise `false`.
      */
     public static func == (lhs: Bookmark, rhs: Bookmark) -> Bool {

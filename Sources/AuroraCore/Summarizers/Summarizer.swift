@@ -46,6 +46,7 @@ public class Summarizer: SummarizerProtocol {
      Constructs the appropriate system-level instruction based on the summary type.
 
      - Parameter type: The type of summary to generate (e.g., general, context).
+     
      - Returns: The appropriate system instruction for the summary type.
      */
     private func summaryInstruction(for type: SummaryType) -> String {
@@ -60,9 +61,13 @@ public class Summarizer: SummarizerProtocol {
     /**
      Sends the messages to the LLM service for summarization and returns the result.
 
-     - Parameter messages: The conversation messages to be sent to the LLM service.
-     - Parameter options: The summarization options to configure the LLM response.
+     - Parameters:
+        - messages: The conversation messages to be sent to the LLM service.
+        - options: The summarization options to configure the LLM response.
+
      - Returns: The summarized result returned by the LLM service.
+
+     - Throws: An error if the LLM service fails to process the request.
      */
     private func sendToLLM(_ messages: [LLMMessage], options: SummarizerOptions? = nil) async throws -> String {
         let request = LLMRequest(

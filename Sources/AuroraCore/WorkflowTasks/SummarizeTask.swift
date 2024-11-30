@@ -18,8 +18,9 @@ public class SummarizeTask: WorkflowTask {
     /**
      Initializes a new `SummarizeTask` instance.
 
-     - Parameter contextController: The `ContextController` instance containing the context to be summarized.
-     - Parameter summaryType: The type of summary to be performed (e.g., context, general text).
+     - Parameters:
+        - contextController: The `ContextController` instance containing the context to be summarized.
+        - summaryType: The type of summary to be performed (e.g., context, general text).
      */
     public init(contextController: ContextController, summaryType: SummaryType) {
         self.contextController = contextController
@@ -40,6 +41,7 @@ public class SummarizeTask: WorkflowTask {
      Executes the summarization task with options, summarizing the context items and storing the result.
 
      - Parameter with options: Optional `SummarizerOptions` to provide additional configuration options (e.g. model, temperature).
+     
      - Throws: An error if the summarization fails.
      */
     public func execute(with options: SummarizerOptions? = nil) async throws {

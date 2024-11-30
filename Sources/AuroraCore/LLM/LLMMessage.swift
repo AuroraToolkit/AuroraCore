@@ -86,8 +86,9 @@ public struct LLMMessage: Codable, Equatable {
     /**
      Initializes a new `LLMMessage` instance.
 
-     - Parameter role: The role of the message sender, including custom roles as needed.
-     - Parameter content: The message content or text.
+     - Parameters:
+        -  role: The role of the message sender, including custom roles as needed.
+        -  content: The message content or text.
      */
     public init(role: LLMRole, content: String) {
         self.role = role

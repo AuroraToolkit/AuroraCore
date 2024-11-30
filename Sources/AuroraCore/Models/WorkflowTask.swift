@@ -84,11 +84,12 @@ public class WorkflowTask: WorkflowTaskProtocol {
     /**
      Initializes a new `WorkflowTask` with a specified name, description, and inputs.
 
-     - Parameter name: The name of the task.
-     - Parameter description: A detailed description of the task.
-     - Parameter inputs: The required inputs for the task.
-     - Parameter maxRetries: The maximum number of retries allowed for this task.
-     - Parameter status: The initial status of the task (default is `.pending`).
+     - Parameters:
+        - name: The name of the task.
+        - description: A detailed description of the task.
+        - inputs: The required inputs for the task.
+        - maxRetries: The maximum number of retries allowed for this task.
+        - status: The initial status of the task (default is `.pending`).
      */
     public init(name: String, description: String, inputs: [String: Any?] = [:], maxRetries: Int = 0, status: TaskStatus = .pending) {
         self.id = UUID()

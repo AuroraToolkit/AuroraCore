@@ -28,9 +28,11 @@ public class ContextManager {
     /**
      Adds a new context to the manager and returns the unique identifier of the new context.
 
-     - Parameter context: An optional `Context` object. If none is provided, a new one will be created automatically.
-     - Parameter llmService: The LLM service used for summarization in this context.
-     - Parameter summarizer: An optional `Summarizer` instance to handle text summarization. If none is provided, a default summarizer will be created.
+     - Parameters:
+        - context: An optional `Context` object. If none is provided, a new one will be created automatically.
+        - llmService: The LLM service used for summarization in this context.
+        - summarizer: An optional `Summarizer` instance to handle text summarization. If none is provided, a default summarizer will be created.
+
      - Returns: The unique identifier (`UUID`) for the newly created `ContextController`.
      */
     @discardableResult
@@ -85,6 +87,7 @@ public class ContextManager {
      Retrieves a `ContextController` for a given context ID.
 
      - Parameter contextID: The UUID of the context to be retrieved.
+     
      - Returns: The `ContextController` associated with the given context ID, or `nil` if no such context exists.
      */
     public func getContextController(for contextID: UUID) -> ContextController? {

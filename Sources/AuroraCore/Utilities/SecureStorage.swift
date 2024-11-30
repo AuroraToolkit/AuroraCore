@@ -17,8 +17,10 @@ public class SecureStorage {
     /**
      Saves an API key to the secure storage (Keychain) for a specific service.
 
-     - Parameter key: The API key to be saved.
-     - Parameter serviceName: The name of the service associated with the API key (e.g., "OpenAI", "Anthropic", "Ollama").
+     - Parameters:
+        - key: The API key to be saved.
+        - serviceName: The name of the service associated with the API key (e.g., "OpenAI", "Anthropic", "Ollama").
+
      - Returns: A boolean indicating whether the key was saved successfully.
      */
     @discardableResult
@@ -41,6 +43,7 @@ public class SecureStorage {
      Retrieves an API key from the secure storage (Keychain) for a specific service.
 
      - Parameter serviceName: The name of the service for which the API key is retrieved.
+
      - Returns: The API key as a string, or `nil` if the key is not found.
      */
     public static func getAPIKey(for serviceName: String) -> String? {
@@ -74,8 +77,10 @@ public class SecureStorage {
     /**
      Saves the base URL to the secure storage (Keychain) for a specific service.
 
-     - Parameter url: The base URL to be saved.
-     - Parameter serviceName: The name of the service associated with the base URL (e.g., "Ollama").
+     - Parameters:
+        - url: The base URL to be saved.
+        - serviceName: The name of the service associated with the base URL (e.g., "Ollama").
+
      - Returns: A boolean indicating whether the base URL was saved successfully.
      */
     @discardableResult
@@ -98,6 +103,7 @@ public class SecureStorage {
      Retrieves the base URL from the secure storage (Keychain) for a specific service.
 
      - Parameter serviceName: The name of the service for which the base URL is retrieved.
+     
      - Returns: The base URL as a string, or `nil` if the base URL is not found.
      */
     public static func getBaseURL(for serviceName: String) -> String? {

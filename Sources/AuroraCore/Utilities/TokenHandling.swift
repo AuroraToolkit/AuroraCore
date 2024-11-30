@@ -18,9 +18,10 @@ public extension String {
     /**
      Checks if the combined token count of the string and an optional context is within the allowed token limit, considering the buffer.
 
-     - Parameter context: An optional context string to be combined with the current string.
-     - Parameter tokenLimit: The maximum allowed token count (default is 1024).
-     - Parameter buffer: The buffer percentage to reduce the token limit (default is 5%).
+     - Parameters:
+        - context: An optional context string to be combined with the current string.
+        - tokenLimit: The maximum allowed token count (default is 1024).
+        - buffer: The buffer percentage to reduce the token limit (default is 5%).
 
      - Returns: A Boolean value indicating whether the combined token count is within the adjusted limit.
      */
@@ -33,9 +34,12 @@ public extension String {
 
     /**
      Trims the string according to the specified trimming strategy.
-     - Parameter strategy: The trimming strategy to use (.start, .middle, .end).
-     - Parameter tokenLimit: The maximum allowed token count after trimming.
-     - Parameter buffer: A buffer percentage to reduce the maximum token limit.
+
+     - Parameters:
+        - strategy: The trimming strategy to use (.start, .middle, .end).
+        - tokenLimit: The maximum allowed token count after trimming.
+        - buffer: A buffer percentage to reduce the maximum token limit.
+
      - Returns: The trimmed string.
      */
     func trimmedToFit(tokenLimit: Int, buffer: Double = 0.05, strategy: TrimmingStrategy) -> String {

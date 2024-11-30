@@ -38,14 +38,15 @@ public struct LLMRequestOptions {
     /**
      Initializes a new `LLMRequestOptions` with default values for all fields.
 
-     - Parameter topP: The top probability value used for nucleus sampling.
-     - Parameter frequencyPenalty: A penalty to discourage token repetition in the response.
-     - Parameter presencePenalty: A penalty to encourage the introduction of new tokens in the response.
-     - Parameter stopSequences: An optional array of strings that will stop the response generation when encountered.
-     - Parameter logitBias: An optional dictionary that maps tokens to biases, allowing adjustment of token probabilities.
-     - Parameter user: An optional string representing a user identifier for tracking purposes.
-     - Parameter suffix: An optional string that will be added after the model's response.
-     - Parameter preferredDomains: An optional array of strings representing preferred domains for routing.
+     - Parameters:
+        -  topP: The top probability value used for nucleus sampling.
+        -  frequencyPenalty: A penalty to discourage token repetition in the response.
+        -  presencePenalty: A penalty to encourage the introduction of new tokens in the response.
+        -  stopSequences: An optional array of strings that will stop the response generation when encountered.
+        -  logitBias: An optional dictionary that maps tokens to biases, allowing adjustment of token probabilities.
+        -  user: An optional string representing a user identifier for tracking purposes.
+        -  suffix: An optional string that will be added after the model's response.
+        -  preferredDomains: An optional array of strings representing preferred domains for routing.
      */
     public init(
         topP: Double? = nil,

@@ -18,6 +18,7 @@ public class FetchContextsTask: WorkflowTask {
      Initializes a `FetchContextsTask` with an optional list of filenames.
 
      - Parameter filenames: An optional array of filenames (without extensions) specifying which contexts to retrieve.
+     
      - Returns: A `FetchContextsTask` instance.
      */
     public init(filenames: [String]? = nil) {

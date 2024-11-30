@@ -12,10 +12,11 @@ public class TrimmingTask: WorkflowTask {
     /**
      Initializes a `TrimmingTask` to trim multiple strings.
 
-     - Parameter strings: An array of strings to be trimmed. Can contain one or multiple items.
-     - Parameter tokenLimit: The maximum allowed token count (default is 1,024).
-     - Parameter buffer: A buffer percentage to apply when calculating the token limit (default is 5%).
-     - Parameter strategy: The trimming strategy to apply (default is `.middle`).
+     - Parameters:
+        - strings: An array of strings to be trimmed. Can contain one or multiple items.
+        - tokenLimit: The maximum allowed token count (default is 1,024).
+        - buffer: A buffer percentage to apply when calculating the token limit (default is 5%).
+        - strategy: The trimming strategy to apply (default is `.middle`).
      */
     public init(strings: [String], tokenLimit: Int? = 1024, buffer: Double? = 0.05, strategy: String.TrimmingStrategy? = .middle) {
         let name = strings.count <= 1 ? "Trimming Task" : "Trim Multiple Strings"

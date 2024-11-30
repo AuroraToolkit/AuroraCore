@@ -4,18 +4,23 @@
 import Foundation
 import AuroraCore
 
-print("Aurora Core Examples")
-print("--------------------")
+//print("Aurora Core Examples")
+//print("--------------------")
+//
+//print("BasicRequest Example:")
+//await BasicRequestExample().execute()
+//
+//print("--------------------")
+//
+//print("StreamingRequest Example:")
+//await StreamingRequestExample().execute()
+//
+//print("--------------------")
+//
+//print("LLM Routing Example:\n")
+//await LLMRoutingExample().execute()
+//
+//print("--------------------")
 
-print("BasicRequest Example:")
-await BasicRequestExample().execute()
-
-print("--------------------")
-
-print("StreamingRequest Example:")
-await StreamingRequestExample().execute()
-
-print("--------------------")
-
-print("LLM Routing Example:\n")
-await LLMRoutingExample().execute()
+print("Domain Routing Example:\n")
+await DomainRoutingExample().execute()

@@ -33,9 +33,10 @@ public struct ContextItem: Identifiable, Codable, Equatable {
     /**
      Initializes a new `ContextItem` with the specified text content and optional parameters for creation date and summary status.
 
-     - Parameter text: The text content of the `ContextItem`.
-     - Parameter creationDate: The date the item was created (default is the current date).
-     - Parameter isSummary: A flag indicating whether the item is a summary (default is `false`).
+     - Parameters:
+        - text: The text content of the `ContextItem`.
+        - creationDate: The date the item was created (default is the current date).
+        - isSummary: A flag indicating whether the item is a summary (default is `false`).
      */
     public init(text: String, creationDate: Date = Date(), isSummary: Bool = false) {
         self.id = UUID()
@@ -52,6 +53,7 @@ public struct ContextItem: Identifiable, Codable, Equatable {
      This is a rough estimate that assumes 1 token per 4 characters (on average).
 
      - Parameter text: The text content to estimate token count for.
+     
      - Returns: The estimated number of tokens.
      */
     public static func estimateTokenCount(for text: String) -> Int {
@@ -63,6 +65,7 @@ public struct ContextItem: Identifiable, Codable, Equatable {
      Checks if the `ContextItem` is older than a specified number of days.
 
      - Parameter days: The number of days to compare against.
+
      - Returns: `true` if the item is older than the specified number of days, otherwise `false`.
      */
     public func isOlderThan(days: Int) -> Bool {
@@ -75,8 +78,10 @@ public struct ContextItem: Identifiable, Codable, Equatable {
     /**
      Conformance to `Equatable` for comparison between `ContextItem`s.
 
-     - Parameter lhs: The left-hand side `ContextItem` to compare.
-     - Parameter rhs: The right-hand side `ContextItem` to compare.
+     - Parameters:
+        - lhs: The left-hand side `ContextItem` to compare.
+        - rhs: The right-hand side `ContextItem` to compare.
+
      - Returns: `true` if the `ContextItem`s are equal, otherwise `false`.
      */
     public static func == (lhs: ContextItem, rhs: ContextItem) -> Bool {

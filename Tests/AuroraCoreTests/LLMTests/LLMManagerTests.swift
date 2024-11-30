@@ -92,7 +92,7 @@ final class LLMManagerTests: XCTestCase {
         let mockService = MockLLMService(name: "TestService", maxOutputTokens: 20, expectedResult: .failure(NSError(domain: "Test", code: 1, userInfo: nil)))
         let fallbackService = MockLLMService(name: "FallbackService", maxOutputTokens: 30, expectedResult: .success(MockLLMResponse(text: "Fallback Output")))
 
-        manager.registerService(mockService, withRouting: [.inputTokenLimit(30)])
+        manager.registerService(mockService, withRoutings: [.inputTokenLimit(30)])
         manager.registerFallbackService(fallbackService)
 
         let longMessage = String(repeating: "C", count: 100) // Exceeds token limit for TestService but fits in FallbackService
@@ -155,7 +155,7 @@ final class LLMManagerTests: XCTestCase {
         let request = LLMRequest(messages: [LLMMessage(role: .user, content: longMessage)])
 
         // When
-        let response = await manager.sendRequest(request, routing: .inputTokenLimit(30), trimming: .end)
+        let response = await manager.sendRequest(request, routings: [.inputTokenLimit(30)], trimming: .end)
 
         // Then
         XCTAssertEqual(response?.text, "Extended Response", "Should route to the service with a higher token limit")
@@ -166,13 +166,13 @@ final class LLMManagerTests: XCTestCase {
         let generalService = MockLLMService(name: "GeneralService", expectedResult: .success(MockLLMResponse(text: "General Response")))
         let specializedService = MockLLMService(name: "SpecializedService", expectedResult: .success(MockLLMResponse(text: "Specialized Response")))
 
-        manager.registerService(generalService, withRouting: [.domain(["general"])])
-        manager.registerService(specializedService, withRouting: [.domain(["specialized"])])
+        manager.registerService(generalService, withRoutings: [.domain(["general"])])
+        manager.registerService(specializedService, withRoutings: [.domain(["specialized"])])
 
         let request = LLMRequest(messages: [LLMMessage(role: .user, content: "Message for specialized domain")])
 
         // When
-        let response = await manager.sendRequest(request, routing: .domain(["specialized"]))
+        let response = await manager.sendRequest(request, routings: [.domain(["specialized"])])
 
         // Then
         XCTAssertEqual(response?.text, "Specialized Response", "Should route to the specialized service based on domain")
@@ -183,7 +183,7 @@ final class LLMManagerTests: XCTestCase {
         let primaryService = MockLLMService(name: "PrimaryService", maxOutputTokens: 20, expectedResult: .failure(NSError(domain: "Test", code: 1)))
         let fallbackService = MockLLMService(name: "FallbackService", maxOutputTokens: 30, expectedResult: .success(MockLLMResponse(text: "Fallback Response")))
 
-        manager.registerService(primaryService, withRouting: [.inputTokenLimit(30)])
+        manager.registerService(primaryService, withRoutings: [.inputTokenLimit(30)])
         manager.registerFallbackService(fallbackService)
 
         let message = String(repeating: "F", count: 25 * 4) // Exceeds PrimaryService limit
@@ -239,13 +239,13 @@ final class LLMManagerTests: XCTestCase {
         let domainService = MockLLMService(name: "DomainService", maxOutputTokens: 50, expectedResult: .success(MockLLMResponse(text: "Domain Response")))
         let fallbackService = MockLLMService(name: "FallbackService", maxOutputTokens: 30, expectedResult: .success(MockLLMResponse(text: "Fallback Response")))
 
-        manager.registerService(domainService, withRouting: [.domain(["otherDomain"])])
+        manager.registerService(domainService, withRoutings: [.domain(["otherDomain"])])
         manager.registerFallbackService(fallbackService)
 
         let request = LLMRequest(messages: [LLMMessage(role: .user, content: "Request for unsupported domain")])
 
         // When
-        let response = await manager.sendRequest(request, routing: .domain(["unmatchedDomain"]))
+        let response = await manager.sendRequest(request, routings: [.domain(["unmatchedDomain"])])
 
         // Then
         XCTAssertEqual(response?.text, "Fallback Response", "Expected fallback service to be selected when no other services meet the domain routing criteria.")
@@ -256,7 +256,7 @@ final class LLMManagerTests: XCTestCase {
         let limitedService = MockLLMService(name: "LimitedService", maxOutputTokens: 10, expectedResult: .failure(NSError(domain: "Test", code: 1, userInfo: nil)))
 
         // Register a service that does not meet the criteria due to its low token limit
-        manager.registerService(limitedService, withRouting: [.inputTokenLimit(10)])
+        manager.registerService(limitedService, withRoutings: [.inputTokenLimit(10)])
 
         // Set the active service to this limited service
         manager.setActiveService(byName: "LimitedService")
@@ -282,7 +282,7 @@ final class LLMManagerTests: XCTestCase {
             maxOutputTokens: 50,
             expectedResult: .success(MockLLMResponse(text: "Trimmed Input Response"))
         )
-        manager.registerService(service, withRouting: [.inputTokenLimit(40)])
+        manager.registerService(service, withRoutings: [.inputTokenLimit(40)])
 
         // Case 1: Input tokens exceed the limit and are trimmed
         let longMessage = String(repeating: "X", count: 60 * 4) // Exceeds 40-token limit
@@ -351,19 +351,19 @@ final class LLMManagerTests: XCTestCase {
             expectedResult: .success(MockLLMResponse(text: "Service2 Response"))
         )
 
-        manager.registerService(service1, withRouting: [.inputTokenLimit(20)])
-        manager.registerService(service2, withRouting: [.inputTokenLimit(40)])
+        manager.registerService(service1, withRoutings: [.inputTokenLimit(20)])
+        manager.registerService(service2, withRoutings: [.inputTokenLimit(40)])
         manager.setActiveService(byName: "") // Clear active service to ensure proper routing logic
 
         // Case 1: Fits within Service1's limit
         let shortMessage = String(repeating: "X", count: 15 * 4) // Fits Service1
         let request1 = LLMRequest(messages: [LLMMessage(role: .user, content: shortMessage)], maxTokens: 30)
-        let response1 = await manager.sendRequest(request1, routing: .inputTokenLimit(20)) // Explicitly use Service1's routing
+        let response1 = await manager.sendRequest(request1, routings: [.inputTokenLimit(20)]) // Explicitly use Service1's routing
 
         // Case 2: Exceeds Service1 but fits Service2
         let longerMessage = String(repeating: "X", count: 35 * 4) // Fits Service2
         let request2 = LLMRequest(messages: [LLMMessage(role: .user, content: longerMessage)], maxTokens: 50)
-        let response2 = await manager.sendRequest(request2, routing: .inputTokenLimit(40)) // Explicitly use Service2's routing
+        let response2 = await manager.sendRequest(request2, routings: [.inputTokenLimit(40)]) // Explicitly use Service2's routing
 
         // Then
         XCTAssertEqual(response1?.text, "Service1 Response", "Service1 should handle the smaller message.")
@@ -453,8 +453,8 @@ final class LLMManagerTests: XCTestCase {
             expectedResult: .success(MockLLMResponse(text: "Flexible Policy Response"))
         )
 
-        manager.registerService(serviceWithStrictPolicy, withRouting: [.domain(["strictDomain"])])
-        manager.registerService(serviceWithFlexiblePolicy, withRouting: [.domain(["flexibleDomain"])])
+        manager.registerService(serviceWithStrictPolicy, withRoutings: [.domain(["strictDomain"])])
+        manager.registerService(serviceWithFlexiblePolicy, withRoutings: [.domain(["flexibleDomain"])])
 
         // Case: Request satisfies token limit for strict service but not domain
         let request = LLMRequest(
@@ -463,7 +463,7 @@ final class LLMManagerTests: XCTestCase {
         )
 
         // When
-        let response = await manager.sendRequest(request, routing: .domain(["flexibleDomain"]))
+        let response = await manager.sendRequest(request, routings: [.domain(["flexibleDomain"])])
 
         // Then
         XCTAssertEqual(response?.text, "Flexible Policy Response", "Expected routing to flexible policy service based on domain match.")
@@ -496,8 +496,8 @@ final class LLMManagerTests: XCTestCase {
             expectedResult: .success(MockLLMResponse(text: "Fallback Response"))
         )
 
-        manager.registerService(service1, withRouting: [.inputTokenLimit(40)])
-        manager.registerService(service2, withRouting: [.inputTokenLimit(60)])
+        manager.registerService(service1, withRoutings: [.inputTokenLimit(40)])
+        manager.registerService(service2, withRoutings: [.inputTokenLimit(60)])
         manager.registerFallbackService(fallbackService)
 
         let longMessage = String(repeating: "X", count: 90 * 4) // Exceeds both service1 and service2 limits

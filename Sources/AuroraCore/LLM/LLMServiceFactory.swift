@@ -21,6 +21,7 @@ public class LLMServiceFactory {
      The method checks for the API key in `SecureStorage` and uses it to instantiate the appropriate LLM service, such as OpenAI, Anthropic, or Ollama.
 
      - Parameter context: The context object containing the LLM service name.
+     
      - Returns: An instance of the corresponding `LLMServiceProtocol`, or `nil` if the API key is missing or the service is not supported.
      */
     public func createService(for context: Context) -> LLMServiceProtocol? {

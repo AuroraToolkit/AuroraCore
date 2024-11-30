@@ -30,9 +30,10 @@ public class ContextController {
     /**
      Initializes a new `ContextController` instance.
 
-     - Parameter context: Optional `Context` object. If none is provided, a new context will be created automatically.
-     - Parameter llmService: The LLM service to be used for summarization.
-     - Parameter summarizer: Optional `Summarizer` instance. If none is provided, a default summarizer will be created.
+     - Parameters:
+        - context: Optional `Context` object. If none is provided, a new context will be created automatically.
+        - llmService: The LLM service to be used for summarization.
+        - summarizer: Optional `Summarizer` instance. If none is provided, a default summarizer will be created.
      */
     public init(context: Context? = nil, llmService: LLMServiceProtocol, summarizer: SummarizerProtocol? = nil) {
         self.context = context ?? Context(llmServiceVendor: llmService.vendor)
@@ -58,9 +59,10 @@ public class ContextController {
     /**
      Adds a new item to the context.
 
-     - Parameter content: The content of the item to be added.
-     - Parameter creationDate: The date when the item was created. Defaults to the current date.
-     - Parameter isSummary: A boolean flag indicating whether the item being added is a summary. Defaults to `false`.
+     - Parameters:
+        - content: The content of the item to be added.
+        - creationDate: The date when the item was created. Defaults to the current date.
+        - isSummary: A boolean flag indicating whether the item being added is a summary. Defaults to `false`.
      */
     public func addItem(content: String, creationDate: Date = Date(), isSummary: Bool = false) {
         context.addItem(content: content, creationDate: creationDate, isSummary: isSummary)
@@ -69,8 +71,9 @@ public class ContextController {
     /**
      Adds a bookmark to the context for a specific item.
 
-     - Parameter item: The `ContextItem` to be bookmarked.
-     - Parameter label: A label for the bookmark.
+     - Parameters:
+        - item: The `ContextItem` to be bookmarked.
+        - label: A label for the bookmark.
      */
     public func addBookmark(for item: ContextItem, label: String) {
         context.addBookmark(for: item, label: label)
