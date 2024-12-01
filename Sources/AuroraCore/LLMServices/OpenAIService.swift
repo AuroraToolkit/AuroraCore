@@ -145,7 +145,8 @@ public class OpenAIService: LLMServiceProtocol {
         }
 
         let decodedResponse = try JSONDecoder().decode(OpenAILLMResponse.self, from: data)
-        return decodedResponse
+        let finalResponse = decodedResponse.changingVendor(to: vendor)
+        return finalResponse
     }
 
     // MARK: - Streaming Request
@@ -206,6 +207,7 @@ public class OpenAIService: LLMServiceProtocol {
 
         return try await withCheckedThrowingContinuation { continuation in
             let streamingDelegate = StreamingDelegate(
+                vendor: vendor,
                 model: request.model ?? "gpt-4o",
                 onPartialResponse: onPartialResponse ?? { _ in },
                 continuation: continuation
@@ -217,6 +219,7 @@ public class OpenAIService: LLMServiceProtocol {
     }
 
     internal class StreamingDelegate: NSObject, URLSessionDataDelegate {
+        private let vendor: String
         private let model: String
         private let onPartialResponse: (String) -> Void
         private let continuation: CheckedContinuation<LLMResponseProtocol, Error>
@@ -224,9 +227,11 @@ public class OpenAIService: LLMServiceProtocol {
         private var finalResponse: LLMResponseProtocol?
         private let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "OpenAIService.StreamingDelegate")
 
-        init(model: String,
+        init(vendor: String,
+             model: String,
              onPartialResponse: @escaping (String) -> Void,
              continuation: CheckedContinuation<LLMResponseProtocol, Error>) {
+            self.vendor = vendor
             self.model = model
             self.onPartialResponse = onPartialResponse
             self.continuation = continuation
@@ -248,6 +253,7 @@ public class OpenAIService: LLMServiceProtocol {
                             finish_reason: "stop"
                         )],
                         usage: usage,
+                        vendor: vendor,
                         model: model
                     )
                     continuation.resume(returning: finalResponse)

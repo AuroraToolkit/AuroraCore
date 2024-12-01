@@ -164,11 +164,12 @@ public class AnthropicService: LLMServiceProtocol {
         }
 
         if let jsonString = String(data: data, encoding: .utf8) {
-            logger.log("AntropicService \(#function) Received response: \(jsonString)")
+            logger.log("AnthropicService \(#function) Received response: \(jsonString)")
         }
 
         let decodedResponse = try JSONDecoder().decode(AnthropicLLMResponse.self, from: data)
-        return decodedResponse
+        let finalResponse = decodedResponse.changingVendor(to: vendor)
+        return finalResponse
     }
 
     // MARK: - Streaming Request
@@ -234,6 +235,7 @@ public class AnthropicService: LLMServiceProtocol {
 
         return try await withCheckedThrowingContinuation { continuation in
             let streamingDelegate = StreamingDelegate(
+                vendor: vendor,
                 model: request.model ?? "claude-3-5-sonnet-20240620",
                 onPartialResponse: onPartialResponse ?? { _ in },
                 continuation: continuation
@@ -245,6 +247,7 @@ public class AnthropicService: LLMServiceProtocol {
     }
 
     internal class StreamingDelegate: NSObject, URLSessionDataDelegate {
+        private let vendor: String
         private let model: String
         private let onPartialResponse: (String) -> Void
         private let continuation: CheckedContinuation<LLMResponseProtocol, Error>
@@ -254,9 +257,11 @@ public class AnthropicService: LLMServiceProtocol {
         private var isComplete = false
         private let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "AnthropicService.StreamingDelegate")
 
-        init(model: String,
+        init(vendor: String,
+             model: String,
              onPartialResponse: @escaping (String) -> Void,
              continuation: CheckedContinuation<LLMResponseProtocol, Error>) {
+            self.vendor = vendor
             self.model = model
             self.onPartialResponse = onPartialResponse
             self.continuation = continuation
@@ -311,6 +316,7 @@ public class AnthropicService: LLMServiceProtocol {
                     id: UUID().uuidString,  // Replace with actual ID from the API if available
                     type: "response",
                     role: "assistant",
+                    vendor: vendor,
                     model: model,
                     content: accumulatedContent,
                     stopReason: "end_turn",  // Replace with actual stop reason if available

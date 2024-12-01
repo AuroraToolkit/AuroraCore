@@ -33,6 +33,9 @@ public struct OpenAILLMResponse: LLMResponseProtocol, Codable {
     /// Token usage statistics (optional for streaming).
     public let usage: Usage?
 
+    /// The vendor associated with the response.
+    public var vendor: String? = "OpenAI"
+
     /// The model used.
     public var model: String?
 

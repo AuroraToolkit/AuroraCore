@@ -42,9 +42,41 @@ public class LLMManager {
     /// The designated fallback service.
     private(set) var fallbackService: LLMServiceProtocol?
 
+    /// The domain routing service used to determine the appropriate domain for a request.
+    private(set) var domainRoutingService: LLMServiceProtocol?
+
     public init() {}
 
     // MARK: - Registering Services
+
+    /**
+     Registers a new domain routing service or replaces an existing one.
+
+     - Parameter service: The service conforming to `LLMServiceProtocol` to be registered as a domain routing service.
+     */
+    public func registerDomainRoutingService(_ service: LLMServiceProtocol) {
+        if domainRoutingService != nil {
+            logger.log("Replacing existing domain routing service with name '\(service.name)'")
+        } else {
+            logger.log("Registering new domain routing service with name '\(service.name)'")
+        }
+        domainRoutingService = service
+    }
+
+    /**
+     Registers a new fallback LLM service or replaces an existing one.
+
+     - Parameter service: The service conforming to `LLMServiceProtocol` to be registered as a fallback.
+     */
+    public func registerFallbackService(_ service: LLMServiceProtocol) {
+        if fallbackService != nil {
+            logger.log("Replacing existing fallback service with name '\(service.name)'")
+        } else {
+            logger.log("Registering new fallback service with name '\(service.name)'")
+        }
+
+        fallbackService = service
+    }
 
     /**
      Registers a new LLM service or replaces an existing one with the same name.
@@ -71,23 +103,6 @@ public class LLMManager {
             logger.log("Active service set to: \(self.activeServiceName ?? "nil")")
         }
     }
-
-    /**
-     Registers a new fallback LLM service or replaces an existing one.
-
-     - Parameter service: The service conforming to `LLMServiceProtocol` to be registered as a fallback.
-     */
-    public func registerFallbackService(_ service: LLMServiceProtocol) {
-        if fallbackService != nil {
-            logger.log("Replacing existing fallback service with name '\(service.name)'")
-        } else {
-            logger.log("Registering new fallback service with name '\(service.name)'")
-        }
-
-        fallbackService = service
-    }
-
-
 
     /**
      Unregisters an LLM service with a specified name.
@@ -124,6 +139,87 @@ public class LLMManager {
         }
         activeServiceName = name
         logger.log("Active service switched to: \(self.activeServiceName ?? "nil")")
+    }
+
+    // MARK: - Route Request
+
+    /**
+     Routes a request to an appropriate LLM service based on the presence of a domain routing service and registered routings.
+
+     - Parameters:
+        - request: The `LLMRequest` object containing the prompt and configuration for the LLM.
+        -  buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).
+        -  trimming: The trimming strategy to apply when tokens exceed the limit. Defaults to `.end`.
+
+     - Returns: An optional `LLMResponseProtocol` containing the response from the routed service.
+
+     - Discussion:
+     This function first checks if a domain routing service is available:
+     - If a domain routing service exists, it uses the service to determine the appropriate domain for the request.
+     - If no domain routing service is present, the function defaults to no routings (`[]`).
+
+     Once the `routings` are determined, the function delegates to `sendRequest()`, which handles actual service selection and fallback logic.
+
+     - Behavior:
+        - **With a Domain Routing Service:** The request is sent to the routing service to identify the domain, and the result is used to create routing options.
+        - **Without a Domain Routing Service:** The request is directly passed to `sendRequest()` with no routings (`[]`), defaulting to fallback logic if no matching services are found.
+
+     - Example Usage:
+        ```
+        let response = await manager.routeRequest(myRequest)
+        print(response?.text ?? "No response received")
+        ```
+
+     - Note: The `sendRequest()` method handles registered services and fallback logic, ensuring robust and flexible routing.
+     */
+    public func routeRequest(
+        _ request: LLMRequest,
+        buffer: Double = 0.05,
+        trimming: String.TrimmingStrategy = .end
+    ) async -> LLMResponseProtocol? {
+        // Determine routings based on the presence of a domain routing service
+        let routings: [Routing]
+        if let domainRoutingService {
+            logger.log("Engaging domain routing service to determine appropriate domain...")
+
+            // Add the system message if it exists
+            var routedRequest = request
+            if let systemPrompt = domainRoutingService.systemPrompt {
+                logger.log("Adding system prompt for domain routing service.")
+                var messages = request.messages
+                messages.insert(LLMMessage(role: .system, content: systemPrompt), at: 0)
+                routedRequest = LLMRequest(
+                    messages: messages,
+                    temperature: request.temperature,
+                    maxTokens: request.maxTokens,
+                    model: request.model,
+                    stream: request.stream,
+                    options: request.options
+                )
+            }
+
+            do {
+                // Send the request to the domain routing service
+                let domainResponse = try await domainRoutingService.sendRequest(routedRequest)
+                let domain = domainResponse.text.lowercased()
+                if !domain.isEmpty {
+                    logger.log("Domain routing service identified domain: \(domain)")
+                    routings = [.domain([domain])]
+                } else {
+                    logger.log("Domain routing service returned an empty domain. Defaulting to fallback.")
+                    routings = []
+                }
+            } catch {
+                logger.error("Domain routing service failed: \(error.localizedDescription)")
+                routings = [] // Default to no routings in case of error
+            }
+        } else {
+            logger.log("No domain routing service available. Defaulting to no routings.")
+            routings = [] // Default to no routings
+        }
+
+        // Call sendRequest with the determined routings
+        return await sendRequest(request, routings: routings, buffer: buffer, trimming: trimming)
     }
 
     // MARK: - Send Request
@@ -216,16 +312,10 @@ public class LLMManager {
         }
 
         logger.log("Sending request to service: \(selectedService.name), model: \(request.model ?? "Not specified")").self
-        print("Sending request to service: \(selectedService.name), model: \(request.model ?? "Not specified")").self
-
-        print("Original request: \(request)")
 
         // Optimize request for the selected service
         logger.log("Optimizing request for service...")
-        print("Optimizing request for service...")
         let optimizedRequest = optimizeRequest(request, for: selectedService, trimming: trimming, buffer: buffer)
-
-        print("Optimized request: \(optimizedRequest)")
 
         return await sendRequestToService(selectedService, withRequest: optimizedRequest, onPartialResponse: onPartialResponse)
     }
@@ -298,7 +388,6 @@ public class LLMManager {
         // Construct the final request by appending the system prompt if it exists
         if let systemPrompt = service.systemPrompt {
             logger.log("Inserting system prompt for service \(service.name): \(systemPrompt.prefix(50))...")
-            print("Inserting system prompt for service \(service.name): \(systemPrompt.prefix(50))...")
             trimmedMessages.insert(LLMMessage(role: .system, content: systemPrompt), at: 0)
         }
 

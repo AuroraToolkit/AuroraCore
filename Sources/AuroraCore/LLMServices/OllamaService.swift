@@ -164,7 +164,8 @@ public class OllamaService: LLMServiceProtocol {
         // Attempt to decode the response from the Ollama API
         do {
             let decodedResponse = try JSONDecoder().decode(OllamaLLMResponse.self, from: data)
-            return decodedResponse
+            let finalResponse = decodedResponse.changingVendor(to: vendor)
+            return finalResponse
         } catch {
             throw LLMServiceError.decodingError
         }
@@ -226,6 +227,7 @@ public class OllamaService: LLMServiceProtocol {
 
         return try await withCheckedThrowingContinuation { continuation in
             let streamingDelegate = StreamingDelegate(
+                vendor: vendor,
                 model: request.model ?? "gpt-4o",
                 onPartialResponse: onPartialResponse ?? { _ in },
                 continuation: continuation
@@ -237,6 +239,7 @@ public class OllamaService: LLMServiceProtocol {
     }
 
     internal class StreamingDelegate: NSObject, URLSessionDataDelegate {
+        private let vendor: String
         private let model: String
         private let onPartialResponse: (String) -> Void
         private let continuation: CheckedContinuation<LLMResponseProtocol, Error>
@@ -244,9 +247,11 @@ public class OllamaService: LLMServiceProtocol {
         private var finalResponse: LLMResponseProtocol?
         private let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "OllamaService.StreamingDelegate")
 
-        init(model: String,
+        init(vendor: String,
+             model: String,
              onPartialResponse: @escaping (String) -> Void,
              continuation: CheckedContinuation<LLMResponseProtocol, Error>) {
+            self.vendor = vendor
             self.model = model
             self.onPartialResponse = onPartialResponse
             self.continuation = continuation
@@ -266,6 +271,7 @@ public class OllamaService: LLMServiceProtocol {
                 if partialResponse.done {
                     // Finalize the response
                     let finalResponse = OllamaLLMResponse(
+                        vendor: vendor,
                         model: model,
                         created_at: partialResponse.created_at,
                         response: accumulatedContent,

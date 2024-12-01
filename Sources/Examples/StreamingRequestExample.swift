@@ -11,6 +11,7 @@ import AuroraCore
 struct StreamingRequestExample {
 
     func execute() async {
+        // Set your Anthropic API key as an environment variable to run this example, e.g., `export ANTHROPIC_API_KEY="your-api-key"`
         let apiKey = ProcessInfo.processInfo.environment["ANTHROPIC_API_KEY"] ?? ""
         if apiKey.isEmpty {
             print("No API key provided. Please set the ANTHROPIC_API_KEY environment variable.")
@@ -40,7 +41,9 @@ struct StreamingRequestExample {
 
         if let response = await manager.sendStreamingRequest(request, onPartialResponse: onPartialResponse) {
             // Handle the final response
-            print("Final response received: \(response.text)")
+            let vendor = response.vendor ?? "Unknown"
+            let model = response.model ?? "Unknown"
+            print("Final response received from vendor: \(vendor), model: \(model)\n\(response.text)")
         } else {
             print("No response received, possibly due to an error.")
         }

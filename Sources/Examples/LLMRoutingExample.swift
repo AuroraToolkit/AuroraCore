@@ -11,7 +11,7 @@ import AuroraCore
 struct LLMRoutingExample {
 
     func execute() async {
-        // Fetch the OpenAI API key from the environment
+        // Set your OpenAI API key as an environment variable to run this example, e.g., `export OPENAI_API_KEY="your-api-key"`
         let openAIKey = ProcessInfo.processInfo.environment["OPENAI_API_KEY"] ?? ""
         if openAIKey.isEmpty {
             print("No API key provided. Please set the OPENAI_API_KEY environment variable.")
@@ -66,7 +66,9 @@ struct LLMRoutingExample {
 
         // Send the high token request
         if let highTokenResponse = await manager.sendRequest(highTokenRequest) {
-            print("High Token Request routed to model: \(highTokenResponse.model ?? "Unknown")")
+            let vendor = highTokenResponse.vendor ?? "Unknown"
+            let model = highTokenResponse.model ?? "Unknown"
+            print("High Token Request routed to vendor: \(vendor), model: \(model)")
             print("High Token Request Response: \(highTokenResponse.text)")
         } else {
             print("No response received for high token request, possibly due to an error.")
@@ -80,7 +82,9 @@ struct LLMRoutingExample {
 
         // Send the low token request
         if let lowTokenResponse = await manager.sendRequest(lowTokenRequest) {
-            print("Low Token Request routed to model: \(lowTokenResponse.model ?? "Unknown")")
+            let vendor = lowTokenResponse.vendor ?? "Unknown"
+            let model = lowTokenResponse.model ?? "Unknown"
+            print("Low Token Request routed to vendor: \(vendor), model: \(model)")
             print("Low Token Request Response: \(lowTokenResponse.text)")
         } else {
             print("No response received for low token request, possibly due to an error.")

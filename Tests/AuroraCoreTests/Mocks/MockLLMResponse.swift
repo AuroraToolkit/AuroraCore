@@ -19,7 +19,7 @@ public struct MockLLMResponse: LLMResponseProtocol {
     public var text: String
 
     /// The vendor of the model used for generating the response
-    public var vendor: String
+    public var vendor: String?
 
     /// The model name for the mock LLM (optional).
     public var model: String?

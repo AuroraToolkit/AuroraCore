@@ -21,11 +21,23 @@ public protocol LLMResponseProtocol {
     /// The generated text from the LLM.
     var text: String { get }
 
+    /// The vendor of the LLM service, if available.
+    var vendor: String? { get set }
+
     /// The model used to generate the text, if available.
     var model: String? { get }
 
     /// Token usage information, if available.
     var tokenUsage: LLMTokenUsage? { get }
+}
+
+extension LLMResponseProtocol {
+    /// Model responses don't typically include vendor, so this lets us modify the response to set it.
+    func changingVendor(to newVendor: String) -> Self {
+        var copy = self
+        copy.vendor = newVendor
+        return copy
+    }
 }
 
 /**

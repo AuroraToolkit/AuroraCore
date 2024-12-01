@@ -14,6 +14,9 @@ import Foundation
  */
 public struct OllamaLLMResponse: LLMResponseProtocol, Codable {
 
+    /// The vendor associated with the response.
+    public var vendor: String? = "Ollama"
+
     /// The model used for generating the response, made optional as per the protocol.
     public var model: String?
 

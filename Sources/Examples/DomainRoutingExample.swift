@@ -18,19 +18,19 @@ struct DomainRoutingExample {
         let manager = LLMManager()
 
         // Domains we handle
-        let sports = ["football", "soccer", "basketball", "baseball", "hockey", "tennis"]
+        let sports = ["sports", "football", "soccer", "basketball", "baseball", "hockey", "tennis"]
         let movies = ["movies"]
         let books = ["books"]
 
         // Register an OllamaService to match questions to a particular domain
-        let domainMatcher = OllamaService(
+        let domainRouter = OllamaService(
             name: "Domain Matcher",
             baseURL: "http://localhost:11434",
             contextWindowSize: 500,
             maxOutputTokens: 100,
-            systemPrompt: "Evaluate the following question and determine the domain it belongs to. Domains we support are: sports, movies, books. If the question is about a particular sport, use the sports domain. If it's about a particular movie, use the movies domain. If it's about a book, use the books domain. If it doesn't fit any of these domains, just use general as the domain. You should respond to any question with ONLY the domain name if we support it, or general if we don't. Do NOT try to answer the question or provide any additional information."
+            systemPrompt: "Evaluate the following question and determine the domain it belongs to. Domains we support are: sports, movies, books. If the question is about a particular sport, use the sports domain. If it's about a particular movie, use the movies domain. If it's about a book, use the books domain. If it doesn't fit any of these domains, just use general as the domain. You should respond to any question with ONLY the domain name if we support it, or general if we don't. Do NOT try to answer the question or provide ANY additional information."
         )
-        manager.registerService(domainMatcher)
+        manager.registerDomainRoutingService(domainRouter)
 
         // Register a mock service that answers questions about the sports domain
         let sportsService = MockLLMService(
@@ -44,14 +44,14 @@ struct DomainRoutingExample {
             name: "Movies Service",
             vendor: "MockLLM",
             expectedResult: .success(MockLLMResponse(text: "Movies Service Response")))
-        manager.registerService(sportsService, withRoutings: [.domain(movies)])
+        manager.registerService(moviesService, withRoutings: [.domain(movies)])
 
         // Register a mock service that answers questions about the books domain
         let booksService = MockLLMService(
             name: "Books Service",
             vendor: "MockLLM",
             expectedResult: .success(MockLLMResponse(text: "Books Service Response")))
-        manager.registerService(sportsService, withRoutings: [.domain(books)])
+        manager.registerService(booksService, withRoutings: [.domain(books)])
 
         // Register a general purpose, fallback service
         let generalService = OllamaService(
@@ -62,18 +62,19 @@ struct DomainRoutingExample {
         manager.registerFallbackService(generalService)
 
         print("Registered Services Details:")
-        print(" - Domain Matcher: Context Size: \(domainMatcher.contextWindowSize), Max Output Tokens: \(domainMatcher.maxOutputTokens)")
+        print(" - Domain Matcher: Context Size: \(domainRouter.contextWindowSize), Max Output Tokens: \(domainRouter.maxOutputTokens)")
         print(" - Sports Service: Context Size: \(sportsService.contextWindowSize), Max Output Tokens: \(sportsService.maxOutputTokens)")
         print(" - Movies Service: Context Size: \(moviesService.contextWindowSize), Max Output Tokens: \(moviesService.maxOutputTokens)")
         print(" - Books Service: Context Size: \(booksService.contextWindowSize), Max Output Tokens: \(booksService.maxOutputTokens)")
         print(" - General Service: Context Size: \(generalService.contextWindowSize), Max Output Tokens: \(generalService.maxOutputTokens)")
         print()
 
-        let sportsquestion = "Who won the Super Bowl in 2022?"
-        let moviesQuestion = "What movie won Best Picture in 2021?"
+        let sportsquestion = "Who won the rugby championship in 2022?"
+        let moviesQuestion = "What won Best Picture in 2021?"
         let booksQuestion = "Who wrote The Great Gatsby?"
+        let generalQuestion = "What is the capital of France?"
 
-        let questions = [sportsquestion, moviesQuestion, booksQuestion]
+        let questions = [sportsquestion, moviesQuestion, booksQuestion, generalQuestion]
 
         for question in questions {
             print("\nSending question to the LLMManager...")
@@ -81,25 +82,23 @@ struct DomainRoutingExample {
 
             // Create an LLMRequest for the question
             let request = LLMRequest(messages: [LLMMessage(role: .user, content: question)])
-            let response = await manager.sendRequest(request)
-            var routings: [LLMManager.Routing]?
+            let response = await manager.routeRequest(request)
 
-            switch response?.text {
-            case "sports":
-                print("Sports question detected. Routing to Sports Service.")
-                routings = [.domain(sports)]
-                case "movies":
-                print("Movies question detected. Routing to Movies Service.")
-                routings = [.domain(movies)]
-                case "books":
-                print("Books question detected. Routing to Books Service.")
-                routings = [.domain(books)]
-            default:
-                print("General question detected. Routing to General Service.")
+            let responseText = response?.text ?? "No response received"
+            let responseVendor = response?.vendor ?? "Unknown vendor"
+            let responseModel = response?.model ?? "Unknown model"
+
+            print("Response from vendor: \(responseVendor), model: \(responseModel)\n\(responseText)")
+
+            if question == sportsquestion {
+                assert(response?.text == "Sports Service Response")
+            } else if question == moviesQuestion {
+                assert(response?.text == "Movies Service Response")
+            } else if question == booksQuestion {
+                assert(response?.text == "Books Service Response")
+            } else {
+                assert(response?.text != nil)
             }
-
-            let domainResponse = await manager.sendRequest(request, routings: routings ?? [])
-            print("Response: \(domainResponse?.text ?? "No response received")")
         }
     }
 }
@@ -177,7 +176,7 @@ fileprivate struct MockLLMResponse: LLMResponseProtocol {
     public var text: String
 
     /// The vendor of the model used for generating the response
-    public var vendor: String
+    public var vendor: String?
 
     /// The model name for the mock LLM (optional).
     public var model: String?
@@ -194,7 +193,7 @@ fileprivate struct MockLLMResponse: LLMResponseProtocol {
         - model: The model name (optional).
         - tokenUsage: The mock token usage statistics (optional).
      */
-    public init(text: String, vendor: String = "Test Vendor", model: String? = nil, tokenUsage: LLMTokenUsage? = nil) {
+    public init(text: String, vendor: String = "Test Vendor", model: String? = "MockLLM", tokenUsage: LLMTokenUsage? = nil) {
         self.text = text
         self.vendor = vendor
         self.model = model

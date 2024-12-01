@@ -23,6 +23,9 @@ public struct AnthropicLLMResponse: LLMResponseProtocol, Codable {
     /// The role of the response, usually indicating it's from the assistant.
     public let role: String
 
+    /// The vendor associated with the response.
+    public var vendor: String? = "Anthropic"
+
     /// The model used for generating the response, made optional as per the protocol.
     public var model: String?
 
