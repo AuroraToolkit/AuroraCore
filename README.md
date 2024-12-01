@@ -6,7 +6,9 @@ AuroraCore is the core library powering the Aurora AI assistant framework. This 
 
 - **Context Management**: Handle and maintain conversation or task-specific context, including adding, retrieving, and summarizing items.
 - **Task and Workflow Handling**: Built-in support for defining and managing tasks and workflows, including the ability to track task status and manage dependent workflows. Now supports asynchronous task execution for handling complex, long-running tasks.
-- **LLM Integration**: Seamless integration with various LLM services via an extendable `LLMManager`. Supports token management, trimming strategies, and fallback mechanisms.
+- **LLM Integration**: Seamless integration with various LLM services via an extendable `LLMManager`. Supports token management, trimming strategies, domain-routing, and fallback mechanisms.
+- **Domain-Specific Routing**: Route requests to the most appropriate LLM service based on predefined domains or fallback options, enabling modular and efficient service management.
+- **Examples for Quick Start**: Includes ready-to-run examples demonstrating common patterns like domain-specific routing and fallback handling.
 - **Modular and Extendable**: AuroraCore is designed to be modular, allowing developers to plug in their own services, workflows, or task managers.
 
 ## Components
@@ -83,6 +85,79 @@ llmManager.registerService(MockLLMService(), withName: "MockService")
 let request = LLMRequest(prompt: "Hello, World!")
 llmManager.sendRequest(request) { response in
     print(response?.text ?? "No response")
+}
+```
+
+### Domain-specific Routing with LLMManager
+
+```swift
+import AuroraCore
+
+let manager = LLMManager()
+
+// Configure the Domain Routing Service (Ollama)
+let domainRouter = OllamaService(
+    name: "DomainRouter",
+    baseURL: "http://localhost:11434",
+    contextWindowSize: 500,
+    maxOutputTokens: 100,
+    systemPrompt: """
+        Evaluate the following question and determine the domain it belongs to. Domains we support are: sports, books. If the question is about a particular sport, use the sports domain. If it's about a book or writing, use the books domain. If it doesn't CLEARLY fit ANY of these domains, use general as the domain. You should respond to any question with ONLY the domain name if we support it, or general if we don't. Do NOT try to answer the question or provide ANY additional information.
+"""
+)
+manager.registerDomainRoutingService(domainRouter)
+
+// Configure the Sports Service (Anthropic)
+let sportsService = AnthropicService(
+    name: "SportsService",
+    apiKey: "your-anthropic-api-key",
+    maxOutputTokens: 256,
+    systemPrompt: """
+You are a sports expert. Answer the following sports-related questions concisely and accurately.
+"""
+)
+manager.registerService(sportsService, withRoutings: [.domain(["sports"])])
+
+// Configure the Books Service (Ollama)
+let booksService = OllamaService(
+    name: "BooksService",
+    baseURL: "http://localhost:11434",
+    maxOutputTokens: 256,
+    systemPrompt: """
+You are a literary expert. Answer the following books-related questions concisely and accurately.
+"""
+)
+manager.registerService(booksService, withRoutings: [.domain(["books"])])
+
+// Configure the Fallback Service (OpenAI)
+let fallbackService = OpenAIService(
+    name: "FallbackService",
+    apiKey: "you-openai-api-key",
+    maxOutputTokens: 512,
+    systemPrompt: """
+You are a helpful assistant. Answer any general questions accurately and concisely.
+"""
+)
+manager.registerFallbackService(fallbackService)
+
+// Example questions
+let questions = [
+    "Who won the Super Bowl in 2022?",  // Sports domain
+    "Who wrote The Great Gatsby?",      // Books domain
+    "What is the capital of France?"    // General (fallback)
+]
+
+// Process each question
+for question in questions {
+    print("\nProcessing question: \(question)")
+
+    let request = LLMRequest(messages: [LLMMessage(role: .user, content: question)])
+
+    if let response = await manager.routeRequest(request) {
+        print("Response from \(response.vendor ?? "Uknown"): \(response.text)")
+    } else {
+        print("No response received.")
+    }
 }
 ```
 

@@ -596,4 +596,153 @@ final class LLMManagerTests: XCTestCase {
         XCTAssertNotNil(response, "Expected a response to be returned from one of the services.")
         XCTAssertTrue(response?.text.contains("Service") ?? false, "Expected response to come from a valid service.")
     }
+
+    func testDomainRoutingWithRoutingService() async {
+        // Given
+        let domainRoutingService = MockLLMService(
+            name: "DomainRoutingService",
+            expectedResult: .success(MockLLMResponse(text: "sports"))
+        )
+        let sportsService = MockLLMService(
+            name: "SportsService",
+            expectedResult: .success(MockLLMResponse(text: "Sports Response"))
+        )
+        let fallbackService = MockLLMService(
+            name: "FallbackService",
+            expectedResult: .success(MockLLMResponse(text: "Fallback Response"))
+        )
+
+        manager.registerDomainRoutingService(domainRoutingService)
+        manager.registerService(sportsService, withRoutings: [.domain(["sports"])])
+        manager.registerFallbackService(fallbackService)
+
+        let sportsQuestion = LLMRequest(messages: [LLMMessage(role: .user, content: "Who won the Super Bowl in 2022?")])
+
+        // When
+        let response = await manager.routeRequest(sportsQuestion)
+
+        // Then
+        XCTAssertEqual(response?.text, "Sports Response", "Should route to the SportsService based on the identified domain.")
+    }
+
+    func testDomainRoutingFallback() async {
+        // Given
+        let domainRoutingService = MockLLMService(
+            name: "DomainRoutingService",
+            expectedResult: .success(MockLLMResponse(text: "unknownDomain"))
+        )
+        let fallbackService = MockLLMService(
+            name: "FallbackService",
+            expectedResult: .success(MockLLMResponse(text: "Fallback Response"))
+        )
+
+        manager.registerDomainRoutingService(domainRoutingService)
+        manager.registerFallbackService(fallbackService)
+
+        let unknownDomainQuestion = LLMRequest(messages: [LLMMessage(role: .user, content: "What's the capital of France?")])
+
+        // When
+        let response = await manager.routeRequest(unknownDomainQuestion)
+
+        // Then
+        XCTAssertEqual(response?.text, "Fallback Response", "Should route to the fallback service if the domain is unknown.")
+    }
+
+    func testDomainRoutingErrorHandling() async {
+        // Given
+        let domainRoutingService = MockLLMService(
+            name: "DomainRoutingService",
+            expectedResult: .failure(NSError(domain: "TestError", code: 1))
+        )
+        let generalService = MockLLMService(
+            name: "GeneralService",
+            expectedResult: .success(MockLLMResponse(text: "General Response"))
+        )
+
+        manager.registerDomainRoutingService(domainRoutingService)
+        manager.registerFallbackService(generalService)
+
+        let request = LLMRequest(messages: [LLMMessage(role: .user, content: "What's the capital of France?")])
+
+        // When
+        let response = await manager.routeRequest(request)
+
+        // Then
+        XCTAssertEqual(response?.text, "General Response", "Should fall back to the general service if the domain routing service fails.")
+    }
+
+    func testDomainRoutingWithoutRoutingService() async {
+        // Given
+        let sportsService = MockLLMService(
+            name: "SportsService",
+            expectedResult: .success(MockLLMResponse(text: "Sports Response"))
+        )
+        manager.registerService(sportsService)
+
+        let fallbackService = MockLLMService(
+            name: "FallbackService",
+            expectedResult: .success(MockLLMResponse(text: "Fallback Response"))
+        )
+        manager.registerFallbackService(fallbackService)
+
+        let request = LLMRequest(messages: [LLMMessage(role: .user, content: "Who won the Super Bowl in 2022?")])
+
+        // When
+        let response = await manager.routeRequest(request)
+
+        // Then
+        XCTAssertEqual(response?.text, "Sports Response", "Should route to the active service when no domain routing service is registered.")
+    }
+
+    func testDomainRoutingInvalidService() async {
+        // Given
+        let domainRoutingService = MockLLMService(
+            name: "DomainRoutingService",
+            expectedResult: .success(MockLLMResponse(text: "invalidDomain"))
+        )
+        let fallbackService = MockLLMService(
+            name: "FallbackService",
+            expectedResult: .success(MockLLMResponse(text: "Fallback Response"))
+        )
+
+        manager.registerDomainRoutingService(domainRoutingService)
+        manager.registerFallbackService(fallbackService)
+
+        let invalidDomainQuestion = LLMRequest(messages: [LLMMessage(role: .user, content: "What is an invalid domain test?")])
+
+        // When
+        let response = await manager.routeRequest(invalidDomainQuestion)
+
+        // Then
+        XCTAssertEqual(response?.text, "Fallback Response", "Should route to the fallback service if no registered service matches the identified domain.")
+    }
+
+    func testRouteRequestSystemPrompt() async {
+        // Given
+        let domainRoutingService = MockLLMService(
+            name: "DomainRoutingService",
+            systemPrompt: "Determine the domain for this question.",
+            expectedResult: .success(MockLLMResponse(text: "sports"))
+        )
+        let sportsService = MockLLMService(
+            name: "SportsService",
+            expectedResult: .success(MockLLMResponse(text: "Sports Response"))
+        )
+
+        manager.registerDomainRoutingService(domainRoutingService)
+        manager.registerService(sportsService, withRoutings: [.domain(["sports"])])
+
+        let sportsQuestion = LLMRequest(messages: [LLMMessage(role: .user, content: "Who won the Super Bowl in 2022?")])
+
+        // When
+        let response = await manager.routeRequest(sportsQuestion)
+
+        // Then
+        XCTAssertEqual(response?.text, "Sports Response", "Should route to the SportsService based on the domain routing.")
+        XCTAssertEqual(
+            domainRoutingService.receivedRequests.first?.messages.first?.content,
+            "Determine the domain for this question.",
+            "Domain routing service should include its system prompt in the request."
+        )
+    }
 }
