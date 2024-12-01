@@ -309,9 +309,9 @@ It allows registering, unregistering, and selecting services based on routing op
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10AuroraCore10LLMManagerC15registerService_11withRoutingyAA18LLMServiceProtocol_p_SayAC0G0OGtF"></a>
-                    <a name="//apple_ref/swift/Method/registerService(_:withRouting:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10AuroraCore10LLMManagerC15registerService_11withRoutingyAA18LLMServiceProtocol_p_SayAC0G0OGtF">registerService(_:<wbr>withRouting:<wbr>)</a>
+                    <a name="/s:10AuroraCore10LLMManagerC28registerDomainRoutingServiceyyAA18LLMServiceProtocol_pF"></a>
+                    <a name="//apple_ref/swift/Method/registerDomainRoutingService(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore10LLMManagerC28registerDomainRoutingServiceyyAA18LLMServiceProtocol_pF">registerDomainRoutingService(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -319,23 +319,35 @@ It allows registering, unregistering, and selecting services based on routing op
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Registers a new LLM service or replaces an existing one with the same name.</p>
-
-<ul>
-<li>service: The service conforming to <code><a href="../Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></code> to be registered.</li>
-<li>withRouting: The <code><a href="../Classes/LLMManager/Routing.html">Routing</a></code> options, if any, for the service. Defaults to <code>[.inputTokenLimit(256)]</code>.</li>
-</ul>
-
-<p>If a service with the same name already exists, it is replaced. Sets the first registered service as the active service if no active service is set.</p>
+                        <p>Registers a new domain routing service or replaces an existing one.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">registerService</span><span class="p">(</span><span class="n">_</span> <span class="nv">service</span><span class="p">:</span> <span class="kt"><a href="../Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></span><span class="p">,</span> <span class="n">withRouting</span> <span class="nv">routing</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Classes/LLMManager/Routing.html">Routing</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="o">.</span><span class="nf">inputTokenLimit</span><span class="p">(</span><span class="mi">256</span><span class="p">)])</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">registerDomainRoutingService</span><span class="p">(</span><span class="n">_</span> <span class="nv">service</span><span class="p">:</span> <span class="kt"><a href="../Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></span><span class="p">)</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>service</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The service conforming to <code><a href="../Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></code> to be registered as a domain routing service.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -389,6 +401,54 @@ It allows registering, unregistering, and selecting services based on routing op
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:10AuroraCore10LLMManagerC15registerService_12withRoutingsyAA18LLMServiceProtocol_p_SayAC7RoutingOGtF"></a>
+                    <a name="//apple_ref/swift/Method/registerService(_:withRoutings:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore10LLMManagerC15registerService_12withRoutingsyAA18LLMServiceProtocol_p_SayAC7RoutingOGtF">registerService(_:<wbr>withRoutings:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Registers a new LLM service or replaces an existing one with the same name.</p>
+
+<p>If a service with the same name already exists, it is replaced. Sets the first registered service as the active service if no active service is set.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">registerService</span><span class="p">(</span><span class="n">_</span> <span class="nv">service</span><span class="p">:</span> <span class="kt"><a href="../Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></span><span class="p">,</span> <span class="n">withRoutings</span> <span class="nv">routing</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Classes/LLMManager/Routing.html">Routing</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="o">.</span><span class="nf">inputTokenLimit</span><span class="p">(</span><span class="mi">256</span><span class="p">)])</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>service</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The service conforming to <code><a href="../Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></code> to be registered.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:10AuroraCore10LLMManagerC17unregisterService8withNameySS_tF"></a>
                     <a name="//apple_ref/swift/Method/unregisterService(withName:)" class="dashAnchor"></a>
                     <a class="token" href="#/s:10AuroraCore10LLMManagerC17unregisterService8withNameySS_tF">unregisterService(withName:<wbr>)</a>
@@ -401,10 +461,6 @@ It allows registering, unregistering, and selecting services based on routing op
                       <div class="abstract">
                         <p>Unregisters an LLM service with a specified name.</p>
 
-<ul>
-<li>name: The name under which the service is registered.</li>
-</ul>
-
 <p>If the service being unregistered is the active service, the active service is reset to the first available service or nil if no services are left.</p>
 
                       </div>
@@ -415,6 +471,25 @@ It allows registering, unregistering, and selecting services based on routing op
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">unregisterService</span><span class="p">(</span><span class="n">withName</span> <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>name</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The name under which the service is registered.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -484,6 +559,126 @@ It allows registering, unregistering, and selecting services based on routing op
             </div>
             <div class="task-group">
               <div class="task-name-container">
+                <a name="/Route%20Request"></a>
+                <a name="//apple_ref/swift/Section/Route Request" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Route%20Request"></a>
+                  <h3 class="section-name"><span>Route Request</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore10LLMManagerC12routeRequest_6buffer8trimmingAA19LLMResponseProtocol_pSgAA10LLMRequestV_SdSSAAE16TrimmingStrategyOtYaF"></a>
+                    <a name="//apple_ref/swift/Method/routeRequest(_:buffer:trimming:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore10LLMManagerC12routeRequest_6buffer8trimmingAA19LLMResponseProtocol_pSgAA10LLMRequestV_SdSSAAE16TrimmingStrategyOtYaF">routeRequest(_:<wbr>buffer:<wbr>trimming:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Routes a request to an appropriate LLM service based on the presence of a domain routing service and registered routings.</p>
+
+<ul>
+<li><p>Discussion:
+This function first checks if a domain routing service is available:</p></li>
+<li><p>If a domain routing service exists, it uses the service to determine the appropriate domain for the request.</p></li>
+<li><p>If no domain routing service is present, the function defaults to no routings (<code>[]</code>).</p></li>
+</ul>
+
+<p>Once the <code>routings</code> are determined, the function delegates to <code>sendRequest()</code>, which handles actual service selection and fallback logic.</p>
+
+<ul>
+<li><p>Behavior:</p>
+
+<ul>
+<li><strong>With a Domain Routing Service:</strong> The request is sent to the routing service to identify the domain, and the result is used to create routing options.</li>
+<li><strong>Without a Domain Routing Service:</strong> The request is directly passed to <code>sendRequest()</code> with no routings (<code>[]</code>), defaulting to fallback logic if no matching services are found.</li>
+</ul></li>
+<li><p>Example Usage:</p>
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">manager</span><span class="o">.</span><span class="nf">routeRequest</span><span class="p">(</span><span class="n">myRequest</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">response</span><span class="p">?</span><span class="o">.</span><span class="n">text</span> <span class="p">??</span> <span class="s">"No response received"</span><span class="p">)</span>
+</code></pre></li>
+</ul><div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>The <code>sendRequest()</code> method handles registered services and fallback logic, ensuring robust and flexible routing.</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">routeRequest</span><span class="p">(</span>
+    <span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Structs/LLMRequest.html">LLMRequest</a></span><span class="p">,</span>
+    <span class="nv">buffer</span><span class="p">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="nv">trimming</span><span class="p">:</span> <span class="kt">String</span><span class="o">.</span><span class="kt">TrimmingStrategy</span> <span class="o">=</span> <span class="o">.</span><span class="n">end</span>
+<span class="p">)</span> <span class="k">async</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a></span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>request</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code><a href="../Structs/LLMRequest.html">LLMRequest</a></code> object containing the prompt and configuration for the LLM.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>buffer</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>trimming</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The trimming strategy to apply when tokens exceed the limit. Defaults to <code>.end</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>An optional <code><a href="../Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a></code> containing the response from the routed service.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
                 <a name="/Send%20Request"></a>
                 <a name="//apple_ref/swift/Section/Send Request" class="dashAnchor"></a>
                 <div class="section-name-container">
@@ -496,9 +691,9 @@ It allows registering, unregistering, and selecting services based on routing op
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10AuroraCore10LLMManagerC11sendRequest_7routing6buffer8trimmingAA19LLMResponseProtocol_pSgAA10LLMRequestV_AC7RoutingOSdSSAAE16TrimmingStrategyOtYaF"></a>
-                    <a name="//apple_ref/swift/Method/sendRequest(_:routing:buffer:trimming:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10AuroraCore10LLMManagerC11sendRequest_7routing6buffer8trimmingAA19LLMResponseProtocol_pSgAA10LLMRequestV_AC7RoutingOSdSSAAE16TrimmingStrategyOtYaF">sendRequest(_:<wbr>routing:<wbr>buffer:<wbr>trimming:<wbr>)</a>
+                    <a name="/s:10AuroraCore10LLMManagerC11sendRequest_8routings6buffer8trimmingAA19LLMResponseProtocol_pSgAA10LLMRequestV_SayAC7RoutingOGSdSSAAE16TrimmingStrategyOtYaF"></a>
+                    <a name="//apple_ref/swift/Method/sendRequest(_:routings:buffer:trimming:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore10LLMManagerC11sendRequest_8routings6buffer8trimmingAA19LLMResponseProtocol_pSgAA10LLMRequestV_SayAC7RoutingOGSdSSAAE16TrimmingStrategyOtYaF">sendRequest(_:<wbr>routings:<wbr>buffer:<wbr>trimming:<wbr>)</a>
                     </code>
                       <span class="declaration-note">
                         Asynchronous
@@ -511,13 +706,6 @@ It allows registering, unregistering, and selecting services based on routing op
                       <div class="abstract">
                         <p>Sends a request to an LLM service, applying the specified routing and token trimming strategies if necessary.</p>
 
-<ul>
-<li>request: The <code><a href="../Structs/LLMRequest.html">LLMRequest</a></code> containing the messages and parameters.</li>
-<li>routing: The routing option to select the appropriate service. Defaults to <code>.inputTokenLimit(256)</code>.</li>
-<li>buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).</li>
-<li>trimming: The trimming strategy to apply when tokens exceed the limit. Defaults to <code>.end</code>.</li>
-</ul>
-
 <p>This function trims the content if it exceeds the token limit of the selected service and sends the request.</p>
 
                       </div>
@@ -527,12 +715,67 @@ It allows registering, unregistering, and selecting services based on routing op
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">sendRequest</span><span class="p">(</span>
     <span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Structs/LLMRequest.html">LLMRequest</a></span><span class="p">,</span>
-    <span class="nv">routing</span><span class="p">:</span> <span class="kt"><a href="../Classes/LLMManager/Routing.html">Routing</a></span> <span class="o">=</span> <span class="o">.</span><span class="nf">inputTokenLimit</span><span class="p">(</span><span class="mi">256</span><span class="p">),</span>
+    <span class="nv">routings</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Classes/LLMManager/Routing.html">Routing</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="o">.</span><span class="nf">inputTokenLimit</span><span class="p">(</span><span class="mi">256</span><span class="p">)],</span>
     <span class="nv">buffer</span><span class="p">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
     <span class="nv">trimming</span><span class="p">:</span> <span class="kt">String</span><span class="o">.</span><span class="kt">TrimmingStrategy</span> <span class="o">=</span> <span class="o">.</span><span class="n">end</span>
 <span class="p">)</span> <span class="k">async</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a></span><span class="p">?</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>request</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code><a href="../Structs/LLMRequest.html">LLMRequest</a></code> containing the messages and parameters.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>routings</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The routing options to select the appropriate service. Defaults to <code>[.inputTokenLimit(256)]</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>buffer</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>trimming</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The trimming strategy to apply when tokens exceed the limit. Defaults to <code>.end</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                       <div>
                         <h4>Return Value</h4>
@@ -557,9 +800,9 @@ It allows registering, unregistering, and selecting services based on routing op
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10AuroraCore10LLMManagerC20sendStreamingRequest_17onPartialResponse7routing6buffer8trimmingAA19LLMResponseProtocol_pSgAA10LLMRequestV_ySScSgAC7RoutingOSdSSAAE16TrimmingStrategyOtYaF"></a>
-                    <a name="//apple_ref/swift/Method/sendStreamingRequest(_:onPartialResponse:routing:buffer:trimming:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10AuroraCore10LLMManagerC20sendStreamingRequest_17onPartialResponse7routing6buffer8trimmingAA19LLMResponseProtocol_pSgAA10LLMRequestV_ySScSgAC7RoutingOSdSSAAE16TrimmingStrategyOtYaF">sendStreamingRequest(_:<wbr>onPartialResponse:<wbr>routing:<wbr>buffer:<wbr>trimming:<wbr>)</a>
+                    <a name="/s:10AuroraCore10LLMManagerC20sendStreamingRequest_17onPartialResponse8routings6buffer8trimmingAA19LLMResponseProtocol_pSgAA10LLMRequestV_ySScSgSayAC7RoutingOGSdSSAAE16TrimmingStrategyOtYaF"></a>
+                    <a name="//apple_ref/swift/Method/sendStreamingRequest(_:onPartialResponse:routings:buffer:trimming:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore10LLMManagerC20sendStreamingRequest_17onPartialResponse8routings6buffer8trimmingAA19LLMResponseProtocol_pSgAA10LLMRequestV_ySScSgSayAC7RoutingOGSdSSAAE16TrimmingStrategyOtYaF">sendStreamingRequest(_:<wbr>onPartialResponse:<wbr>routings:<wbr>buffer:<wbr>trimming:<wbr>)</a>
                     </code>
                       <span class="declaration-note">
                         Asynchronous
@@ -572,14 +815,6 @@ It allows registering, unregistering, and selecting services based on routing op
                       <div class="abstract">
                         <p>Sends a streaming request to an LLM service, applying the specified routing and token trimming strategies if necessary.</p>
 
-<ul>
-<li>request: The <code><a href="../Structs/LLMRequest.html">LLMRequest</a></code> containing the messages and parameters.</li>
-<li>onPartialResponse: A closure that handles partial responses during streaming.</li>
-<li>routing: The routing option to select the appropriate service. Defaults to <code>.inputTokenLimit(256)</code>.</li>
-<li>buffer: The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).</li>
-<li>trimming: The trimming strategy to apply when tokens exceed the limit. Defaults to <code>.end</code>.</li>
-</ul>
-
 <p>This function trims the content if it exceeds the token limit of the selected service and sends the streaming request.</p>
 
                       </div>
@@ -590,12 +825,79 @@ It allows registering, unregistering, and selecting services based on routing op
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">sendStreamingRequest</span><span class="p">(</span>
     <span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Structs/LLMRequest.html">LLMRequest</a></span><span class="p">,</span>
     <span class="nv">onPartialResponse</span><span class="p">:</span> <span class="p">((</span><span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?,</span>
-    <span class="nv">routing</span><span class="p">:</span> <span class="kt"><a href="../Classes/LLMManager/Routing.html">Routing</a></span> <span class="o">=</span> <span class="o">.</span><span class="nf">inputTokenLimit</span><span class="p">(</span><span class="mi">256</span><span class="p">),</span>
+    <span class="nv">routings</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Classes/LLMManager/Routing.html">Routing</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="o">.</span><span class="nf">inputTokenLimit</span><span class="p">(</span><span class="mi">256</span><span class="p">)],</span>
     <span class="nv">buffer</span><span class="p">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
     <span class="nv">trimming</span><span class="p">:</span> <span class="kt">String</span><span class="o">.</span><span class="kt">TrimmingStrategy</span> <span class="o">=</span> <span class="o">.</span><span class="n">end</span>
 <span class="p">)</span> <span class="k">async</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a></span><span class="p">?</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>request</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code><a href="../Structs/LLMRequest.html">LLMRequest</a></code> containing the messages and parameters.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>onPartialResponse</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A closure that handles partial responses during streaming.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>routing</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The routing options to select the appropriate service. Defaults to <code>[.inputTokenLimit(256)]</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>buffer</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>trimming</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The trimming strategy to apply when tokens exceed the limit. Defaults to <code>.end</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                       <div>
                         <h4>Return Value</h4>
@@ -609,7 +911,7 @@ It allows registering, unregistering, and selecting services based on routing op
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-11-28)</p>
+          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-12-01)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
