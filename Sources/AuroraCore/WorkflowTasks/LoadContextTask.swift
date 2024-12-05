@@ -10,6 +10,11 @@ import Foundation
 /**
  `LoadContextTask` is responsible for loading a `Context` object from disk.
 
+ - **Inputs**
+    - `filename`: The name of the file to load the context from (optional).
+ - **Outputs**
+    - `context`: The loaded context object.
+
  This task can be integrated into a workflow where context data needs to be retrieved from disk.
  */
 public class LoadContextTask: WorkflowTask {
@@ -32,7 +37,7 @@ public class LoadContextTask: WorkflowTask {
 
      - Throws: An error if the context could not be loaded (e.g., file not found, decoding error).
      */
-    public override func execute() async throws {
+    public override func execute() async throws -> [String: Any] {
         do {
             // Retrieve the filename from inputs or use a default
             let filename = inputs["filename"] as? String ?? "default_context"
@@ -47,8 +52,8 @@ public class LoadContextTask: WorkflowTask {
             let decoder = JSONDecoder()
             let context = try decoder.decode(Context.self, from: data)
 
-            // Mark the task as completed and output the context
-            markCompleted(withOutputs: ["context": context])
+            markCompleted()
+            return ["context": context]
         } catch {
             markFailed()
             throw error

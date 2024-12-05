@@ -317,12 +317,12 @@ final class ContextManagerTests: XCTestCase {
         var context1 = Context(llmServiceVendor: mockService.vendor)
         context1.addItem(content: "Item in context 1")
         let saveTask1 = SaveContextTask(context: context1, filename: "context_\(contextID1.uuidString)")
-        try await saveTask1.execute()
+        _ = try await saveTask1.execute()
 
         var context2 = Context(llmServiceVendor: mockService2.vendor)
         context2.addItem(content: "Item in context 2")
         let saveTask2 = SaveContextTask(context: context2, filename: "context_\(contextID2.uuidString)")
-        try await saveTask2.execute()
+        _ = try await saveTask2.execute()
 
         // Ensure no active context is set
         contextManager.activeContextID = nil

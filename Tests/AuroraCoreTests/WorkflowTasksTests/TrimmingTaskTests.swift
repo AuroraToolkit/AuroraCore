@@ -22,8 +22,8 @@ final class TrimmingTaskTests: XCTestCase {
         let task = TrimmingTask(string: input)
 
         // When
-        try await task.execute()
-        let trimmedString = task.outputs["trimmedStrings"] as? [String]
+        let taskOutputs = try await task.execute()
+        let trimmedString = taskOutputs["trimmedStrings"] as? [String]
         let tokenCount = trimmedString?.first?.estimatedTokenCount()
 
         // Then
@@ -46,8 +46,8 @@ final class TrimmingTaskTests: XCTestCase {
         )
 
         // When
-        try await task.execute()
-        let trimmedString = task.outputs["trimmedStrings"] as? [String]
+        let taskOutputs = try await task.execute()
+        let trimmedString = taskOutputs["trimmedStrings"] as? [String]
         let tokenCount = trimmedString?.first?.estimatedTokenCount()
 
         // Then
@@ -70,8 +70,8 @@ final class TrimmingTaskTests: XCTestCase {
         )
 
         // When
-        try await task.execute()
-        let trimmedString = task.outputs["trimmedStrings"] as? [String]
+        let taskOutputs = try await task.execute()
+        let trimmedString = taskOutputs["trimmedStrings"] as? [String]
         let tokenCount = trimmedString?.first?.estimatedTokenCount()
 
         // Then
@@ -93,8 +93,8 @@ final class TrimmingTaskTests: XCTestCase {
         let task = TrimmingTask(strings: inputs)
 
         // When
-        try await task.execute()
-        let trimmedStrings = task.outputs["trimmedStrings"] as? [String]
+        let taskOutputs = try await task.execute()
+        let trimmedStrings = taskOutputs["trimmedStrings"] as? [String]
 
         // Then
         XCTAssertEqual(trimmedStrings?.count, 2, "Expected two trimmed strings in the output.")
@@ -114,7 +114,7 @@ final class TrimmingTaskTests: XCTestCase {
 
         // When
         do {
-            try await task.execute()
+            _ = try await task.execute()
             XCTFail("Task should have thrown an error due to missing inputs.")
         } catch {
             // Then

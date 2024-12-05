@@ -80,7 +80,7 @@ Task {
 import AuroraCore
 
 let llmManager = LLMManager()
-llmManager.registerService(MockLLMService(), withName: "MockService")
+llmManager.registerService(OllamaService(name: "Ollama"))
 
 let request = LLMRequest(prompt: "Hello, World!")
 llmManager.sendRequest(request) { response in

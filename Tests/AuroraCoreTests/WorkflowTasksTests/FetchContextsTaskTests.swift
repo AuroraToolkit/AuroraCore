@@ -29,10 +29,10 @@ final class FetchContextsTaskTests: XCTestCase {
 
         // Initialize and execute the task
         let task = FetchContextsTask()
-        try await task.execute()
+        let taskOutputs = try await task.execute()
 
         // Verify the outputs
-        if let outputContexts = task.outputs["contexts"] as? [URL] {
+        if let outputContexts = taskOutputs["contexts"] as? [URL] {
             XCTAssertEqual(outputContexts.count, 2, "Should only fetch JSON files")
             let filenames = outputContexts.map { $0.lastPathComponent }
             XCTAssertTrue(filenames.contains("context1.json") && filenames.contains("context2.json"), "Filenames should match created contexts")
@@ -48,10 +48,10 @@ final class FetchContextsTaskTests: XCTestCase {
 
         // Specify filenames in inputs and execute the task
         let task = FetchContextsTask(filenames: ["context1.json"])
-        try await task.execute()
+        let taskOutputs = try await task.execute()
 
         // Verify the outputs
-        if let outputContexts = task.outputs["contexts"] as? [URL] {
+        if let outputContexts = taskOutputs["contexts"] as? [URL] {
             print("Output Contexts: \(outputContexts)") // Debugging step
             XCTAssertEqual(outputContexts.count, 1, "Should fetch only the specified context file")
             XCTAssertEqual(outputContexts.first?.lastPathComponent, "context1.json", "Filenames should match specified context")
@@ -67,10 +67,10 @@ final class FetchContextsTaskTests: XCTestCase {
 
         // Specify filenames in inputs without the `.json` extension and execute the task
         let task = FetchContextsTask(filenames: ["context1"])
-        try await task.execute()
+        let taskOutputs = try await task.execute()
 
         // Verify the outputs
-        if let outputContexts = task.outputs["contexts"] as? [URL] {
+        if let outputContexts = taskOutputs["contexts"] as? [URL] {
             XCTAssertEqual(outputContexts.count, 1, "Should fetch only the specified context file")
             XCTAssertEqual(outputContexts.first?.lastPathComponent, "context1.json", "Filenames should match specified context with the .json extension")
         } else {
@@ -81,9 +81,9 @@ final class FetchContextsTaskTests: XCTestCase {
     // Test case for handling an empty directory
     func testFetchContextsEmptyDirectory() async throws {
         let task = FetchContextsTask()
-        try await task.execute()
+        let taskOutputs = try await task.execute()
 
-        if let outputContexts = task.outputs["contexts"] as? [URL] {
+        if let outputContexts = taskOutputs["contexts"] as? [URL] {
             XCTAssertEqual(outputContexts.count, 0, "No contexts should be fetched from an empty directory")
         } else {
             XCTFail("Expected contexts output not found")
@@ -95,9 +95,9 @@ final class FetchContextsTaskTests: XCTestCase {
         try cleanupTestFiles()
 
         let task = FetchContextsTask(filenames: ["non_existent_file"])
-        try await task.execute()
+        let taskOutputs = try await task.execute()
 
-        if let outputContexts = task.outputs["contexts"] as? [URL] {
+        if let outputContexts = taskOutputs["contexts"] as? [URL] {
             XCTAssertEqual(outputContexts.count, 0, "No contexts should be fetched when file does not exist")
         } else {
             XCTFail("Expected contexts output not found")

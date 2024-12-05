@@ -10,7 +10,15 @@ import Foundation
 /**
  `SaveContextTask` is responsible for saving a `Context` object to disk.
 
- The task ensures that a dedicated `contexts/` directory exists in the documents folder.
+ - **Inputs**
+    - `context`: The `Context` object to save.
+    - `filename`: The name of the file (without extension) used for saving the context.
+ - **Outputs**
+    - `filename`: The name of the file where the context was saved.
+
+ This task can be integrated in a workflow where context data needs to be saved to disk.
+
+ - Note: The task ensures that a dedicated `contexts/` directory exists in the documents folder.
  */
 public class SaveContextTask: WorkflowTask {
 
@@ -33,7 +41,7 @@ public class SaveContextTask: WorkflowTask {
 
      - Throws: An error if encoding or saving fails.
      */
-    public override func execute() async throws {
+    public override func execute() async throws -> [String: Any] {
         guard let context = inputs["context"] as? Context,
               let filename = inputs["filename"] as? String else {
             markFailed()
@@ -54,6 +62,7 @@ public class SaveContextTask: WorkflowTask {
             try data.write(to: fileURL)
 
             markCompleted()
+            return ["filename": properFilename]
         } catch {
             markFailed()
             throw error

@@ -44,7 +44,7 @@ public protocol WorkflowManagerProtocol {
     func executeCurrentTask() async
 
     /// Completes the current task and progresses to the next task if available.
-    func completeTask(_ task: WorkflowTaskProtocol) async
+    func completeTask(_ task: WorkflowTaskProtocol, outputs: [String: Any]) async
 
     /// Handles a task failure and determines whether to retry the task or stop the workflow.
     func handleTaskFailure(for task: WorkflowTaskProtocol) async
@@ -116,24 +116,30 @@ public class WorkflowManager: WorkflowManagerProtocol {
             return
         }
 
-        let task = workflow.tasks[workflow.currentTaskIndex]
+        var task = workflow.tasks[workflow.currentTaskIndex]
 
         if task.hasRequiredInputs() {
-            var updatedTask = task
-            updatedTask.markInProgress()
-            await completeTask(updatedTask)
+            do {
+                task.markInProgress()
+                let outputs = try await task.execute()
+                await completeTask(task, outputs: outputs)
+            } catch {
+                logger.log("Task \(task.name) failed with error: \(error.localizedDescription)")
+                await handleTaskFailure(for: task)
+            }
         } else {
             logger.log("Required inputs not present for task: \(task.name)")
             await handleTaskFailure(for: task)
         }
     }
 
-    public func completeTask(_ task: WorkflowTaskProtocol) async {
+    public func completeTask(_ task: WorkflowTaskProtocol, outputs: [String: Any]) async {
         var updatedTask = task
-        updatedTask.markCompleted(withOutputs: task.outputs)  // Pass the current outputs
+        updatedTask.markCompleted()
+        updatedTask.outputs.merge(outputs, uniquingKeysWith: { $1 }) // Update task's outputs
         workflow.updateTask(updatedTask, at: workflow.currentTaskIndex)
 
-        logger.log("Task \(task.name) completed with outputs: \(updatedTask.outputs)")
+        logger.log("Task \(task.name) completed with outputs: \(outputs)")
 
         if workflow.currentTaskIndex + 1 < workflow.tasks.count {
             workflow.currentTaskIndex += 1

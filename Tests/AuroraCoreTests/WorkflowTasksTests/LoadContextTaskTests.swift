@@ -45,10 +45,10 @@ final class LoadContextTaskTests: XCTestCase {
 
         // Initialize and execute the LoadContextTask
         let task = LoadContextTask(filename: filename)
-        try await task.execute()
+        let taskOutputs = try await task.execute()
 
         // Verify the outputs
-        if let outputContext = task.outputs["context"] as? Context {
+        if let outputContext = taskOutputs["context"] as? Context {
             XCTAssertEqual(outputContext.id, context.id, "Loaded context should match saved context")
             XCTAssertEqual(outputContext.items.first?.text, context.items.first?.text, "Context item should match")
         } else {
@@ -66,10 +66,10 @@ final class LoadContextTaskTests: XCTestCase {
 
         // Initialize and execute the LoadContextTask without specifying a filename
         let task = LoadContextTask()
-        try await task.execute()
+        let taskOutputs = try await task.execute()
 
         // Verify the outputs
-        if let outputContext = task.outputs["context"] as? Context {
+        if let outputContext = taskOutputs["context"] as? Context {
             XCTAssertEqual(outputContext.id, context.id, "Loaded context should match saved context")
             XCTAssertEqual(outputContext.items.first?.text, context.items.first?.text, "Context item should match")
         } else {
@@ -81,7 +81,7 @@ final class LoadContextTaskTests: XCTestCase {
     func testLoadContextFromNonExistentFile() async {
         let task = LoadContextTask(filename: "non_existent.json")
         do {
-            try await task.execute()
+            _ = try await task.execute()
             XCTFail("Expected an error when loading from a non-existent file")
         } catch let error as NSError {
             XCTAssertEqual(error.code, NSFileReadNoSuchFileError, "Error should have the correct code for a missing file")

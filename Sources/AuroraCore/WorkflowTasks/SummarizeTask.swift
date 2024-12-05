@@ -9,6 +9,14 @@ import Foundation
 
 /**
  `SummarizeTask` is responsible for summarizing context items within a `ContextController` using the connected LLM service.
+
+ - **Inputs**
+    - `ContextController`: The context controller containing the context to be summarized.
+    - `SummaryType`: The type of summary to be performed (e.g., context, general text).
+ - **Outputs**
+    - `summarizedContext`: The context containing the summarized content.
+
+ This task can be integrated in a workflow where context items need to be summarized.
  */
 public class SummarizeTask: WorkflowTask {
 
@@ -33,8 +41,8 @@ public class SummarizeTask: WorkflowTask {
 
      - Throws: An error if the summarization fails.
      */
-    public override func execute() async throws {
-        try await execute(with: nil)
+    public override func execute() async throws -> [String: Any] {
+        return try await execute(with: nil)
     }
 
     /**
@@ -44,13 +52,13 @@ public class SummarizeTask: WorkflowTask {
      
      - Throws: An error if the summarization fails.
      */
-    public func execute(with options: SummarizerOptions? = nil) async throws {
+    public func execute(with options: SummarizerOptions? = nil) async throws -> [String: Any] {
         // Retrieve all context items to be summarized
         let itemsToSummarize = contextController.getItems()
 
         // If there are no items, do nothing
         guard !itemsToSummarize.isEmpty else {
-            return
+            return [:]
         }
 
         // Summarize the items
@@ -59,7 +67,6 @@ public class SummarizeTask: WorkflowTask {
         // Store the summaries in the context
         contextController.addItem(content: summaries, isSummary: true)
 
-        // Save the summarized context to outputs for further use
-        outputs["summarizedContext"] = contextController.getContext()
+        return ["summarizedContext": contextController.getContext()]
     }
 }

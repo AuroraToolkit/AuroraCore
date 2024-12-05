@@ -7,11 +7,22 @@
 
 import Foundation
 
+/**
+ `TrimmingTask` is responsible for trimming strings to fit within a specified token limit.
+
+ - **Inputs**
+    - `strings`: An array of strings to be trimmed. Can contain one or multiple items.
+    - `tokenLimit`: The maximum allowed token count (default is 1,024).
+    - `buffer`: A buffer percentage to apply when calculating the token limit (default is 5%).
+    - `strategy`: The trimming strategy to apply (default is `.middle`).
+ - **Outputs**
+    - `trimmedStrings`: An array of trimmed strings.
+
+ This task can be integrated in a workflow where string trimming is required to fit within a token limit.
+ */
 public class TrimmingTask: WorkflowTask {
 
     /**
-     Initializes a `TrimmingTask` to trim multiple strings.
-
      - Parameters:
         - strings: An array of strings to be trimmed. Can contain one or multiple items.
         - tokenLimit: The maximum allowed token count (default is 1,024).
@@ -45,7 +56,7 @@ public class TrimmingTask: WorkflowTask {
         self.init(strings: [string], tokenLimit: tokenLimit, buffer: buffer, strategy: strategy)
     }
 
-    public override func execute() async throws {
+    public override func execute() async throws -> [String: Any] {
         // Retrieve inputs with default values
         let strings = inputs["strings"] as? [String] ?? []
         let tokenLimit = inputs["tokenLimit"] as? Int ?? 1024
@@ -61,7 +72,7 @@ public class TrimmingTask: WorkflowTask {
         // Perform the trimming operation for each string in the array
         let trimmedStrings = strings.map { $0.trimmedToFit(tokenLimit: tokenLimit, buffer: buffer, strategy: strategy) }
 
-        // Store the results in outputs
-        markCompleted(withOutputs: ["trimmedStrings": trimmedStrings])
+        markCompleted()
+        return ["trimmedStrings": trimmedStrings]
     }
 }

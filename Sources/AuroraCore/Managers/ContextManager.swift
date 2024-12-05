@@ -134,7 +134,7 @@ public class ContextManager {
     public func saveAllContexts() async throws {
         for (contextID, contextController) in contextControllers {
             let saveTask = SaveContextTask(context: contextController.getContext(), filename: contextID.uuidString)
-            try await saveTask.execute()
+            _ = try await saveTask.execute()
         }
     }
 
@@ -147,14 +147,14 @@ public class ContextManager {
      */
     public func loadAllContexts() async throws {
         let fetchTask = FetchContextsTask()
-        try await fetchTask.execute()
+        let fetchTaskOutputs = try await fetchTask.execute()
 
-        if let contextFiles = fetchTask.outputs["contexts"] as? [URL] {
+        if let contextFiles = fetchTaskOutputs["contexts"] as? [URL] {
             for file in contextFiles {
                 let loadTask = LoadContextTask(filename: file.deletingPathExtension().lastPathComponent)
-                try await loadTask.execute()
+                let loadTaskOutputs = try await loadTask.execute()
 
-                if let loadedContext = loadTask.outputs["context"] as? Context,
+                if let loadedContext = loadTaskOutputs["context"] as? Context,
                    let llmService = llmServiceFactory.createService(for: loadedContext) {
                     let contextController = ContextController(context: loadedContext, llmService: llmService)
                     let contextID = loadedContext.id

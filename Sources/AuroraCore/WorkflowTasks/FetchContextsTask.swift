@@ -10,6 +10,11 @@ import Foundation
 /**
  `FetchContextsTask` is responsible for retrieving a list of stored contexts from the disk.
 
+ - **Inputs:**
+    - `filenames`: An optional array of filenames (without extensions) specifying which contexts to retrieve.
+ - **Outputs:**
+    - `contexts`: An array of URLs pointing to the context files on disk.
+
  This task can be used in workflows requiring access to multiple stored contexts. If a list of specific filenames is provided, only those contexts will be fetched. Otherwise, all contexts will be retrieved.
  */
 public class FetchContextsTask: WorkflowTask {
@@ -37,7 +42,7 @@ public class FetchContextsTask: WorkflowTask {
 
      - Throws: An error if the contexts directory cannot be accessed or any of the specified files cannot be retrieved.
      */
-    public override func execute() async throws {
+    public override func execute() async throws -> [String: Any] {
         do {
             // Ensure the contexts directory exists
             let documentDirectory = try FileManager.default.createContextsDirectory()
@@ -59,7 +64,8 @@ public class FetchContextsTask: WorkflowTask {
                 contextFiles = fileURLs.filter { $0.pathExtension == "json" }
             }
 
-            markCompleted(withOutputs: ["contexts": contextFiles])
+            markCompleted()
+            return  ["contexts": contextFiles]
         } catch {
             markFailed()
             throw error

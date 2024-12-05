@@ -9,6 +9,7 @@ import Foundation
 @testable import AuroraCore
 
 class MockWorkflowTask: WorkflowTaskProtocol {
+    
     var id = UUID()
     var name: String
     var description: String
@@ -39,14 +40,14 @@ class MockWorkflowTask: WorkflowTaskProtocol {
         self.hasRequiredInputsValue = hasRequiredInputsValue
     }
 
-    func execute() async throws {
+    func execute() async throws -> [String : Any] {
         /// doing some stuff
+        return [:]
     }
 
-    func markCompleted(withOutputs outputs: [String: Any] = [:]) {
+    func markCompleted() {
         self.status = .completed
         self.completionDate = Date()
-        self.outputs = outputs
     }
 
     func markInProgress() {
@@ -74,5 +75,9 @@ class MockWorkflowTask: WorkflowTaskProtocol {
 
     func hasRequiredInputs() -> Bool {
         return hasRequiredInputsValue
+    }
+
+    func updateOutputs(with newOutputs: [String: Any]) {
+        self.outputs.merge(newOutputs) { (_, new) in new }
     }
 }

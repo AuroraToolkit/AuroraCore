@@ -33,7 +33,7 @@ final class SaveContextTaskTests: XCTestCase {
 
         // Initialize and execute the task
         let task = SaveContextTask(context: context, filename: filename)
-        try await task.execute()
+        _ = try await task.execute()
 
         // Verify the file was saved correctly
         let documentDirectory = try FileManager.default.createContextsDirectory()
@@ -56,7 +56,7 @@ final class SaveContextTaskTests: XCTestCase {
 
         // Execute and verify the error
         do {
-            try await task.execute()
+            _ = try await task.execute()
             XCTFail("Expected error when executing task without context input")
         } catch {
             XCTAssertEqual(error.localizedDescription, "Invalid inputs for SaveContextTask", "Error should indicate missing context input")
@@ -73,7 +73,7 @@ final class SaveContextTaskTests: XCTestCase {
 
         // Execute and verify the error
         do {
-            try await task.execute()
+            _ = try await task.execute()
             XCTFail("Expected error when executing task without filename input")
         } catch {
             XCTAssertEqual(error.localizedDescription, "Invalid inputs for SaveContextTask", "Error should indicate missing filename input")

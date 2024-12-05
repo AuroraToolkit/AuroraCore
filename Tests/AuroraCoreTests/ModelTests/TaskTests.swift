@@ -40,7 +40,7 @@ final class TaskTests: XCTestCase {
         let task = WorkflowTask(name: "Test Task", description: "This is a test task")
 
         // When
-        task.markCompleted(withOutputs: [:])
+        task.markCompleted()
 
         // Then
         XCTAssertEqual(task.status, .completed)

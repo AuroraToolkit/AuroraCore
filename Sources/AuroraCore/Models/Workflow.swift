@@ -12,7 +12,7 @@ import os.log
  A protocol defining the essential properties and behaviors of a workflow, responsible for executing and managing tasks.
  */
 public protocol WorkflowProtocol {
-       /// Unique identifier for the task.
+    /// Unique identifier for the task.
     var id: UUID { get }
 
     /// Name of the task.
@@ -160,8 +160,8 @@ public class Workflow: WorkflowProtocol {
         }
 
         do {
-            try await task.execute()
-            completeCurrentTask()
+            let outputs = try await task.execute() // Collect outputs from execution
+            completeCurrentTask(outputs: outputs)
         } catch {
             handleTaskFailure()
         }
@@ -169,9 +169,15 @@ public class Workflow: WorkflowProtocol {
 
     /**
      Completes the current task, processes its outputs, and proceeds to the next task.
+
+     - Parameter outputs: The outputs produced by the task during its execution.
      */
-    private func completeCurrentTask() {
-        tasks[currentTaskIndex].markCompleted(withOutputs: tasks[currentTaskIndex].outputs)
+    private func completeCurrentTask(outputs: [String: Any]) {
+        var task = tasks[currentTaskIndex]
+        task.markCompleted() // Updated to reflect the new status system
+        task.updateOutputs(with: outputs) // Store outputs in the task
+
+        updateTask(task, at: currentTaskIndex)
 
         if currentTaskIndex + 1 < tasks.count {
             currentTaskIndex += 1

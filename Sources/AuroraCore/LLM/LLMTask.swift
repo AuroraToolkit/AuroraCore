@@ -47,12 +47,13 @@ public class LLMTask: WorkflowTask {
      Executes the `LLMTask` by sending the prompt to the connected LLM service.
 
      - Throws: An error if the LLM service fails to process the request.
-     - Returns: The result of the request stored in `outputs`.
+     - Returns: The result of the request.
      */
-    public override func execute() async throws {
+    public override func execute() async throws -> [String: Any] {
         do {
             let response = try await llmService.sendRequest(request)
-            markCompleted(withOutputs: ["response": response.text])
+            markCompleted()
+            return ["response": response.text]
         } catch {
             markFailed()
             throw error

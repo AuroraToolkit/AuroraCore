@@ -27,7 +27,7 @@ public protocol WorkflowTaskProtocol {
     var inputs: [String: Any?] { get }
 
     /// The outputs produced by the task.
-    var outputs: [String: Any] { get }
+    var outputs: [String: Any] { get set }
 
     /// The timestamp for when the task was created.
     var creationDate: Date { get }
@@ -42,10 +42,10 @@ public protocol WorkflowTaskProtocol {
     var maxRetries: Int { get }
 
     /// Executes the task. This method can be either synchronous or asynchronous.
-    func execute() async throws
+    func execute() async throws -> [String: Any]
 
     /// Marks the task as completed and sets the completion timestamp to the current time.
-    mutating func markCompleted(withOutputs outputs: [String: Any])
+    mutating func markCompleted()
 
     /// Marks the task as in progress.
     mutating func markInProgress()
@@ -64,6 +64,9 @@ public protocol WorkflowTaskProtocol {
 
     /// Checks if the task has all required inputs.
     func hasRequiredInputs() -> Bool
+
+    /// Updates the task outputs with new values.
+    func updateOutputs(with newOutputs: [String: Any])
 }
 
 /**
@@ -80,6 +83,9 @@ public class WorkflowTask: WorkflowTaskProtocol {
     public var completionDate: Date?
     public var retryCount: Int = 0
     public var maxRetries: Int
+
+    /// An optional inline execution block for the task.
+    private var executeBlock: (([String: Any]) async throws -> [String: Any])?
 
     /**
      Initializes a new `WorkflowTask` with a specified name, description, and inputs.
@@ -101,19 +107,26 @@ public class WorkflowTask: WorkflowTaskProtocol {
         self.maxRetries = maxRetries
     }
 
-    public func execute() async throws {
-        /// Implement task execution logic here
+
+    public func execute() async throws -> [String: Any] {
+        if let executeBlock = executeBlock {
+            // Use inline execution block if provided
+            return try await executeBlock(inputs.compactMapValues { $0 })
+        } else {
+            throw NSError(
+                domain: "WorkflowTask",
+                code: 1,
+                userInfo: [NSLocalizedDescriptionKey: "Subclasses must override execute() or provide an executeBlock."]
+            )
+        }
     }
 
     /**
-     Marks the `LLMTask` as completed and stores the response from the LLM service.
-
-     - Parameter outputs: The response received from the LLM, which will be passed to subsequent tasks.
+     Marks the `LLMTask` as completed.
      */
-    public func markCompleted(withOutputs outputs: [String : Any] = [:]) {
+    public func markCompleted() {
         self.status = .completed
         self.completionDate = Date()
-        self.outputs = outputs
     }
 
     public func markInProgress() {
@@ -150,17 +163,21 @@ public class WorkflowTask: WorkflowTaskProtocol {
             return mirror.displayStyle != .optional || mirror.children.first != nil
         }
     }
+
+    public func updateOutputs(with newOutputs: [String: Any]) {
+        self.outputs.merge(newOutputs) { (_, new) in new }
+    }
 }
 
 /**
- An enumeration representing the various statuses that a task can have within its lifecycle.
+ An enumeration representing the various statuses that a task can have within its lifecycle, each associated with a timestamp.
 
  - pending: The task is created but not yet started.
  - inProgress: The task is currently being worked on.
  - completed: The task has been successfully completed.
  - failed: The task was unable to be completed successfully.
  */
-public enum TaskStatus: String, Codable {
+public enum TaskStatus: Codable, Equatable {
     case pending
     case inProgress
     case completed
