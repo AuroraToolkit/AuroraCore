@@ -51,6 +51,9 @@
                 <a href="Classes/FetchContextsTask.html">FetchContextsTask</a>
               </li>
               <li class="nav-group-task">
+                <a href="Classes/FetchURLTask.html">FetchURLTask</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Classes/LLMManager.html">LLMManager</a>
               </li>
               <li class="nav-group-task">
@@ -72,13 +75,19 @@
                 <a href="Classes/OpenAIService.html">OpenAIService</a>
               </li>
               <li class="nav-group-task">
+                <a href="Classes/RSSParsingTask.html">RSSParsingTask</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Classes/SaveContextTask.html">SaveContextTask</a>
               </li>
               <li class="nav-group-task">
                 <a href="Classes/SecureStorage.html">SecureStorage</a>
               </li>
               <li class="nav-group-task">
-                <a href="Classes/SummarizeTask.html">SummarizeTask</a>
+                <a href="Classes/SummarizeContextTask.html">SummarizeContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/SummarizeStringsTask.html">SummarizeStringsTask</a>
               </li>
               <li class="nav-group-task">
                 <a href="Classes/Summarizer.html">Summarizer</a>
@@ -212,7 +221,18 @@
                 <a href="Structs/OpenAILLMResponse.html#/s:10AuroraCore17OpenAILLMResponseV5UsageV">– Usage</a>
               </li>
               <li class="nav-group-task">
+                <a href="Structs/RSSArticle.html">RSSArticle</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Structs/SummarizerOptions.html">SummarizerOptions</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Typealiases.html#/s:10AuroraCore16WorkflowMappingsa">WorkflowMappings</a>
               </li>
             </ul>
           </li>
@@ -630,6 +650,19 @@ This is useful for storing sensitive information like API keys and custom base U
                       <div class="abstract">
                         <p><code>FetchContextsTask</code> is responsible for retrieving a list of stored contexts from the disk.</p>
 
+<ul>
+<li><strong>Inputs:</strong>
+
+<ul>
+<li><code>filenames</code>: An optional array of filenames (without extensions) specifying which contexts to retrieve.</li>
+</ul></li>
+<li><strong>Outputs:</strong>
+
+<ul>
+<li><code>contexts</code>: An array of URLs pointing to the context files on disk.</li>
+</ul></li>
+</ul>
+
 <p>This task can be used in workflows requiring access to multiple stored contexts. If a list of specific filenames is provided, only those contexts will be fetched. Otherwise, all contexts will be retrieved.</p>
 
                         <a href="Classes/FetchContextsTask.html" class="slightly-smaller">See more</a>
@@ -639,6 +672,49 @@ This is useful for storing sensitive information like API keys and custom base U
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">FetchContextsTask</span> <span class="p">:</span> <span class="kt"><a href="Classes/WorkflowTask.html">WorkflowTask</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore12FetchURLTaskC"></a>
+                    <a name="//apple_ref/swift/Class/FetchURLTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore12FetchURLTaskC">FetchURLTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>FetchURLTask</code> fetches the contents of a specified URL and returns the raw data.</p>
+
+<ul>
+<li><strong>Inputs</strong>
+
+<ul>
+<li><code>url</code>: The URL to fetch.</li>
+</ul></li>
+<li><strong>Outputs</strong>
+
+<ul>
+<li><code>data</code>: The raw data fetched from the URL.</li>
+</ul></li>
+</ul>
+
+<p>This task can be used in workflows where external data needs to be retrieved, such as downloading files, fetching JSON, or reading RSS feeds.</p>
+
+                        <a href="Classes/FetchURLTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">FetchURLTask</span> <span class="p">:</span> <span class="kt"><a href="Classes/WorkflowTask.html">WorkflowTask</a></span></code></pre>
 
                         </div>
                       </div>
@@ -660,6 +736,19 @@ This is useful for storing sensitive information like API keys and custom base U
                       <div class="abstract">
                         <p><code>LoadContextTask</code> is responsible for loading a <code><a href="Structs/Context.html">Context</a></code> object from disk.</p>
 
+<ul>
+<li><strong>Inputs</strong>
+
+<ul>
+<li><code>filename</code>: The name of the file to load the context from (optional).</li>
+</ul></li>
+<li><strong>Outputs</strong>
+
+<ul>
+<li><code>context</code>: The loaded context object.</li>
+</ul></li>
+</ul>
+
 <p>This task can be integrated into a workflow where context data needs to be retrieved from disk.</p>
 
                         <a href="Classes/LoadContextTask.html" class="slightly-smaller">See more</a>
@@ -669,6 +758,49 @@ This is useful for storing sensitive information like API keys and custom base U
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">LoadContextTask</span> <span class="p">:</span> <span class="kt"><a href="Classes/WorkflowTask.html">WorkflowTask</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore14RSSParsingTaskC"></a>
+                    <a name="//apple_ref/swift/Class/RSSParsingTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore14RSSParsingTaskC">RSSParsingTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>RSSParsingTask</code> parses an RSS feed and extracts the article links.</p>
+
+<ul>
+<li><strong>Inputs</strong>
+
+<ul>
+<li><code>feedData</code>: The data of the RSS feed to parse.</li>
+</ul></li>
+<li><strong>Outputs</strong>
+
+<ul>
+<li><code>articles</code>: An array of <code><a href="Structs/RSSArticle.html">RSSArticle</a></code> objects containing the article details.</li>
+</ul></li>
+</ul>
+
+<p>This task can be integrated into a workflow where article links need to be extracted from an RSS feed.</p>
+
+                        <a href="Classes/RSSParsingTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">RSSParsingTask</span> <span class="p">:</span> <span class="kt"><a href="Classes/WorkflowTask.html">WorkflowTask</a></span></code></pre>
 
                         </div>
                       </div>
@@ -690,7 +822,26 @@ This is useful for storing sensitive information like API keys and custom base U
                       <div class="abstract">
                         <p><code>SaveContextTask</code> is responsible for saving a <code><a href="Structs/Context.html">Context</a></code> object to disk.</p>
 
-<p>The task ensures that a dedicated <code>contexts/</code> directory exists in the documents folder.</p>
+<ul>
+<li><strong>Inputs</strong>
+
+<ul>
+<li><code>context</code>: The <code><a href="Structs/Context.html">Context</a></code> object to save.</li>
+<li><code>filename</code>: The name of the file (without extension) used for saving the context.</li>
+</ul></li>
+<li><strong>Outputs</strong>
+
+<ul>
+<li><code>filename</code>: The name of the file where the context was saved.</li>
+</ul></li>
+</ul>
+
+<p>This task can be integrated in a workflow where context data needs to be saved to disk.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    The task ensures that a dedicated <code>contexts/</code> directory exists in the documents folder.
+
+</div>
 
                         <a href="Classes/SaveContextTask.html" class="slightly-smaller">See more</a>
                       </div>
@@ -708,9 +859,9 @@ This is useful for storing sensitive information like API keys and custom base U
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10AuroraCore13SummarizeTaskC"></a>
-                    <a name="//apple_ref/swift/Class/SummarizeTask" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10AuroraCore13SummarizeTaskC">SummarizeTask</a>
+                    <a name="/s:10AuroraCore20SummarizeContextTaskC"></a>
+                    <a name="//apple_ref/swift/Class/SummarizeContextTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore20SummarizeContextTaskC">SummarizeContextTask</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -718,15 +869,75 @@ This is useful for storing sensitive information like API keys and custom base U
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p><code>SummarizeTask</code> is responsible for summarizing context items within a <code><a href="Classes/ContextController.html">ContextController</a></code> using the connected LLM service.</p>
+                        <p><code>SummarizeContextTask</code> is responsible for summarizing context items within a <code><a href="Classes/ContextController.html">ContextController</a></code> using the connected LLM service.</p>
 
-                        <a href="Classes/SummarizeTask.html" class="slightly-smaller">See more</a>
+<ul>
+<li><strong>Inputs</strong>
+
+<ul>
+<li><code><a href="Classes/ContextController.html">ContextController</a></code>: The context controller containing the context to be summarized.</li>
+<li><code><a href="Enums/SummaryType.html">SummaryType</a></code>: The type of summary to be performed (e.g., context, general text).</li>
+</ul></li>
+<li><strong>Outputs</strong>
+
+<ul>
+<li><code>summarizedContext</code>: The context containing the summarized content.</li>
+</ul></li>
+</ul>
+
+<p>This task can be integrated in a workflow where context items need to be summarized.</p>
+
+                        <a href="Classes/SummarizeContextTask.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">SummarizeTask</span> <span class="p">:</span> <span class="kt"><a href="Classes/WorkflowTask.html">WorkflowTask</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">SummarizeContextTask</span> <span class="p">:</span> <span class="kt"><a href="Classes/WorkflowTask.html">WorkflowTask</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore20SummarizeStringsTaskC"></a>
+                    <a name="//apple_ref/swift/Class/SummarizeStringsTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore20SummarizeStringsTaskC">SummarizeStringsTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A task that summarizes a list of strings using the LLM service.</p>
+
+<ul>
+<li><strong>Inputs</strong>
+
+<ul>
+<li><code>summarizer</code>: The summarizer to be used for the task.</li>
+<li><code>summaryType</code>: The type of summary to be performed (e.g., context, general text).</li>
+</ul></li>
+<li><strong>Outputs</strong>
+
+<ul>
+<li><code>summaries</code>:  The list of summarized strings.</li>
+</ul></li>
+</ul>
+
+<p>This task can be integrated in a workflow where context items need to be summarized.</p>
+
+                        <a href="Classes/SummarizeStringsTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">SummarizeStringsTask</span> <span class="p">:</span> <span class="kt"><a href="Classes/WorkflowTask.html">WorkflowTask</a></span></code></pre>
 
                         </div>
                       </div>
@@ -746,7 +957,19 @@ This is useful for storing sensitive information like API keys and custom base U
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p><code>TrimmingTask</code> is responsible for trimming strings to fit within a specified token limit.</p>
+
+<ul>
+<li><strong>Inputs</strong></li>
+<li><code>strings</code>: An array of strings to be trimmed. Can contain one or multiple items.</li>
+<li><code>tokenLimit</code>: The maximum allowed token count (default is 1,024).</li>
+<li><code>buffer</code>: A buffer percentage to apply when calculating the token limit (default is 5%).</li>
+<li><code>strategy</code>: The trimming strategy to apply (default is <code>.middle</code>).</li>
+<li><strong>Outputs</strong></li>
+<li><code>trimmedStrings</code>: An array of trimmed strings.</li>
+</ul>
+
+<p>This task can be integrated in a workflow where string trimming is required to fit within a token limit.</p>
 
                         <a href="Classes/TrimmingTask.html" class="slightly-smaller">See more</a>
                       </div>
@@ -766,7 +989,7 @@ This is useful for storing sensitive information like API keys and custom base U
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-12-01)</p>
+          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-12-08)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>

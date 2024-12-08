@@ -16,7 +16,7 @@
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/LLM/LLMManager.swift",
-      "line": 45,
+      "line": 48,
       "symbol": "LLMManager.init()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
@@ -177,42 +177,42 @@
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Summarizers/SummarizerProtocol.swift",
-      "line": 40,
+      "line": 44,
       "symbol": "SummaryType.general",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Summarizers/SummarizerProtocol.swift",
-      "line": 41,
+      "line": 45,
       "symbol": "SummaryType.context",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Utilities/TokenHandling.swift",
-      "line": 69,
+      "line": 71,
       "symbol": "String.TrimmingStrategy.start",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Utilities/TokenHandling.swift",
-      "line": 70,
+      "line": 72,
       "symbol": "String.TrimmingStrategy.middle",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Utilities/TokenHandling.swift",
-      "line": 71,
+      "line": 73,
       "symbol": "String.TrimmingStrategy.end",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Utilities/TokenHandling.swift",
-      "line": 72,
+      "line": 74,
       "symbol": "String.TrimmingStrategy.none",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
@@ -226,7 +226,7 @@
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/WorkflowTasks/TrimmingTask.swift",
-      "line": 49,
+      "line": 48,
       "symbol": "TrimmingTask.execute()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"

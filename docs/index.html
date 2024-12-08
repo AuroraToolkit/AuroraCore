@@ -48,6 +48,9 @@
                 <a href="Classes/FetchContextsTask.html">FetchContextsTask</a>
               </li>
               <li class="nav-group-task">
+                <a href="Classes/FetchURLTask.html">FetchURLTask</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Classes/LLMManager.html">LLMManager</a>
               </li>
               <li class="nav-group-task">
@@ -69,13 +72,19 @@
                 <a href="Classes/OpenAIService.html">OpenAIService</a>
               </li>
               <li class="nav-group-task">
+                <a href="Classes/RSSParsingTask.html">RSSParsingTask</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Classes/SaveContextTask.html">SaveContextTask</a>
               </li>
               <li class="nav-group-task">
                 <a href="Classes/SecureStorage.html">SecureStorage</a>
               </li>
               <li class="nav-group-task">
-                <a href="Classes/SummarizeTask.html">SummarizeTask</a>
+                <a href="Classes/SummarizeContextTask.html">SummarizeContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/SummarizeStringsTask.html">SummarizeStringsTask</a>
               </li>
               <li class="nav-group-task">
                 <a href="Classes/Summarizer.html">Summarizer</a>
@@ -209,7 +218,18 @@
                 <a href="Structs/OpenAILLMResponse.html#/s:10AuroraCore17OpenAILLMResponseV5UsageV">– Usage</a>
               </li>
               <li class="nav-group-task">
+                <a href="Structs/RSSArticle.html">RSSArticle</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Structs/SummarizerOptions.html">SummarizerOptions</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Typealiases.html#/s:10AuroraCore16WorkflowMappingsa">WorkflowMappings</a>
               </li>
             </ul>
           </li>
@@ -227,7 +247,9 @@
 <ul>
 <li><strong>Context Management</strong>: Handle and maintain conversation or task-specific context, including adding, retrieving, and summarizing items.</li>
 <li><strong>Task and Workflow Handling</strong>: Built-in support for defining and managing tasks and workflows, including the ability to track task status and manage dependent workflows. Now supports asynchronous task execution for handling complex, long-running tasks.</li>
-<li><strong>LLM Integration</strong>: Seamless integration with various LLM services via an extendable <code><a href="Classes/LLMManager.html">LLMManager</a></code>. Supports token management, trimming strategies, and fallback mechanisms.</li>
+<li><strong>LLM Integration</strong>: Seamless integration with various LLM services via an extendable <code><a href="Classes/LLMManager.html">LLMManager</a></code>. Supports token management, trimming strategies, domain-routing, and fallback mechanisms.</li>
+<li><strong>Domain-Specific Routing</strong>: Route requests to the most appropriate LLM service based on predefined domains or fallback options, enabling modular and efficient service management.</li>
+<li><strong>Examples for Quick Start</strong>: Includes ready-to-run examples demonstrating common patterns like domain-specific routing and fallback handling.</li>
 <li><strong>Modular and Extendable</strong>: AuroraCore is designed to be modular, allowing developers to plug in their own services, workflows, or task managers.</li>
 </ul>
 <h2 id='components' class='heading'>Components</h2>
@@ -283,11 +305,81 @@
 <pre class="highlight swift"><code><span class="kd">import</span> <span class="kt">AuroraCore</span>
 
 <span class="k">let</span> <span class="nv">llmManager</span> <span class="o">=</span> <span class="kt">LLMManager</span><span class="p">()</span>
-<span class="n">llmManager</span><span class="o">.</span><span class="nf">registerService</span><span class="p">(</span><span class="kt">MockLLMService</span><span class="p">(),</span> <span class="nv">withName</span><span class="p">:</span> <span class="s">"MockService"</span><span class="p">)</span>
+<span class="n">llmManager</span><span class="o">.</span><span class="nf">registerService</span><span class="p">(</span><span class="kt">OllamaService</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Ollama"</span><span class="p">))</span>
 
 <span class="k">let</span> <span class="nv">request</span> <span class="o">=</span> <span class="kt">LLMRequest</span><span class="p">(</span><span class="nv">prompt</span><span class="p">:</span> <span class="s">"Hello, World!"</span><span class="p">)</span>
 <span class="n">llmManager</span><span class="o">.</span><span class="nf">sendRequest</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="p">{</span> <span class="n">response</span> <span class="k">in</span>
     <span class="nf">print</span><span class="p">(</span><span class="n">response</span><span class="p">?</span><span class="o">.</span><span class="n">text</span> <span class="p">??</span> <span class="s">"No response"</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre>
+<h3 id='domain-specific-routing-with-llmmanager' class='heading'>Domain-specific Routing with LLMManager</h3>
+<pre class="highlight swift"><code><span class="kd">import</span> <span class="kt">AuroraCore</span>
+
+<span class="k">let</span> <span class="nv">manager</span> <span class="o">=</span> <span class="kt">LLMManager</span><span class="p">()</span>
+
+<span class="c1">// Configure the Domain Routing Service (Ollama)</span>
+<span class="k">let</span> <span class="nv">domainRouter</span> <span class="o">=</span> <span class="kt">OllamaService</span><span class="p">(</span>
+    <span class="nv">name</span><span class="p">:</span> <span class="s">"DomainRouter"</span><span class="p">,</span>
+    <span class="nv">baseURL</span><span class="p">:</span> <span class="s">"http://localhost:11434"</span><span class="p">,</span>
+    <span class="nv">contextWindowSize</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+    <span class="nv">maxOutputTokens</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="nv">systemPrompt</span><span class="p">:</span> <span class="s">"""
+        Evaluate the following question and determine the domain it belongs to. Domains we support are: sports, books. If the question is about a particular sport, use the sports domain. If it's about a book or writing, use the books domain. If it doesn't CLEARLY fit ANY of these domains, use general as the domain. You should respond to any question with ONLY the domain name if we support it, or general if we don't. Do NOT try to answer the question or provide ANY additional information.
+"""</span>
+<span class="p">)</span>
+<span class="n">manager</span><span class="o">.</span><span class="nf">registerDomainRoutingService</span><span class="p">(</span><span class="n">domainRouter</span><span class="p">)</span>
+
+<span class="c1">// Configure the Sports Service (Anthropic)</span>
+<span class="k">let</span> <span class="nv">sportsService</span> <span class="o">=</span> <span class="kt">AnthropicService</span><span class="p">(</span>
+    <span class="nv">name</span><span class="p">:</span> <span class="s">"SportsService"</span><span class="p">,</span>
+    <span class="nv">apiKey</span><span class="p">:</span> <span class="s">"your-anthropic-api-key"</span><span class="p">,</span>
+    <span class="nv">maxOutputTokens</span><span class="p">:</span> <span class="mi">256</span><span class="p">,</span>
+    <span class="nv">systemPrompt</span><span class="p">:</span> <span class="s">"""
+You are a sports expert. Answer the following sports-related questions concisely and accurately.
+"""</span>
+<span class="p">)</span>
+<span class="n">manager</span><span class="o">.</span><span class="nf">registerService</span><span class="p">(</span><span class="n">sportsService</span><span class="p">,</span> <span class="nv">withRoutings</span><span class="p">:</span> <span class="p">[</span><span class="o">.</span><span class="nf">domain</span><span class="p">([</span><span class="s">"sports"</span><span class="p">])])</span>
+
+<span class="c1">// Configure the Books Service (Ollama)</span>
+<span class="k">let</span> <span class="nv">booksService</span> <span class="o">=</span> <span class="kt">OllamaService</span><span class="p">(</span>
+    <span class="nv">name</span><span class="p">:</span> <span class="s">"BooksService"</span><span class="p">,</span>
+    <span class="nv">baseURL</span><span class="p">:</span> <span class="s">"http://localhost:11434"</span><span class="p">,</span>
+    <span class="nv">maxOutputTokens</span><span class="p">:</span> <span class="mi">256</span><span class="p">,</span>
+    <span class="nv">systemPrompt</span><span class="p">:</span> <span class="s">"""
+You are a literary expert. Answer the following books-related questions concisely and accurately.
+"""</span>
+<span class="p">)</span>
+<span class="n">manager</span><span class="o">.</span><span class="nf">registerService</span><span class="p">(</span><span class="n">booksService</span><span class="p">,</span> <span class="nv">withRoutings</span><span class="p">:</span> <span class="p">[</span><span class="o">.</span><span class="nf">domain</span><span class="p">([</span><span class="s">"books"</span><span class="p">])])</span>
+
+<span class="c1">// Configure the Fallback Service (OpenAI)</span>
+<span class="k">let</span> <span class="nv">fallbackService</span> <span class="o">=</span> <span class="kt">OpenAIService</span><span class="p">(</span>
+    <span class="nv">name</span><span class="p">:</span> <span class="s">"FallbackService"</span><span class="p">,</span>
+    <span class="nv">apiKey</span><span class="p">:</span> <span class="s">"you-openai-api-key"</span><span class="p">,</span>
+    <span class="nv">maxOutputTokens</span><span class="p">:</span> <span class="mi">512</span><span class="p">,</span>
+    <span class="nv">systemPrompt</span><span class="p">:</span> <span class="s">"""
+You are a helpful assistant. Answer any general questions accurately and concisely.
+"""</span>
+<span class="p">)</span>
+<span class="n">manager</span><span class="o">.</span><span class="nf">registerFallbackService</span><span class="p">(</span><span class="n">fallbackService</span><span class="p">)</span>
+
+<span class="c1">// Example questions</span>
+<span class="k">let</span> <span class="nv">questions</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s">"Who won the Super Bowl in 2022?"</span><span class="p">,</span>  <span class="c1">// Sports domain</span>
+    <span class="s">"Who wrote The Great Gatsby?"</span><span class="p">,</span>      <span class="c1">// Books domain</span>
+    <span class="s">"What is the capital of France?"</span>    <span class="c1">// General (fallback)</span>
+<span class="p">]</span>
+
+<span class="c1">// Process each question</span>
+<span class="k">for</span> <span class="n">question</span> <span class="k">in</span> <span class="n">questions</span> <span class="p">{</span>
+    <span class="nf">print</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">Processing question: </span><span class="se">\(</span><span class="n">question</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
+
+    <span class="k">let</span> <span class="nv">request</span> <span class="o">=</span> <span class="kt">LLMRequest</span><span class="p">(</span><span class="nv">messages</span><span class="p">:</span> <span class="p">[</span><span class="kt">LLMMessage</span><span class="p">(</span><span class="nv">role</span><span class="p">:</span> <span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="nv">content</span><span class="p">:</span> <span class="n">question</span><span class="p">)])</span>
+
+    <span class="k">if</span> <span class="k">let</span> <span class="nv">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">manager</span><span class="o">.</span><span class="nf">routeRequest</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nf">print</span><span class="p">(</span><span class="s">"Response from </span><span class="se">\(</span><span class="n">response</span><span class="o">.</span><span class="n">vendor</span> <span class="p">??</span> <span class="s">"Uknown"</span><span class="se">)</span><span class="s">: </span><span class="se">\(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nf">print</span><span class="p">(</span><span class="s">"No response received."</span><span class="p">)</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </code></pre>
 <h2 id='running-tests' class='heading'>Running Tests</h2>
@@ -330,7 +422,7 @@ private let anthropicAPIKey: String? = &quot;&quot; // Insert your Anthropic API
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-12-01)</p>
+          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-12-08)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>

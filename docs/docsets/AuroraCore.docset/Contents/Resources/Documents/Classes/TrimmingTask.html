@@ -53,6 +53,9 @@
                 <a href="../Classes/FetchContextsTask.html">FetchContextsTask</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Classes/FetchURLTask.html">FetchURLTask</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Classes/LLMManager.html">LLMManager</a>
               </li>
               <li class="nav-group-task">
@@ -74,13 +77,19 @@
                 <a href="../Classes/OpenAIService.html">OpenAIService</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Classes/RSSParsingTask.html">RSSParsingTask</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Classes/SaveContextTask.html">SaveContextTask</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/SecureStorage.html">SecureStorage</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/SummarizeTask.html">SummarizeTask</a>
+                <a href="../Classes/SummarizeContextTask.html">SummarizeContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SummarizeStringsTask.html">SummarizeStringsTask</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/Summarizer.html">Summarizer</a>
@@ -214,7 +223,18 @@
                 <a href="../Structs/OpenAILLMResponse.html#/s:10AuroraCore17OpenAILLMResponseV5UsageV">– Usage</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/RSSArticle.html">RSSArticle</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/SummarizerOptions.html">SummarizerOptions</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:10AuroraCore16WorkflowMappingsa">WorkflowMappings</a>
               </li>
             </ul>
           </li>
@@ -231,7 +251,19 @@
 
                 </div>
               </div>
-            <p>Undocumented</p>
+            <p><code>TrimmingTask</code> is responsible for trimming strings to fit within a specified token limit.</p>
+
+<ul>
+<li><strong>Inputs</strong></li>
+<li><code>strings</code>: An array of strings to be trimmed. Can contain one or multiple items.</li>
+<li><code>tokenLimit</code>: The maximum allowed token count (default is 1,024).</li>
+<li><code>buffer</code>: A buffer percentage to apply when calculating the token limit (default is 5%).</li>
+<li><code>strategy</code>: The trimming strategy to apply (default is <code>.middle</code>).</li>
+<li><strong>Outputs</strong></li>
+<li><code>trimmedStrings</code>: An array of trimmed strings.</li>
+</ul>
+
+<p>This task can be integrated in a workflow where string trimming is required to fit within a token limit.</p>
 
           </section>
           <section class="section task-group-section">
@@ -240,9 +272,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10AuroraCore12TrimmingTaskC7strings10tokenLimit6buffer8strategyACSaySSG_SiSgSdSgSSAAE0C8StrategyOSgtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(strings:tokenLimit:buffer:strategy:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10AuroraCore12TrimmingTaskC7strings10tokenLimit6buffer8strategyACSaySSG_SiSgSdSgSSAAE0C8StrategyOSgtcfc">init(strings:<wbr>tokenLimit:<wbr>buffer:<wbr>strategy:<wbr>)</a>
+                    <a name="/s:10AuroraCore12TrimmingTaskC4name7strings10tokenLimit6buffer8strategyACSSSg_SaySSGSiSgSdSgSSAAE0C8StrategyOSgtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(name:strings:tokenLimit:buffer:strategy:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore12TrimmingTaskC4name7strings10tokenLimit6buffer8strategyACSSSg_SaySSGSiSgSdSgSSAAE0C8StrategyOSgtcfc">init(name:<wbr>strings:<wbr>tokenLimit:<wbr>buffer:<wbr>strategy:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -250,14 +282,19 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Initializes a <code>TrimmingTask</code> to trim multiple strings.</p>
-
+                        
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">strings</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">],</span> <span class="nv">tokenLimit</span><span class="p">:</span> <span class="kt">Int</span><span class="p">?</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">,</span> <span class="nv">buffer</span><span class="p">:</span> <span class="kt">Double</span><span class="p">?</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span> <span class="nv">strategy</span><span class="p">:</span> <span class="kt">String</span><span class="o">.</span><span class="kt">TrimmingStrategy</span><span class="p">?</span> <span class="o">=</span> <span class="o">.</span><span class="n">middle</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span>
+    <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+    <span class="nv">strings</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">],</span>
+    <span class="nv">tokenLimit</span><span class="p">:</span> <span class="kt">Int</span><span class="p">?</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">,</span>
+    <span class="nv">buffer</span><span class="p">:</span> <span class="kt">Double</span><span class="p">?</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="nv">strategy</span><span class="p">:</span> <span class="kt">String</span><span class="o">.</span><span class="kt">TrimmingStrategy</span><span class="p">?</span> <span class="o">=</span> <span class="o">.</span><span class="n">middle</span>
+<span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -265,6 +302,18 @@
                         <h4>Parameters</h4>
                         <table class="graybox">
                           <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>name</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The name of the task.</p>
+                                </div>
+                              </td>
+                            </tr>
                             <tr>
                               <td>
                                 <code>
@@ -404,9 +453,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10AuroraCore12TrimmingTaskC7executeyyYaKF"></a>
+                    <a name="/s:10AuroraCore12TrimmingTaskC7executeSDySSypGyYaKF"></a>
                     <a name="//apple_ref/swift/Method/execute()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10AuroraCore12TrimmingTaskC7executeyyYaKF">execute()</a>
+                    <a class="token" href="#/s:10AuroraCore12TrimmingTaskC7executeSDySSypGyYaKF">execute()</a>
                     </code>
                       <span class="declaration-note">
                         Asynchronous
@@ -424,7 +473,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">override</span> <span class="kd">func</span> <span class="nf">execute</span><span class="p">()</span> <span class="k">async</span> <span class="k">throws</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">override</span> <span class="kd">func</span> <span class="nf">execute</span><span class="p">()</span> <span class="k">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="kt">String</span> <span class="p">:</span> <span class="kt">Any</span><span class="p">]</span></code></pre>
 
                         </div>
                       </div>
@@ -436,7 +485,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-12-01)</p>
+          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-12-08)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
