@@ -12,14 +12,12 @@ import Testing
 
 struct LLMServiceTests {
 
-    // API Keys: Testers should add their own API keys below for OpenAI and Anthropic.
-    // Important: Make sure to not commit these keys to the repository!
-    private let openAIAPIKey: String? = "" // Insert your OpenAI API key here
-    private let anthropicAPIKey: String? = "" // Insert your Anthropic API key here
-
     // Services to be tested
     private func getServices() -> [LLMServiceProtocol] {
         var services: [LLMServiceProtocol] = []
+
+        let openAIAPIKey = ProcessInfo.processInfo.environment["OPENAI_API_KEY"]
+        let anthropicAPIKey = ProcessInfo.processInfo.environment["ANTHROPIC_API_KEY"]
 
         if let apiKey = openAIAPIKey, !apiKey.isEmpty {
             services.append(OpenAIService(apiKey: apiKey))

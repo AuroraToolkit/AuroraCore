@@ -39,21 +39,6 @@ final class FetchURLTaskTests: XCTestCase {
         }
     }
 
-    func testFetchURLTaskSuccessWithStringURL() async throws {
-        // Given
-        let validURLString = "https://httpbin.org/get"
-        task = FetchURLTask(urlString: validURLString)
-
-        // When
-        let taskOutputs = try await task.execute()
-
-        // Then
-        XCTAssertNotNil(taskOutputs["data"], "The data output should not be nil.")
-        if let data = taskOutputs["data"] as? Data {
-            XCTAssertFalse(data.isEmpty, "The fetched data should not be empty.")
-        }
-    }
-
     func testFetchURLTaskInvalidURL() async throws {
         // Given
         let invalidURL = URL(string: "invalid-url")!
@@ -68,38 +53,10 @@ final class FetchURLTaskTests: XCTestCase {
         }
     }
 
-    func testFetchURLTaskInvalidStringURL() async throws {
-        // Given
-        let invalidURLString = "invalid-url"
-        task = FetchURLTask(urlString: invalidURLString)
-
-        // When/Then
-        do {
-            _ = try await task.execute()
-            XCTFail("Expected an error to be thrown for an invalid URL, but no error was thrown.")
-        } catch {
-            XCTAssertTrue(error is URLError, "The error should be a URLError.")
-        }
-    }
-
     func testFetchURLTaskNonExistentURL() async throws {
         // Given
         let nonExistentURL = URL(string: "https://thisurldoesnotexist.tld")!
         task = FetchURLTask(url: nonExistentURL)
-
-        // When/Then
-        do {
-            _ = try await task.execute()
-            XCTFail("Expected an error to be thrown for a non-existent URL, but no error was thrown.")
-        } catch {
-            XCTAssertTrue(error is URLError, "The error should be a URLError for a non-existent URL.")
-        }
-    }
-
-    func testFetchURLTaskNonExistentStringURL() async throws {
-        // Given
-        let nonExistentURLString = "https://thisurldoesnotexist.tld"
-        task = FetchURLTask(urlString: nonExistentURLString)
 
         // When/Then
         do {
@@ -132,23 +89,6 @@ final class FetchURLTaskTests: XCTestCase {
         let timeoutURL = URL(string: "https://httpbin.org/delay/10")! // Delays response by 10 seconds
         let session = URLSession(configuration: config)
         task = FetchURLTask(url: timeoutURL, session: session)
-
-        // When/Then
-        do {
-            _ = try await task.execute()
-            XCTFail("Expected a timeout error to be thrown, but no error was thrown.")
-        } catch {
-            XCTAssertTrue(error is URLError, "The error should be a URLError for a timeout.")
-        }
-    }
-
-    func testFetchURLTaskTimeoutWithStringURL() async throws {
-        // Given
-        let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = 2 // 2-second timeout
-        let timeoutURLString = "https://httpbin.org/delay/10" // Delays response by 10 seconds
-        let session = URLSession(configuration: config)
-        task = FetchURLTask(urlString: timeoutURLString, session: session)
 
         // When/Then
         do {

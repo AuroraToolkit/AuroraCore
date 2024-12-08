@@ -167,18 +167,14 @@ AuroraCore includes tests for multiple language model services. The Ollama tests
 
 ### Adding API Keys for OpenAI and Anthropic:
 
-In the test files that involve OpenAI or Anthropic services, there are placeholders where you can insert your API keys.
+Some test and example files use OpenAI or Anthropic services and need API keys to function correctly. To use these services, add the following keys to the `AuroraCore` and `Examples` schemes. Make sure these schemes are not shared, and take extra precaution to avoid committing API keys into the repository.
 
-1. Open the `LLMServiceTests.swift` file.
-2. Locate the following lines near the top of the file:
-    ```swift
-    private let openAIAPIKey: String? = "" // Insert your OpenAI API key here
-    private let anthropicAPIKey: String? = "" // Insert your Anthropic API key here
-    ```
-3. Add your keys between the quotation marks (`""`) to enable the tests for those services.
+- For Anthropic, add the environment variable `ANTHROPIC_API_KEY' with a valid test API key.
+- For OpenAI, add the environment variable `OPENAI_API_KEY` with a valid test API key.
+- Ollama does not require API keys, but does require the Ollama service to be running at the default service URL, `http://localhost:11434`.
 
 ### Important:
-- **Do not commit your API keys to the repository**. The tests are designed to run with Ollama by default, and you can enable additional tests for OpenAI and Anthropic by manually adding your keys for local testing.
+- **Never commit your API keys to the repository**. The tests are designed to run with Ollama by default, and you can enable additional tests for OpenAI and Anthropic by manually adding your keys for local testing.
 - Be sure to remove or replace your keys with empty strings before committing any changes.
 
 With this setup, you can run the tests without relying on environment variables, and ensure your sensitive keys are not inadvertently shared.

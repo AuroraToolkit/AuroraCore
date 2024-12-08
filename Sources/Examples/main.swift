@@ -33,26 +33,26 @@ import AuroraCore
     ```
  */
 
-//print("Aurora Core Examples\n")
-//print("--------------------\n")
-//
-//print("BasicRequest Example:\n")
-//await BasicRequestExample().execute()
-//
-//print("--------------------\n")
-//
-//print("StreamingRequest Example:\n")
-//await StreamingRequestExample().execute()
-//
-//print("--------------------\n")
-//
-//print("LLM Routing Example:\n")
-//await LLMRoutingExample().execute()
-//
-//print("--------------------\n")
-//
-//print("Domain Routing Example:\n")
-//await DomainRoutingExample().execute()
+print("Aurora Core Examples\n")
+print("--------------------\n")
+
+print("BasicRequest Example:\n")
+await BasicRequestExample().execute()
+
+print("--------------------\n")
+
+print("StreamingRequest Example:\n")
+await StreamingRequestExample().execute()
+
+print("--------------------\n")
+
+print("LLM Routing Example:\n")
+await LLMRoutingExample().execute()
+
+print("--------------------\n")
+
+print("Domain Routing Example:\n")
+await DomainRoutingExample().execute()
 
 print("--------------------\n")
 

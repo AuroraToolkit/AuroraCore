@@ -14,10 +14,15 @@ import AuroraCore
 struct ArticleSummariesWorkflowExample {
     func execute() async {
 
+        // Set your OpenAI API key as an environment variable to run this example, e.g., `export OPENAI_API_KEY="your-api-key"`
+        let openAIKey = ProcessInfo.processInfo.environment["OPENAI_API_KEY"] ?? ""
+        if openAIKey.isEmpty {
+            print("No API key provided. Please set the OPENAI_API_KEY environment variable.")
+            return
+        }
+
         // Initialize LLM service
-        let openAIService = OpenAIService(
-            apiKey: "your-openai-api-key"
-        )
+        let openAIService = OpenAIService(apiKey: openAIKey)
 
         // Workflow initialization
         let workflow = Workflow(
@@ -58,16 +63,17 @@ struct ArticleSummariesWorkflowExample {
             let request = LLMRequest(
                 messages: [
                 LLMMessage(role: .system, content: """
-                    Given the following article headlines, summaries, and urls, please generate a script for a team of 
+                    Given the following article headlines and summaries, please generate a script for a team of 
                     TV news anchors to read on air. Feel free to rearrange the order to make the script flow better.
                     Invent a station identifier similar to KTLA and use a US city of your choice. Remember that stations
                     to the west of the Mississippi River uses K callsigns, and stations to the east use W callsigns.
                     
-                    Come up with two to three anchor full names, and use them in the script. Use typical TV anchor 
-                    phrases to throw to each one. The script should be between 1,000 and 2,000 words. Be sure to come 
-                    up with a catchy opening line to grab the audience's attention. The script should be engaging and 
-                    informative, using a serious tone when appropriate, and a more casual tone for lighter topics. 
-                    Include typical TV news anchor filler in between stories to maintain viewer interest.
+                    Come up with two to three anchor full names, and use them in the script. Use friendly TV anchor 
+                    phrases to throw to each one, but each anchor should own an entire story. The script should be 
+                    between 1,000 and 2,000 words. Be sure to come up with a catchy opening line to grab the 
+                    audience's attention. The script should be engaging and informative, using a serious tone when 
+                    appropriate, and a more casual tone for lighter topics. Include typical TV news anchor filler in 
+                    between stories to maintain viewer interest.
                     
                     Typically, a TV news broadcast will end with a feel-good story or a humorous anecdote, so pick
                     the lightest story to close with, and add a closing line to wrap up the broadcast.
