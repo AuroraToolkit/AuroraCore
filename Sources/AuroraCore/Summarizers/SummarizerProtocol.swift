@@ -13,35 +13,35 @@ import Foundation
 public protocol SummarizerProtocol {
 
     /**
-     Summarizes a given piece of text using the LLM service.
+     Summarizes text using the LLM service.
 
      - Parameters:
         - text: The text to be summarized.
-        - type: The type of summary to be performed (e.g., context, general text, etc.).
         - options: Optional `SummarizerOptions` to modify the request parameters.
 
      - Returns: A summarized version of the text.
      */
-    func summarize(_ text: String, type: SummaryType, options: SummarizerOptions?) async throws -> String
+    func summarize(_ text: String, options: SummarizerOptions?) async throws -> String
 
     /**
      Summarizes a group of text strings using the LLM service.
 
      - Parameters:
-        - texts: An array of strings to be summarized together.
-        - type: The type of summary to be performed (e.g., context, general text, etc.).
+        - texts: An array of strings to be summarized.
+        - type: The type of summary to be performed (`.single` or `.multiple`).
         - options: Optional `SummarizerOptions` to modify the request parameters.
 
-     - Returns: A summarized version of the combined texts.
+     - Returns: An array of summarized texts corresponding to the input texts.
+
+     - Note: If `type` is `.single`, the return value will be an array of one summary.
      */
-    func summarizeGroup(_ texts: [String], type: SummaryType, options: SummarizerOptions?) async throws -> String
+    func summarizeGroup(_ texts: [String], type: SummaryType, options: SummarizerOptions?) async throws -> [String]
 }
 
 /**
  Enum representing different types of summaries that can be requested.
  */
 public enum SummaryType {
-    case general
-    case context
-    // Additional types can be added here as needed
+    case single     // A single, combined summary for all input strings
+    case multiple   // Individual summaries for each input string
 }

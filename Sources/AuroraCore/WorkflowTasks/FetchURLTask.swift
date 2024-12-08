@@ -29,29 +29,18 @@ public class FetchURLTask: WorkflowTask {
      Initializes a `FetchURLTask` with the URL to fetch.
 
      - Parameters:
+        - name: The name of the task.
         - url: The URL to fetch.
         - session: The URLSession used to fetch the URL. Defaults to `.shared`.
      */
-    public init(url: URL, session: URLSession = .shared) {
+    public init(name: String? = nil, url: URL, session: URLSession = .shared) {
         self.url = url
         self.session = session
         super.init(
-            name: "Fetch URL",
+            name: name,
             description: "Fetches data from the specified URL",
             inputs: ["url": url]
         )
-    }
-
-    /**
-     Initializes a `FetchURLTask` with the URL as a String to fetch.
-
-     - Parameters:
-        - urlString: The URL string to fetch.
-        - session: The URLSession used to fetch the URL. Defaults to `.shared`.
-     */
-    convenience public init?(urlString: String, session: URLSession = .shared) {
-        guard let url = URL(string: urlString) else { return nil }
-        self.init(url: url, session: session)
     }
 
     /**

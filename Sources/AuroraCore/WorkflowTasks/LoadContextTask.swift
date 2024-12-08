@@ -22,11 +22,13 @@ public class LoadContextTask: WorkflowTask {
     /**
      Initializes a `LoadContextTask` with the ability to load a context from disk.
 
-     - Parameter filename: Optionally pass the name of the file to load the context from.
+     - Parameters:
+        - name: Optionally pass the name of the task.
+        - filename: Optionally pass the name of the file to load the context from.
      */
-    public init(filename: String? = nil) {
+    public init(name: String? = nil, filename: String? = nil) {
         super.init(
-            name: "Load Context",
+            name: name,
             description: "Load the context from disk",
             inputs: ["filename": filename]
         )

@@ -1,5 +1,5 @@
 //
-//  SummarizeTaskTests.swift
+//  SummarizeContextTaskTests.swift
 //  AuroraTests
 //
 //  Created by Dan Murrell Jr on 9/2/24.
@@ -8,11 +8,11 @@
 import XCTest
 @testable import AuroraCore
 
-final class SummarizeTaskTests: XCTestCase {
+final class SummarizeContextTaskTests: XCTestCase {
 
     var contextController: ContextController!
     var mockService: MockLLMService!
-    var task: SummarizeTask!
+    var task: SummarizeContextTask!
 
     override func setUp() {
         super.setUp()
@@ -30,7 +30,7 @@ final class SummarizeTaskTests: XCTestCase {
     func testSummarizeTaskSingleItem() async throws {
         // Given
         contextController.addItem(content: "This is a test content.")
-        task = SummarizeTask(contextController: contextController, summaryType: .context)
+        task = SummarizeContextTask(contextController: contextController, summaryType: .single)
 
         // When
         _ = try await task.execute()
@@ -45,7 +45,7 @@ final class SummarizeTaskTests: XCTestCase {
         // Given
         contextController.addItem(content: "First piece of content.")
         contextController.addItem(content: "Second piece of content.")
-        task = SummarizeTask(contextController: contextController, summaryType: .context)
+        task = SummarizeContextTask(contextController: contextController, summaryType: .single)
 
         // When
         _ = try await task.execute()
@@ -58,7 +58,7 @@ final class SummarizeTaskTests: XCTestCase {
 
     func testSummarizeTaskEmptyContext() async throws {
         // Given
-        task = SummarizeTask(contextController: contextController, summaryType: .context)
+        task = SummarizeContextTask(contextController: contextController, summaryType: .single)
 
         // When
         _ = try await task.execute()
@@ -73,7 +73,7 @@ final class SummarizeTaskTests: XCTestCase {
         let failingService = MockLLMService(name: "FailingService", maxOutputTokens: 4096, expectedResult: .failure(NSError(domain: "Test", code: -1, userInfo: nil)))
         contextController = ContextController(llmService: failingService)
         contextController.addItem(content: "Content that will not be summarized.")
-        task = SummarizeTask(contextController: contextController, summaryType: .context)
+        task = SummarizeContextTask(contextController: contextController, summaryType: .single)
 
         // When/Then
         do {
@@ -91,7 +91,7 @@ final class SummarizeTaskTests: XCTestCase {
         let content = String(repeating: "A", count: 4095) // One token short of the limit
         contextController.addItem(content: content)
         contextController.addItem(content: content)
-        task = SummarizeTask(contextController: contextController, summaryType: .context)
+        task = SummarizeContextTask(contextController: contextController, summaryType: .single)
 
         // When
         _ = try await task.execute()
@@ -106,7 +106,7 @@ final class SummarizeTaskTests: XCTestCase {
         // Given
         contextController.addItem(content: "Content 1")
         contextController.addItem(content: "Content 2")
-        task = SummarizeTask(contextController: contextController, summaryType: .context)
+        task = SummarizeContextTask(contextController: contextController, summaryType: .single)
 
         // When
         _ = try await task.execute()

@@ -10,12 +10,30 @@ import Foundation
 
 class MockSummarizer: SummarizerProtocol, Equatable {
 
-    func summarize(_ text: String, type: AuroraCore.SummaryType, options: SummarizerOptions? = nil) async throws -> String {
-        return "Summary"
+    private let expectedSummaries: [String]
+    private let expectedResult: Result<[String], Error>
+
+    init(expectedSummaries: [String] = [], expectedResult: Result<[String], Error>? = nil) {
+        self.expectedSummaries = expectedSummaries
+        self.expectedResult = expectedResult ?? .success(expectedSummaries)
     }
 
-    func summarizeGroup(_ texts: [String], type: AuroraCore.SummaryType, options: SummarizerOptions? = nil) async throws -> String {
-        return "Summary of \(texts.count) items"
+    func summarize(_ text: String, options: SummarizerOptions? = nil) async throws -> String {
+        switch expectedResult {
+        case .success(let summaries):
+            return summaries.first ?? "Summary"
+        case .failure(let error):
+            throw error
+        }
+    }
+
+    func summarizeGroup(_ texts: [String], type: SummaryType, options: SummarizerOptions? = nil) async throws -> [String] {
+        switch expectedResult {
+        case .success(let summaries):
+            return summaries
+        case .failure(let error):
+            throw error
+        }
     }
 
     // Equatable conformance for MockSummarizer

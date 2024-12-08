@@ -123,19 +123,22 @@ public class ContextController {
         guard !group.isEmpty else { return }
 
         // Determine if we should summarize items individually or as a group
-        let summary: String
+        let summaries: [String]
         if group.count == 1 {
             // Summarize a single item
-            summary = try await summarizer.summarize(group[0].text, type: .context, options: options)
+            let summary = try await summarizer.summarize(group[0].text, options: options)
+            summaries = [summary]
         } else {
             // Summarize multiple items
             let texts = group.map { $0.text }
-            summary = try await summarizer.summarizeGroup(texts, type: .context, options: options)
+            summaries = try await summarizer.summarizeGroup(texts, type: .single, options: options)
         }
 
         // Create a new summary item
-        let summaryItem = ContextItem(text: summary, isSummary: true)
-        summarizedItems.append(summaryItem)
+        summaries.forEach { summary in
+            let summaryItem = ContextItem(text: summary, isSummary: true)
+            summarizedItems.append(summaryItem)
+        }
 
         // Mark the original items as summarized
         for item in group {

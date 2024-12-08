@@ -25,11 +25,13 @@ public class RSSParsingTask: WorkflowTask {
     /**
      Initializes the `RSSParsingTask` with the RSS feed data.
 
-     - Parameter feedData: The data of the RSS feed to parse.
+     - Parameters:
+        - name: Optionally pass the name of the task.
+        - feedData: The data of the RSS feed to parse.
      */
-    public init(feedData: Data) {
+    public init(name: String? = nil, feedData: Data) {
         super.init(
-            name: "Parse RSS Feed",
+            name: name,
             description: "Extract article links from the RSS feed",
             inputs: ["feedData": feedData]
         )
@@ -41,6 +43,10 @@ public class RSSParsingTask: WorkflowTask {
             markFailed()
             throw NSError(domain: "RSSParsingTask", code: 1, userInfo: [NSLocalizedDescriptionKey: "Missing or invalid RSS feed data"])
         }
+
+        print("Parsing RSS feed... \(feedData.count) bytes")
+        let feedString = String(data: feedData, encoding: .utf8) ?? ""
+        print("Feed data: \(feedString)")
 
         // Initialize the parser
         let parserDelegate = RSSParserDelegate()
@@ -128,6 +134,13 @@ fileprivate class RSSParserDelegate: NSObject, XMLParserDelegate {
                 guid: currentGUID
             )
             articles.append(article)
+
+            // Reset current variables for the next item
+            currentTitle = ""
+            currentLink = ""
+            currentDescription = ""
+            currentGUID = ""
+
             insideItem = false
         }
         currentElement = ""

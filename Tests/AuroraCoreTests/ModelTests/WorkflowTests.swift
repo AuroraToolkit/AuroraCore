@@ -75,6 +75,17 @@ final class WorkflowTests: XCTestCase {
         XCTAssertEqual(workflow.state, .notStarted, "Workflow should not be marked as completed if there are active tasks.")
     }
 
+    func testMarkWorkflowInProgress() {
+        // Given
+        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow")
+
+        // When
+        workflow.markInProgress()
+
+        // Then
+        XCTAssertEqual(workflow.state, .inProgress, "Workflow should be in progress after calling markInProgress.")
+    }
+
     func testResetWorkflow() {
         // Given
         let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow")
@@ -198,5 +209,65 @@ final class WorkflowTests: XCTestCase {
         XCTAssertEqual(workflow.tasks[0].status, .pending, "Task 1 should be reset to pending.")
         XCTAssertEqual(workflow.tasks[1].status, .pending, "Task 2 should be reset to pending.")
         XCTAssertEqual(workflow.state, .notStarted, "Workflow should be reset to not started after failure and reset.")
+    }
+
+    func testWorkflowWithMappings() async throws {
+        // Create tasks
+        let fetchTask = MockWorkflowTask(
+            name: "FetchURLTask",
+            description: "Fetch URL",
+            inputs: [:]
+        )
+        fetchTask.outputs = ["data": "Mocked data"]
+
+        let parseTask = MockWorkflowTask(
+            name: "RSSParsingTask",
+            description: "Parse RSS feed",
+            inputs: [:]
+        )
+        parseTask.outputs = ["articles": ["Article 1", "Article 2"]]
+
+        let summarizeTask = MockWorkflowTask(
+            name: "SummarizeTask",
+            description: "Summarize articles",
+            inputs: [:]
+        )
+        summarizeTask.outputs = ["summary": "Mocked summary"]
+
+        // Add tasks to workflow
+        let workflow = Workflow(name: "Test Workflow", description: "Fetch, parse, and summarize articles")
+        workflow.addTask(fetchTask)
+        workflow.addTask(parseTask)
+        workflow.addTask(summarizeTask)
+
+        // Define mappings
+        let mappings: WorkflowMappings = [
+            "RSSParsingTask": [
+                "data": "FetchURLTask.data"
+            ],
+            "SummarizeTask": [
+                "articles": "RSSParsingTask.articles"
+            ]
+        ]
+
+        // Initialize manager with workflow and mappings
+        let manager = WorkflowManager(workflow: workflow, mappings: mappings)
+
+        // Start the workflow
+        await manager.start()
+
+        // Validate workflow completion
+        if case .completed(_) = workflow.state {
+            XCTAssertTrue(true)
+        } else {
+            XCTFail("Workflow should be in the completed state.")
+        }
+
+        // Validate task inputs
+        XCTAssertEqual(parseTask.inputs["data"] as? String, "Mocked data", "Parse task should receive 'data' from FetchURLTask.")
+        XCTAssertEqual(summarizeTask.inputs["articles"] as? [String], ["Article 1", "Article 2"], "Summarize task should receive 'articles' from RSSParsingTask.")
+
+        // Validate final outputs if needed
+        XCTAssertEqual(summarizeTask.outputs["summary"] as? String, "Mocked summary", "Summarize task should produce a mocked summary.")
     }
 }

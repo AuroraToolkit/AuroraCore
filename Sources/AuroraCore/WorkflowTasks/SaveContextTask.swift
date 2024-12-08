@@ -26,14 +26,19 @@ public class SaveContextTask: WorkflowTask {
      Initializes a `SaveContextTask` with the context and filename.
 
      - Parameters:
+        - name: Optionally pass the name of the task.
         - context: The `Context` object to save.
         - filename: The name of the file (without extension) used for saving the context.
      */
-    public init(context: Context, filename: String) {
+    public init(name: String? = nil, context: Context, filename: String) {
         var inputs: [String: Any?] = [:]
         inputs["context"] = context
         inputs["filename"] = filename.hasSuffix(".json") ? filename : "\(filename).json"
-        super.init(name: "Save Context", description: "Save the context to disk", inputs: inputs)
+        super.init(
+            name: name,
+            description: "Save the context to disk",
+            inputs: inputs
+        )
     }
 
     /**

@@ -37,10 +37,19 @@ public class LLMTask: WorkflowTask {
         - prompt: The prompt that will be sent to the LLM service.
         - llmService: The LLM service that will handle the request.
      */
-    public init(name: String, description: String, inputs: [String: Any?] = [:], llmService: LLMServiceProtocol, request: LLMRequest, maxRetries: Int = 0) {
+    public init(
+        name: String? = nil,
+        description: String? = nil,
+        llmService: LLMServiceProtocol,
+        request: LLMRequest, maxRetries: Int = 0
+    ) {
         self.llmService = llmService
         self.request = request
-        super.init(name: name, description: description, inputs: inputs, maxRetries: maxRetries)
+        super.init(
+            name: name,
+            description: description ?? "Send a prompt to the LLM service",
+            maxRetries: maxRetries
+        )
     }
 
     /**

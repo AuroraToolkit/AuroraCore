@@ -34,6 +34,9 @@ public protocol WorkflowProtocol {
     @discardableResult
     func tryMarkCompleted() -> Bool
 
+    /// Updates the state of the workflow to `inProgress`.
+    func markInProgress()
+
     /// Updates the state of the workflow to `stopped`.
     func markStopped()
 
@@ -97,6 +100,15 @@ public class Workflow: WorkflowProtocol {
             logger.log("Cannot mark workflow as completed. There are still active tasks.")
             return false
         }
+    }
+
+    public func markInProgress() {
+        guard state.isNotStarted else {
+            logger.log("Cannot mark workflow as in progress. Current state: \(self.state)")
+            return
+        }
+        state = .inProgress
+        logger.log("Workflow marked as in progress.")
     }
 
     public func markStopped() {

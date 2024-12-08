@@ -22,13 +22,15 @@ public class FetchContextsTask: WorkflowTask {
     /**
      Initializes a `FetchContextsTask` with an optional list of filenames.
 
-     - Parameter filenames: An optional array of filenames (without extensions) specifying which contexts to retrieve.
-     
+     - Parameters:
+        - name: The name of the task.
+        - filenames: An optional array of filenames (without extensions) specifying which contexts to retrieve.
+
      - Returns: A `FetchContextsTask` instance.
      */
-    public init(filenames: [String]? = nil) {
+    public init(name: String? = nil, filenames: [String]? = nil) {
         super.init(
-            name: "Fetch Contexts",
+            name: name,
             description: "Fetch stored contexts from disk",
             inputs: ["filenames": filenames]
         )

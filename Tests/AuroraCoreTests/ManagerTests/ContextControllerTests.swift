@@ -111,6 +111,9 @@ final class ContextControllerTests: XCTestCase {
         // Given
         let content1 = String(repeating: "Item 1 ", count: 10) // 50 tokens
         let content2 = String(repeating: "Item 2 ", count: 10) // 50 tokens
+        mockSummarizer = MockSummarizer(expectedSummaries: ["Summary of Item 1", "Summary of Item 2"])
+        contextController = ContextController(llmService: mockService, summarizer: mockSummarizer)
+
         contextController.addItem(content: content1, creationDate: Date().addingTimeInterval(-8 * 24 * 60 * 60)) // 8 days old
         contextController.addItem(content: content2, creationDate: Date().addingTimeInterval(-8 * 24 * 60 * 60)) // 8 days old
 
@@ -118,9 +121,9 @@ final class ContextControllerTests: XCTestCase {
         try await contextController.summarizeOlderContext()
 
         // Then
-        XCTAssertEqual(contextController.summarizedContext().count, 1, "There should be 1 summary.")
-        XCTAssertEqual(contextController.fullHistory().count, 2, "Full history should include 2 original items.")
-        XCTAssertTrue(contextController.fullHistory().first?.isSummarized ?? false, "The original items should be marked as summarized.")
+        XCTAssertEqual(contextController.summarizedContext().count, 2, "There should be 2 summarized items.")
+        XCTAssertEqual(contextController.summarizedContext()[0].text, "Summary of Item 1", "The first summary should match the expected output.")
+        XCTAssertEqual(contextController.summarizedContext()[1].text, "Summary of Item 2", "The second summary should match the expected output.")
     }
 
     func testFullHistoryRetrieval() async throws {
@@ -139,12 +142,13 @@ final class ContextControllerTests: XCTestCase {
 
     func testSummarizedContextRetrieval() async throws {
         // Given
-        var context = Context(llmServiceVendor: mockService.name)
         let content1 = String(repeating: "Item 1 ", count: 10)
         let content2 = String(repeating: "Item 2 ", count: 1000)
-        context.addItem(content: content1, creationDate: Date().addingTimeInterval(-8 * 24 * 60 * 60)) // 8 days old
-        context.addItem(content: content2, creationDate: Date().addingTimeInterval(-8 * 24 * 60 * 60)) // 8 days old
-        let contextController = ContextController(context: context, llmService: mockService, summarizer: MockSummarizer())
+        mockSummarizer = MockSummarizer(expectedSummaries: ["Summary of 2 items"])
+        contextController = ContextController(llmService: mockService, summarizer: mockSummarizer)
+
+        contextController.addItem(content: content1, creationDate: Date().addingTimeInterval(-8 * 24 * 60 * 60)) // 8 days old
+        contextController.addItem(content: content2, creationDate: Date().addingTimeInterval(-8 * 24 * 60 * 60)) // 8 days old
 
         // When
         try await contextController.summarizeOlderContext()
@@ -197,6 +201,9 @@ final class ContextControllerTests: XCTestCase {
         // Given
         let item1 = ContextItem(text: String(repeating: "A", count: 2000), creationDate: Date().addingTimeInterval(-8 * 24 * 60 * 60)) // 8 days old
         let item2 = ContextItem(text: String(repeating: "B", count: 2000), creationDate: Date().addingTimeInterval(-8 * 24 * 60 * 60)) // 8 days old
+        mockSummarizer = MockSummarizer(expectedSummaries: ["Summary of 2 items"])
+        contextController = ContextController(llmService: mockService, summarizer: mockSummarizer)
+
         contextController.addItem(content: item1.text, creationDate: item1.creationDate)
         contextController.addItem(content: item2.text, creationDate: item2.creationDate)
 
@@ -206,6 +213,7 @@ final class ContextControllerTests: XCTestCase {
         // Then
         XCTAssertEqual(contextController.fullHistory().count, 2, "Full history should contain the original items.")
         XCTAssertEqual(contextController.summarizedContext().count, 1, "A summary should be created for the two items.")
+        XCTAssertEqual(contextController.summarizedContext().first?.text, "Summary of 2 items", "The summary should match the expected grouped result.")
     }
 
     func testSummarizeOlderContextWithSingleItem() async throws {
@@ -226,6 +234,9 @@ final class ContextControllerTests: XCTestCase {
         // Given
         let oldItem1 = ContextItem(text: "Old item 1", creationDate: Date().addingTimeInterval(-8 * 24 * 60 * 60)) // 8 days old
         let oldItem2 = ContextItem(text: "Old item 2", creationDate: Date().addingTimeInterval(-8 * 24 * 60 * 60)) // 8 days old
+        mockSummarizer = MockSummarizer(expectedSummaries: ["Summary of 2 items"])
+        contextController = ContextController(llmService: mockService, summarizer: mockSummarizer)
+
         contextController.addItem(content: oldItem1.text, creationDate: oldItem1.creationDate)
         contextController.addItem(content: oldItem2.text, creationDate: oldItem2.creationDate)
 
@@ -235,8 +246,7 @@ final class ContextControllerTests: XCTestCase {
         // Then
         XCTAssertEqual(contextController.summarizedContext().count, 1, "There should be 1 summarized item.")
         XCTAssertEqual(contextController.summarizedContext().first?.text, "Summary of 2 items", "Multiple items should be summarized together.")
-        XCTAssertTrue(contextController.getItems().first?.isSummarized ?? false, "The first item should be marked as summarized.")
-        XCTAssertTrue(contextController.getItems()[1].isSummarized, "The second item should be marked as summarized.")
+        XCTAssertTrue(contextController.getItems().allSatisfy { $0.isSummarized }, "All original items should be marked as summarized.")
     }
 
     // Test updating the LLM service

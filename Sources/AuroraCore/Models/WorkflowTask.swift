@@ -24,7 +24,7 @@ public protocol WorkflowTaskProtocol {
     var status: TaskStatus { get set }
 
     /// The inputs required by the task.
-    var inputs: [String: Any?] { get }
+    var inputs: [String: Any?] { get set }
 
     /// The outputs produced by the task.
     var outputs: [String: Any] { get set }
@@ -97,14 +97,22 @@ public class WorkflowTask: WorkflowTaskProtocol {
         - maxRetries: The maximum number of retries allowed for this task.
         - status: The initial status of the task (default is `.pending`).
      */
-    public init(name: String, description: String, inputs: [String: Any?] = [:], maxRetries: Int = 0, status: TaskStatus = .pending) {
+    public init(
+        name: String? = nil,
+        description: String,
+        inputs: [String: Any?] = [:],
+        maxRetries: Int = 0,
+        status: TaskStatus = .pending,
+        executeBlock: (([String: Any]) async throws -> [String: Any])? = nil
+    ) {
         self.id = UUID()
-        self.name = name
+        self.name = name ?? String(describing: type(of: self)) // Default to the class name
         self.description = description
         self.inputs = inputs
         self.status = status
         self.creationDate = Date()
         self.maxRetries = maxRetries
+        self.executeBlock = executeBlock
     }
 
 
@@ -165,7 +173,7 @@ public class WorkflowTask: WorkflowTaskProtocol {
     }
 
     public func updateOutputs(with newOutputs: [String: Any]) {
-        self.outputs.merge(newOutputs) { (_, new) in new }
+        self.outputs.merge(newOutputs, uniquingKeysWith: { $1 })
     }
 }
 

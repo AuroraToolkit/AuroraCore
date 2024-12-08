@@ -16,7 +16,7 @@ import Foundation
  - completed: The workflow has successfully completed all tasks.
  - failed: The workflow has failed after exhausting all retries for a task.
  */
-public enum WorkflowState: Equatable {
+public enum WorkflowState: Equatable, CustomStringConvertible {
     case notStarted
     case inProgress
     case stopped(Date)
@@ -47,5 +47,15 @@ public enum WorkflowState: Equatable {
     public var isFailed: Bool {
         if case .failed = self { return true }
         return false
+    }
+
+    public var description: String {
+        switch self {
+        case .notStarted: return "Not Started"
+        case .inProgress: return "In Progress"
+        case .stopped(let date): return "Stopped on \(date)"
+        case .completed(let date): return "Completed on \(date)"
+        case .failed(let date, let retries): return "Failed on \(date) after \(retries) retries"
+        }
     }
 }

@@ -8,6 +8,9 @@
 import Foundation
 import os.log
 
+/// A typealias for a dictionary mapping task names to their corresponding input mappings.
+public typealias WorkflowMappings = [String: [String: String]]
+
 /**
  A protocol defining the essential properties and behaviors of a workflow manager, responsible for executing and managing workflows.
  */
@@ -17,6 +20,9 @@ public protocol WorkflowManagerProtocol {
 
     /// Logger instance for logging workflow events.
     var logger: Logger { get }
+
+    /// A dictionary of the final outputs of the workflow.
+    var finalOutputs: [String: Any] { get }
 
     // Workflow-related functions
 
@@ -57,22 +63,32 @@ public class WorkflowManager: WorkflowManagerProtocol {
     public var workflow: WorkflowProtocol
     public let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "WorkflowManager")
 
+    // Static mapping of task names to their corresponding input mappings
+    public let mappings: [String: [String: String]]
+
+    // Final outputs of the workflow
+    public var finalOutputs: [String: Any] = [:]
+
     /**
      Initializes the workflow manager with a specific workflow.
 
-     - Parameter workflow: The workflow that the manager will execute.
+     - Parameters:
+        - workflow: The workflow that the manager will execute.
+        - mappings: A dictionary mapping task names to their corresponding input mappings.
      */
-    public init(workflow: WorkflowProtocol) {
+    public init(workflow: WorkflowProtocol, mappings: WorkflowMappings = [:]) {
         self.workflow = workflow
+        self.mappings = mappings
     }
 
     // Workflow-related functions
     public func start() async {
         guard workflow.state.isNotStarted || workflow.state.isInProgress else {
-            logger.log("Cannot start workflow. Current state: \(String(describing: self.workflow.state))")
+            logger.log("Cannot start workflow. Current state: \(self.workflow.state)")
             return
         }
 
+        workflow.markInProgress()
         await executeCurrentTask()
     }
 
@@ -89,8 +105,8 @@ public class WorkflowManager: WorkflowManagerProtocol {
     }
 
     public func stopWorkflow() {
-        guard workflow.state.isInProgress else {
-            logger.log("Workflow already stopped or completed.")
+        guard workflow.state.isNotStarted || workflow.state.isInProgress else {
+            logger.log("Workflow already stopped or completed. Current state: \(self.workflow.state)")
             return
         }
 
@@ -105,7 +121,7 @@ public class WorkflowManager: WorkflowManagerProtocol {
     // Task-related functions
     public func executeCurrentTask() async {
         guard workflow.state.isNotStarted || workflow.state.isInProgress else {
-            logger.log("Workflow is not in progress.")
+            logger.log("Workflow is unable to continue. Current state is \(self.workflow.state)")
             return
         }
 
@@ -117,6 +133,7 @@ public class WorkflowManager: WorkflowManagerProtocol {
         }
 
         var task = workflow.tasks[workflow.currentTaskIndex]
+        populateInputs(for: &task)
 
         if task.hasRequiredInputs() {
             do {
@@ -136,7 +153,7 @@ public class WorkflowManager: WorkflowManagerProtocol {
     public func completeTask(_ task: WorkflowTaskProtocol, outputs: [String: Any]) async {
         var updatedTask = task
         updatedTask.markCompleted()
-        updatedTask.outputs.merge(outputs, uniquingKeysWith: { $1 }) // Update task's outputs
+        updatedTask.updateOutputs(with: outputs)
         workflow.updateTask(updatedTask, at: workflow.currentTaskIndex)
 
         logger.log("Task \(task.name) completed with outputs: \(outputs)")
@@ -146,7 +163,9 @@ public class WorkflowManager: WorkflowManagerProtocol {
             await executeCurrentTask()
         } else {
             workflow.tryMarkCompleted()
+            finalOutputs = outputs
             logger.log("Workflow completed.")
+            logger.log("Final outputs: \(outputs)")
         }
     }
 
@@ -163,6 +182,27 @@ public class WorkflowManager: WorkflowManagerProtocol {
             workflow.updateTask(failedTask, at: workflow.currentTaskIndex)
             workflow.markFailed(retryCount: failedTask.retryCount)
             logger.log("Task \(failedTask.name) failed after \(failedTask.maxRetries) retries. Stopping workflow.")
+        }
+    }
+
+    private func populateInputs(for task: inout WorkflowTaskProtocol) {
+        let taskName = task.name
+        logger.log("Populating inputs for task: \(taskName)")
+        guard let taskMappings = mappings[task.name] else { return }
+        for (inputKey, sourceMapping) in taskMappings {
+            let parts = sourceMapping.split(separator: ".")
+            guard parts.count == 2 else { continue }
+
+            let sourceTaskName = String(parts[0])
+            let sourceOutputKey = String(parts[1])
+
+            let sourceTask = workflow.tasks.first(where: { $0.name == sourceTaskName })
+            if let value = sourceTask?.outputs[sourceOutputKey] {
+                logger.log("Populating input '\(inputKey)' for task '\(taskName)' with value from '\(sourceTaskName).\(sourceOutputKey)': \(String(describing: value))")
+                task.inputs[inputKey] = value
+            } else {
+                logger.log("Failed to populate input '\(inputKey)' for task '\(taskName)'. Source '\(sourceTaskName).\(sourceOutputKey)' not found or empty.")
+            }
         }
     }
 }

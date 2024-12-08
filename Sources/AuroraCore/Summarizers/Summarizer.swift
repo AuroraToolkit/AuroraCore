@@ -23,38 +23,94 @@ public class Summarizer: SummarizerProtocol {
         self.llmService = llmService
     }
 
-    public func summarize(_ text: String, type: SummaryType, options: SummarizerOptions? = nil) async throws -> String {
+    /**
+        Summarizes a text using the LLM service.
+
+        - Parameters:
+            - text: The text to summarize.
+            - options: The summarization options to configure the LLM response.
+
+        - Returns: The summarized text.
+     */
+    public func summarize(_ text: String, options: SummarizerOptions? = nil) async throws -> String {
         let messages: [LLMMessage] = [
-            LLMMessage(role: .system, content: summaryInstruction(for: type)),
+            LLMMessage(role: .system, content: "Summarize the following text."),
             LLMMessage(role: .user, content: text)
         ]
 
         return try await sendToLLM(messages, options: options)
     }
 
-    public func summarizeGroup(_ texts: [String], type: SummaryType, options: SummarizerOptions? = nil) async throws -> String {
-        let combinedText = texts.joined(separator: "\n")
-        let messages: [LLMMessage] = [
-            LLMMessage(role: .system, content: summaryInstruction(for: type)),
-            LLMMessage(role: .user, content: combinedText)
-        ]
+    /**
+        Summarizes multiple texts using the LLM service.
 
-        return try await sendToLLM(messages, options: options)
+        - Parameters:
+            - texts: An array of texts to summarize.
+            - type: The type of summary to generate (e.g., `.single`, or `.multiple`).
+            - options: The summarization options to configure the LLM response.
+
+        - Returns: An array of summarized texts corresponding to the input texts.
+     */
+    public func summarizeGroup(_ texts: [String], type: SummaryType, options: SummarizerOptions? = nil) async throws -> [String] {
+        guard !texts.isEmpty else {
+            throw NSError(domain: "Summarizer", code: 1, userInfo: [NSLocalizedDescriptionKey: "No texts provided for summarization."])
+        }
+
+        switch type {
+        case .single:
+            // Combine texts into one string and use the existing `summarize` function
+            let combinedText = texts.joined(separator: "\n")
+            let summary = try await summarize(combinedText, options: options)
+            return [summary]
+
+        case .multiple:
+            // Use JSON input for structured summarization of individual texts
+            let jsonInput: [String: Any] = ["texts": texts]
+            let jsonData = try JSONSerialization.data(withJSONObject: jsonInput, options: [])
+            let jsonString = String(data: jsonData, encoding: .utf8)!
+
+            // Create messages for the LLM
+            let messages: [LLMMessage] = [
+                LLMMessage(role: .system, content: summaryInstruction(for: .multiple)),
+                LLMMessage(role: .user, content: jsonString)
+            ]
+
+            // Send the request to the LLM
+            let response = try await sendToLLM(messages, options: options)
+
+            // Parse the JSON response
+            guard let responseData = response.data(using: .utf8),
+                  let jsonResponse = try? JSONSerialization.jsonObject(with: responseData) as? [String: Any],
+                  let summaries = jsonResponse["summaries"] as? [String] else {
+                throw NSError(domain: "Summarizer", code: 2, userInfo: [NSLocalizedDescriptionKey: "Invalid JSON response from LLM"])
+            }
+
+            return summaries
+        }
     }
 
     /**
      Constructs the appropriate system-level instruction based on the summary type.
 
-     - Parameter type: The type of summary to generate (e.g., general, context).
-     
+     - Parameter type: The type of summary to generate (e.g., `.single`, or `.multiple`).
+
      - Returns: The appropriate system instruction for the summary type.
      */
     private func summaryInstruction(for type: SummaryType) -> String {
         switch type {
-        case .general:
-            return "Summarize the following text."
-        case .context:
-            return "Summarize the following context."
+        case .single:
+            return "Summarize the following text:\n"
+        case .multiple:
+            return """
+        You are an assistant that summarizes text. I will provide a JSON object containing a list of texts under the key "texts". 
+        For each text, provide a concise summary in the same JSON format under the key "summaries".
+
+        For example:
+        Input: {"texts": ["Text 1", "Text 2"]}
+        Output: {"summaries": ["Summary of Text 1", "Summary of Text 2"]}
+
+        Here is the input:
+        """
         }
     }
 
@@ -70,10 +126,11 @@ public class Summarizer: SummarizerProtocol {
      - Throws: An error if the LLM service fails to process the request.
      */
     private func sendToLLM(_ messages: [LLMMessage], options: SummarizerOptions? = nil) async throws -> String {
+        let maxTokens = min(options?.maxTokens ?? llmService.maxOutputTokens, llmService.maxOutputTokens)
         let request = LLMRequest(
             messages: messages,
             temperature: options?.temperature ?? 0.7,
-            maxTokens: options?.maxTokens ?? 256,
+            maxTokens: maxTokens,
             model: options?.model,
             stream: options?.stream ?? false
         )

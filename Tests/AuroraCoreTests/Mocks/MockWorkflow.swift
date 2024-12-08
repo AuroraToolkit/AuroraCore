@@ -13,13 +13,15 @@ class MockWorkflow: WorkflowProtocol {
     var name: String
     var description: String
     var tasks: [WorkflowTaskProtocol]
+    var mappings: WorkflowMappings
     var currentTaskIndex: Int = 0
     var state: WorkflowState = .notStarted
 
-    init(name: String, description: String, tasks: [WorkflowTaskProtocol] = []) {
+    init(name: String, description: String, tasks: [WorkflowTaskProtocol] = [], mappings: WorkflowMappings = [:]) {
         self.name = name
         self.description = description
         self.tasks = tasks
+        self.mappings = mappings
     }
 
     internal func setState(_ state: WorkflowState) {
@@ -44,6 +46,9 @@ class MockWorkflow: WorkflowProtocol {
         return false
     }
 
+    func markInProgress() {
+        state = .inProgress
+    }
     func markStopped() {
         state = .stopped(Date())
     }
