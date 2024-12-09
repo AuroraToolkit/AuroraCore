@@ -97,18 +97,18 @@ public class Workflow: WorkflowProtocol {
             self.state = .completed(Date())
             return true
         } else {
-            logger.log("Cannot mark workflow as completed. There are still active tasks.")
+            logger.debug("Workflow \(self.name): Cannot mark workflow as completed. There are still active tasks.")
             return false
         }
     }
 
     public func markInProgress() {
         guard state.isNotStarted else {
-            logger.log("Cannot mark workflow as in progress. Current state: \(self.state)")
+            logger.debug("Workflow \(self.name): Cannot mark workflow as in progress. Current state: \(self.state)")
             return
         }
         state = .inProgress
-        logger.log("Workflow marked as in progress.")
+        logger.debug("Workflow \(self.name): Workflow marked as in progress.")
     }
 
     public func markStopped() {
@@ -209,7 +209,7 @@ public class Workflow: WorkflowProtocol {
 
         if failedTask.canRetry() {
             failedTask.incrementRetryCount()
-            logger.log("Retrying task \(failedTask.name). Attempt \(failedTask.retryCount) of \(failedTask.maxRetries).")
+            logger.debug("Workflow \(self.name): Retrying task \(failedTask.name). Attempt \(failedTask.retryCount) of \(failedTask.maxRetries).")
 
             failedTask.resetTask()
             updateTask(failedTask, at: currentTaskIndex)
@@ -217,7 +217,7 @@ public class Workflow: WorkflowProtocol {
         } else {
             failedTask.markFailed()
             updateTask(failedTask, at: currentTaskIndex)
-            logger.log("Task \(failedTask.name) failed after \(failedTask.retryCount) retries. Stopping workflow.")
+            logger.debug("Workflow \(self.name): Task \(failedTask.name) failed after \(failedTask.retryCount) retries. Stopping workflow.")
             markFailed(retryCount: failedTask.retryCount)
         }
     }

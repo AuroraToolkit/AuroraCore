@@ -131,18 +131,16 @@ public class OpenAIService: LLMServiceProtocol {
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
 
-        logger.log("OpenAIService \(#function) Sending request: \(body)")
+        logger.debug("OpenAIService [sendRequest] Sending request with keys: \(body.keys)")
 
         // Non-streaming response handling
-        let (data, response) = try await URLSession.shared.data(for: urlRequest)
+        let (data, response) = try await urlSession.data(for: urlRequest)
 
         guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
             throw LLMServiceError.invalidResponse(statusCode: (response as? HTTPURLResponse)?.statusCode ?? -1)
         }
 
-        if let jsonString = String(data: data, encoding: .utf8) {
-            logger.log("OpenAIService \(#function) Received response: \(jsonString)")
-        }
+        logger.debug("OpenAIService [sendRequest] Response received from OpenAI.")
 
         let decodedResponse = try JSONDecoder().decode(OpenAILLMResponse.self, from: data)
         let finalResponse = decodedResponse.changingVendor(to: vendor)
@@ -203,7 +201,7 @@ public class OpenAIService: LLMServiceProtocol {
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
 
-        logger.log("OpenAIService \(#function) Sending streaming request.")
+        logger.debug("OpenAIService [sendStreamingRequest] Sending streaming request with keys: \(body.keys).")
 
         return try await withCheckedThrowingContinuation { continuation in
             let streamingDelegate = StreamingDelegate(
@@ -240,7 +238,7 @@ public class OpenAIService: LLMServiceProtocol {
         func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
             guard let responseText = String(data: data, encoding: .utf8) else { return }
 
-            logger.log("Response: \(responseText)")
+            logger.debug("Streaming response received. Processing...")
 
             for line in responseText.split(separator: "\n") {
                 if line == "data: [DONE]" {
@@ -263,7 +261,6 @@ public class OpenAIService: LLMServiceProtocol {
                 // Remove `data:` prefix and decode JSON
                 if line.starts(with: "data:") {
                     let jsonString = line.replacingOccurrences(of: "data: ", with: "")
-                    logger.log("JSON string: \(jsonString)")
 
                     if let jsonData = jsonString.data(using: .utf8) {
                         do {
@@ -275,7 +272,7 @@ public class OpenAIService: LLMServiceProtocol {
                                 onPartialResponse(partialContent)
                             }
                         } catch {
-                            logger.log("Decoding error: \(error)")
+                            logger.debug("Decoding error: \(error)")
                         }
                     }
                 }

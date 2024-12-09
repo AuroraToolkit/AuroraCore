@@ -143,23 +143,16 @@ public class OllamaService: LLMServiceProtocol {
         urlRequest.httpBody = jsonData
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        logger.log("OllamaService \(#function) Sending request: \(body)")
+        logger.debug("OllamaService [sendRequest] Sending request with keys: \(body.keys)")
 
-        // Execute the request
+        // Non-streaming response handling
         let (data, response) = try await urlSession.data(for: urlRequest)
 
-        // Ensure the response is a valid HTTP response
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw LLMServiceError.invalidResponse(statusCode: -1)
+        guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
+            throw LLMServiceError.invalidResponse(statusCode: (response as? HTTPURLResponse)?.statusCode ?? -1)
         }
 
-        guard (200...299).contains(httpResponse.statusCode) else {
-            throw LLMServiceError.invalidResponse(statusCode: httpResponse.statusCode)
-        }
-
-        if let jsonString = String(data: data, encoding: .utf8) {
-            logger.log("OllamaService \(#function) Received response: \(jsonString)")
-        }
+        logger.debug("OpenAIService [sendRequest] Response received from Ollama.")
 
         // Attempt to decode the response from the Ollama API
         do {
@@ -215,15 +208,13 @@ public class OllamaService: LLMServiceProtocol {
             "stream": true
         ]
 
-        logger.log("OllamaService \(#function) Sending request: \(body)")
-
         let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         urlRequest.httpBody = jsonData
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        logger.log("OllamaService \(#function) Sending streaming request.")
+        logger.debug("OllamaService [sendRequest] Sending streaming request with keys: \(body.keys).")
 
         return try await withCheckedThrowingContinuation { continuation in
             let streamingDelegate = StreamingDelegate(
@@ -258,9 +249,7 @@ public class OllamaService: LLMServiceProtocol {
         }
 
         func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-            guard let responseText = String(data: data, encoding: .utf8) else { return }
-
-            logger.log("OllamaService \(#function) Received response: \(responseText)")
+            logger.debug("Streaming response received. Processing...")
 
             do {
                 let partialResponse = try JSONDecoder().decode(OllamaLLMResponse.self, from: data)
@@ -282,7 +271,7 @@ public class OllamaService: LLMServiceProtocol {
                     return
                 }
             } catch {
-                logger.log("Decoding error: \(error)")
+                logger.debug("Decoding error: \(error)")
             }
         }
 

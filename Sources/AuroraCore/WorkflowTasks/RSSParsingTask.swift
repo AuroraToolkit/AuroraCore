@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import os.log
 
 /**
  `RSSParsingTask` parses an RSS feed and extracts the article links.
@@ -21,6 +22,7 @@ public class RSSParsingTask: WorkflowTask {
     private var articleLinks: [String] = []
     private var currentElement: String = ""
     private var currentLink: String?
+    private let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "RSSParsingTask")
 
     /**
      Initializes the `RSSParsingTask` with the RSS feed data.
@@ -41,12 +43,12 @@ public class RSSParsingTask: WorkflowTask {
         // Validate the input data
         guard let feedData = inputs["feedData"] as? Data else {
             markFailed()
+            logger.error("RSSParsingTask \(self.name): Missing or invalid RSS feed data")
             throw NSError(domain: "RSSParsingTask", code: 1, userInfo: [NSLocalizedDescriptionKey: "Missing or invalid RSS feed data"])
         }
 
-        print("Parsing RSS feed... \(feedData.count) bytes")
+        logger.debug("RSSParsingTask \(self.name): Parsing RSS feed... \(feedData.count) bytes")
         let feedString = String(data: feedData, encoding: .utf8) ?? ""
-        print("Feed data: \(feedString)")
 
         // Initialize the parser
         let parserDelegate = RSSParserDelegate()
@@ -56,6 +58,7 @@ public class RSSParsingTask: WorkflowTask {
         // Start parsing
         guard parser.parse() else {
             markFailed()
+            logger.error("RSSParsingTask \(self.name): Failed to parse RSS feed")
             throw NSError(domain: "RSSParsingTask", code: 2, userInfo: [NSLocalizedDescriptionKey: "Failed to parse RSS feed"])
         }
 

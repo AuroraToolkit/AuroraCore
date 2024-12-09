@@ -1,5 +1,5 @@
 //
-//  ArticleSummariesWorkflowExample.swift
+//  TVScriptWorkflowExample.swift
 //  AuroraCore
 //
 //  Created by Dan Murrell Jr on 12/3/24.
@@ -9,9 +9,9 @@ import Foundation
 import AuroraCore
 
 /**
- Example workflow demonstrating fetching an RSS feed, summarizing articles, and generating a structured document using AuroraCore.
+ Example workflow demonstrating fetching an RSS feed, summarizing articles, and generating a news anchor script using AuroraCore.
  */
-struct ArticleSummariesWorkflowExample {
+struct TVScriptWorkflowExample {
     func execute() async {
 
         // Set your OpenAI API key as an environment variable to run this example, e.g., `export OPENAI_API_KEY="your-api-key"`
@@ -26,8 +26,8 @@ struct ArticleSummariesWorkflowExample {
 
         // Workflow initialization
         let workflow = Workflow(
-            name: "AP Tech Articles Workflow",
-            description: "Fetch, summarize, and publish AP Tech articles"
+            name: "AP Tech News Script Workflow",
+            description: "Fetch and summarize AP Tech News articles for a TV news broadcast."
         )
 
         // Step 1: Fetch the RSS feed

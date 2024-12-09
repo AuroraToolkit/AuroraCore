@@ -142,7 +142,7 @@ public class AnthropicService: LLMServiceProtocol {
             body["system"] = systemMessage
         }
 
-        logger.log("AnthropicService \(#function) Sending request: \(body)")
+        logger.debug("AnthropicService [sendRequest] Sending request with keys: \(body.keys)")
 
         let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
 
@@ -163,9 +163,7 @@ public class AnthropicService: LLMServiceProtocol {
             throw LLMServiceError.invalidResponse(statusCode: (response as? HTTPURLResponse)?.statusCode ?? -1)
         }
 
-        if let jsonString = String(data: data, encoding: .utf8) {
-            logger.log("AnthropicService \(#function) Received response: \(jsonString)")
-        }
+        logger.debug("AnthropicService [sendRequest] Response received from Anthropic")
 
         let decodedResponse = try JSONDecoder().decode(AnthropicLLMResponse.self, from: data)
         let finalResponse = decodedResponse.changingVendor(to: vendor)
@@ -220,7 +218,7 @@ public class AnthropicService: LLMServiceProtocol {
         let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
 
         guard let url = URL(string: "\(baseURL)/v1/messages") else {
-            logger.log("Invalid URL: \(self.baseURL)/v1/messages")
+            logger.debug("Invalid URL: \(self.baseURL)/v1/messages")
             throw LLMServiceError.invalidURL
         }
 
@@ -231,7 +229,7 @@ public class AnthropicService: LLMServiceProtocol {
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")  // Required Anthropic version header
 
-        logger.log("AnthropicService \(#function) Sending streaming request: \(body)")
+        logger.debug("AnthropicService [sendStreamingRequest] Sending streaming request with keys: \(body.keys)")
 
         return try await withCheckedThrowingContinuation { continuation in
             let streamingDelegate = StreamingDelegate(
@@ -265,23 +263,23 @@ public class AnthropicService: LLMServiceProtocol {
             self.model = model
             self.onPartialResponse = onPartialResponse
             self.continuation = continuation
-            logger.log("AnthropicService \(#function) StreamingDelegate initialized for model: \(model)")
+            logger.debug("AnthropicService [StreamingDelegate] initialized for model: \(model)")
         }
 
         func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
             guard let eventText = String(data: data, encoding: .utf8) else {
-                logger.log("AnthropicService \(#function) Failed to decode data as UTF-8")
+                logger.debug("AnthropicService Failed to decode data as UTF-8")
                 return
             }
 
-            logger.log("AnthropicService \(#function) Received event: \(eventText)")
+            logger.debug("AnthropicService [StreamingDelegate] streaming event received")
 
             let events = eventText.components(separatedBy: "\n\n")
             for event in events {
                 guard !event.isEmpty else { continue }
 
                 if event.contains("event: message_stop") {
-                    logger.log("AnthropicService \(#function) Received message_stop event.")
+                    logger.debug("AnthropicService [StreamingDelegate] Received message_stop event.")
                     isComplete = true
                     break
                 } else if let dataRange = event.range(of: "data: ") {
@@ -295,7 +293,7 @@ public class AnthropicService: LLMServiceProtocol {
                                 accumulatedContent.append(content)
                                 onPartialResponse(text)
 
-                                logger.log("AnthropicService \(#function) Partial response: \(text)")
+                                logger.debug("AnthropicService [StreamingDelegate] Partial response: \(text)")
                             }
 
                             if let usage = streamingResponse.usage {
@@ -303,11 +301,11 @@ public class AnthropicService: LLMServiceProtocol {
                                 outputTokens = usage.outputTokens ?? 0
                             }
                         } catch {
-                            logger.log("AnthropicService \(#function) Failed to decode partial response: \(error.localizedDescription)")
+                            logger.debug("AnthropicService [StreamingDelegate] Failed to decode partial response: \(error.localizedDescription)")
                         }
                     }
                 } else {
-                    logger.log("AnthropicService \(#function) Unhandled event type: \(event)")
+                    logger.debug("AnthropicService [StreamingDelegate] Unhandled event type: \(event)")
                 }
             }
 
@@ -328,10 +326,10 @@ public class AnthropicService: LLMServiceProtocol {
 
         func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
             if let error = error {
-                logger.log("AnthropicService \(#function) Task completed with error: \(error.localizedDescription)")
+                logger.debug("AnthropicService [StreamingDelegate] Task completed with error: \(error.localizedDescription)")
                 continuation.resume(throwing: error)
             } else if !isComplete {
-                logger.log("AnthropicService \(#function) Task completed without receiving a message_stop event.")
+                logger.debug("AnthropicService [StreamingDelegate] Task completed without receiving a message_stop event.")
                 continuation.resume(throwing: LLMServiceError.custom(message: "Streaming response ended prematurely."))
             }
         }

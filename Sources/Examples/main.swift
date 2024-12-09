@@ -11,7 +11,7 @@ import AuroraCore
     - OPENAI_API_KEY: Your OpenAI API key
     - ANTHROPIC_API_KEY: Your Anthropic API key
 
-    You can set these environment variables using the following commands:
+    You can set these environment variables in the `Examples` scheme or by using the following commands:
     ```
     export OPENAI_API_KEY="your-openai-api-key"
     export ANTHROPIC_API_KEY="your-anthropic-api-key"
@@ -57,4 +57,4 @@ await DomainRoutingExample().execute()
 print("--------------------\n")
 
 print("Article Summarization Example:\n")
-await ArticleSummariesWorkflowExample().execute()
+await TVScriptWorkflowExample().execute()
