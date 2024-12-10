@@ -43,7 +43,8 @@ public class SummarizeStringsTask: WorkflowTask {
         self.strings = strings
         super.init(
             name: name,
-            description: "Summarize a list of strings using the LLM service"
+            description: "Summarize a list of strings using the LLM service",
+            inputs: ["strings": strings]
         )
     }
 

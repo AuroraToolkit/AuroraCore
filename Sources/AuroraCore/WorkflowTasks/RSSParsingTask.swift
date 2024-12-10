@@ -41,14 +41,13 @@ public class RSSParsingTask: WorkflowTask {
 
     public override func execute() async throws -> [String: Any] {
         // Validate the input data
-        guard let feedData = inputs["feedData"] as? Data else {
+        guard let feedData = inputs["feedData"] as? Data, !feedData.isEmpty else {
             markFailed()
             logger.error("RSSParsingTask \(self.name): Missing or invalid RSS feed data")
             throw NSError(domain: "RSSParsingTask", code: 1, userInfo: [NSLocalizedDescriptionKey: "Missing or invalid RSS feed data"])
         }
 
         logger.debug("RSSParsingTask \(self.name): Parsing RSS feed... \(feedData.count) bytes")
-        let feedString = String(data: feedData, encoding: .utf8) ?? ""
 
         // Initialize the parser
         let parserDelegate = RSSParserDelegate()
@@ -129,14 +128,18 @@ fileprivate class RSSParserDelegate: NSObject, XMLParserDelegate {
 
     func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName: String?) {
         if elementName == "item" {
-            // Store the parsed article details
-            let article = RSSArticle(
-                title: currentTitle,
-                link: currentLink,
-                description: currentDescription,
-                guid: currentGUID
-            )
-            articles.append(article)
+            // Validate the article before adding. Skip if title or link is empty
+            if !currentTitle.isEmpty && !currentLink.isEmpty {
+                let article = RSSArticle(
+                    title: currentTitle,
+                    link: currentLink,
+                    description: currentDescription,
+                    guid: currentGUID
+                )
+                articles.append(article)
+            } else {
+                print("Skipping invalid article with title: '\(currentTitle)' and link: '\(currentLink)'")
+            }
 
             // Reset current variables for the next item
             currentTitle = ""

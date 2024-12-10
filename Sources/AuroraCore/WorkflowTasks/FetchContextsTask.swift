@@ -51,23 +51,27 @@ public class FetchContextsTask: WorkflowTask {
 
             // Retrieve the filenames from inputs if available, otherwise fetch all files
             let filenames = inputs["filenames"] as? [String]
+            let existingFilenames = try FileManager.default.contentsOfDirectory(at: documentDirectory, includingPropertiesForKeys: nil)
+                .map { $0.lastPathComponent.lowercased() } // Normalize filenames to lowercase
+
             let contextFiles: [URL]
             if let filenames = filenames {
                 // Fetch only the specified context files
                 contextFiles = filenames.compactMap { filename in
-                    // Only append .json if the filename doesn't already have it
-                    let properFilename = filename.hasSuffix(".json") ? filename : "\(filename).json"
-                    let fileURL = documentDirectory.appendingPathComponent(properFilename)
-                    return FileManager.default.fileExists(atPath: fileURL.path) ? fileURL : nil
+                    let normalizedFilename = filename.hasSuffix(".json") ? filename.lowercased() : "\(filename).json".lowercased()
+                    if let matchingFile = existingFilenames.first(where: { $0 == normalizedFilename }) {
+                        return documentDirectory.appendingPathComponent(matchingFile)
+                    }
+                    return nil
                 }
             } else {
                 // Fetch all `.json` files in the directory if no specific filenames are provided
                 let fileURLs = try FileManager.default.contentsOfDirectory(at: documentDirectory, includingPropertiesForKeys: nil)
-                contextFiles = fileURLs.filter { $0.pathExtension == "json" }
+                contextFiles = fileURLs.filter { $0.pathExtension.lowercased() == "json" }
             }
 
             markCompleted()
-            return  ["contexts": contextFiles]
+            return ["contexts": contextFiles]
         } catch {
             markFailed()
             throw error

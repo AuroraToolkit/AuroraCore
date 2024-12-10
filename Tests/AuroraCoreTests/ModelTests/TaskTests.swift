@@ -114,4 +114,43 @@ final class TaskTests: XCTestCase {
         // Then
         XCTAssertTrue(hasRequiredInputs, "Task should pass input validation since optional input is nil and required input is present.")
     }
+
+    func testTaskExecutesInlineLogicSuccessfully() async throws {
+        // Given
+        let task = WorkflowTask(
+            name: "Inline Logic Task",
+            description: "A task with inline execution logic"
+        ) { inputs in
+            guard let inputValue = inputs["key"] as? String else {
+                throw NSError(domain: "WorkflowTask", code: 1, userInfo: [NSLocalizedDescriptionKey: "Missing required input."])
+            }
+            return ["result": "\(inputValue) processed"]
+        }
+        task.inputs = ["key": "Test value"]
+
+        // When
+        let outputs = try await task.execute()
+
+        // Then
+        XCTAssertEqual(outputs["result"] as? String, "Test value processed", "Task should correctly process input and return expected outputs.")
+    }
+
+    func testTaskFailsWhenInlineLogicThrows() async throws {
+        // Given
+        let task = WorkflowTask(
+            name: "Failing Task",
+            description: "A task that always throws an error"
+        ) { _ in
+            throw NSError(domain: "TestDomain", code: 1, userInfo: [NSLocalizedDescriptionKey: "Execution failed"])
+        }
+
+        // When
+        do {
+            _ = try await task.execute()
+            XCTFail("Task execution should have thrown an error.")
+        } catch {
+            // Then
+            XCTAssertEqual(error.localizedDescription, "Execution failed", "The error message should match the thrown error.")
+        }
+    }
 }

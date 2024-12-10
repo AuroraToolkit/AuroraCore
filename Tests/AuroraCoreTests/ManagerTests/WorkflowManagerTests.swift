@@ -303,5 +303,73 @@ final class WorkflowManagerTests: XCTestCase {
         // Then
         XCTAssertTrue(manager.getWorkflowState().isStopped, "Workflow should remain stopped after evaluateState() is called.")
     }
+
+    func testWorkflowExecutesTasksWithInlineLogic() async {
+        // Given
+        let task1 = WorkflowTask(
+            name: "Task 1",
+            description: "First task"
+        ) { inputs in
+            return ["outputKey": "Task 1 result"]
+        }
+
+        let task2 = WorkflowTask(
+            name: "Task 2",
+            description: "Second task"
+        ) { inputs in
+            guard let inputValue = inputs["inputKey"] as? String else {
+                throw NSError(domain: "WorkflowTask", code: 1, userInfo: [NSLocalizedDescriptionKey: "Missing required input."])
+            }
+            return ["result": "\(inputValue) processed by Task 2"]
+        }
+
+        let workflow = Workflow(name: "Inline Logic Workflow", description: "Workflow with inline logic tasks")
+        workflow.addTask(task1)
+        workflow.addTask(task2)
+
+        let mappings: WorkflowMappings = [
+            "Task 2": ["inputKey": "Task 1.outputKey"]
+        ]
+        let manager = WorkflowManager(workflow: workflow, mappings: mappings)
+
+        // When
+        await manager.start()
+
+        // Then
+        XCTAssertEqual(workflow.tasks[1].inputs["inputKey"] as? String, "Task 1 result", "Task 2 should receive input from Task 1's output.")
+        XCTAssertEqual(workflow.tasks[1].outputs["result"] as? String, "Task 1 result processed by Task 2", "Task 2 should produce the expected result.")
+        XCTAssertTrue(manager.getWorkflowState().isCompleted, "Workflow should complete successfully.")
+    }
+
+    func testWorkflowHandlesFailureInInlineLogic() async {
+        // Given
+        let task1 = WorkflowTask(
+            name: "Task 1",
+            description: "First task"
+        ) { inputs in
+            return ["outputKey": "Task 1 result"]
+        }
+
+        let failingTask = WorkflowTask(
+            name: "Failing Task",
+            description: "Task with inline logic that fails"
+        ) { inputs in
+            throw NSError(domain: "WorkflowTask", code: 1, userInfo: [NSLocalizedDescriptionKey: "Task failed during execution."])
+        }
+
+        let workflow = Workflow(name: "Failure Workflow", description: "Workflow with a failing task")
+        workflow.addTask(task1)
+        workflow.addTask(failingTask)
+
+        let manager = WorkflowManager(workflow: workflow)
+
+        // When
+        await manager.start()
+
+        // Then
+        XCTAssertEqual(workflow.tasks[0].status, .completed, "Task 1 should complete successfully.")
+        XCTAssertEqual(workflow.tasks[1].status, .failed, "Failing Task should be marked as failed.")
+        XCTAssertTrue(manager.getWorkflowState().isFailed, "Workflow should fail due to a task failure.")
+    }
 }
 

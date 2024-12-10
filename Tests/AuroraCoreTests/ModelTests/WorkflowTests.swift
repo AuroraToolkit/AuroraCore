@@ -270,4 +270,57 @@ final class WorkflowTests: XCTestCase {
         // Validate final outputs if needed
         XCTAssertEqual(summarizeTask.outputs["summary"] as? String, "Mocked summary", "Summarize task should produce a mocked summary.")
     }
+
+    func testWorkflowHandlesFailureInInlineLogic() async {
+        // Given
+        let task1 = WorkflowTask(
+            name: "Task 1",
+            description: "First task"
+        ) { inputs in
+            return ["outputKey": "Task 1 result"]
+        }
+
+        let failingTask = WorkflowTask(
+            name: "Failing Task",
+            description: "Task with inline logic that fails"
+        ) { inputs in
+            throw NSError(domain: "WorkflowTask", code: 1, userInfo: [NSLocalizedDescriptionKey: "Task failed during execution."])
+        }
+
+        let workflow = Workflow(name: "Failure Workflow", description: "Workflow with a failing task")
+        workflow.addTask(task1)
+        workflow.addTask(failingTask)
+
+        let manager = WorkflowManager(workflow: workflow)
+
+        // When
+        await manager.start()
+
+        // Then
+        XCTAssertEqual(workflow.tasks[0].status, .completed, "Task 1 should complete successfully.")
+        XCTAssertEqual(workflow.tasks[1].status, .failed, "Failing Task should be marked as failed.")
+        XCTAssertTrue(manager.getWorkflowState().isFailed, "Workflow should fail due to a task failure.")
+    }
+
+    func testWorkflowFinalOutputsWithInlineLogic() async {
+        // Given
+        let task = WorkflowTask(
+            name: "Final Task",
+            description: "Task producing final outputs"
+        ) { inputs in
+            return ["finalKey": "finalValue"]
+        }
+
+        let workflow = Workflow(name: "Final Outputs Workflow", description: "Workflow producing final outputs")
+        workflow.addTask(task)
+
+        let manager = WorkflowManager(workflow: workflow)
+
+        // When
+        await manager.start()
+
+        // Then
+        XCTAssertEqual(manager.finalOutputs["finalKey"] as? String, "finalValue", "Final outputs should be correctly stored in the manager.")
+        XCTAssertTrue(manager.getWorkflowState().isCompleted, "Workflow should complete successfully.")
+    }
 }

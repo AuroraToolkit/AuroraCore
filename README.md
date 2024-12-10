@@ -179,6 +179,12 @@ Some test and example files use OpenAI or Anthropic services and need API keys t
 
 With this setup, you can run the tests without relying on environment variables, and ensure your sensitive keys are not inadvertently shared.
 
+## Future Ideas
+
+- **Parallel task execution**: Support for parallel task execution in workflows.
+- **Dynamic task execution**: Support for dynamic task creation and execution.
+- **On-device LLM support**: Integration with on-device language models.
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a pull request or open an issue. For more details on how to contribute, please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file.

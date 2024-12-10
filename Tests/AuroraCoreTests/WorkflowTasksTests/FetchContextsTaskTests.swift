@@ -104,6 +104,65 @@ final class FetchContextsTaskTests: XCTestCase {
         }
     }
 
+    // Invalid Filenames in Inputs Test
+    func testInvalidFilenamesInInputs() async throws {
+        // Given
+        let invalidFilenames = ["invalid/name", "another|invalid:name"]
+        let task = FetchContextsTask(filenames: invalidFilenames)
+
+        // When
+        let taskOutputs = try await task.execute()
+
+        // Then
+        if let outputContexts = taskOutputs["contexts"] as? [URL] {
+            XCTAssertEqual(outputContexts.count, 0, "No contexts should be fetched for invalid filenames.")
+        } else {
+            XCTFail("Expected contexts output not found")
+        }
+    }
+
+    // Mixed Case Filenames Test
+    func testMixedCaseFilenames() async throws {
+        // Given
+        let files = ["Context1.JSON", "context2.json"]
+        try createTestFiles(files)
+
+        // Request the file with a different case
+        let task = FetchContextsTask(filenames: ["context1.json"])
+        let taskOutputs = try await task.execute()
+
+        // Then
+        if let outputContexts = taskOutputs["contexts"] as? [URL] {
+            XCTAssertEqual(outputContexts.count, 1, "Should fetch the file regardless of case sensitivity.")
+            XCTAssertEqual(outputContexts.first?.lastPathComponent.lowercased(), "context1.json", "File matching should be case insensitive.")
+        } else {
+            XCTFail("Expected contexts output not found")
+        }
+    }
+
+    // Performance Test for Large Number of Files
+    func testPerformanceForLargeNumberOfFiles() async throws {
+        // Given
+        let fileCount = 1000
+        let filenames = (1...fileCount).map { "context\($0).json" }
+        try createTestFiles(filenames)
+
+        let task = FetchContextsTask()
+
+        // When
+        let startTime = CFAbsoluteTimeGetCurrent()
+        let taskOutputs = try await task.execute()
+        let executionTime = CFAbsoluteTimeGetCurrent() - startTime
+
+        // Then
+        if let outputContexts = taskOutputs["contexts"] as? [URL] {
+            XCTAssertEqual(outputContexts.count, fileCount, "Should fetch all \(fileCount) JSON files.")
+            XCTAssertLessThan(executionTime, 5.0, "Task should complete within 5 seconds for 1000 files.")
+        } else {
+            XCTFail("Expected contexts output not found")
+        }
+    }
+
     // Helper function to create test files in the `aurora/contexts` directory
     private func createTestFiles(_ filenames: [String]) throws {
         let documentDirectory = try FileManager.default.createContextsDirectory()
