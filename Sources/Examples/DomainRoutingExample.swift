@@ -18,19 +18,17 @@ struct DomainRoutingExample {
         let manager = LLMManager()
 
         // Domains we handle
-        let sports = ["sports", "football", "soccer", "basketball", "baseball", "hockey", "tennis"]
+        let sports = ["sports"]
         let movies = ["movies"]
         let books = ["books"]
 
-        // Register an OllamaService to match questions to a particular domain
-        let domainRouter = OllamaService(
-            name: "Domain Matcher",
-            baseURL: "http://localhost:11434",
-            contextWindowSize: 500,
-            maxOutputTokens: 100,
-            systemPrompt: "Evaluate the following question and determine the domain it belongs to. Domains we support are: sports, movies, books. If the question is about a particular sport, use the sports domain. If it's about a particular movie, use the movies domain. If it's about a book, use the books domain. If it doesn't fit any of these domains, just use general as the domain. You should respond to any question with ONLY the domain name if we support it, or general if we don't. Do NOT try to answer the question or provide ANY additional information."
+        // Register a domain router that routes questions to the appropriate service based on the domain
+        let router = LLMDomainRouter(
+            name: "Domain Router",
+            service: OllamaService(),
+            supportedDomains: sports + movies + books
         )
-        manager.registerDomainRoutingService(domainRouter)
+        manager.registerDomainRouter(router)
 
         // Register a mock service that answers questions about the sports domain
         let sportsService = MockLLMService(
@@ -62,7 +60,7 @@ struct DomainRoutingExample {
         manager.registerFallbackService(generalService)
 
         print("Registered Services Details:")
-        print(" - Domain Matcher: Context Size: \(domainRouter.contextWindowSize), Max Output Tokens: \(domainRouter.maxOutputTokens)")
+        print(" - Domain Router: Supported Domains: \(router.supportedDomains)")
         print(" - Sports Service: Context Size: \(sportsService.contextWindowSize), Max Output Tokens: \(sportsService.maxOutputTokens)")
         print(" - Movies Service: Context Size: \(moviesService.contextWindowSize), Max Output Tokens: \(moviesService.maxOutputTokens)")
         print(" - Books Service: Context Size: \(booksService.contextWindowSize), Max Output Tokens: \(booksService.maxOutputTokens)")

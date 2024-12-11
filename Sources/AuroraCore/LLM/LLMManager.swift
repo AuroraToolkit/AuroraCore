@@ -43,7 +43,7 @@ public class LLMManager {
     private(set) var fallbackService: LLMServiceProtocol?
 
     /// The domain routing service used to determine the appropriate domain for a request.
-    private(set) var domainRoutingService: LLMServiceProtocol?
+    private(set) var domainRouter: LLMDomainRouterProtocol?
 
     public init() {}
 
@@ -52,15 +52,15 @@ public class LLMManager {
     /**
      Registers a new domain routing service or replaces an existing one.
 
-     - Parameter service: The service conforming to `LLMServiceProtocol` to be registered as a domain routing service.
+     - Parameter router: The domain router conforming to `LLMDomainRouterProtocol` to be registered for domain routing.
      */
-    public func registerDomainRoutingService(_ service: LLMServiceProtocol) {
-        if domainRoutingService != nil {
-            logger.debug("Replacing existing domain routing service with name '\(service.name)'")
+    public func registerDomainRouter(_ router: LLMDomainRouterProtocol) {
+        if domainRouter != nil {
+            logger.debug("Replacing existing domain router with '\(router.name)'")
         } else {
-            logger.debug("Registering new domain routing service with name '\(service.name)'")
+            logger.debug("Registering new domain router with '\(router.name)'")
         }
-        domainRoutingService = service
+        domainRouter = router
     }
 
     /**
@@ -179,29 +179,12 @@ public class LLMManager {
     ) async -> LLMResponseProtocol? {
         // Determine routings based on the presence of a domain routing service
         let routings: [Routing]
-        if let domainRoutingService {
-            logger.debug("Engaging domain routing service to determine appropriate domain...")
-
-            // Add the system message if it exists
-            var routedRequest = request
-            if let systemPrompt = domainRoutingService.systemPrompt {
-                logger.debug("Adding system prompt for domain routing service.")
-                var messages = request.messages
-                messages.insert(LLMMessage(role: .system, content: systemPrompt), at: 0)
-                routedRequest = LLMRequest(
-                    messages: messages,
-                    temperature: request.temperature,
-                    maxTokens: request.maxTokens,
-                    model: request.model,
-                    stream: request.stream,
-                    options: request.options
-                )
-            }
+        if let domainRouter {
+            logger.debug("Engaging domain router \(domainRouter.name) to determine appropriate domain...")
 
             do {
-                // Send the request to the domain routing service
-                let domainResponse = try await domainRoutingService.sendRequest(routedRequest)
-                let domain = domainResponse.text.lowercased()
+                // Send the request to the domain router
+                let domain = try await domainRouter.determineDomain(for: request)
                 if !domain.isEmpty {
                     logger.debug("Domain routing service identified domain: \(domain)")
                     routings = [.domain([domain])]

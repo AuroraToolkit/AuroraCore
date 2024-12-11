@@ -599,9 +599,14 @@ final class LLMManagerTests: XCTestCase {
 
     func testDomainRoutingWithRoutingService() async {
         // Given
-        let domainRoutingService = MockLLMService(
-            name: "DomainRoutingService",
-            expectedResult: .success(MockLLMResponse(text: "sports"))
+        let mockService = MockLLMService(
+            name: "MockService",
+            expectedResult: .success(MockLLMResponse(text: "Mock Response"))
+        )
+        let mockRouter = MockLLMDomainRouter(
+            name: "MockDomainRouter",
+            service: mockService,
+            expectedDomain: "sports"
         )
         let sportsService = MockLLMService(
             name: "SportsService",
@@ -612,7 +617,7 @@ final class LLMManagerTests: XCTestCase {
             expectedResult: .success(MockLLMResponse(text: "Fallback Response"))
         )
 
-        manager.registerDomainRoutingService(domainRoutingService)
+        manager.registerDomainRouter(mockRouter)
         manager.registerService(sportsService, withRoutings: [.domain(["sports"])])
         manager.registerFallbackService(fallbackService)
 
@@ -627,16 +632,21 @@ final class LLMManagerTests: XCTestCase {
 
     func testDomainRoutingFallback() async {
         // Given
-        let domainRoutingService = MockLLMService(
-            name: "DomainRoutingService",
-            expectedResult: .success(MockLLMResponse(text: "unknownDomain"))
+        let mockService = MockLLMService(
+            name: "MockService",
+            expectedResult: .success(MockLLMResponse(text: "Mock Response"))
+        )
+        let mockRouter = MockLLMDomainRouter(
+            name: "MockDomainRouter",
+            service: mockService,
+            expectedDomain: "unknownDomain"
         )
         let fallbackService = MockLLMService(
             name: "FallbackService",
             expectedResult: .success(MockLLMResponse(text: "Fallback Response"))
         )
 
-        manager.registerDomainRoutingService(domainRoutingService)
+        manager.registerDomainRouter(mockRouter)
         manager.registerFallbackService(fallbackService)
 
         let unknownDomainQuestion = LLMRequest(messages: [LLMMessage(role: .user, content: "What's the capital of France?")])
@@ -650,16 +660,21 @@ final class LLMManagerTests: XCTestCase {
 
     func testDomainRoutingErrorHandling() async {
         // Given
-        let domainRoutingService = MockLLMService(
-            name: "DomainRoutingService",
-            expectedResult: .failure(NSError(domain: "TestError", code: 1))
+        let mockService = MockLLMService(
+            name: "MockService",
+            expectedResult: .success(MockLLMResponse(text: "Mock Response"))
+        )
+        let mockRouter = MockLLMDomainRouter(
+            name: "MockDomainRouter",
+            service: mockService,
+            shouldThrowError: true
         )
         let generalService = MockLLMService(
             name: "GeneralService",
             expectedResult: .success(MockLLMResponse(text: "General Response"))
         )
 
-        manager.registerDomainRoutingService(domainRoutingService)
+        manager.registerDomainRouter(mockRouter)
         manager.registerFallbackService(generalService)
 
         let request = LLMRequest(messages: [LLMMessage(role: .user, content: "What's the capital of France?")])
@@ -696,16 +711,21 @@ final class LLMManagerTests: XCTestCase {
 
     func testDomainRoutingInvalidService() async {
         // Given
-        let domainRoutingService = MockLLMService(
-            name: "DomainRoutingService",
-            expectedResult: .success(MockLLMResponse(text: "invalidDomain"))
+        let mockService = MockLLMService(
+            name: "MockService",
+            expectedResult: .success(MockLLMResponse(text: "Mock Response"))
+        )
+        let mockRouter = MockLLMDomainRouter(
+            name: "MockDomainRouter",
+            service: mockService,
+            expectedDomain: "invalidDomain"
         )
         let fallbackService = MockLLMService(
             name: "FallbackService",
             expectedResult: .success(MockLLMResponse(text: "Fallback Response"))
         )
 
-        manager.registerDomainRoutingService(domainRoutingService)
+        manager.registerDomainRouter(mockRouter)
         manager.registerFallbackService(fallbackService)
 
         let invalidDomainQuestion = LLMRequest(messages: [LLMMessage(role: .user, content: "What is an invalid domain test?")])
@@ -715,34 +735,5 @@ final class LLMManagerTests: XCTestCase {
 
         // Then
         XCTAssertEqual(response?.text, "Fallback Response", "Should route to the fallback service if no registered service matches the identified domain.")
-    }
-
-    func testRouteRequestSystemPrompt() async {
-        // Given
-        let domainRoutingService = MockLLMService(
-            name: "DomainRoutingService",
-            systemPrompt: "Determine the domain for this question.",
-            expectedResult: .success(MockLLMResponse(text: "sports"))
-        )
-        let sportsService = MockLLMService(
-            name: "SportsService",
-            expectedResult: .success(MockLLMResponse(text: "Sports Response"))
-        )
-
-        manager.registerDomainRoutingService(domainRoutingService)
-        manager.registerService(sportsService, withRoutings: [.domain(["sports"])])
-
-        let sportsQuestion = LLMRequest(messages: [LLMMessage(role: .user, content: "Who won the Super Bowl in 2022?")])
-
-        // When
-        let response = await manager.routeRequest(sportsQuestion)
-
-        // Then
-        XCTAssertEqual(response?.text, "Sports Response", "Should route to the SportsService based on the domain routing.")
-        XCTAssertEqual(
-            domainRoutingService.receivedRequests.first?.messages.first?.content,
-            "Determine the domain for this question.",
-            "Domain routing service should include its system prompt in the request."
-        )
     }
 }
