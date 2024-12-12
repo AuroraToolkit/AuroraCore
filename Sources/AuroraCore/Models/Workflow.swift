@@ -75,7 +75,7 @@ public class Workflow: WorkflowProtocol {
     public private(set) var tasks: [WorkflowTaskProtocol]
     public private(set) var state: WorkflowState = .notStarted
     public var currentTaskIndex: Int = 0
-    public let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "Workflow")
+    public let logger = CustomLogger.shared
 
     /**
      Initializes a new workflow with a specified name, description, and tasks.
@@ -97,18 +97,18 @@ public class Workflow: WorkflowProtocol {
             self.state = .completed(Date())
             return true
         } else {
-            logger.debug("Workflow \(self.name): Cannot mark workflow as completed. There are still active tasks.")
+            logger.debug("Workflow \(self.name): Cannot mark workflow as completed. There are still active tasks.", category: "Workflow")
             return false
         }
     }
 
     public func markInProgress() {
         guard state.isNotStarted else {
-            logger.debug("Workflow \(self.name): Cannot mark workflow as in progress. Current state: \(self.state)")
+            logger.debug("Workflow \(self.name): Cannot mark workflow as in progress. Current state: \(self.state)", category: "Workflow")
             return
         }
         state = .inProgress
-        logger.debug("Workflow \(self.name): Workflow marked as in progress.")
+        logger.debug("Workflow \(self.name): Workflow marked as in progress.", category: "Workflow")
     }
 
     public func markStopped() {
@@ -209,7 +209,7 @@ public class Workflow: WorkflowProtocol {
 
         if failedTask.canRetry() {
             failedTask.incrementRetryCount()
-            logger.debug("Workflow \(self.name): Retrying task \(failedTask.name). Attempt \(failedTask.retryCount) of \(failedTask.maxRetries).")
+            logger.debug("Workflow \(self.name): Retrying task \(failedTask.name). Attempt \(failedTask.retryCount) of \(failedTask.maxRetries).", category: "Workflow")
 
             failedTask.resetTask()
             updateTask(failedTask, at: currentTaskIndex)
@@ -217,7 +217,7 @@ public class Workflow: WorkflowProtocol {
         } else {
             failedTask.markFailed()
             updateTask(failedTask, at: currentTaskIndex)
-            logger.debug("Workflow \(self.name): Task \(failedTask.name) failed after \(failedTask.retryCount) retries. Stopping workflow.")
+            logger.debug("Workflow \(self.name): Task \(failedTask.name) failed after \(failedTask.retryCount) retries. Stopping workflow.", category: "Workflow")
             markFailed(retryCount: failedTask.retryCount)
         }
     }

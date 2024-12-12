@@ -16,7 +16,7 @@ import os.log
 public class AnthropicService: LLMServiceProtocol {
 
     /// A logger for recording information and errors within the `AnthropicService`.
-    private let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "AnthropicService")
+    private let logger = CustomLogger.shared
 
     /// The name of the service vendor, required by the protocol.
     public let vendor = "Anthropic"
@@ -142,7 +142,7 @@ public class AnthropicService: LLMServiceProtocol {
             body["system"] = systemMessage
         }
 
-        logger.debug("AnthropicService [sendRequest] Sending request with keys: \(body.keys)")
+        logger.debug("AnthropicService [sendRequest] Sending request with keys: \(body.keys)", category: "AnthropicService")
 
         let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
 
@@ -163,7 +163,7 @@ public class AnthropicService: LLMServiceProtocol {
             throw LLMServiceError.invalidResponse(statusCode: (response as? HTTPURLResponse)?.statusCode ?? -1)
         }
 
-        logger.debug("AnthropicService [sendRequest] Response received from Anthropic")
+        logger.debug("AnthropicService [sendRequest] Response received from Anthropic", category: "AnthropicService")
 
         let decodedResponse = try JSONDecoder().decode(AnthropicLLMResponse.self, from: data)
         let finalResponse = decodedResponse.changingVendor(to: vendor)
@@ -229,7 +229,7 @@ public class AnthropicService: LLMServiceProtocol {
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")  // Required Anthropic version header
 
-        logger.debug("AnthropicService [sendStreamingRequest] Sending streaming request with keys: \(body.keys)")
+        logger.debug("AnthropicService [sendStreamingRequest] Sending streaming request with keys: \(body.keys)", category: "AnthropicService")
 
         return try await withCheckedThrowingContinuation { continuation in
             let streamingDelegate = StreamingDelegate(
@@ -253,7 +253,7 @@ public class AnthropicService: LLMServiceProtocol {
         private var inputTokens: Int = 0
         private var outputTokens: Int = 0
         private var isComplete = false
-        private let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "AnthropicService.StreamingDelegate")
+        private let logger = CustomLogger.shared
 
         init(vendor: String,
              model: String,
@@ -263,23 +263,23 @@ public class AnthropicService: LLMServiceProtocol {
             self.model = model
             self.onPartialResponse = onPartialResponse
             self.continuation = continuation
-            logger.debug("AnthropicService [StreamingDelegate] initialized for model: \(model)")
+            logger.debug("AnthropicService [StreamingDelegate] initialized for model: \(model)", category: "AnthropicService.StreamingDelegate")
         }
 
         func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
             guard let eventText = String(data: data, encoding: .utf8) else {
-                logger.debug("AnthropicService Failed to decode data as UTF-8")
+                logger.debug("AnthropicService Failed to decode data as UTF-8", category: "AnthropicService.StreamingDelegate")
                 return
             }
 
-            logger.debug("AnthropicService [StreamingDelegate] streaming event received")
+            logger.debug("AnthropicService [StreamingDelegate] streaming event received", category: "AnthropicService.StreamingDelegate")
 
             let events = eventText.components(separatedBy: "\n\n")
             for event in events {
                 guard !event.isEmpty else { continue }
 
                 if event.contains("event: message_stop") {
-                    logger.debug("AnthropicService [StreamingDelegate] Received message_stop event.")
+                    logger.debug("AnthropicService [StreamingDelegate] Received message_stop event.", category: "AnthropicService.StreamingDelegate")
                     isComplete = true
                     break
                 } else if let dataRange = event.range(of: "data: ") {
@@ -293,7 +293,7 @@ public class AnthropicService: LLMServiceProtocol {
                                 accumulatedContent.append(content)
                                 onPartialResponse(text)
 
-                                logger.debug("AnthropicService [StreamingDelegate] Partial response: \(text)")
+                                logger.debug("AnthropicService Partial response: \(text)", category: "AnthropicService.StreamingDelegate")
                             }
 
                             if let usage = streamingResponse.usage {
@@ -301,11 +301,11 @@ public class AnthropicService: LLMServiceProtocol {
                                 outputTokens = usage.outputTokens ?? 0
                             }
                         } catch {
-                            logger.debug("AnthropicService [StreamingDelegate] Failed to decode partial response: \(error.localizedDescription)")
+                            logger.error("AnthropicService Failed to decode partial response: \(error.localizedDescription)", category: "AnthropicService.StreamingDelegate")
                         }
                     }
                 } else {
-                    logger.debug("AnthropicService [StreamingDelegate] Unhandled event type: \(event)")
+                    logger.debug("AnthropicService [StreamingDelegate] Unhandled event type: \(event)", category: "AnthropicService.StreamingDelegate")
                 }
             }
 
@@ -326,10 +326,10 @@ public class AnthropicService: LLMServiceProtocol {
 
         func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
             if let error = error {
-                logger.debug("AnthropicService [StreamingDelegate] Task completed with error: \(error.localizedDescription)")
+                logger.error("AnthropicService [StreamingDelegate] Task completed with error: \(error.localizedDescription)", category: "AnthropicService.StreamingDelegate")
                 continuation.resume(throwing: error)
             } else if !isComplete {
-                logger.debug("AnthropicService [StreamingDelegate] Task completed without receiving a message_stop event.")
+                logger.debug("AnthropicService [StreamingDelegate] Task completed without receiving a message_stop event.", category: "AnthropicService.StreamingDelegate")
                 continuation.resume(throwing: LLMServiceError.custom(message: "Streaming response ended prematurely."))
             }
         }

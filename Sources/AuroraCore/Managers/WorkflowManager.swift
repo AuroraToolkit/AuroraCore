@@ -19,7 +19,7 @@ public protocol WorkflowManagerProtocol {
     var workflow: WorkflowProtocol { get set }
 
     /// Logger instance for logging workflow events.
-    var logger: Logger { get }
+    var logger: CustomLogger { get }
 
     /// A dictionary of the final outputs of the workflow.
     var finalOutputs: [String: Any] { get }
@@ -61,7 +61,7 @@ public protocol WorkflowManagerProtocol {
  */
 public class WorkflowManager: WorkflowManagerProtocol {
     public var workflow: WorkflowProtocol
-    public let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "WorkflowManager")
+    public let logger = CustomLogger.shared
 
     // Static mapping of task names to their corresponding input mappings
     public let mappings: [String: [String: String]]
@@ -84,7 +84,7 @@ public class WorkflowManager: WorkflowManagerProtocol {
     // Workflow-related functions
     public func start() async {
         guard workflow.state.isNotStarted || workflow.state.isInProgress else {
-            logger.debug("Cannot start workflow. Current state: \(self.workflow.state)")
+            logger.debug("Cannot start workflow. Current state: \(self.workflow.state)", category: "WorkflowManager")
             return
         }
 
@@ -120,13 +120,13 @@ public class WorkflowManager: WorkflowManagerProtocol {
     // Task-related functions
     public func executeCurrentTask() async {
         guard workflow.state.isNotStarted || workflow.state.isInProgress else {
-            logger.debug("Workflow is unable to continue. Current state is \(self.workflow.state)")
+            logger.debug("Workflow is unable to continue. Current state is \(self.workflow.state)", category: "WorkflowManager")
             return
         }
 
         // Ensure there are tasks to execute
         guard workflow.currentTaskIndex < workflow.tasks.count else {
-            logger.debug("No tasks to execute in the workflow.")
+            logger.debug("No tasks to execute in the workflow.", category: "WorkflowManager")
             workflow.tryMarkCompleted() // Mark the workflow as completed if no tasks
             return
         }
@@ -140,11 +140,11 @@ public class WorkflowManager: WorkflowManagerProtocol {
                 let outputs = try await task.execute()
                 await completeTask(task, outputs: outputs)
             } catch {
-                logger.debug("Task \(task.name) failed with error: \(error.localizedDescription)")
+                logger.error("Task \(task.name) failed with error: \(error.localizedDescription)", category: "WorkflowManager")
                 await handleTaskFailure(for: task)
             }
         } else {
-            logger.debug("Required inputs not present for task: \(task.name)")
+            logger.debug("Required inputs not present for task: \(task.name)", category: "WorkflowManager")
             await handleTaskFailure(for: task)
         }
     }
@@ -155,7 +155,7 @@ public class WorkflowManager: WorkflowManagerProtocol {
         updatedTask.updateOutputs(with: outputs)
         workflow.updateTask(updatedTask, at: workflow.currentTaskIndex)
 
-        logger.debug("Task \(task.name) completed with outputs: \(outputs)")
+        logger.debug("Task \(task.name) completed with outputs: \(outputs)", category: "WorkflowManager")
 
         if workflow.currentTaskIndex + 1 < workflow.tasks.count {
             workflow.currentTaskIndex += 1
@@ -163,7 +163,7 @@ public class WorkflowManager: WorkflowManagerProtocol {
         } else {
             workflow.tryMarkCompleted()
             finalOutputs = outputs
-            logger.debug("Final outputs: \(outputs)")
+            logger.debug("Final outputs: \(outputs)", category: "WorkflowManager")
         }
     }
 
@@ -172,20 +172,20 @@ public class WorkflowManager: WorkflowManagerProtocol {
             var updatedTask = task
             updatedTask.incrementRetryCount()
             workflow.updateTask(updatedTask, at: workflow.currentTaskIndex)
-            logger.debug("Retrying task \(updatedTask.name). Retry \(updatedTask.retryCount) of \(updatedTask.maxRetries).")
+            logger.debug("Retrying task \(updatedTask.name). Retry \(updatedTask.retryCount) of \(updatedTask.maxRetries).", category: "WorkflowManager")
             await executeCurrentTask()
         } else {
             var failedTask = task
             failedTask.markFailed()
             workflow.updateTask(failedTask, at: workflow.currentTaskIndex)
             workflow.markFailed(retryCount: failedTask.retryCount)
-            logger.debug("Task \(failedTask.name) failed after \(failedTask.maxRetries) retries. Stopping workflow.")
+            logger.debug("Task \(failedTask.name) failed after \(failedTask.maxRetries) retries. Stopping workflow.", category: "WorkflowManager")
         }
     }
 
     private func populateInputs(for task: inout WorkflowTaskProtocol) {
         let taskName = task.name
-        logger.debug("Populating inputs for task: \(taskName)")
+        logger.debug("Populating inputs for task: \(taskName)", category: "WorkflowManager")
         guard let taskMappings = mappings[task.name] else { return }
         for (inputKey, sourceMapping) in taskMappings {
             let parts = sourceMapping.split(separator: ".")
@@ -196,10 +196,10 @@ public class WorkflowManager: WorkflowManagerProtocol {
 
             let sourceTask = workflow.tasks.first(where: { $0.name == sourceTaskName })
             if let value = sourceTask?.outputs[sourceOutputKey] {
-                logger.debug("Populating input '\(inputKey)' for task '\(taskName)' with value from '\(sourceTaskName).\(sourceOutputKey)'")
+                logger.debug("Populating input '\(inputKey)' for task '\(taskName)' with value from '\(sourceTaskName).\(sourceOutputKey)'", category: "WorkflowManager")
                 task.inputs[inputKey] = value
             } else {
-                logger.debug("Failed to populate input '\(inputKey)' for task '\(taskName)'. Source '\(sourceTaskName).\(sourceOutputKey)' not found or empty.")
+                logger.debug("Failed to populate input '\(inputKey)' for task '\(taskName)'. Source '\(sourceTaskName).\(sourceOutputKey)' not found or empty.", category: "WorkflowManager")
             }
         }
     }

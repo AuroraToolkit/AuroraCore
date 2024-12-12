@@ -16,7 +16,7 @@ import os.log
 public class OpenAIService: LLMServiceProtocol {
 
     /// A logger for recording information and errors within the `AnthropicService`.
-    private let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "OpenAIService")
+    private let logger = CustomLogger.shared
 
     /// The name of the service vendor, required by the protocol.
     public let vendor = "OpenAI"
@@ -131,7 +131,7 @@ public class OpenAIService: LLMServiceProtocol {
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
 
-        logger.debug("OpenAIService [sendRequest] Sending request with keys: \(body.keys)")
+        logger.debug("OpenAIService [sendRequest] Sending request with keys: \(body.keys)", category: "OpenAIService")
 
         // Non-streaming response handling
         let (data, response) = try await urlSession.data(for: urlRequest)
@@ -140,7 +140,7 @@ public class OpenAIService: LLMServiceProtocol {
             throw LLMServiceError.invalidResponse(statusCode: (response as? HTTPURLResponse)?.statusCode ?? -1)
         }
 
-        logger.debug("OpenAIService [sendRequest] Response received from OpenAI.")
+        logger.debug("OpenAIService [sendRequest] Response received from OpenAI.", category: "OpenAIService")
 
         let decodedResponse = try JSONDecoder().decode(OpenAILLMResponse.self, from: data)
         let finalResponse = decodedResponse.changingVendor(to: vendor)
@@ -201,7 +201,7 @@ public class OpenAIService: LLMServiceProtocol {
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
 
-        logger.debug("OpenAIService [sendStreamingRequest] Sending streaming request with keys: \(body.keys).")
+        logger.debug("OpenAIService [sendStreamingRequest] Sending streaming request with keys: \(body.keys).", category: "OpenAIService")
 
         return try await withCheckedThrowingContinuation { continuation in
             let streamingDelegate = StreamingDelegate(
@@ -223,7 +223,7 @@ public class OpenAIService: LLMServiceProtocol {
         private let continuation: CheckedContinuation<LLMResponseProtocol, Error>
         private var accumulatedContent = ""
         private var finalResponse: LLMResponseProtocol?
-        private let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "OpenAIService.StreamingDelegate")
+        private let logger = CustomLogger.shared
 
         init(vendor: String,
              model: String,
@@ -238,7 +238,7 @@ public class OpenAIService: LLMServiceProtocol {
         func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
             guard let responseText = String(data: data, encoding: .utf8) else { return }
 
-            logger.debug("Streaming response received. Processing...")
+            logger.debug("Streaming response received. Processing...", category: "OpenAIService.StreamingDelegate")
 
             for line in responseText.split(separator: "\n") {
                 if line == "data: [DONE]" {
@@ -272,7 +272,7 @@ public class OpenAIService: LLMServiceProtocol {
                                 onPartialResponse(partialContent)
                             }
                         } catch {
-                            logger.debug("Decoding error: \(error)")
+                            logger.error("OpenAIService Failed to decode partial response: \(error)", category: "OpenAIService.StreamingDelegate")
                         }
                     }
                 }

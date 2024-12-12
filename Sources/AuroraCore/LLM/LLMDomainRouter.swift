@@ -44,7 +44,7 @@ public class LLMDomainRouter: LLMDomainRouterProtocol {
     public let name: String
     public var service: LLMServiceProtocol
     public let supportedDomains: [String]
-    private let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "LLMDomainRouter")
+    private let logger = CustomLogger.shared
     private let DEFAULT_INSTRUCTIONS = """
 Evaluate the following request and determine the domain it belongs to. Domains we support are: %@.
 
@@ -119,17 +119,17 @@ information.
             let response = try await service.sendRequest(routedRequest)
             let domain = response.text.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
 
-            logger.debug("Domain resolved by service: \(domain)")
+            logger.debug("Domain resolved by service: \(domain)", category: "LLMDomainRouter")
 
             // Validate the domain against supported domains
             if supportedDomains.contains(domain) {
                 return domain
             } else {
-                logger.debug("Domain '\(domain)' not in supported domains. Defaulting to 'general'.")
+                logger.debug("Domain '\(domain)' not in supported domains. Defaulting to 'general'.", category: "LLMDomainRouter")
                 return "general"
             }
         } catch {
-            logger.error("Failed to determine domain: \(error.localizedDescription)")
+            logger.error("Failed to determine domain: \(error.localizedDescription)", category: "LLMDomainRouter")
             throw error
         }
     }

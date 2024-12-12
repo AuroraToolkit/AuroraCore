@@ -15,7 +15,7 @@ import os.log
 public class OllamaService: LLMServiceProtocol {
 
     /// A logger for recording information and errors within the `AnthropicService`.
-    private let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "OllamaService")
+    private let logger = CustomLogger.shared
 
     /// The name of the service vendor, required by the protocol.
     public var vendor: String
@@ -143,7 +143,7 @@ public class OllamaService: LLMServiceProtocol {
         urlRequest.httpBody = jsonData
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        logger.debug("OllamaService [sendRequest] Sending request with keys: \(body.keys)")
+        logger.debug("OllamaService [sendRequest] Sending request with keys: \(body.keys)", category: "OllamaService")
 
         // Non-streaming response handling
         let (data, response) = try await urlSession.data(for: urlRequest)
@@ -152,7 +152,7 @@ public class OllamaService: LLMServiceProtocol {
             throw LLMServiceError.invalidResponse(statusCode: (response as? HTTPURLResponse)?.statusCode ?? -1)
         }
 
-        logger.debug("OpenAIService [sendRequest] Response received from Ollama.")
+        logger.debug("OpenAIService [sendRequest] Response received from Ollama.", category: "OllamaService")
 
         // Attempt to decode the response from the Ollama API
         do {
@@ -214,7 +214,7 @@ public class OllamaService: LLMServiceProtocol {
         urlRequest.httpBody = jsonData
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        logger.debug("OllamaService [sendRequest] Sending streaming request with keys: \(body.keys).")
+        logger.debug("OllamaService [sendRequest] Sending streaming request with keys: \(body.keys).", category: "OllamaService")
 
         return try await withCheckedThrowingContinuation { continuation in
             let streamingDelegate = StreamingDelegate(
@@ -236,7 +236,7 @@ public class OllamaService: LLMServiceProtocol {
         private let continuation: CheckedContinuation<LLMResponseProtocol, Error>
         private var accumulatedContent = ""
         private var finalResponse: LLMResponseProtocol?
-        private let logger = Logger(subsystem: "com.mutantsoup.AuroraCore", category: "OllamaService.StreamingDelegate")
+        private let logger = CustomLogger.shared
 
         init(vendor: String,
              model: String,
@@ -249,7 +249,7 @@ public class OllamaService: LLMServiceProtocol {
         }
 
         func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-            logger.debug("Streaming response received. Processing...")
+            logger.debug("Streaming response received. Processing...", category: "OllamaService.StreamingDelegate")
 
             do {
                 let partialResponse = try JSONDecoder().decode(OllamaLLMResponse.self, from: data)
@@ -271,7 +271,7 @@ public class OllamaService: LLMServiceProtocol {
                     return
                 }
             } catch {
-                logger.debug("Decoding error: \(error)")
+                logger.error("Decoding error: \(error.localizedDescription)", category: "OllamaService.StreamingDelegate")
             }
         }
 

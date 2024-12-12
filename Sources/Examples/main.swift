@@ -33,6 +33,9 @@ import AuroraCore
     ```
  */
 
+// Uncomment the following line to disable debug logs
+//CustomLogger.shared.toggleDebugLogs(false)
+
 print("Aurora Core Examples\n")
 print("--------------------\n")
 
@@ -56,5 +59,5 @@ await DomainRoutingExample().execute()
 
 print("--------------------\n")
 
-print("Article Summarization Example:\n")
+print("TV Script Workflow Example:\n")
 await TVScriptWorkflowExample().execute()

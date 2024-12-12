@@ -1,6 +1,6 @@
 # AuroraCore
 
-AuroraCore is the core library powering the Aurora AI assistant framework. This package is designed to manage the fundamental structures and workflows that support various AI-driven tasks, including context management, task workflows, and integrations with large language models (LLMs) such as OpenAI and Ollama. It is highly modular, allowing developers to extend its functionality and integrate with external services.
+AuroraCore is the foundational library within the AuroraToolkit—a suite of tools designed to simplify the integration of AI capabilities into your projects. This package provides robust support for AI-driven workflows, including context management, task orchestration, and seamless integrations with large language models (LLMs) from organizations such as Anthropic, OpenAI, and Ollama. Its modular architecture empowers developers to customize, extend, and integrate with external services effortlessly.
 
 ## Features
 
@@ -184,6 +184,8 @@ With this setup, you can run the tests without relying on environment variables,
 - **Parallel task execution**: Support for parallel task execution in workflows.
 - **Dynamic task execution**: Support for dynamic task creation and execution.
 - **On-device LLM support**: Integration with on-device language models.
+- **Template workflows**: Prebuilt workflows for common AI tasks (e.g., summarization, Q&A, data extraction) to jumpstart development.
+- **Time-based triggers**: Add support for workflows that execute at scheduled intervals or based on real-time events.
 
 ## Contributing
 
@@ -199,4 +201,4 @@ AuroraCore is released under the [Apache 2.0 License](LICENSE).
 
 ## Contact
 
-For any inquiries or feedback, please reach out to us at [aurora.core.project@gmail.com](mailto:aurora.core.project@gmail.com).
+For any inquiries or feedback, please reach out to us at [aurora.toolkit@gmail.com](mailto:aurora.toolkit@gmail.com).
