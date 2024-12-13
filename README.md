@@ -35,7 +35,7 @@ The `LLMManager` is responsible for managing connections to various language mod
 To integrate AuroraCore into your project using Swift Package Manager, add the following line to your `Package.swift` file:
 
 ```swift
-.package(url: "https://github.com/yourusername/AuroraCore.git", from: "1.0.0")
+.package(url: "https://github.com/AuroraToolkit/AuroraCore.git", from: "0.1.0")
 ```
 
 Then add `AuroraCore` as a dependency to your target:
