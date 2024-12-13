@@ -96,16 +96,12 @@ import AuroraCore
 let manager = LLMManager()
 
 // Configure the Domain Routing Service (Ollama)
-let domainRouter = OllamaService(
-    name: "DomainRouter",
-    baseURL: "http://localhost:11434",
-    contextWindowSize: 500,
-    maxOutputTokens: 100,
-    systemPrompt: """
-        Evaluate the following question and determine the domain it belongs to. Domains we support are: sports, books. If the question is about a particular sport, use the sports domain. If it's about a book or writing, use the books domain. If it doesn't CLEARLY fit ANY of these domains, use general as the domain. You should respond to any question with ONLY the domain name if we support it, or general if we don't. Do NOT try to answer the question or provide ANY additional information.
-"""
+let router = LLMDomainRouter(
+    name: "Domain Router",
+    service: OllamaService(),
+    supportedDomains: ["sports", "movies", "books"]
 )
-manager.registerDomainRoutingService(domainRouter)
+manager.registerDomainRouter(router)
 
 // Configure the Sports Service (Anthropic)
 let sportsService = AnthropicService(
@@ -117,6 +113,17 @@ You are a sports expert. Answer the following sports-related questions concisely
 """
 )
 manager.registerService(sportsService, withRoutings: [.domain(["sports"])])
+
+// Configure the Movies Service (OpenAI)
+let moviesService = OpenAIService(
+    name: "MoviesService",
+    apiKey: "your-openai-api-key",
+    maxOutputTokens: 256,
+    systemPrompt: """
+You are a movie critic. Answer the following movie-related questions concisely and accurately.
+"""
+)
+manager.registerService(moviesService, withRoutings: [.domain(["movies"])])
 
 // Configure the Books Service (Ollama)
 let booksService = OllamaService(
@@ -132,7 +139,7 @@ manager.registerService(booksService, withRoutings: [.domain(["books"])])
 // Configure the Fallback Service (OpenAI)
 let fallbackService = OpenAIService(
     name: "FallbackService",
-    apiKey: "you-openai-api-key",
+    apiKey: "your-openai-api-key",
     maxOutputTokens: 512,
     systemPrompt: """
 You are a helpful assistant. Answer any general questions accurately and concisely.
@@ -143,6 +150,7 @@ manager.registerFallbackService(fallbackService)
 // Example questions
 let questions = [
     "Who won the Super Bowl in 2022?",  // Sports domain
+    "What won Best Picture in 2021?",   // Movies domain
     "Who wrote The Great Gatsby?",      // Books domain
     "What is the capital of France?"    // General (fallback)
 ]
@@ -169,7 +177,7 @@ AuroraCore includes tests for multiple language model services. The Ollama tests
 
 Some test and example files use OpenAI or Anthropic services and need API keys to function correctly. To use these services, add the following keys to the `AuroraCore` and `Examples` schemes. Make sure these schemes are not shared, and take extra precaution to avoid committing API keys into the repository.
 
-- For Anthropic, add the environment variable `ANTHROPIC_API_KEY' with a valid test API key.
+- For Anthropic, add the environment variable `ANTHROPIC_API_KEY` with a valid test API key.
 - For OpenAI, add the environment variable `OPENAI_API_KEY` with a valid test API key.
 - Ollama does not require API keys, but does require the Ollama service to be running at the default service URL, `http://localhost:11434`.
 
@@ -177,13 +185,16 @@ Some test and example files use OpenAI or Anthropic services and need API keys t
 - **Never commit your API keys to the repository**. The tests are designed to run with Ollama by default, and you can enable additional tests for OpenAI and Anthropic by manually adding your keys for local testing.
 - Be sure to remove or replace your keys with empty strings before committing any changes.
 
-With this setup, you can run the tests without relying on environment variables, and ensure your sensitive keys are not inadvertently shared.
+With this setup, you can run the tests on multiple LLMs and ensure your sensitive keys are not inadvertently shared.
 
 ## Future Ideas
 
+- **On-device LLM support**: Integration with on-device language models.
+- **Google LLM support**: Support for Gemeni and future Google-built language models.
+- **Multimodal LLM support**: Support multimodal LLMs for use cases beyond plain text.
+- **Declarative Workflow syntax**: Define workflows declaratively, similar to SwiftUI for UI.
 - **Parallel task execution**: Support for parallel task execution in workflows.
 - **Dynamic task execution**: Support for dynamic task creation and execution.
-- **On-device LLM support**: Integration with on-device language models.
 - **Template workflows**: Prebuilt workflows for common AI tasks (e.g., summarization, Q&A, data extraction) to jumpstart development.
 - **Time-based triggers**: Add support for workflows that execute at scheduled intervals or based on real-time events.
 
