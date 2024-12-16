@@ -8,7 +8,7 @@
 import Foundation
 @testable import AuroraCore
 
-class MockWorkflow: WorkflowProtocol {
+class MockWorkflow: WWorkflowProtocol {
     var id: UUID = UUID()
     var name: String
     var description: String

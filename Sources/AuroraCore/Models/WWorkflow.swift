@@ -11,7 +11,7 @@ import os.log
 /**
  A protocol defining the essential properties and behaviors of a workflow, responsible for executing and managing tasks.
  */
-public protocol WorkflowProtocol {
+public protocol WWorkflowProtocol {
     /// Unique identifier for the task.
     var id: UUID { get }
 
@@ -68,7 +68,7 @@ public protocol WorkflowProtocol {
 /**
  A concrete implementation of the `WorkflowProtocol`, responsible for executing and managing tasks in a workflow.
  */
-public class Workflow: WorkflowProtocol {
+public class WWorkflow: WWorkflowProtocol {
     public let id: UUID
     public let name: String
     public let description: String

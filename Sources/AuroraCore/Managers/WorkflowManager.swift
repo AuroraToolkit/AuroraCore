@@ -16,7 +16,7 @@ public typealias WorkflowMappings = [String: [String: String]]
  */
 public protocol WorkflowManagerProtocol {
     /// The workflow that the manager will execute.
-    var workflow: WorkflowProtocol { get set }
+    var workflow: WWorkflowProtocol { get set }
 
     /// Logger instance for logging workflow events.
     var logger: CustomLogger { get }
@@ -30,7 +30,7 @@ public protocol WorkflowManagerProtocol {
     func start() async
 
     /// Retrieves the current workflow object.
-    func getWorkflow() -> WorkflowProtocol
+    func getWorkflow() -> WWorkflowProtocol
 
     /// Retrieves the current workflow state.
     func getWorkflowState() -> WorkflowState
@@ -60,7 +60,7 @@ public protocol WorkflowManagerProtocol {
  A concrete implementation of the `WorkflowManager` protocol, responsible for managing and executing a workflow.
  */
 public class WorkflowManager: WorkflowManagerProtocol {
-    public var workflow: WorkflowProtocol
+    public var workflow: WWorkflowProtocol
     public let logger = CustomLogger.shared
 
     // Static mapping of task names to their corresponding input mappings
@@ -76,7 +76,7 @@ public class WorkflowManager: WorkflowManagerProtocol {
         - workflow: The workflow that the manager will execute.
         - mappings: A dictionary mapping task names to their corresponding input mappings.
      */
-    public init(workflow: WorkflowProtocol, mappings: WorkflowMappings = [:]) {
+    public init(workflow: WWorkflowProtocol, mappings: WorkflowMappings = [:]) {
         self.workflow = workflow
         self.mappings = mappings
     }
@@ -92,7 +92,7 @@ public class WorkflowManager: WorkflowManagerProtocol {
         await executeCurrentTask()
     }
 
-    public func getWorkflow() -> WorkflowProtocol {
+    public func getWorkflow() -> WWorkflowProtocol {
         return workflow
     }
 

@@ -162,7 +162,7 @@ final class WorkflowManagerTests: XCTestCase {
     func testHandleTaskFailureWithRetries() {
         // Given
         let task = MockWorkflowTask(name: "Test Task", description: "Task with retries", retryCount: 0, maxRetries: 3, hasRequiredInputsValue: true)
-        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task])
+        let workflow = WWorkflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task])
         let manager = WorkflowManager(workflow: workflow)
 
         // Simulate the task failing
@@ -205,7 +205,7 @@ final class WorkflowManagerTests: XCTestCase {
     func testStopWorkflowAlreadyCompleted() {
         // Given
         let task = MockWorkflowTask(name: "Mock Task", description: "A mock task", status: .completed)
-        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task])
+        let workflow = WWorkflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task])
         workflow.tryMarkCompleted() // Manually mark workflow as completed
         let manager = WorkflowManager(workflow: workflow)
 
@@ -239,7 +239,7 @@ final class WorkflowManagerTests: XCTestCase {
         // Given
         let task1 = MockWorkflowTask(name: "Task 1", description: "First task", status: .completed)
         let task2 = MockWorkflowTask(name: "Task 2", description: "Second task", status: .completed)
-        let workflow = Workflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
+        let workflow = WWorkflow(name: "Test Workflow", description: "This is a test workflow", tasks: [task1, task2])
         let manager = WorkflowManager(workflow: workflow)
 
         // When
@@ -323,7 +323,7 @@ final class WorkflowManagerTests: XCTestCase {
             return ["result": "\(inputValue) processed by Task 2"]
         }
 
-        let workflow = Workflow(name: "Inline Logic Workflow", description: "Workflow with inline logic tasks")
+        let workflow = WWorkflow(name: "Inline Logic Workflow", description: "Workflow with inline logic tasks")
         workflow.addTask(task1)
         workflow.addTask(task2)
 
@@ -357,7 +357,7 @@ final class WorkflowManagerTests: XCTestCase {
             throw NSError(domain: "WorkflowTask", code: 1, userInfo: [NSLocalizedDescriptionKey: "Task failed during execution."])
         }
 
-        let workflow = Workflow(name: "Failure Workflow", description: "Workflow with a failing task")
+        let workflow = WWorkflow(name: "Failure Workflow", description: "Workflow with a failing task")
         workflow.addTask(task1)
         workflow.addTask(failingTask)
 

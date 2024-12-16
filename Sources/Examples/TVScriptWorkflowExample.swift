@@ -25,7 +25,7 @@ struct TVScriptWorkflowExample {
         let openAIService = OpenAIService(apiKey: openAIKey)
 
         // Workflow initialization
-        let workflow = Workflow(
+        let workflow = WWorkflow(
             name: "AP Tech News Script Workflow",
             description: "Fetch and summarize AP Tech News articles for a TV news broadcast."
         )
