@@ -53,6 +53,64 @@ public struct Workflow {
         self.components = content()
     }
 
+    // MARK: - Workflow Lifecycle
+
+    public mutating func start() async {
+        guard state == .notStarted else {
+            print("Workflow already started or completed.")
+            return
+        }
+
+        state = .inProgress
+
+        do {
+            try await executeComponents()
+            state = .completed
+            print("Workflow \(name) completed successfully.")
+        } catch {
+            state = .failed
+            print("Workflow \(name) failed: \(error.localizedDescription)")
+        }
+    }
+
+    private func executeComponents() async throws {
+        for component in components {
+            switch component {
+            case .task(let task):
+                try await executeTask(task)
+            case .taskGroup(let group):
+                try await executeTaskGroup(group)
+            }
+        }
+    }
+
+    private func executeTask(_ task: Task) async throws {
+        print("Executing task: \(task.name)")
+        let _ = try await task.execute(inputs: [:]) // Execute with no inputs for now
+        print("Task \(task.name) completed.")
+    }
+
+    private func executeTaskGroup(_ group: TaskGroup) async throws {
+        print("Executing task group: \(group.name)")
+
+        switch group.mode {
+        case .sequential:
+            for task in group.tasks {
+                try await executeTask(task)
+            }
+        case .parallel:
+            await withThrowingTaskGroup(of: Void.self) { taskGroup in
+                for task in group.tasks {
+                    taskGroup.addTask {
+                        try await executeTask(task)
+                    }
+                }
+            }
+        }
+
+        print("Task group \(group.name) completed.")
+    }
+
     // MARK: - Nested Types
 
     /**
@@ -158,6 +216,15 @@ public struct Workflow {
         /// The tasks contained within the group.
         public let tasks: [Task]
 
+        ///  How tasks are executed, sequentially, or in parallel
+        public let mode: ExecutionMode
+
+        /// Execute tasks sequentially in the order they were added, or simultaneously in parallel.
+        public enum ExecutionMode {
+            case sequential
+            case parallel
+        }
+
         /**
          Initializes a new task group.
 
@@ -166,10 +233,11 @@ public struct Workflow {
             - description: A brief description of the task group (default is an empty string).
             - content: A closure that declares the tasks within the group.
          */
-        public init(name: String, description: String = "", @WorkflowBuilder _ content: () -> [Workflow.Component]) {
+        public init(name: String, description: String = "", mode: ExecutionMode = .sequential, @WorkflowBuilder _ content: () -> [Workflow.Component]) {
             self.id = UUID()
             self.name = name
             self.description = description
+            self.mode = mode
             self.tasks = content().compactMap {
                 if case let .task(task) = $0 {
                     return task
