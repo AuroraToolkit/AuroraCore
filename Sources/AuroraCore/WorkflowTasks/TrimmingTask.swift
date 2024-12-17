@@ -20,7 +20,9 @@ import Foundation
 
  This task can be integrated in a workflow where string trimming is required to fit within a token limit.
  */
-public class TrimmingTask: WorkflowTask {
+public class TrimmingTask: WorkflowComponent {
+    /// The wrapped task.
+    private let task: Workflow.Task
 
     /**
      - Parameters:
@@ -38,7 +40,7 @@ public class TrimmingTask: WorkflowTask {
         strategy: String.TrimmingStrategy? = .middle
     ) {
         let description = strings.count <= 1 ? "Trim string to fit within the token limit using \(strategy!) strategy" : "Trim multiple strings to fit within the token limit using \(strategy!) strategy"
-        super.init(
+        self.task = Workflow.Task(
             name: name,
             description: description,
             inputs: [
@@ -47,7 +49,23 @@ public class TrimmingTask: WorkflowTask {
                 "buffer": buffer,
                 "strategy": strategy
             ]
-        )
+        ) { inputs in
+            // Retrieve inputs with default values
+            let strings = inputs["strings"] as? [String] ?? []
+            let tokenLimit = inputs["tokenLimit"] as? Int ?? 1024
+            let buffer = inputs["buffer"] as? Double ?? 0.05
+            let strategy = inputs["strategy"] as? String.TrimmingStrategy ?? .middle
+
+            // Validate required inputs
+            guard !strings.isEmpty else {
+                throw NSError(domain: "TrimmingTask", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid inputs for TrimmingTask"])
+            }
+
+            // Perform the trimming operation for each string in the array
+            let trimmedStrings = strings.map { $0.trimmedToFit(tokenLimit: tokenLimit, buffer: buffer, strategy: strategy) }
+
+            return ["trimmedStrings": trimmedStrings]
+        }
     }
 
     /**
@@ -62,23 +80,8 @@ public class TrimmingTask: WorkflowTask {
         self.init(strings: [string], tokenLimit: tokenLimit, buffer: buffer, strategy: strategy)
     }
 
-    public override func execute() async throws -> [String: Any] {
-        // Retrieve inputs with default values
-        let strings = inputs["strings"] as? [String] ?? []
-        let tokenLimit = inputs["tokenLimit"] as? Int ?? 1024
-        let buffer = inputs["buffer"] as? Double ?? 0.05
-        let strategy = inputs["strategy"] as? String.TrimmingStrategy ?? .middle
-
-        // Validate required inputs
-        guard !strings.isEmpty else {
-            markFailed()
-            throw NSError(domain: "TrimmingTask", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid inputs for TrimmingTask"])
-        }
-
-        // Perform the trimming operation for each string in the array
-        let trimmedStrings = strings.map { $0.trimmedToFit(tokenLimit: tokenLimit, buffer: buffer, strategy: strategy) }
-
-        markCompleted()
-        return ["trimmedStrings": trimmedStrings]
+    /// Converts this `LoadContextTask` to a `Workflow.Component`.
+    public func toComponent() -> Workflow.Component {
+        .task(task)
     }
 }

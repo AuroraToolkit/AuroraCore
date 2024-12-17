@@ -22,7 +22,12 @@ final class TrimmingTaskTests: XCTestCase {
         let task = TrimmingTask(string: input)
 
         // When
-        let taskOutputs = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+
+        let taskOutputs = try await unwrappedTask.execute()
         let trimmedString = taskOutputs["trimmedStrings"] as? [String]
         let tokenCount = trimmedString?.first?.estimatedTokenCount()
 
@@ -46,7 +51,12 @@ final class TrimmingTaskTests: XCTestCase {
         )
 
         // When
-        let taskOutputs = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+
+        let taskOutputs = try await unwrappedTask.execute()
         let trimmedString = taskOutputs["trimmedStrings"] as? [String]
         let tokenCount = trimmedString?.first?.estimatedTokenCount()
 
@@ -70,7 +80,12 @@ final class TrimmingTaskTests: XCTestCase {
         )
 
         // When
-        let taskOutputs = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+
+        let taskOutputs = try await unwrappedTask.execute()
         let trimmedString = taskOutputs["trimmedStrings"] as? [String]
         let tokenCount = trimmedString?.first?.estimatedTokenCount()
 
@@ -93,7 +108,12 @@ final class TrimmingTaskTests: XCTestCase {
         let task = TrimmingTask(strings: inputs)
 
         // When
-        let taskOutputs = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+
+        let taskOutputs = try await unwrappedTask.execute()
         let trimmedStrings = taskOutputs["trimmedStrings"] as? [String]
 
         // Then
@@ -114,7 +134,12 @@ final class TrimmingTaskTests: XCTestCase {
 
         // When
         do {
-            _ = try await task.execute()
+            guard case let .task(unwrappedTask) = task.toComponent() else {
+                XCTFail("Failed to unwrap the Workflow.Task from the component.")
+                return
+            }
+
+            _ = try await unwrappedTask.execute()
             XCTFail("Task should have thrown an error due to missing inputs.")
         } catch {
             // Then
