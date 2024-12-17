@@ -18,11 +18,13 @@ import os.log
 
  This task can be integrated into a workflow where article links need to be extracted from an RSS feed.
  */
-public class RSSParsingTask: WorkflowTask {
+public class RSSParsingTask: WorkflowComponent {
+    /// The wrapped task.
+    private let task: Workflow.Task
+
     private var articleLinks: [String] = []
     private var currentElement: String = ""
     private var currentLink: String?
-    private let logger = CustomLogger.shared
 
     /**
      Initializes the `RSSParsingTask` with the RSS feed data.
@@ -32,37 +34,33 @@ public class RSSParsingTask: WorkflowTask {
         - feedData: The data of the RSS feed to parse.
      */
     public init(name: String? = nil, feedData: Data) {
-        super.init(
+        self.task = Workflow.Task(
             name: name,
             description: "Extract article links from the RSS feed",
             inputs: ["feedData": feedData]
-        )
+        ) { inputs in
+            // Validate the input data
+            guard let feedData = inputs["feedData"] as? Data, !feedData.isEmpty else {
+                throw NSError(domain: "RSSParsingTask", code: 1, userInfo: [NSLocalizedDescriptionKey: "Missing or invalid RSS feed data"])
+            }
+
+            // Initialize the parser
+            let parserDelegate = RSSParserDelegate()
+            let parser = XMLParser(data: feedData)
+            parser.delegate = parserDelegate
+
+            // Start parsing
+            guard parser.parse() else {
+                throw NSError(domain: "RSSParsingTask", code: 2, userInfo: [NSLocalizedDescriptionKey: "Failed to parse RSS feed"])
+            }
+
+            return ["articles": parserDelegate.articles]
+        }
     }
 
-    public override func execute() async throws -> [String: Any] {
-        // Validate the input data
-        guard let feedData = inputs["feedData"] as? Data, !feedData.isEmpty else {
-            markFailed()
-            logger.error("RSSParsingTask \(self.name): Missing or invalid RSS feed data", category: "RSSParsingTask")
-            throw NSError(domain: "RSSParsingTask", code: 1, userInfo: [NSLocalizedDescriptionKey: "Missing or invalid RSS feed data"])
-        }
-
-        logger.debug("RSSParsingTask \(self.name): Parsing RSS feed... \(feedData.count) bytes", category: "RSSParsingTask")
-
-        // Initialize the parser
-        let parserDelegate = RSSParserDelegate()
-        let parser = XMLParser(data: feedData)
-        parser.delegate = parserDelegate
-
-        // Start parsing
-        guard parser.parse() else {
-            markFailed()
-            logger.error("RSSParsingTask \(self.name): Failed to parse RSS feed", category: "RSSParsingTask")
-            throw NSError(domain: "RSSParsingTask", code: 2, userInfo: [NSLocalizedDescriptionKey: "Failed to parse RSS feed"])
-        }
-
-        markCompleted()
-        return ["articles": parserDelegate.articles]
+    /// Converts this `RSSParsingTask` to a `Workflow.Component`.
+    public func toComponent() -> Workflow.Component {
+        .task(task)
     }
 }
 

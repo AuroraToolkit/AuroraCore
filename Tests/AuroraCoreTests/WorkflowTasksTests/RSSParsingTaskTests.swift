@@ -35,10 +35,14 @@ final class RSSParsingTaskTests: XCTestCase {
         let task = RSSParsingTask(feedData: validRSSData)
         
         // When
-        let outputs = try await task.execute()
-        
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+        let taskOutputs = try await unwrappedTask.execute()
+
         // Then
-        guard let articles = outputs["articles"] as? [RSSArticle] else {
+        guard let articles = taskOutputs["articles"] as? [RSSArticle] else {
             XCTFail("Output 'articles' not found or invalid")
             return
         }
@@ -56,7 +60,11 @@ final class RSSParsingTaskTests: XCTestCase {
         
         // When/Then
         do {
-            _ = try await task.execute()
+            guard case let .task(unwrappedTask) = task.toComponent() else {
+                XCTFail("Failed to unwrap the Workflow.Task from the component.")
+                return
+            }
+            _ = try await unwrappedTask.execute()
             XCTFail("Expected an error to be thrown, but no error was thrown.")
         } catch {
             XCTAssertEqual((error as NSError).domain, "RSSParsingTask", "Error domain should match.")
@@ -70,7 +78,11 @@ final class RSSParsingTaskTests: XCTestCase {
         
         // When/Then
         do {
-            _ = try await task.execute()
+            guard case let .task(unwrappedTask) = task.toComponent() else {
+                XCTFail("Failed to unwrap the Workflow.Task from the component.")
+                return
+            }
+            _ = try await unwrappedTask.execute()
             XCTFail("Expected an error to be thrown, but no error was thrown.")
         } catch {
             XCTAssertEqual((error as NSError).domain, "RSSParsingTask", "Error domain should match.")
@@ -89,10 +101,14 @@ final class RSSParsingTaskTests: XCTestCase {
         let task = RSSParsingTask(feedData: emptyRSSData)
 
         // When
-        let outputs = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+        let taskOutputs = try await unwrappedTask.execute()
 
         // Then
-        guard let articles = outputs["articles"] as? [RSSArticle] else {
+        guard let articles = taskOutputs["articles"] as? [RSSArticle] else {
             XCTFail("Output 'articles' not found or invalid")
             return
         }
@@ -113,7 +129,11 @@ final class RSSParsingTaskTests: XCTestCase {
 
         // When/Then
         do {
-            _ = try await task.execute()
+            guard case let .task(unwrappedTask) = task.toComponent() else {
+                XCTFail("Failed to unwrap the Workflow.Task from the component.")
+                return
+            }
+            _ = try await unwrappedTask.execute()
             XCTFail("Expected an error to be thrown, but no error was thrown.")
         } catch {
             XCTAssertEqual((error as NSError).domain, "RSSParsingTask", "Error domain should match.")
@@ -141,10 +161,14 @@ final class RSSParsingTaskTests: XCTestCase {
         let task = RSSParsingTask(feedData: largeRSSData)
 
         // When
-        let outputs = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+        let taskOutputs = try await unwrappedTask.execute()
 
         // Then
-        guard let articles = outputs["articles"] as? [RSSArticle] else {
+        guard let articles = taskOutputs["articles"] as? [RSSArticle] else {
             XCTFail("Output 'articles' not found or invalid")
             return
         }
@@ -171,10 +195,14 @@ final class RSSParsingTaskTests: XCTestCase {
         let task = RSSParsingTask(feedData: partiallyValidRSSData)
 
         // When
-        let outputs = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+        let taskOutputs = try await unwrappedTask.execute()
 
         // Then
-        guard let articles = outputs["articles"] as? [RSSArticle] else {
+        guard let articles = taskOutputs["articles"] as? [RSSArticle] else {
             XCTFail("Output 'articles' not found or invalid")
             return
         }
@@ -202,10 +230,14 @@ final class RSSParsingTaskTests: XCTestCase {
         let task = RSSParsingTask(feedData: partiallyValidRSSData)
 
         // When
-        let outputs = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+        let taskOutputs = try await unwrappedTask.execute()
 
         // Then
-        guard let articles = outputs["articles"] as? [RSSArticle] else {
+        guard let articles = taskOutputs["articles"] as? [RSSArticle] else {
             XCTFail("Output 'articles' not found or invalid")
             return
         }
@@ -228,10 +260,14 @@ final class RSSParsingTaskTests: XCTestCase {
         let task = RSSParsingTask(feedData: invalidRSSData)
 
         // When
-        let outputs = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+        let taskOutputs = try await unwrappedTask.execute()
 
         // Then
-        guard let articles = outputs["articles"] as? [RSSArticle] else {
+        guard let articles = taskOutputs["articles"] as? [RSSArticle] else {
             XCTFail("Output 'articles' not found or invalid")
             return
         }
