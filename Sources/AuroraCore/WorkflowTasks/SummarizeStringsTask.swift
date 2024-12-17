@@ -13,12 +13,16 @@ import Foundation
  - **Inputs**
     - `summarizer`: The summarizer to be used for the task.
     - `summaryType`: The type of summary to be performed (e.g., context, general text).
+    - `SummarizerOptions`: Additional summarizer configuration options (e.g. model, temperature).
  - **Outputs**
     - `summaries`:  The list of summarized strings.
 
  This task can be integrated in a workflow where context items need to be summarized.
  */
-public class SummarizeStringsTask: WorkflowTask {
+public class SummarizeStringsTask: WorkflowComponent {
+    /// The wrapped task.
+    private let task: Workflow.Task
+
     private let summarizer: SummarizerProtocol
     private let summaryType: SummaryType
     private let strings: [String]
@@ -31,31 +35,38 @@ public class SummarizeStringsTask: WorkflowTask {
             - summarizer: The summarizer to be used for the task.
             - summaryType: The type of summary to be performed (e.g., context, general text).
             - strings: The list of strings to be summarized.
+            - options: Optional `SummarizerOptions` to provide additional configuration options (e.g., model, temperature).
      */
     public init(
         name: String? = nil,
         summarizer: SummarizerProtocol,
         summaryType: SummaryType,
-        strings: [String]
+        strings: [String],
+        options: SummarizerOptions? = nil
     ) {
         self.summarizer = summarizer
         self.summaryType = summaryType
         self.strings = strings
-        super.init(
+        self.task = Workflow.Task(
             name: name,
             description: "Summarize a list of strings using the LLM service",
-            inputs: ["strings": strings]
-        )
+            inputs: [
+                "strings": strings,
+                "options": options ?? SummarizerOptions()
+            ]
+        ) { inputs in
+            guard let strings = inputs["strings"] as? [String], !strings.isEmpty else {
+                throw NSError(domain: "SummarizeStringsTask", code: 1, userInfo: [NSLocalizedDescriptionKey: "No strings provided for summarization."])
+            }
+
+            let options = inputs["options"] as? SummarizerOptions
+            let summaries = try await summarizer.summarizeGroup(strings, type: summaryType, options: options)
+            return ["summaries": summaries]
+        }
     }
 
-    public override func execute() async throws -> [String: Any] {
-        guard let strings = inputs["strings"] as? [String], !strings.isEmpty else {
-            markFailed()
-            throw NSError(domain: "SummarizeStringsTask", code: 1, userInfo: [NSLocalizedDescriptionKey: "No strings provided for summarization."])
-        }
-
-        let summaries = try await summarizer.summarizeGroup(strings, type: summaryType, options: nil)
-        markCompleted()
-        return ["summaries": summaries]
+    /// Converts this `LoadContextTask` to a `Workflow.Component`.
+    public func toComponent() -> Workflow.Component {
+        .task(task)
     }
 }

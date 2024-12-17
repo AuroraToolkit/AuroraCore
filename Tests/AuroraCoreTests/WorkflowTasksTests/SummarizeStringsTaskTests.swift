@@ -23,7 +23,12 @@ final class SummarizeStringsTaskTests: XCTestCase {
         )
 
         // When
-        let outputs = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+
+        let outputs = try await unwrappedTask.execute()
 
         // Then
         guard let summaries = outputs["summaries"] as? [String] else {
@@ -47,7 +52,12 @@ final class SummarizeStringsTaskTests: XCTestCase {
         )
 
         // When
-        let outputs = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+
+        let outputs = try await unwrappedTask.execute()
 
         // Then
         guard let summaries = outputs["summaries"] as? [String] else {
@@ -69,7 +79,12 @@ final class SummarizeStringsTaskTests: XCTestCase {
 
         // When/Then
         do {
-            _ = try await task.execute()
+            guard case let .task(unwrappedTask) = task.toComponent() else {
+                XCTFail("Failed to unwrap the Workflow.Task from the component.")
+                return
+            }
+
+            _ = try await unwrappedTask.execute()
             XCTFail("Expected an error to be thrown for empty input, but no error was thrown.")
         } catch {
             XCTAssertEqual((error as NSError).domain, "SummarizeStringsTask", "Error domain should match.")
@@ -91,7 +106,12 @@ final class SummarizeStringsTaskTests: XCTestCase {
 
         // When/Then
         do {
-            _ = try await task.execute()
+            guard case let .task(unwrappedTask) = task.toComponent() else {
+                XCTFail("Failed to unwrap the Workflow.Task from the component.")
+                return
+            }
+
+            _ = try await unwrappedTask.execute()
             XCTFail("Expected an error to be thrown by the summarizer, but no error was thrown.")
         } catch {
             XCTAssertEqual((error as NSError).domain, expectedError.domain, "Error domain should match the simulated error.")
@@ -107,11 +127,15 @@ final class SummarizeStringsTaskTests: XCTestCase {
             summaryType: .single,
             strings: [] // Will be replaced with invalid inputs
         )
-        task.inputs["strings"] = "Not an array"
 
         // When/Then
         do {
-            _ = try await task.execute()
+            guard case let .task(unwrappedTask) = task.toComponent() else {
+                XCTFail("Failed to unwrap the Workflow.Task from the component.")
+                return
+            }
+
+            _ = try await unwrappedTask.execute(inputs: ["strings": "Not an array"])
             XCTFail("Expected an error to be thrown for invalid input, but no error was thrown.")
         } catch {
             XCTAssertEqual((error as NSError).domain, "SummarizeStringsTask", "Error domain should match.")

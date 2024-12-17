@@ -33,7 +33,7 @@ public class SummarizeContextTask: WorkflowComponent {
         - name: Optionally pass the name of the task.
         - contextController: The `ContextController` instance containing the context to be summarized.
         - summaryType: The type of summary to be performed (`single` or `multiple`).
-        - options:Optional `SummarizerOptions` to provide additional configuration options (e.g., model, temperature).
+        - options: Optional `SummarizerOptions` to provide additional configuration options (e.g., model, temperature).
      */
     public init(
         name: String? = nil,
