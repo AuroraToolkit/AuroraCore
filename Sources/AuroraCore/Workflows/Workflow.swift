@@ -189,7 +189,7 @@ public struct Workflow {
          - Returns: A dictionary of outputs produced by the task.
          - Throws: An error if the task execution logic is not provided or fails during execution.
          */
-        public func execute(inputs: [String: Any]) async throws -> [String: Any] {
+        public func execute(inputs: [String: Any] = [:]) async throws -> [String: Any] {
             let mergedInputs = self.inputs.merging(inputs) { (_, new) in new } // Runtime inputs take precedence
             if let executeBlock = executeBlock {
                 return try await executeBlock(mergedInputs)

@@ -150,12 +150,15 @@ public class ContextManager {
         guard case let .task(unwrappedTask) = fetchTask.toComponent() else {
             return
         }
-        let fetchTaskOutputs = try await unwrappedTask.execute(inputs: [:])
+        let fetchTaskOutputs = try await unwrappedTask.execute()
 
         if let contextFiles = fetchTaskOutputs["contexts"] as? [URL] {
             for file in contextFiles {
                 let loadTask = LoadContextTask(filename: file.deletingPathExtension().lastPathComponent)
-                let loadTaskOutputs = try await loadTask.execute()
+                guard case let .task(unwrappedTask) = loadTask.toComponent() else {
+                    return
+                }
+                let loadTaskOutputs = try await unwrappedTask.execute()
 
                 if let loadedContext = loadTaskOutputs["context"] as? Context,
                    let llmService = llmServiceFactory.createService(for: loadedContext) {

@@ -45,7 +45,11 @@ final class LoadContextTaskTests: XCTestCase {
 
         // Initialize and execute the LoadContextTask
         let task = LoadContextTask(filename: filename)
-        let taskOutputs = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+        let taskOutputs = try await unwrappedTask.execute(inputs: [:])
 
         // Verify the outputs
         if let outputContext = taskOutputs["context"] as? Context {
@@ -66,7 +70,11 @@ final class LoadContextTaskTests: XCTestCase {
 
         // Initialize and execute the LoadContextTask without specifying a filename
         let task = LoadContextTask()
-        let taskOutputs = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+        let taskOutputs = try await unwrappedTask.execute(inputs: [:])
 
         // Verify the outputs
         if let outputContext = taskOutputs["context"] as? Context {
@@ -81,7 +89,12 @@ final class LoadContextTaskTests: XCTestCase {
     func testLoadContextFromNonExistentFile() async {
         let task = LoadContextTask(filename: "non_existent.json")
         do {
-            _ = try await task.execute()
+            guard case let .task(unwrappedTask) = task.toComponent() else {
+                XCTFail("Failed to unwrap the Workflow.Task from the component.")
+                return
+            }
+
+            _ = try await unwrappedTask.execute()
             XCTFail("Expected an error when loading from a non-existent file")
         } catch let error as NSError {
             XCTAssertEqual(error.code, NSFileReadNoSuchFileError, "Error should have the correct code for a missing file")
