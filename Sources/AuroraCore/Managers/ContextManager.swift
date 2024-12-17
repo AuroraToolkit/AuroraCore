@@ -134,7 +134,10 @@ public class ContextManager {
     public func saveAllContexts() async throws {
         for (contextID, contextController) in contextControllers {
             let saveTask = SaveContextTask(context: contextController.getContext(), filename: contextID.uuidString)
-            _ = try await saveTask.execute()
+            guard case let .task(unwrappedTask) = saveTask.toComponent() else {
+                return
+            }
+            _ = try await unwrappedTask.execute()
         }
     }
 

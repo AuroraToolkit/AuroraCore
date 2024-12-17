@@ -33,7 +33,11 @@ final class SaveContextTaskTests: XCTestCase {
 
         // Initialize and execute the task
         let task = SaveContextTask(context: context, filename: filename)
-        _ = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+        _ = try await unwrappedTask.execute()
 
         // Verify the file was saved correctly
         let documentDirectory = try FileManager.default.createContextsDirectory()
@@ -51,12 +55,14 @@ final class SaveContextTaskTests: XCTestCase {
         let context = Context(llmServiceVendor: "OpenAI") // Sample context
         let task = SaveContextTask(context: context, filename: "test_context")
 
-        // Set context input to nil
-        task.inputs["context"] = nil
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
 
         // Execute and verify the error
         do {
-            _ = try await task.execute()
+            _ = try await unwrappedTask.execute(inputs: ["context": "A string value which is not a Context"])
             XCTFail("Expected error when executing task without context input")
         } catch {
             XCTAssertEqual(error.localizedDescription, "Invalid inputs for SaveContextTask", "Error should indicate missing context input")
@@ -68,12 +74,14 @@ final class SaveContextTaskTests: XCTestCase {
         let context = Context(llmServiceVendor: "OpenAI") // Sample context
         let task = SaveContextTask(context: context, filename: "test_context")
 
-        // Set filename input to nil
-        task.inputs["filename"] = nil
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
 
         // Execute and verify the error
         do {
-            _ = try await task.execute()
+            _ = try await unwrappedTask.execute(inputs: ["filename": nil])
             XCTFail("Expected error when executing task without filename input")
         } catch {
             XCTAssertEqual(error.localizedDescription, "Invalid inputs for SaveContextTask", "Error should indicate missing filename input")

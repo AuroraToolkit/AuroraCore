@@ -49,7 +49,7 @@ final class LoadContextTaskTests: XCTestCase {
             XCTFail("Failed to unwrap the Workflow.Task from the component.")
             return
         }
-        let taskOutputs = try await unwrappedTask.execute(inputs: [:])
+        let taskOutputs = try await unwrappedTask.execute()
 
         // Verify the outputs
         if let outputContext = taskOutputs["context"] as? Context {
@@ -74,7 +74,7 @@ final class LoadContextTaskTests: XCTestCase {
             XCTFail("Failed to unwrap the Workflow.Task from the component.")
             return
         }
-        let taskOutputs = try await unwrappedTask.execute(inputs: [:])
+        let taskOutputs = try await unwrappedTask.execute()
 
         // Verify the outputs
         if let outputContext = taskOutputs["context"] as? Context {

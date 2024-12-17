@@ -34,7 +34,7 @@ final class FetchURLTaskTests: XCTestCase {
             XCTFail("Failed to unwrap the Workflow.Task from the component.")
             return
         }
-        let outputs = try await unwrappedTask.execute(inputs: [:])
+        let outputs = try await unwrappedTask.execute()
 
         // Then
         XCTAssertNotNil(outputs["data"], "The data output should not be nil.")
@@ -54,7 +54,7 @@ final class FetchURLTaskTests: XCTestCase {
                 XCTFail("Failed to unwrap the Workflow.Task from the component.")
                 return
             }
-            _ = try await unwrappedTask.execute(inputs: [:])
+            _ = try await unwrappedTask.execute()
             XCTFail("Expected an error to be thrown for an invalid URL, but no error was thrown.")
         } catch {
             XCTAssertTrue(error is URLError, "The error should be a URLError.")
@@ -72,7 +72,7 @@ final class FetchURLTaskTests: XCTestCase {
                 XCTFail("Failed to unwrap the Workflow.Task from the component.")
                 return
             }
-            _ = try await unwrappedTask.execute(inputs: [:])
+            _ = try await unwrappedTask.execute()
             XCTFail("Expected an error to be thrown for a non-existent URL, but no error was thrown.")
         } catch {
             XCTAssertTrue(error is URLError, "The error should be a URLError for a non-existent URL.")
@@ -89,7 +89,7 @@ final class FetchURLTaskTests: XCTestCase {
             XCTFail("Failed to unwrap the Workflow.Task from the component.")
             return
         }
-        let outputs = try await unwrappedTask.execute(inputs: [:])
+        let outputs = try await unwrappedTask.execute()
 
         // Then
         XCTAssertNotNil(outputs["data"], "The data output should not be nil.")
@@ -112,7 +112,7 @@ final class FetchURLTaskTests: XCTestCase {
                 XCTFail("Failed to unwrap the Workflow.Task from the component.")
                 return
             }
-            _ = try await unwrappedTask.execute(inputs: [:])
+            _ = try await unwrappedTask.execute()
             XCTFail("Expected a timeout error to be thrown, but no error was thrown.")
         } catch {
             XCTAssertTrue(error is URLError, "The error should be a URLError for a timeout.")
