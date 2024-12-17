@@ -33,7 +33,12 @@ final class SummarizeContextTaskTests: XCTestCase {
         task = SummarizeContextTask(contextController: contextController, summaryType: .single)
 
         // When
-        _ = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+
+        _ = try await unwrappedTask.execute()
 
         // Then
         XCTAssertEqual(contextController.getItems().count, 2, "There should be 2 items in the context (original + summary).")
@@ -48,7 +53,12 @@ final class SummarizeContextTaskTests: XCTestCase {
         task = SummarizeContextTask(contextController: contextController, summaryType: .single)
 
         // When
-        _ = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+
+        _ = try await unwrappedTask.execute()
 
         // Then
         XCTAssertEqual(contextController.getItems().count, 3, "There should be 3 items in the context (original 2 + summary).")
@@ -61,7 +71,12 @@ final class SummarizeContextTaskTests: XCTestCase {
         task = SummarizeContextTask(contextController: contextController, summaryType: .single)
 
         // When
-        _ = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+
+        _ = try await unwrappedTask.execute()
 
         // Then
         XCTAssertEqual(contextController.getItems().count, 0, "There should be no items in the context.")
@@ -76,8 +91,13 @@ final class SummarizeContextTaskTests: XCTestCase {
         task = SummarizeContextTask(contextController: contextController, summaryType: .single)
 
         // When/Then
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+
         do {
-            _ = try await task.execute()
+            _ = try await unwrappedTask.execute()
             XCTFail("Expected an error to be thrown, but no error was thrown.")
         } catch {
             // Verify the error is as expected
@@ -94,7 +114,12 @@ final class SummarizeContextTaskTests: XCTestCase {
         task = SummarizeContextTask(contextController: contextController, summaryType: .single)
 
         // When
-        _ = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+
+        _ = try await unwrappedTask.execute()
 
         // Then
         XCTAssertEqual(contextController.getItems().count, 3, "There should be 3 items in the context (original 2 + summary).")
@@ -109,8 +134,13 @@ final class SummarizeContextTaskTests: XCTestCase {
         task = SummarizeContextTask(contextController: contextController, summaryType: .single)
 
         // When
-        _ = try await task.execute()
-        _ = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+
+        _ = try await unwrappedTask.execute()
+        _ = try await unwrappedTask.execute()
 
         // Then
         XCTAssertEqual(contextController.getItems().count, 4, "There should be 4 items in the context after 2 summarizations (original 2 + 2 summaries).")
