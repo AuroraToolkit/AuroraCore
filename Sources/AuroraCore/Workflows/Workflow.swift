@@ -170,13 +170,13 @@ public struct Workflow {
             - executeBlock: An optional closure defining the work to be performed by the task.
          */
         public init(
-            name: String,
+            name: String?,
             description: String = "",
             inputs: [String: Any?] = [:],
             executeBlock: (([String: Any]) async throws -> [String: Any])? = nil
         ) {
             self.id = UUID()
-            self.name = name
+            self.name = name ?? String(describing: type(of: self)) // Default to the class name
             self.description = description
             self.inputs = inputs.compactMapValues { $0 }
             self.executeBlock = executeBlock

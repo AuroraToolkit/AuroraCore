@@ -147,7 +147,10 @@ public class ContextManager {
      */
     public func loadAllContexts() async throws {
         let fetchTask = FetchContextsTask()
-        let fetchTaskOutputs = try await fetchTask.execute()
+        guard case let .task(unwrappedTask) = fetchTask.toComponent() else {
+            return
+        }
+        let fetchTaskOutputs = try await unwrappedTask.execute(inputs: [:])
 
         if let contextFiles = fetchTaskOutputs["contexts"] as? [URL] {
             for file in contextFiles {

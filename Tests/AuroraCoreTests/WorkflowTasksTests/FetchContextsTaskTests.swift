@@ -29,7 +29,11 @@ final class FetchContextsTaskTests: XCTestCase {
 
         // Initialize and execute the task
         let task = FetchContextsTask()
-        let taskOutputs = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+        let taskOutputs = try await unwrappedTask.execute(inputs: [:])
 
         // Verify the outputs
         if let outputContexts = taskOutputs["contexts"] as? [URL] {
@@ -48,7 +52,11 @@ final class FetchContextsTaskTests: XCTestCase {
 
         // Specify filenames in inputs and execute the task
         let task = FetchContextsTask(filenames: ["context1.json"])
-        let taskOutputs = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+        let taskOutputs = try await unwrappedTask.execute(inputs: [:])
 
         // Verify the outputs
         if let outputContexts = taskOutputs["contexts"] as? [URL] {
@@ -67,7 +75,11 @@ final class FetchContextsTaskTests: XCTestCase {
 
         // Specify filenames in inputs without the `.json` extension and execute the task
         let task = FetchContextsTask(filenames: ["context1"])
-        let taskOutputs = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+        let taskOutputs = try await unwrappedTask.execute(inputs: [:])
 
         // Verify the outputs
         if let outputContexts = taskOutputs["contexts"] as? [URL] {
@@ -81,7 +93,11 @@ final class FetchContextsTaskTests: XCTestCase {
     // Test case for handling an empty directory
     func testFetchContextsEmptyDirectory() async throws {
         let task = FetchContextsTask()
-        let taskOutputs = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+        let taskOutputs = try await unwrappedTask.execute(inputs: [:])
 
         if let outputContexts = taskOutputs["contexts"] as? [URL] {
             XCTAssertEqual(outputContexts.count, 0, "No contexts should be fetched from an empty directory")
@@ -95,7 +111,11 @@ final class FetchContextsTaskTests: XCTestCase {
         try cleanupTestFiles()
 
         let task = FetchContextsTask(filenames: ["non_existent_file"])
-        let taskOutputs = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+        let taskOutputs = try await unwrappedTask.execute(inputs: [:])
 
         if let outputContexts = taskOutputs["contexts"] as? [URL] {
             XCTAssertEqual(outputContexts.count, 0, "No contexts should be fetched when file does not exist")
@@ -111,7 +131,11 @@ final class FetchContextsTaskTests: XCTestCase {
         let task = FetchContextsTask(filenames: invalidFilenames)
 
         // When
-        let taskOutputs = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+        let taskOutputs = try await unwrappedTask.execute(inputs: [:])
 
         // Then
         if let outputContexts = taskOutputs["contexts"] as? [URL] {
@@ -129,7 +153,11 @@ final class FetchContextsTaskTests: XCTestCase {
 
         // Request the file with a different case
         let task = FetchContextsTask(filenames: ["context1.json"])
-        let taskOutputs = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+        let taskOutputs = try await unwrappedTask.execute(inputs: [:])
 
         // Then
         if let outputContexts = taskOutputs["contexts"] as? [URL] {
@@ -151,7 +179,11 @@ final class FetchContextsTaskTests: XCTestCase {
 
         // When
         let startTime = CFAbsoluteTimeGetCurrent()
-        let taskOutputs = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+        let taskOutputs = try await unwrappedTask.execute(inputs: [:])
         let executionTime = CFAbsoluteTimeGetCurrent() - startTime
 
         // Then

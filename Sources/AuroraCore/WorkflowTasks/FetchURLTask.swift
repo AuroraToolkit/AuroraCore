@@ -27,13 +27,14 @@ public struct FetchURLTask: WorkflowComponent {
      Initializes a `FetchURLTask`.
 
      - Parameters:
-       - url: The URL to fetch.
-       - session: The URLSession to use for the request. Defaults to `.shared`.
+        - name: The name of the task.
+        - url: The URL to fetch.
+        - session: The URLSession to use for the request. Defaults to `.shared`.
      */
-    public init(url: URL, session: URLSession = .shared) {
+    public init(name: String? = nil, url: URL, session: URLSession = .shared) {
         self.session = session
         self.task = Workflow.Task(
-            name: "Fetch URL Task",
+            name: name,
             description: "Fetches data from \(url.absoluteString)",
             inputs: ["url": url]
         ) { inputs in
