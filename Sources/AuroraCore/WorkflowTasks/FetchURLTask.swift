@@ -2,8 +2,6 @@
 //  FetchURLTask.swift
 //  AuroraCore
 //
-//  Created by Dan Murrell Jr on 12/3/24.
-//
 
 import Foundation
 
@@ -15,52 +13,40 @@ import Foundation
  - **Outputs**
     - `data`: The raw data fetched from the URL.
 
- This task can be used in workflows where external data needs to be retrieved, such as downloading files, fetching JSON, or reading RSS feeds.
+ This task wraps `Workflow.Task` and can be used in workflows where external data needs to be retrieved, such as downloading files,
+ fetching JSON, or reading RSS feeds.
  */
-public class FetchURLTask: WorkflowTask {
-
-    /// The URL to fetch.
-    private let url: URL
+public struct FetchURLTask: WorkflowComponent {
+    /// The wrapped task.
+    private let task: Workflow.Task
 
     /// The URLSession used to fetch the URL.
     private let session: URLSession
 
     /**
-     Initializes a `FetchURLTask` with the URL to fetch.
+     Initializes a `FetchURLTask`.
 
      - Parameters:
-        - name: The name of the task.
-        - url: The URL to fetch.
-        - session: The URLSession used to fetch the URL. Defaults to `.shared`.
+       - url: The URL to fetch.
+       - session: The URLSession to use for the request. Defaults to `.shared`.
      */
-    public init(name: String? = nil, url: URL, session: URLSession = .shared) {
-        self.url = url
+    public init(url: URL, session: URLSession = .shared) {
         self.session = session
-        super.init(
-            name: name,
-            description: "Fetches data from the specified URL",
+        self.task = Workflow.Task(
+            name: "Fetch URL Task",
+            description: "Fetches data from \(url.absoluteString)",
             inputs: ["url": url]
-        )
+        ) { inputs in
+            guard let url = inputs["url"] as? URL else {
+                throw NSError(domain: "FetchURLTask", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL input"])
+            }
+            let (data, _) = try await session.data(from: url)
+            return ["data": data]
+        }
     }
 
-    /**
-     Executes the task by fetching the contents of the specified URL.
-
-     - Throws: An error if the URL cannot be fetched or the data is invalid.
-     */
-    public override func execute() async throws -> [String: Any] {
-        guard let url = inputs["url"] as? URL else {
-            markFailed()
-            throw NSError(domain: "FetchURLTask", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL input"])
-        }
-
-        do {
-            let (data, _) = try await session.data(from: url)
-            markCompleted()
-            return ["data": data]
-        } catch {
-            markFailed()
-            throw error
-        }
+    /// Converts this `FetchURLTask` to a `Workflow.Component`.
+    public func toComponent() -> Workflow.Component {
+        .task(task)
     }
 }

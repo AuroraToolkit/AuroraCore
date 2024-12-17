@@ -16,7 +16,7 @@ final class FetchURLTaskTests: XCTestCase {
     override func setUp() {
         super.setUp()
         // Set up a test server or a known good URL
-        testServerURL = URL(string: "https://httpbin.org/get") // Example: public API for testing GET requests
+        testServerURL = URL(string: "https://httpbin.org/get") // Public API for testing GET requests
     }
 
     override func tearDown() {
@@ -30,11 +30,15 @@ final class FetchURLTaskTests: XCTestCase {
         task = FetchURLTask(url: testServerURL)
 
         // When
-        let taskOutputs = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+        let outputs = try await unwrappedTask.execute(inputs: [:])
 
         // Then
-        XCTAssertNotNil(taskOutputs["data"], "The data output should not be nil.")
-        if let data = taskOutputs["data"] as? Data {
+        XCTAssertNotNil(outputs["data"], "The data output should not be nil.")
+        if let data = outputs["data"] as? Data {
             XCTAssertFalse(data.isEmpty, "The fetched data should not be empty.")
         }
     }
@@ -46,7 +50,11 @@ final class FetchURLTaskTests: XCTestCase {
 
         // When/Then
         do {
-            _ = try await task.execute()
+            guard case let .task(unwrappedTask) = task.toComponent() else {
+                XCTFail("Failed to unwrap the Workflow.Task from the component.")
+                return
+            }
+            _ = try await unwrappedTask.execute(inputs: [:])
             XCTFail("Expected an error to be thrown for an invalid URL, but no error was thrown.")
         } catch {
             XCTAssertTrue(error is URLError, "The error should be a URLError.")
@@ -60,7 +68,11 @@ final class FetchURLTaskTests: XCTestCase {
 
         // When/Then
         do {
-            _ = try await task.execute()
+            guard case let .task(unwrappedTask) = task.toComponent() else {
+                XCTFail("Failed to unwrap the Workflow.Task from the component.")
+                return
+            }
+            _ = try await unwrappedTask.execute(inputs: [:])
             XCTFail("Expected an error to be thrown for a non-existent URL, but no error was thrown.")
         } catch {
             XCTAssertTrue(error is URLError, "The error should be a URLError for a non-existent URL.")
@@ -73,11 +85,15 @@ final class FetchURLTaskTests: XCTestCase {
         task = FetchURLTask(url: largeResponseURL)
 
         // When
-        let taskOutputs = try await task.execute()
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+        let outputs = try await unwrappedTask.execute(inputs: [:])
 
         // Then
-        XCTAssertNotNil(taskOutputs["data"], "The data output should not be nil.")
-        if let data = taskOutputs["data"] as? Data {
+        XCTAssertNotNil(outputs["data"], "The data output should not be nil.")
+        if let data = outputs["data"] as? Data {
             XCTAssertEqual(data.count, 10240, "The fetched data size should match the expected size (10KB).")
         }
     }
@@ -92,7 +108,11 @@ final class FetchURLTaskTests: XCTestCase {
 
         // When/Then
         do {
-            _ = try await task.execute()
+            guard case let .task(unwrappedTask) = task.toComponent() else {
+                XCTFail("Failed to unwrap the Workflow.Task from the component.")
+                return
+            }
+            _ = try await unwrappedTask.execute(inputs: [:])
             XCTFail("Expected a timeout error to be thrown, but no error was thrown.")
         } catch {
             XCTAssertTrue(error is URLError, "The error should be a URLError for a timeout.")

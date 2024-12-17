@@ -31,6 +31,9 @@ public struct Workflow {
     /// The current state of the workflow.
     public private(set) var state: State = .notStarted
 
+    private let logger = CustomLogger.shared
+
+
     public enum State {
         case notStarted
         case inProgress
@@ -57,7 +60,7 @@ public struct Workflow {
 
     public mutating func start() async {
         guard state == .notStarted else {
-            print("Workflow already started or completed.")
+            logger.debug("Workflow \(name) already started or completed.", category: "Workflow")
             return
         }
 
@@ -66,10 +69,10 @@ public struct Workflow {
         do {
             try await executeComponents()
             state = .completed
-            print("Workflow \(name) completed successfully.")
+            logger.debug("Workflow \(name) completed successfully.", category: "Workflow")
         } catch {
             state = .failed
-            print("Workflow \(name) failed: \(error.localizedDescription)")
+            logger.error("Workflow \(name) failed: \(error.localizedDescription)", category: "Workflow")
         }
     }
 
@@ -85,13 +88,14 @@ public struct Workflow {
     }
 
     private func executeTask(_ task: Task) async throws {
-        print("Executing task: \(task.name)")
-        let _ = try await task.execute(inputs: [:]) // Execute with no inputs for now
-        print("Task \(task.name) completed.")
+        logger.debug("Executing task: \(task.name)", category: "Workflow")
+        let nonNilInputs = task.inputs.compactMapValues { $0 }
+        let _ = try await task.execute(inputs: nonNilInputs)
+        logger.debug("Task \(task.name) completed.", category: "Workflow")
     }
 
     private func executeTaskGroup(_ group: TaskGroup) async throws {
-        print("Executing task group: \(group.name)")
+        logger.debug("Executing task group: \(group.name)", category: "Workflow")
 
         switch group.mode {
         case .sequential:
@@ -116,7 +120,7 @@ public struct Workflow {
             }
         }
 
-        print("Task group \(group.name) completed.")
+        logger.debug("Task group \(group.name) completed.", category: "Workflow")
     }
 
     // MARK: - Nested Types
@@ -151,7 +155,7 @@ public struct Workflow {
         public let description: String
 
         /// The required inputs for the task.
-        public let inputs: [String: Any?]
+        public let inputs: [String: Any]
 
         /// A closure representing the work to be performed by the task.
         public let executeBlock: (([String: Any]) async throws -> [String: Any])?
@@ -174,7 +178,7 @@ public struct Workflow {
             self.id = UUID()
             self.name = name
             self.description = description
-            self.inputs = inputs
+            self.inputs = inputs.compactMapValues { $0 }
             self.executeBlock = executeBlock
         }
 
@@ -186,8 +190,9 @@ public struct Workflow {
          - Throws: An error if the task execution logic is not provided or fails during execution.
          */
         public func execute(inputs: [String: Any]) async throws -> [String: Any] {
+            let mergedInputs = self.inputs.merging(inputs) { (_, new) in new } // Runtime inputs take precedence
             if let executeBlock = executeBlock {
-                return try await executeBlock(inputs)
+                return try await executeBlock(mergedInputs)
             } else {
                 throw NSError(
                     domain: "Workflow.Task",
