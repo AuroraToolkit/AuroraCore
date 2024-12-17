@@ -99,11 +99,19 @@ public struct Workflow {
                 try await executeTask(task)
             }
         case .parallel:
-            await withThrowingTaskGroup(of: Void.self) { taskGroup in
+            try await withThrowingTaskGroup(of: Void.self) { taskGroup in
                 for task in group.tasks {
                     taskGroup.addTask {
-                        try await executeTask(task)
+                        try await self.executeTask(task)
                     }
+                }
+
+                // Cancel all remaining tasks if one throws an error
+                do {
+                    while try await taskGroup.next() != nil {}
+                } catch {
+                    taskGroup.cancelAll()
+                    throw error
                 }
             }
         }

@@ -138,4 +138,50 @@ final class WorkflowTests: XCTestCase {
 
         XCTAssertEqual(executableWorkflow.state, .failed, "Workflow should fail if a task throws an error.")
     }
+
+    func testTaskGroupSequentialFailure() async throws {
+        let workflow = Workflow(name: "Sequential Task Group Failure", description: "A task fails in sequential group.") {
+            Workflow.TaskGroup(name: "Group 1", description: "Sequential tasks") {
+                Workflow.Task(name: "Task 1") { _ in
+                    print("Executing Task 1")
+                    return ["result": "Task 1 complete"]
+                }
+                Workflow.Task(name: "Task 2") { _ in
+                    print("Executing Task 2")
+                    throw NSError(domain: "TestError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Task 2 failed"])
+                }
+                Workflow.Task(name: "Task 3") { _ in
+                    XCTFail("Task 3 should not execute after Task 2 failure.")
+                    return [:]
+                }
+            }
+        }
+
+        var executableWorkflow = workflow
+        await executableWorkflow.start()
+
+        XCTAssertEqual(executableWorkflow.state, .failed, "Workflow should fail if a task in a sequential group throws an error.")
+    }
+
+    func testTaskGroupParallelFailure() async throws {
+        let workflow = Workflow(name: "Parallel Task Group Failure", description: "A task fails in parallel group.") {
+            Workflow.TaskGroup(name: "Group 1", description: "Parallel tasks", mode: .parallel) {
+                Workflow.Task(name: "Task 1") { _ in
+                    try await Task.sleep(nanoseconds: 500_000_000) // Simulate delay
+                    print("Executing Task 1")
+                    throw NSError(domain: "TestError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Task 1 failed"])
+                }
+                Workflow.Task(name: "Task 2") { _ in
+                    try await Task.sleep(nanoseconds: 1_000_000_000) // Simulate longer delay
+                    XCTFail("Task 2 should be canceled after Task 1 failure.")
+                    return [:]
+                }
+            }
+        }
+
+        var executableWorkflow = workflow
+        await executableWorkflow.start()
+
+        XCTAssertEqual(executableWorkflow.state, .failed, "Workflow should fail if a task in a parallel group throws an error.")
+    }
 }
