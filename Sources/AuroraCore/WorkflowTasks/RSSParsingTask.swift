@@ -30,14 +30,29 @@ public class RSSParsingTask: WorkflowComponent {
      Initializes the `RSSParsingTask` with the RSS feed data.
 
      - Parameters:
-        - name: Optionally pass the name of the task.
+        - name: The name of the task (default is `RSSParsingTask`).
         - feedData: The data of the RSS feed to parse.
+        - inputs: A dictionary of additional inputs to the task.
+
+     - Note: The `feedData` parameter provided during initialization takes precedence over inputs with the same key.
+     However, at execution time, any resolved `feedData` value in the `inputs` dictionary will overwrite both the initialized parameter and the raw input value.
+     This ensures dynamic flexibility within the workflow.
      */
-    public init(name: String? = nil, feedData: Data) {
+    public init(
+        name: String? = nil,
+        feedData: Data? = nil,
+        inputs: [String: Any?] = [:]
+    ) {
+        // Merge direct parameters into inputs
+        var mergedInputs = inputs
+        if let feedData {
+            mergedInputs["feedData"] = feedData
+        }
+
         self.task = Workflow.Task(
             name: name,
             description: "Extract article links from the RSS feed",
-            inputs: ["feedData": feedData]
+            inputs: mergedInputs
         ) { inputs in
             // Validate the input data
             guard let feedData = inputs["feedData"] as? Data, !feedData.isEmpty else {
@@ -51,8 +66,11 @@ public class RSSParsingTask: WorkflowComponent {
 
             // Start parsing
             guard parser.parse() else {
-                throw NSError(domain: "RSSParsingTask", code: 2, userInfo: [NSLocalizedDescriptionKey: "Failed to parse RSS feed"])
+                let parseError = parser.parserError?.localizedDescription ?? "Unknown error"
+                throw NSError(domain: "RSSParsingTask", code: 2, userInfo: [NSLocalizedDescriptionKey: "Failed to parse RSS feed: \(parseError)"])
             }
+
+            print("Parsed \(parserDelegate.articles.count) articles")
 
             return ["articles": parserDelegate.articles]
         }

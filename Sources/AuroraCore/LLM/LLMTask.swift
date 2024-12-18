@@ -8,25 +8,23 @@
 import Foundation
 
 /**
- The `LLMTask` class represents a workflow task that sends a prompt to a Language Learning Model (LLM) service
- and processes the response.
+ `LLMTask` sends a prompt to a Large Language Model (LLM) service and returns a response.
+
+ - **Inputs**
+    - `llmRequest`: The request object containing the prompt and configuration for the LLM service.
+ - **Outputs**
+    - `response`: The response from the LLM service.
 
  This task is designed to be part of a workflow where the result from an LLM is used in further tasks.
 
  - Note: This class works with any service that conforms to `LLMServiceProtocol`.
  */
-public class LLMTask: WorkflowTask {
-    /**
-     The LLM service used for sending requests and receiving responses.
+public class LLMTask: WorkflowComponent {
+    /// The wrapped task.
+    private let task: Workflow.Task
 
-     - Important: This must conform to the `LLMServiceProtocol`.
-     */
+    /// The LLM service used for sending requests and receiving responses.
     private let llmService: LLMServiceProtocol
-
-    /**
-     The request object containing the prompt and configuration for the LLM service.
-     */
-    private let request: LLMRequest
 
     /**
      Initializes a new `LLMTask`.
@@ -34,38 +32,47 @@ public class LLMTask: WorkflowTask {
      - Parameters:
         - name: The name of the task.
         - description: A detailed description of the task.
-        - prompt: The prompt that will be sent to the LLM service.
         - llmService: The LLM service that will handle the request.
+        - request: The `LLMRequest` containing the prompt and configuration for the LLM service.
      */
     public init(
         name: String? = nil,
         description: String? = nil,
         llmService: LLMServiceProtocol,
-        request: LLMRequest, maxRetries: Int = 0
+        request: LLMRequest? = nil,
+        inputs: [String: Any?] = [:]
     ) {
+        // Merge direct parameters into inputs
+        var mergedInputs = inputs
+        if let request {
+            mergedInputs["request"] = request
+        }
+
         self.llmService = llmService
-        self.request = request
-        super.init(
+        self.task = Workflow.Task(
             name: name,
             description: description ?? "Send a prompt to the LLM service",
-            maxRetries: maxRetries
-        )
+            inputs: mergedInputs
+        ) { inputs in
+            guard let request = inputs["request"] as? LLMRequest else {
+                throw NSError(
+                    domain: "LLMTask",
+                    code: 1,
+                    userInfo: [NSLocalizedDescriptionKey: "LLMRequest is missing."]
+                )
+            }
+
+            do {
+                let response = try await llmService.sendRequest(request)
+                return ["response": response.text]
+            } catch {
+                throw error
+            }
+        }
     }
 
-    /**
-     Executes the `LLMTask` by sending the prompt to the connected LLM service.
-
-     - Throws: An error if the LLM service fails to process the request.
-     - Returns: The result of the request.
-     */
-    public override func execute() async throws -> [String: Any] {
-        do {
-            let response = try await llmService.sendRequest(request)
-            markCompleted()
-            return ["response": response.text]
-        } catch {
-            markFailed()
-            throw error
-        }
+    /// Converts this `FetchURLTask` to a `Workflow.Component`.
+    public func toComponent() -> Workflow.Component {
+        .task(task)
     }
 }
