@@ -11,12 +11,12 @@ import XCTest
 final class FetchURLTaskTests: XCTestCase {
 
     var task: FetchURLTask!
-    var testServerURL: URL!
+    var testServerURL: String!
 
     override func setUp() {
         super.setUp()
         // Set up a test server or a known good URL
-        testServerURL = URL(string: "https://httpbin.org/get") // Public API for testing GET requests
+        testServerURL = "https://httpbin.org/get"   // Public API for testing GET requests
     }
 
     override func tearDown() {
@@ -45,7 +45,7 @@ final class FetchURLTaskTests: XCTestCase {
 
     func testFetchURLTaskInvalidURL() async throws {
         // Given
-        let invalidURL = URL(string: "invalid-url")!
+        let invalidURL = "invalid-url"
         task = FetchURLTask(url: invalidURL)
 
         // When/Then
@@ -63,7 +63,7 @@ final class FetchURLTaskTests: XCTestCase {
 
     func testFetchURLTaskNonExistentURL() async throws {
         // Given
-        let nonExistentURL = URL(string: "https://thisurldoesnotexist.tld")!
+        let nonExistentURL = "https://thisurldoesnotexist.tld"
         task = FetchURLTask(url: nonExistentURL)
 
         // When/Then
@@ -81,7 +81,7 @@ final class FetchURLTaskTests: XCTestCase {
 
     func testFetchURLTaskWithLargeResponse() async throws {
         // Given
-        let largeResponseURL = URL(string: "https://httpbin.org/bytes/10240")! // Generates a 10KB response
+        let largeResponseURL = "https://httpbin.org/bytes/10240" // Generates a 10KB response
         task = FetchURLTask(url: largeResponseURL)
 
         // When
@@ -102,7 +102,7 @@ final class FetchURLTaskTests: XCTestCase {
         // Given
         let config = URLSessionConfiguration.default
         config.timeoutIntervalForRequest = 2 // 2-second timeout
-        let timeoutURL = URL(string: "https://httpbin.org/delay/10")! // Delays response by 10 seconds
+        let timeoutURL = "https://httpbin.org/delay/10" // Delays response by 10 seconds
         let session = URLSession(configuration: config)
         task = FetchURLTask(url: timeoutURL, session: session)
 

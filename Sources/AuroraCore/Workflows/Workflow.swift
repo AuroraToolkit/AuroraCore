@@ -31,6 +31,9 @@ public struct Workflow {
     /// The current state of the workflow.
     public private(set) var state: State = .notStarted
 
+    /// A collection of outputs resulting from executing one or more tasks.
+    public private(set) var outputs: [String: Any] = [:]
+
     private let logger = CustomLogger.shared
 
 
@@ -58,6 +61,11 @@ public struct Workflow {
 
     // MARK: - Workflow Lifecycle
 
+    /**
+        Starts the workflow asynchronously.
+
+        The method iterates over each component in the workflow and executes it asynchronously.
+     */
     public mutating func start() async {
         guard state == .notStarted else {
             logger.debug("Workflow \(name) already started or completed.", category: "Workflow")
@@ -76,37 +84,110 @@ public struct Workflow {
         }
     }
 
-    private func executeComponents() async throws {
+    /**
+        Executes the components of the workflow.
+
+        The method iterates over each component in the workflow and executes it asynchronously.
+        Task outputs are collected and stored in the `outputs` dictionary for use in subsequent tasks.
+     */
+    private mutating func executeComponents() async throws {
         for component in components {
             switch component {
             case .task(let task):
-                try await executeTask(task)
+                let taskOutputs = try await executeTask(task, workflowOutputs: outputs)
+                self.outputs.merge(taskOutputs.mapKeys { "\(task.name).\($0)" }) { _, new in new }
+
             case .taskGroup(let group):
-                try await executeTaskGroup(group)
+                let taskGroupOutputs = try await executeTaskGroup(group, workflowOutputs: outputs)
+                self.outputs.merge(taskGroupOutputs.mapKeys { "\(group.name).\($0)" }) { _, new in new }
             }
         }
     }
 
-    private func executeTask(_ task: Task) async throws {
-        logger.debug("Executing task: \(task.name)", category: "Workflow")
-        let nonNilInputs = task.inputs.compactMapValues { $0 }
-        let _ = try await task.execute(inputs: nonNilInputs)
-        logger.debug("Task \(task.name) completed.", category: "Workflow")
+    /**
+        Resolves the inputs for a task using the outputs of previously executed tasks.
+
+        - Parameters:
+            - task: The task for which to resolve inputs.
+            - workflowOutputs: A dictionary of outputs from previously executed tasks.
+        - Returns: A dictionary of resolved inputs for the task.
+
+        The method resolves dynamic references in the task inputs by looking up the corresponding output keys in the `workflowOutputs` dictionary.
+        Dynamic references are denoted with `{` and `}` brackets in the input values. For example, `{TaskName.OutputKey}`.
+        Dynamic references are replaced with the actual output values from the workflow. If an output key is not found, the reference is left unresolved.
+        If an input key is not a dynamic reference, the value is used as is.
+     */
+    private func resolveInputs(for task: Task, using workflowOutputs: [String: Any]) -> [String: Any] {
+        task.inputs.reduce(into: [String: Any]()) { resolvedInputs, entry in
+            let (key, value) = entry
+            if let stringValue = value as? String, stringValue.hasPrefix("{") && stringValue.hasSuffix("}") {
+                let dynamicKey = String(stringValue.dropFirst().dropLast()) // Extract key from {key}
+                resolvedInputs[key] = workflowOutputs[dynamicKey]
+            } else {
+                resolvedInputs[key] = value
+            }
+        }
     }
 
-    private func executeTaskGroup(_ group: TaskGroup) async throws {
+    /**
+        Executes a task asynchronously and returns the outputs produced by the task.
+
+        - Parameters:
+            - task: The task to be executed
+            - workflowOutputs: A dictionary of outputs from previously executed tasks.
+        - Returns: A dictionary of outputs produced by the task.
+     */
+    private func executeTask(_ task: Task, workflowOutputs: [String: Any]) async throws -> [String: Any] {
+        logger.debug("Executing task: \(task.name)", category: "Workflow")
+
+        let startTime = Date() // Start timing
+
+        // Resolve inputs dynamically
+        let resolvedInputs = resolveInputs(for: task, using: workflowOutputs)
+
+        // Execute the task with resolved inputs
+        let outputs = try await task.execute(inputs: resolvedInputs)
+
+        let endTime = Date() // End timing
+        let duration = endTime.timeIntervalSince(startTime)
+
+        logger.debug("Task \(task.name) completed in \(String(format: "%.2f", duration)) seconds.", category: "Workflow")
+
+        return outputs
+    }
+
+    /**
+        Executes a task group asynchronously and returns the outputs produced by the group.
+
+        - Parameters:
+            - group: The task group to be executed.
+            - workflowOutputs: A dictionary of outputs from previously executed tasks.
+        - Returns: A dictionary of outputs produced by the task group.
+
+        Task groups can execute tasks sequentially or in parallel based on the `mode` property.
+     */
+    private func executeTaskGroup(_ group: TaskGroup, workflowOutputs: [String: Any]) async throws -> [String: Any]  {
         logger.debug("Executing task group: \(group.name)", category: "Workflow")
+
+        let startTime = Date() // Start timing
+
+        let queue = DispatchQueue(label: "com.workflow.groupOutputs")
+        var groupOutputs: [String: Any] = [:]
 
         switch group.mode {
         case .sequential:
             for task in group.tasks {
-                try await executeTask(task)
+                let taskOutputs = try await executeTask(task, workflowOutputs: workflowOutputs)
+                groupOutputs.merge(taskOutputs.mapKeys { "\(task.name).\($0)" }) { _, new in new }
             }
         case .parallel:
             try await withThrowingTaskGroup(of: Void.self) { taskGroup in
                 for task in group.tasks {
                     taskGroup.addTask {
-                        try await self.executeTask(task)
+                        let taskOutputs = try await self.executeTask(task, workflowOutputs: workflowOutputs)
+                        queue.sync {    // Ensure thread safety when updating groupOutputs
+                            groupOutputs.merge(taskOutputs.mapKeys { "\(task.name).\($0)" }) { _, new in new }
+                        }
                     }
                 }
 
@@ -120,7 +201,12 @@ public struct Workflow {
             }
         }
 
-        logger.debug("Task group \(group.name) completed.", category: "Workflow")
+        let endTime = Date() // End timing
+        let duration = endTime.timeIntervalSince(startTime)
+
+        logger.debug("Task group \(group.name) completed in \(String(format: "%.2f", duration)) seconds.", category: "Workflow")
+
+        return groupOutputs
     }
 
     // MARK: - Nested Types
