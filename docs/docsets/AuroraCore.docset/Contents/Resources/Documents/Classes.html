@@ -17,7 +17,7 @@
     <a title="Classes  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">AuroraCore Docs</a> (91% documented)</p>
+        <p><a href="index.html">AuroraCore Docs</a> (93% documented)</p>
         <div class="header-right">
           <form role="search" action="search.json">
             <input type="text" placeholder="Search documentation" data-typeahead>
@@ -48,10 +48,10 @@
                 <a href="Classes/ContextManager.html">ContextManager</a>
               </li>
               <li class="nav-group-task">
-                <a href="Classes/FetchContextsTask.html">FetchContextsTask</a>
+                <a href="Classes/CustomLogger.html">CustomLogger</a>
               </li>
               <li class="nav-group-task">
-                <a href="Classes/FetchURLTask.html">FetchURLTask</a>
+                <a href="Classes/LLMDomainRouter.html">LLMDomainRouter</a>
               </li>
               <li class="nav-group-task">
                 <a href="Classes/LLMManager.html">LLMManager</a>
@@ -95,15 +95,6 @@
               <li class="nav-group-task">
                 <a href="Classes/TrimmingTask.html">TrimmingTask</a>
               </li>
-              <li class="nav-group-task">
-                <a href="Classes/Workflow.html">Workflow</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Classes/WorkflowManager.html">WorkflowManager</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Classes/WorkflowTask.html">WorkflowTask</a>
-              </li>
             </ul>
           </li>
           <li class="nav-group-name">
@@ -119,13 +110,7 @@
                 <a href="Enums/SummaryType.html">SummaryType</a>
               </li>
               <li class="nav-group-task">
-                <a href="Enums/TaskStatus.html">TaskStatus</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="Enums/TokenAdjustmentPolicy.html">TokenAdjustmentPolicy</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Enums/WorkflowState.html">WorkflowState</a>
               </li>
             </ul>
           </li>
@@ -144,6 +129,9 @@
             <a href="Protocols.html">Protocols</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="Protocols/LLMDomainRouterProtocol.html">LLMDomainRouterProtocol</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a>
               </li>
               <li class="nav-group-task">
@@ -153,13 +141,7 @@
                 <a href="Protocols/SummarizerProtocol.html">SummarizerProtocol</a>
               </li>
               <li class="nav-group-task">
-                <a href="Protocols/WorkflowManagerProtocol.html">WorkflowManagerProtocol</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Protocols/WorkflowProtocol.html">WorkflowProtocol</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Protocols/WorkflowTaskProtocol.html">WorkflowTaskProtocol</a>
+                <a href="Protocols/WorkflowComponent.html">WorkflowComponent</a>
               </li>
             </ul>
           </li>
@@ -188,6 +170,9 @@
                 <a href="Structs/AnthropicLLMStreamingResponse/Usage.html">– Usage</a>
               </li>
               <li class="nav-group-task">
+                <a href="Structs/AnyWorkflowComponent.html">AnyWorkflowComponent</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Structs/Bookmark.html">Bookmark</a>
               </li>
               <li class="nav-group-task">
@@ -195,6 +180,12 @@
               </li>
               <li class="nav-group-task">
                 <a href="Structs/ContextItem.html">ContextItem</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/FetchContextsTask.html">FetchContextsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/FetchURLTask.html">FetchURLTask</a>
               </li>
               <li class="nav-group-task">
                 <a href="Structs/LLMMessage.html">LLMMessage</a>
@@ -226,13 +217,23 @@
               <li class="nav-group-task">
                 <a href="Structs/SummarizerOptions.html">SummarizerOptions</a>
               </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a href="Typealiases.html">Type Aliases</a>
-            <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="Typealiases.html#/s:10AuroraCore16WorkflowMappingsa">WorkflowMappings</a>
+                <a href="Structs/Workflow.html">Workflow</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/Workflow/State.html">– State</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/Workflow/Component.html">– Component</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/Workflow/Task.html">– Task</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/Workflow/TaskGroup.html">– TaskGroup</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/WorkflowBuilder.html">WorkflowBuilder</a>
               </li>
             </ul>
           </li>
@@ -248,6 +249,36 @@
           <section class="section task-group-section">
             <div class="task-group">
               <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore15LLMDomainRouterC"></a>
+                    <a name="//apple_ref/swift/Class/LLMDomainRouter" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore15LLMDomainRouterC">LLMDomainRouter</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The <code>LLMDomainRouter</code> class is responsible for determining the domain of a request using an LLM service.</p>
+
+<p>The router uses the service to process the request and identify the domain. If the domain is not in the list of supported domains, a fallback (&ldquo;general&rdquo;) is returned.</p>
+
+                        <a href="Classes/LLMDomainRouter.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">LLMDomainRouter</span> <span class="p">:</span> <span class="kt"><a href="Protocols/LLMDomainRouterProtocol.html">LLMDomainRouterProtocol</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -325,8 +356,20 @@ It allows registering, unregistering, and selecting services based on routing op
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The <code>LLMTask</code> class represents a workflow task that sends a prompt to a Language Learning Model (LLM) service
-and processes the response.</p>
+                        <p><code>LLMTask</code> sends a prompt to a Large Language Model (LLM) service and returns a response.</p>
+
+<ul>
+<li><strong>Inputs</strong>
+
+<ul>
+<li><code>llmRequest</code>: The request object containing the prompt and configuration for the LLM service.</li>
+</ul></li>
+<li><strong>Outputs</strong>
+
+<ul>
+<li><code>response</code>: The response from the LLM service.</li>
+</ul></li>
+</ul>
 
 <p>This task is designed to be part of a workflow where the result from an LLM is used in further tasks.</p>
 <div class="aside aside-note">
@@ -341,7 +384,7 @@ and processes the response.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">LLMTask</span> <span class="p">:</span> <span class="kt"><a href="Classes/WorkflowTask.html">WorkflowTask</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">LLMTask</span> <span class="p">:</span> <span class="kt"><a href="Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
 
                         </div>
                       </div>
@@ -497,90 +540,6 @@ It allows adding, removing, switching between contexts, and saving/restoring con
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10AuroraCore15WorkflowManagerC"></a>
-                    <a name="//apple_ref/swift/Class/WorkflowManager" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10AuroraCore15WorkflowManagerC">WorkflowManager</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>A concrete implementation of the <code>WorkflowManager</code> protocol, responsible for managing and executing a workflow.</p>
-
-                        <a href="Classes/WorkflowManager.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WorkflowManager</span> <span class="p">:</span> <span class="kt"><a href="Protocols/WorkflowManagerProtocol.html">WorkflowManagerProtocol</a></span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:10AuroraCore8WorkflowC"></a>
-                    <a name="//apple_ref/swift/Class/Workflow" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10AuroraCore8WorkflowC">Workflow</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>A concrete implementation of the <code><a href="Protocols/WorkflowProtocol.html">WorkflowProtocol</a></code>, responsible for executing and managing tasks in a workflow.</p>
-
-                        <a href="Classes/Workflow.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">Workflow</span> <span class="p">:</span> <span class="kt"><a href="Protocols/WorkflowProtocol.html">WorkflowProtocol</a></span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:10AuroraCore12WorkflowTaskC"></a>
-                    <a name="//apple_ref/swift/Class/WorkflowTask" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10AuroraCore12WorkflowTaskC">WorkflowTask</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>A concrete implementation of the <code>Task</code> protocol, representing a task within a workflow system.</p>
-
-                        <a href="Classes/WorkflowTask.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WorkflowTask</span> <span class="p">:</span> <span class="kt"><a href="Protocols/WorkflowTaskProtocol.html">WorkflowTaskProtocol</a></span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
                     <a name="/s:10AuroraCore10SummarizerC"></a>
                     <a name="//apple_ref/swift/Class/Summarizer" class="dashAnchor"></a>
                     <a class="token" href="#/s:10AuroraCore10SummarizerC">Summarizer</a>
@@ -600,6 +559,45 @@ It allows adding, removing, switching between contexts, and saving/restoring con
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">Summarizer</span> <span class="p">:</span> <span class="kt"><a href="Protocols/SummarizerProtocol.html">SummarizerProtocol</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore12CustomLoggerC"></a>
+                    <a name="//apple_ref/swift/Class/CustomLogger" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore12CustomLoggerC">CustomLogger</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The <code>CustomLogger</code> class provides a centralized logging system for the app. It allows for logging messages at different severity levels and categories, as well as enabling or disabling debug logs.</p>
+
+<p>Usage:</p>
+<pre class="highlight swift"><code><span class="kt">CustomLogger</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">debug</span><span class="p">(</span><span class="s">"Debug message"</span><span class="p">,</span> <span class="nv">category</span><span class="p">:</span> <span class="s">"MyCategory"</span><span class="p">)</span>
+<span class="kt">CustomLogger</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">info</span><span class="p">(</span><span class="s">"Info message"</span><span class="p">)</span>
+<span class="kt">CustomLogger</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">error</span><span class="p">(</span><span class="s">"Error message"</span><span class="p">,</span> <span class="nv">category</span><span class="p">:</span> <span class="s">"MyCategory"</span><span class="p">)</span>
+<span class="kt">CustomLogger</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">fault</span><span class="p">(</span><span class="s">"Fault message"</span><span class="p">)</span>
+
+<span class="kt">CustomLogger</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">toggleDebugLogs</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
+
+<span class="kt">CustomLogger</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">log</span><span class="p">(</span><span class="nv">level</span><span class="p">:</span> <span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="s">"Custom log message"</span><span class="p">,</span> <span class="nv">category</span><span class="p">:</span> <span class="s">"MyCategory"</span><span class="p">,</span> <span class="nv">metadata</span><span class="p">:</span> <span class="p">[</span><span class="s">"key"</span><span class="p">:</span> <span class="s">"value"</span><span class="p">])</span>
+</code></pre>
+
+                        <a href="Classes/CustomLogger.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">final</span> <span class="kd">public</span> <span class="kd">class</span> <span class="kt">CustomLogger</span></code></pre>
 
                         </div>
                       </div>
@@ -629,92 +627,6 @@ This is useful for storing sensitive information like API keys and custom base U
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">SecureStorage</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:10AuroraCore17FetchContextsTaskC"></a>
-                    <a name="//apple_ref/swift/Class/FetchContextsTask" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10AuroraCore17FetchContextsTaskC">FetchContextsTask</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p><code>FetchContextsTask</code> is responsible for retrieving a list of stored contexts from the disk.</p>
-
-<ul>
-<li><strong>Inputs:</strong>
-
-<ul>
-<li><code>filenames</code>: An optional array of filenames (without extensions) specifying which contexts to retrieve.</li>
-</ul></li>
-<li><strong>Outputs:</strong>
-
-<ul>
-<li><code>contexts</code>: An array of URLs pointing to the context files on disk.</li>
-</ul></li>
-</ul>
-
-<p>This task can be used in workflows requiring access to multiple stored contexts. If a list of specific filenames is provided, only those contexts will be fetched. Otherwise, all contexts will be retrieved.</p>
-
-                        <a href="Classes/FetchContextsTask.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">FetchContextsTask</span> <span class="p">:</span> <span class="kt"><a href="Classes/WorkflowTask.html">WorkflowTask</a></span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:10AuroraCore12FetchURLTaskC"></a>
-                    <a name="//apple_ref/swift/Class/FetchURLTask" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10AuroraCore12FetchURLTaskC">FetchURLTask</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p><code>FetchURLTask</code> fetches the contents of a specified URL and returns the raw data.</p>
-
-<ul>
-<li><strong>Inputs</strong>
-
-<ul>
-<li><code>url</code>: The URL to fetch.</li>
-</ul></li>
-<li><strong>Outputs</strong>
-
-<ul>
-<li><code>data</code>: The raw data fetched from the URL.</li>
-</ul></li>
-</ul>
-
-<p>This task can be used in workflows where external data needs to be retrieved, such as downloading files, fetching JSON, or reading RSS feeds.</p>
-
-                        <a href="Classes/FetchURLTask.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">FetchURLTask</span> <span class="p">:</span> <span class="kt"><a href="Classes/WorkflowTask.html">WorkflowTask</a></span></code></pre>
 
                         </div>
                       </div>
@@ -757,7 +669,7 @@ This is useful for storing sensitive information like API keys and custom base U
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">LoadContextTask</span> <span class="p">:</span> <span class="kt"><a href="Classes/WorkflowTask.html">WorkflowTask</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">LoadContextTask</span> <span class="p">:</span> <span class="kt"><a href="Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
 
                         </div>
                       </div>
@@ -800,7 +712,7 @@ This is useful for storing sensitive information like API keys and custom base U
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">RSSParsingTask</span> <span class="p">:</span> <span class="kt"><a href="Classes/WorkflowTask.html">WorkflowTask</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">RSSParsingTask</span> <span class="p">:</span> <span class="kt"><a href="Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
 
                         </div>
                       </div>
@@ -849,7 +761,7 @@ This is useful for storing sensitive information like API keys and custom base U
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">SaveContextTask</span> <span class="p">:</span> <span class="kt"><a href="Classes/WorkflowTask.html">WorkflowTask</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">SaveContextTask</span> <span class="p">:</span> <span class="kt"><a href="Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
 
                         </div>
                       </div>
@@ -877,6 +789,7 @@ This is useful for storing sensitive information like API keys and custom base U
 <ul>
 <li><code><a href="Classes/ContextController.html">ContextController</a></code>: The context controller containing the context to be summarized.</li>
 <li><code><a href="Enums/SummaryType.html">SummaryType</a></code>: The type of summary to be performed (e.g., context, general text).</li>
+<li><code><a href="Structs/SummarizerOptions.html">SummarizerOptions</a></code>: Additional summarizer configuration options (e.g. model, temperature).</li>
 </ul></li>
 <li><strong>Outputs</strong>
 
@@ -893,7 +806,7 @@ This is useful for storing sensitive information like API keys and custom base U
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">SummarizeContextTask</span> <span class="p">:</span> <span class="kt"><a href="Classes/WorkflowTask.html">WorkflowTask</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">SummarizeContextTask</span> <span class="p">:</span> <span class="kt"><a href="Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
 
                         </div>
                       </div>
@@ -921,6 +834,8 @@ This is useful for storing sensitive information like API keys and custom base U
 <ul>
 <li><code>summarizer</code>: The summarizer to be used for the task.</li>
 <li><code>summaryType</code>: The type of summary to be performed (e.g., context, general text).</li>
+<li><code><a href="Structs/SummarizerOptions.html">SummarizerOptions</a></code>: Additional summarizer configuration options (e.g. model, temperature).</li>
+<li><code>strings</code>: An array of strings to be summarized.</li>
 </ul></li>
 <li><strong>Outputs</strong>
 
@@ -937,7 +852,7 @@ This is useful for storing sensitive information like API keys and custom base U
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">SummarizeStringsTask</span> <span class="p">:</span> <span class="kt"><a href="Classes/WorkflowTask.html">WorkflowTask</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">SummarizeStringsTask</span> <span class="p">:</span> <span class="kt"><a href="Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
 
                         </div>
                       </div>
@@ -977,7 +892,7 @@ This is useful for storing sensitive information like API keys and custom base U
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">TrimmingTask</span> <span class="p">:</span> <span class="kt"><a href="Classes/WorkflowTask.html">WorkflowTask</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">TrimmingTask</span> <span class="p">:</span> <span class="kt"><a href="Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
 
                         </div>
                       </div>
@@ -989,7 +904,7 @@ This is useful for storing sensitive information like API keys and custom base U
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-12-08)</p>
+          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-12-20)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>

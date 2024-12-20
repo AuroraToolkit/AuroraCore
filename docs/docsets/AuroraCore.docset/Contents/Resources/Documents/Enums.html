@@ -17,7 +17,7 @@
     <a title="Enumerations  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">AuroraCore Docs</a> (91% documented)</p>
+        <p><a href="index.html">AuroraCore Docs</a> (93% documented)</p>
         <div class="header-right">
           <form role="search" action="search.json">
             <input type="text" placeholder="Search documentation" data-typeahead>
@@ -48,10 +48,10 @@
                 <a href="Classes/ContextManager.html">ContextManager</a>
               </li>
               <li class="nav-group-task">
-                <a href="Classes/FetchContextsTask.html">FetchContextsTask</a>
+                <a href="Classes/CustomLogger.html">CustomLogger</a>
               </li>
               <li class="nav-group-task">
-                <a href="Classes/FetchURLTask.html">FetchURLTask</a>
+                <a href="Classes/LLMDomainRouter.html">LLMDomainRouter</a>
               </li>
               <li class="nav-group-task">
                 <a href="Classes/LLMManager.html">LLMManager</a>
@@ -95,15 +95,6 @@
               <li class="nav-group-task">
                 <a href="Classes/TrimmingTask.html">TrimmingTask</a>
               </li>
-              <li class="nav-group-task">
-                <a href="Classes/Workflow.html">Workflow</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Classes/WorkflowManager.html">WorkflowManager</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Classes/WorkflowTask.html">WorkflowTask</a>
-              </li>
             </ul>
           </li>
           <li class="nav-group-name">
@@ -119,13 +110,7 @@
                 <a href="Enums/SummaryType.html">SummaryType</a>
               </li>
               <li class="nav-group-task">
-                <a href="Enums/TaskStatus.html">TaskStatus</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="Enums/TokenAdjustmentPolicy.html">TokenAdjustmentPolicy</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Enums/WorkflowState.html">WorkflowState</a>
               </li>
             </ul>
           </li>
@@ -144,6 +129,9 @@
             <a href="Protocols.html">Protocols</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="Protocols/LLMDomainRouterProtocol.html">LLMDomainRouterProtocol</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a>
               </li>
               <li class="nav-group-task">
@@ -153,13 +141,7 @@
                 <a href="Protocols/SummarizerProtocol.html">SummarizerProtocol</a>
               </li>
               <li class="nav-group-task">
-                <a href="Protocols/WorkflowManagerProtocol.html">WorkflowManagerProtocol</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Protocols/WorkflowProtocol.html">WorkflowProtocol</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Protocols/WorkflowTaskProtocol.html">WorkflowTaskProtocol</a>
+                <a href="Protocols/WorkflowComponent.html">WorkflowComponent</a>
               </li>
             </ul>
           </li>
@@ -188,6 +170,9 @@
                 <a href="Structs/AnthropicLLMStreamingResponse/Usage.html">– Usage</a>
               </li>
               <li class="nav-group-task">
+                <a href="Structs/AnyWorkflowComponent.html">AnyWorkflowComponent</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Structs/Bookmark.html">Bookmark</a>
               </li>
               <li class="nav-group-task">
@@ -195,6 +180,12 @@
               </li>
               <li class="nav-group-task">
                 <a href="Structs/ContextItem.html">ContextItem</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/FetchContextsTask.html">FetchContextsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/FetchURLTask.html">FetchURLTask</a>
               </li>
               <li class="nav-group-task">
                 <a href="Structs/LLMMessage.html">LLMMessage</a>
@@ -226,13 +217,23 @@
               <li class="nav-group-task">
                 <a href="Structs/SummarizerOptions.html">SummarizerOptions</a>
               </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a href="Typealiases.html">Type Aliases</a>
-            <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="Typealiases.html#/s:10AuroraCore16WorkflowMappingsa">WorkflowMappings</a>
+                <a href="Structs/Workflow.html">Workflow</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/Workflow/State.html">– State</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/Workflow/Component.html">– Component</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/Workflow/Task.html">– Task</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/Workflow/TaskGroup.html">– TaskGroup</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/WorkflowBuilder.html">WorkflowBuilder</a>
               </li>
             </ul>
           </li>
@@ -359,77 +360,6 @@ These errors provide more granular control and understanding of the failure poin
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10AuroraCore13WorkflowStateO"></a>
-                    <a name="//apple_ref/swift/Enum/WorkflowState" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10AuroraCore13WorkflowStateO">WorkflowState</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p><code>WorkflowState</code> represents the various states a workflow can be in during its lifecycle.</p>
-
-<ul>
-<li>notStarted: The workflow has been defined but not yet started.</li>
-<li>inProgress: The workflow is currently being executed.</li>
-<li>stopped: The workflow has been manually stopped.</li>
-<li>completed: The workflow has successfully completed all tasks.</li>
-<li>failed: The workflow has failed after exhausting all retries for a task.</li>
-</ul>
-
-                        <a href="Enums/WorkflowState.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">WorkflowState</span> <span class="p">:</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">CustomStringConvertible</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:10AuroraCore10TaskStatusO"></a>
-                    <a name="//apple_ref/swift/Enum/TaskStatus" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10AuroraCore10TaskStatusO">TaskStatus</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>An enumeration representing the various statuses that a task can have within its lifecycle, each associated with a timestamp.</p>
-
-<ul>
-<li>pending: The task is created but not yet started.</li>
-<li>inProgress: The task is currently being worked on.</li>
-<li>completed: The task has been successfully completed.</li>
-<li>failed: The task was unable to be completed successfully.</li>
-</ul>
-
-                        <a href="Enums/TaskStatus.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">TaskStatus</span> <span class="p">:</span> <span class="kt">Codable</span><span class="p">,</span> <span class="kt">Equatable</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
                     <a name="/s:10AuroraCore11SummaryTypeO"></a>
                     <a name="//apple_ref/swift/Enum/SummaryType" class="dashAnchor"></a>
                     <a class="token" href="#/s:10AuroraCore11SummaryTypeO">SummaryType</a>
@@ -460,7 +390,7 @@ These errors provide more granular control and understanding of the failure poin
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-12-08)</p>
+          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-12-20)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>

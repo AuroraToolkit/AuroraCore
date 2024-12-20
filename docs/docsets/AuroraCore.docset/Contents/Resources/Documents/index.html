@@ -16,7 +16,7 @@
     <a title="AuroraCore  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">AuroraCore Docs</a> (91% documented)</p>
+        <p><a href="index.html">AuroraCore Docs</a> (93% documented)</p>
         <div class="header-right">
           <form role="search" action="search.json">
             <input type="text" placeholder="Search documentation" data-typeahead>
@@ -45,10 +45,10 @@
                 <a href="Classes/ContextManager.html">ContextManager</a>
               </li>
               <li class="nav-group-task">
-                <a href="Classes/FetchContextsTask.html">FetchContextsTask</a>
+                <a href="Classes/CustomLogger.html">CustomLogger</a>
               </li>
               <li class="nav-group-task">
-                <a href="Classes/FetchURLTask.html">FetchURLTask</a>
+                <a href="Classes/LLMDomainRouter.html">LLMDomainRouter</a>
               </li>
               <li class="nav-group-task">
                 <a href="Classes/LLMManager.html">LLMManager</a>
@@ -92,15 +92,6 @@
               <li class="nav-group-task">
                 <a href="Classes/TrimmingTask.html">TrimmingTask</a>
               </li>
-              <li class="nav-group-task">
-                <a href="Classes/Workflow.html">Workflow</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Classes/WorkflowManager.html">WorkflowManager</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Classes/WorkflowTask.html">WorkflowTask</a>
-              </li>
             </ul>
           </li>
           <li class="nav-group-name">
@@ -116,13 +107,7 @@
                 <a href="Enums/SummaryType.html">SummaryType</a>
               </li>
               <li class="nav-group-task">
-                <a href="Enums/TaskStatus.html">TaskStatus</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="Enums/TokenAdjustmentPolicy.html">TokenAdjustmentPolicy</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Enums/WorkflowState.html">WorkflowState</a>
               </li>
             </ul>
           </li>
@@ -141,6 +126,9 @@
             <a href="Protocols.html">Protocols</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="Protocols/LLMDomainRouterProtocol.html">LLMDomainRouterProtocol</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a>
               </li>
               <li class="nav-group-task">
@@ -150,13 +138,7 @@
                 <a href="Protocols/SummarizerProtocol.html">SummarizerProtocol</a>
               </li>
               <li class="nav-group-task">
-                <a href="Protocols/WorkflowManagerProtocol.html">WorkflowManagerProtocol</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Protocols/WorkflowProtocol.html">WorkflowProtocol</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Protocols/WorkflowTaskProtocol.html">WorkflowTaskProtocol</a>
+                <a href="Protocols/WorkflowComponent.html">WorkflowComponent</a>
               </li>
             </ul>
           </li>
@@ -185,6 +167,9 @@
                 <a href="Structs/AnthropicLLMStreamingResponse/Usage.html">– Usage</a>
               </li>
               <li class="nav-group-task">
+                <a href="Structs/AnyWorkflowComponent.html">AnyWorkflowComponent</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Structs/Bookmark.html">Bookmark</a>
               </li>
               <li class="nav-group-task">
@@ -192,6 +177,12 @@
               </li>
               <li class="nav-group-task">
                 <a href="Structs/ContextItem.html">ContextItem</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/FetchContextsTask.html">FetchContextsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/FetchURLTask.html">FetchURLTask</a>
               </li>
               <li class="nav-group-task">
                 <a href="Structs/LLMMessage.html">LLMMessage</a>
@@ -223,13 +214,23 @@
               <li class="nav-group-task">
                 <a href="Structs/SummarizerOptions.html">SummarizerOptions</a>
               </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a href="Typealiases.html">Type Aliases</a>
-            <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="Typealiases.html#/s:10AuroraCore16WorkflowMappingsa">WorkflowMappings</a>
+                <a href="Structs/Workflow.html">Workflow</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/Workflow/State.html">– State</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/Workflow/Component.html">– Component</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/Workflow/Task.html">– Task</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/Workflow/TaskGroup.html">– TaskGroup</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/WorkflowBuilder.html">WorkflowBuilder</a>
               </li>
             </ul>
           </li>
@@ -241,38 +242,36 @@
             
             <h1 id='auroracore' class='heading'>AuroraCore</h1>
 
-<p>AuroraCore is the core library powering the Aurora AI assistant framework. This package is designed to manage the fundamental structures and workflows that support various AI-driven tasks, including context management, task workflows, and integrations with large language models (LLMs) such as OpenAI and Ollama. It is highly modular, allowing developers to extend its functionality and integrate with external services.</p>
+<p>AuroraCore is the foundational library within the AuroraToolkit—a suite of tools designed to simplify the integration of AI capabilities into your projects. This package provides robust support for AI-driven workflows, including context management, task orchestration, and seamless integrations with large language models (LLMs) from organizations such as Anthropic, OpenAI, and Ollama. Its modular architecture empowers developers to customize, extend, and integrate with external services effortlessly.</p>
 <h2 id='features' class='heading'>Features</h2>
 
 <ul>
 <li><strong>Context Management</strong>: Handle and maintain conversation or task-specific context, including adding, retrieving, and summarizing items.</li>
-<li><strong>Task and Workflow Handling</strong>: Built-in support for defining and managing tasks and workflows, including the ability to track task status and manage dependent workflows. Now supports asynchronous task execution for handling complex, long-running tasks.</li>
+<li><strong>Task and Workflow Handling</strong>: Built-in support for defining and managing tasks and workflows, supporting asynchronous task execution for handling complex, long-running tasks.</li>
+<li><strong>Declarative Workflow syntax</strong>: Define workflows declaratively, similar to SwiftUI for UI.</li>
 <li><strong>LLM Integration</strong>: Seamless integration with various LLM services via an extendable <code><a href="Classes/LLMManager.html">LLMManager</a></code>. Supports token management, trimming strategies, domain-routing, and fallback mechanisms.</li>
 <li><strong>Domain-Specific Routing</strong>: Route requests to the most appropriate LLM service based on predefined domains or fallback options, enabling modular and efficient service management.</li>
 <li><strong>Examples for Quick Start</strong>: Includes ready-to-run examples demonstrating common patterns like domain-specific routing and fallback handling.</li>
 <li><strong>Modular and Extendable</strong>: AuroraCore is designed to be modular, allowing developers to plug in their own services, workflows, or task managers.</li>
 </ul>
-<h2 id='components' class='heading'>Components</h2>
+<h2 id='major-components' class='heading'>Major Components</h2>
 <h3 id='1-strong-contextcontroller-strong' class='heading'>1. <strong>ContextController</strong></h3>
 
 <p>The <code><a href="Classes/ContextController.html">ContextController</a></code> manages context data, including adding, updating, and summarizing items. It works closely with summarizers and handles context tokenization.</p>
-<h3 id='2-strong-workflowtask-and-workflow-strong' class='heading'>2. <strong>WorkflowTask and Workflow</strong></h3>
-
-<p>The <code><a href="Classes/WorkflowTask.html">WorkflowTask</a></code> and <code><a href="Classes/Workflow.html">Workflow</a></code> classes provide mechanisms to define tasks, monitor their progress, and execute complex workflows that are built from multiple tasks.</p>
-<h3 id='3-strong-workflowmanager-strong' class='heading'>3. <strong>WorkflowManager</strong></h3>
-
-<p>The <code><a href="Classes/WorkflowManager.html">WorkflowManager</a></code> is responsible for managing and executing workflows. It coordinates task execution, handles task failures, and manages workflow states such as <code>inProgress</code>, <code>stopped</code>, <code>completed</code>, and <code>failed</code>. It supports asynchronous execution, making it suitable for workflows involving AI, network requests, and other asynchronous tasks.</p>
-<h3 id='4-strong-llmmanager-strong' class='heading'>4. <strong>LLMManager</strong></h3>
+<h3 id='2-strong-llmmanager-strong' class='heading'>2. <strong>LLMManager</strong></h3>
 
 <p>The <code><a href="Classes/LLMManager.html">LLMManager</a></code> is responsible for managing connections to various language model services, handling requests, and managing token limits. It supports trimming strategies (start, middle, end) to fit within LLM token limits.</p>
-<h3 id='5-strong-contextmanager-strong' class='heading'>5. <strong>ContextManager</strong></h3>
+<h3 id='3-strong-contextmanager-strong' class='heading'>3. <strong>ContextManager</strong></h3>
 
 <p><code><a href="Classes/ContextManager.html">ContextManager</a></code> supervises multiple <code><a href="Classes/ContextController.html">ContextController</a></code> instances, allowing for the management of multiple contexts. It handles saving and loading contexts to disk, as well as setting the active context.</p>
+<h3 id='4-strong-workflow-strong' class='heading'>4. <strong>Workflow</strong></h3>
+
+<p>The <code><a href="Structs/Workflow.html">Workflow</a></code> provide declarative mechanisms to define tasks and task groups, to execute complex workflows. It supports asynchronous task execution, making it suitable for workflows involving AI, network requests, and other asynchronous tasks.</p>
 <h2 id='installation' class='heading'>Installation</h2>
 <h3 id='swift-package-manager' class='heading'>Swift Package Manager</h3>
 
 <p>To integrate AuroraCore into your project using Swift Package Manager, add the following line to your <code>Package.swift</code> file:</p>
-<pre class="highlight swift"><code><span class="o">.</span><span class="nf">package</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="s">"https://github.com/yourusername/AuroraCore.git"</span><span class="p">,</span> <span class="nv">from</span><span class="p">:</span> <span class="s">"1.0.0"</span><span class="p">)</span>
+<pre class="highlight swift"><code><span class="o">.</span><span class="nf">package</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="s">"https://github.com/AuroraToolkit/AuroraCore.git"</span><span class="p">,</span> <span class="nv">from</span><span class="p">:</span> <span class="s">"0.1.0"</span><span class="p">)</span>
 </code></pre>
 
 <p>Then add <code>AuroraCore</code> as a dependency to your target:</p>
@@ -288,18 +287,20 @@
 <span class="n">contextController</span><span class="o">.</span><span class="nf">addItem</span><span class="p">(</span><span class="nv">content</span><span class="p">:</span> <span class="s">"This is a new item."</span><span class="p">)</span>
 <span class="k">let</span> <span class="nv">summary</span> <span class="o">=</span> <span class="n">contextController</span><span class="o">.</span><span class="nf">summarizeContext</span><span class="p">()</span>
 </code></pre>
-<h3 id='using-workflowtask-and-workflow' class='heading'>Using WorkflowTask and Workflow</h3>
+<h3 id='using-workflows-and-tasks' class='heading'>Using Workflows and Tasks</h3>
 <pre class="highlight swift"><code><span class="kd">import</span> <span class="kt">AuroraCore</span>
 
-<span class="k">let</span> <span class="nv">task</span> <span class="o">=</span> <span class="kt">WorkflowTask</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Example Task"</span><span class="p">,</span> <span class="nv">description</span><span class="p">:</span> <span class="s">"This is a sample task."</span><span class="p">)</span>
-<span class="k">var</span> <span class="nv">workflow</span> <span class="o">=</span> <span class="kt">Workflow</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Example Workflow"</span><span class="p">,</span> <span class="nv">description</span><span class="p">:</span> <span class="s">"This is a sample workflow"</span><span class="p">,</span> <span class="nv">tasks</span><span class="p">:</span> <span class="p">[</span><span class="n">task</span><span class="p">])</span>
-
-<span class="k">let</span> <span class="nv">workflowManager</span> <span class="o">=</span> <span class="kt">WorkflowManager</span><span class="p">(</span><span class="nv">workflow</span><span class="p">:</span> <span class="n">workflow</span><span class="p">)</span>
-
-<span class="c1">// Starting the workflow</span>
-<span class="kt">Task</span> <span class="p">{</span>
-    <span class="k">await</span> <span class="n">workflowManager</span><span class="o">.</span><span class="nf">start</span><span class="p">()</span>
+<span class="k">let</span> <span class="nv">workflow</span> <span class="o">=</span> <span class="kt">Workflow</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Example Workflow"</span><span class="p">,</span> <span class="nv">description</span><span class="p">:</span> <span class="s">"This is a sample workflow"</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">Workflow</span><span class="o">.</span><span class="kt">Task</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Task_1"</span><span class="p">,</span> <span class="nv">description</span><span class="p">:</span> <span class="s">"This is the first task."</span><span class="p">)</span>
+    <span class="kt">Workflow</span><span class="o">.</span><span class="kt">Task</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Task_2"</span><span class="p">,</span> <span class="nv">description</span><span class="p">:</span> <span class="s">"This is the second task."</span><span class="p">)</span> <span class="p">{</span> <span class="n">inputs</span> <span class="k">in</span>
+        <span class="c1">// Perform some task-specific logic</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s">"result"</span><span class="p">:</span> <span class="s">"Task 2 completed."</span><span class="p">]</span>
+    <span class="p">}</span>
 <span class="p">}</span>
+
+<span class="k">await</span> <span class="n">workflow</span><span class="o">.</span><span class="nf">start</span><span class="p">()</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="s">"Workflow completed. Result: </span><span class="se">\(</span><span class="n">workflow</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s">"Task_2.result"</span><span class="p">]</span> <span class="k">as?</span> <span class="kt">String</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
 </code></pre>
 <h3 id='llm-integration' class='heading'>LLM Integration</h3>
 <pre class="highlight swift"><code><span class="kd">import</span> <span class="kt">AuroraCore</span>
@@ -318,16 +319,12 @@
 <span class="k">let</span> <span class="nv">manager</span> <span class="o">=</span> <span class="kt">LLMManager</span><span class="p">()</span>
 
 <span class="c1">// Configure the Domain Routing Service (Ollama)</span>
-<span class="k">let</span> <span class="nv">domainRouter</span> <span class="o">=</span> <span class="kt">OllamaService</span><span class="p">(</span>
-    <span class="nv">name</span><span class="p">:</span> <span class="s">"DomainRouter"</span><span class="p">,</span>
-    <span class="nv">baseURL</span><span class="p">:</span> <span class="s">"http://localhost:11434"</span><span class="p">,</span>
-    <span class="nv">contextWindowSize</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
-    <span class="nv">maxOutputTokens</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
-    <span class="nv">systemPrompt</span><span class="p">:</span> <span class="s">"""
-        Evaluate the following question and determine the domain it belongs to. Domains we support are: sports, books. If the question is about a particular sport, use the sports domain. If it's about a book or writing, use the books domain. If it doesn't CLEARLY fit ANY of these domains, use general as the domain. You should respond to any question with ONLY the domain name if we support it, or general if we don't. Do NOT try to answer the question or provide ANY additional information.
-"""</span>
+<span class="k">let</span> <span class="nv">router</span> <span class="o">=</span> <span class="kt">LLMDomainRouter</span><span class="p">(</span>
+    <span class="nv">name</span><span class="p">:</span> <span class="s">"Domain Router"</span><span class="p">,</span>
+    <span class="nv">service</span><span class="p">:</span> <span class="kt">OllamaService</span><span class="p">(),</span>
+    <span class="nv">supportedDomains</span><span class="p">:</span> <span class="p">[</span><span class="s">"sports"</span><span class="p">,</span> <span class="s">"movies"</span><span class="p">,</span> <span class="s">"books"</span><span class="p">]</span>
 <span class="p">)</span>
-<span class="n">manager</span><span class="o">.</span><span class="nf">registerDomainRoutingService</span><span class="p">(</span><span class="n">domainRouter</span><span class="p">)</span>
+<span class="n">manager</span><span class="o">.</span><span class="nf">registerDomainRouter</span><span class="p">(</span><span class="n">router</span><span class="p">)</span>
 
 <span class="c1">// Configure the Sports Service (Anthropic)</span>
 <span class="k">let</span> <span class="nv">sportsService</span> <span class="o">=</span> <span class="kt">AnthropicService</span><span class="p">(</span>
@@ -339,6 +336,17 @@ You are a sports expert. Answer the following sports-related questions concisely
 """</span>
 <span class="p">)</span>
 <span class="n">manager</span><span class="o">.</span><span class="nf">registerService</span><span class="p">(</span><span class="n">sportsService</span><span class="p">,</span> <span class="nv">withRoutings</span><span class="p">:</span> <span class="p">[</span><span class="o">.</span><span class="nf">domain</span><span class="p">([</span><span class="s">"sports"</span><span class="p">])])</span>
+
+<span class="c1">// Configure the Movies Service (OpenAI)</span>
+<span class="k">let</span> <span class="nv">moviesService</span> <span class="o">=</span> <span class="kt">OpenAIService</span><span class="p">(</span>
+    <span class="nv">name</span><span class="p">:</span> <span class="s">"MoviesService"</span><span class="p">,</span>
+    <span class="nv">apiKey</span><span class="p">:</span> <span class="s">"your-openai-api-key"</span><span class="p">,</span>
+    <span class="nv">maxOutputTokens</span><span class="p">:</span> <span class="mi">256</span><span class="p">,</span>
+    <span class="nv">systemPrompt</span><span class="p">:</span> <span class="s">"""
+You are a movie critic. Answer the following movie-related questions concisely and accurately.
+"""</span>
+<span class="p">)</span>
+<span class="n">manager</span><span class="o">.</span><span class="nf">registerService</span><span class="p">(</span><span class="n">moviesService</span><span class="p">,</span> <span class="nv">withRoutings</span><span class="p">:</span> <span class="p">[</span><span class="o">.</span><span class="nf">domain</span><span class="p">([</span><span class="s">"movies"</span><span class="p">])])</span>
 
 <span class="c1">// Configure the Books Service (Ollama)</span>
 <span class="k">let</span> <span class="nv">booksService</span> <span class="o">=</span> <span class="kt">OllamaService</span><span class="p">(</span>
@@ -354,7 +362,7 @@ You are a literary expert. Answer the following books-related questions concisel
 <span class="c1">// Configure the Fallback Service (OpenAI)</span>
 <span class="k">let</span> <span class="nv">fallbackService</span> <span class="o">=</span> <span class="kt">OpenAIService</span><span class="p">(</span>
     <span class="nv">name</span><span class="p">:</span> <span class="s">"FallbackService"</span><span class="p">,</span>
-    <span class="nv">apiKey</span><span class="p">:</span> <span class="s">"you-openai-api-key"</span><span class="p">,</span>
+    <span class="nv">apiKey</span><span class="p">:</span> <span class="s">"your-openai-api-key"</span><span class="p">,</span>
     <span class="nv">maxOutputTokens</span><span class="p">:</span> <span class="mi">512</span><span class="p">,</span>
     <span class="nv">systemPrompt</span><span class="p">:</span> <span class="s">"""
 You are a helpful assistant. Answer any general questions accurately and concisely.
@@ -365,6 +373,7 @@ You are a helpful assistant. Answer any general questions accurately and concise
 <span class="c1">// Example questions</span>
 <span class="k">let</span> <span class="nv">questions</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s">"Who won the Super Bowl in 2022?"</span><span class="p">,</span>  <span class="c1">// Sports domain</span>
+    <span class="s">"What won Best Picture in 2021?"</span><span class="p">,</span>   <span class="c1">// Movies domain</span>
     <span class="s">"Who wrote The Great Gatsby?"</span><span class="p">,</span>      <span class="c1">// Books domain</span>
     <span class="s">"What is the capital of France?"</span>    <span class="c1">// General (fallback)</span>
 <span class="p">]</span>
@@ -387,25 +396,30 @@ You are a helpful assistant. Answer any general questions accurately and concise
 <p>AuroraCore includes tests for multiple language model services. The Ollama tests will always run, as they do not require any API keys. For testing OpenAI or Anthropic services, you will need to manually provide your API keys.</p>
 <h3 id='adding-api-keys-for-openai-and-anthropic' class='heading'>Adding API Keys for OpenAI and Anthropic:</h3>
 
-<p>In the test files that involve OpenAI or Anthropic services, there are placeholders where you can insert your API keys.</p>
+<p>Some test and example files use OpenAI or Anthropic services and need API keys to function correctly. To use these services, add the following keys to the <code>AuroraCore</code> and <code>Examples</code> schemes. Make sure these schemes are not shared, and take extra precaution to avoid committing API keys into the repository.</p>
 
-<ol>
-<li>Open the <code>LLMServiceTests.swift</code> file.</li>
-<li>Locate the following lines near the top of the file:
-<code>swift
-private let openAIAPIKey: String? = &quot;&quot; // Insert your OpenAI API key here
-private let anthropicAPIKey: String? = &quot;&quot; // Insert your Anthropic API key here
-</code></li>
-<li>Add your keys between the quotation marks (<code>&quot;&quot;</code>) to enable the tests for those services.</li>
-</ol>
+<ul>
+<li>For Anthropic, add the environment variable <code>ANTHROPIC_API_KEY</code> with a valid test API key.</li>
+<li>For OpenAI, add the environment variable <code>OPENAI_API_KEY</code> with a valid test API key.</li>
+<li>Ollama does not require API keys, but does require the Ollama service to be running at the default service URL, <code>http://localhost:11434</code>.</li>
+</ul>
 <h3 id='important' class='heading'>Important:</h3>
 
 <ul>
-<li><strong>Do not commit your API keys to the repository</strong>. The tests are designed to run with Ollama by default, and you can enable additional tests for OpenAI and Anthropic by manually adding your keys for local testing.</li>
+<li><strong>Never commit your API keys to the repository</strong>. The tests are designed to run with Ollama by default, and you can enable additional tests for OpenAI and Anthropic by manually adding your keys for local testing.</li>
 <li>Be sure to remove or replace your keys with empty strings before committing any changes.</li>
 </ul>
 
-<p>With this setup, you can run the tests without relying on environment variables, and ensure your sensitive keys are not inadvertently shared.</p>
+<p>With this setup, you can run the tests on multiple LLMs and ensure your sensitive keys are not inadvertently shared.</p>
+<h2 id='future-ideas' class='heading'>Future Ideas</h2>
+
+<ul>
+<li><strong>On-device LLM support</strong>: Integrate with on-device language models to enable fast, private, and offline AI capabilities.</li>
+<li><strong>Google LLM support</strong>: Support Gemini and future Google-built language models.</li>
+<li><strong>Multimodal LLM support</strong>: Enable multimodal LLMs for use cases beyond plain text.</li>
+<li><strong>Advanced Workflow features</strong>: Include dynamic task execution, prebuilt workflow templates for common AI tasks (e.g., summarization, Q&amp;A, data extraction) to jumpstart development.</li>
+<li><strong>Time-based triggers</strong>: Automate workflows to execute at scheduled intervals or in response to real-world events for monitoring and alerting systems.</li>
+</ul>
 <h2 id='contributing' class='heading'>Contributing</h2>
 
 <p>Contributions are welcome! Please feel free to submit a pull request or open an issue. For more details on how to contribute, please refer to the <a href="CONTRIBUTING.md">CONTRIBUTING.md</a> file.</p>
@@ -417,12 +431,12 @@ private let anthropicAPIKey: String? = &quot;&quot; // Insert your Anthropic API
 <p>AuroraCore is released under the <a href="LICENSE">Apache 2.0 License</a>.</p>
 <h2 id='contact' class='heading'>Contact</h2>
 
-<p>For any inquiries or feedback, please reach out to us at <a href="mailto:aurora.core.project@gmail.com">aurora.core.project@gmail.com</a>.</p>
+<p>For any inquiries or feedback, please reach out to us at <a href="mailto:aurora.toolkit@gmail.com">aurora.toolkit@gmail.com</a>.</p>
 
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-12-08)</p>
+          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-12-20)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>

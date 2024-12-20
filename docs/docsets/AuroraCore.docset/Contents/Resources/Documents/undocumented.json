@@ -71,8 +71,15 @@
       "warning": "undocumented"
     },
     {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Managers/WorkflowManager.swift",
+      "line": 67,
+      "symbol": "WorkflowManager.mappings",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Models/Workflow.swift",
-      "line": 75,
+      "line": 78,
       "symbol": "Workflow.logger",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
@@ -149,43 +156,43 @@
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Models/WorkflowTask.swift",
-      "line": 164,
+      "line": 189,
       "symbol": "TaskStatus.pending",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Models/WorkflowTask.swift",
-      "line": 165,
+      "line": 190,
       "symbol": "TaskStatus.inProgress",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Models/WorkflowTask.swift",
-      "line": 166,
+      "line": 191,
       "symbol": "TaskStatus.completed",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Models/WorkflowTask.swift",
-      "line": 167,
+      "line": 192,
       "symbol": "TaskStatus.failed",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Summarizers/SummarizerProtocol.swift",
-      "line": 44,
-      "symbol": "SummaryType.general",
+      "line": 45,
+      "symbol": "SummaryType.single",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Summarizers/SummarizerProtocol.swift",
-      "line": 45,
-      "symbol": "SummaryType.context",
+      "line": 46,
+      "symbol": "SummaryType.multiple",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
@@ -218,15 +225,22 @@
       "warning": "undocumented"
     },
     {
-      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/WorkflowTasks/TrimmingTask.swift",
-      "line": 10,
-      "symbol": "TrimmingTask",
-      "symbol_kind": "source.lang.swift.decl.class",
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/WorkflowTasks/RSSParsingTask.swift",
+      "line": 40,
+      "symbol": "RSSParsingTask.execute()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/WorkflowTasks/SummarizeStringsTask.swift",
+      "line": 50,
+      "symbol": "SummarizeStringsTask.execute()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/WorkflowTasks/TrimmingTask.swift",
-      "line": 48,
+      "line": 65,
       "symbol": "TrimmingTask.execute()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
