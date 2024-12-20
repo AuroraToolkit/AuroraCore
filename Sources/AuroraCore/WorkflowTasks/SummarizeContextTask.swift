@@ -23,9 +23,6 @@ public class SummarizeContextTask: WorkflowComponent {
     /// The wrapped task.
     private let task: Workflow.Task
 
-    private let contextController: ContextController
-    private let summaryType: SummaryType
-
     /**
      Initializes a new `SummarizeContextTask` instance.
 
@@ -34,19 +31,19 @@ public class SummarizeContextTask: WorkflowComponent {
         - contextController: The `ContextController` instance containing the context to be summarized.
         - summaryType: The type of summary to be performed (`single` or `multiple`).
         - options: Optional `SummarizerOptions` to provide additional configuration options (e.g., model, temperature).
+        - inputs: Additional inputs for the task. Defaults to an empty dictionary.
      */
     public init(
         name: String? = nil,
         contextController: ContextController,
         summaryType: SummaryType = .multiple,
-        options: SummarizerOptions? = nil
+        options: SummarizerOptions? = nil,
+        inputs: [String: Any?] = [:]
     ) {
-        self.contextController = contextController
-        self.summaryType = summaryType
         self.task = Workflow.Task(
             name: name,
             description: "Summarize the content in the context controller",
-            inputs: ["options": options ?? SummarizerOptions()]
+            inputs: inputs
         ) { inputs in
             // Retrieve all context items to be summarized
             let itemsToSummarize = contextController.getItems().map { $0.text }
@@ -56,7 +53,8 @@ public class SummarizeContextTask: WorkflowComponent {
                 return [:]
             }
 
-            let options = inputs["options"] as? SummarizerOptions
+            /// Resolve the options from the inputs if it exists, otherwise use the provided `options` parameter or default
+            let options = inputs.resolve(key: "options", fallback: options) ?? SummarizerOptions()
 
             // Summarize the items based on the summary type
             let summarizer = contextController.getSummarizer()

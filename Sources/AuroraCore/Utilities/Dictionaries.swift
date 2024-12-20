@@ -20,3 +20,21 @@ extension Dictionary {
         return Dictionary<NewKey, Value>(uniqueKeysWithValues: map { (transform($0.key), $0.value) })
     }
 }
+
+extension Dictionary where Key == String {
+    /**
+     Resolves a value from the dictionary by its key.
+     If the key exists in the dictionary, its value is returned (even if `nil`). Otherwise, the provided fallback value is returned.
+
+     - Parameters:
+        - key: The key to resolve.
+        - fallback: The fallback value to use if the key does not exist in the dictionary.
+     - Returns: The resolved value or the fallback.
+     */
+    func resolve<T>(key: String, fallback: T?) -> T? {
+        if self.keys.contains(key) {
+            return self[key] as? T
+        }
+        return fallback
+    }
+}

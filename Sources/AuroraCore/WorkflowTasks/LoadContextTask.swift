@@ -27,17 +27,25 @@ public class LoadContextTask: WorkflowComponent {
      - Parameters:
         - name: Optionally pass the name of the task.
         - filename: Optionally pass the name of the file to load the context from.
+        - inputs: Additional inputs for the task. Defaults to an empty dictionary.
+
+     - Note: The `inputs` array can contain direct values for keys like `filename`, or dynamic references that will be resolved at runtime.
      */
-    public init(name: String? = nil, filename: String? = nil) {
+    public init(
+        name: String? = nil,
+        filename: String? = nil,
+        inputs: [String: Any?] = [:]
+    ) {
         self.task = Workflow.Task(
             name: name,
             description: "Load the context from disk",
-            inputs: ["filename": filename]
+            inputs: inputs
         ) { inputs in
+            /// Resolve the filename from the inputs if it exists, otherwise use the provided `filename` parameter or a default value
+            let resolvedFilename = inputs.resolve(key: "filename", fallback: filename) ?? "default_context"
+
             do {
-                // Retrieve the filename from inputs or use a default
-                let filename = inputs["filename"] as? String ?? "default_context"
-                let properFilename = filename.hasSuffix(".json") ? filename : "\(filename).json"
+                let properFilename = resolvedFilename.hasSuffix(".json") ? resolvedFilename : "\(resolvedFilename).json"
 
                 // Ensure the contexts directory exists
                 let documentDirectory = try FileManager.default.createContextsDirectory()

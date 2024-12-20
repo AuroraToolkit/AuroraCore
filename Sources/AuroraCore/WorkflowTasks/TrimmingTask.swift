@@ -31,38 +31,35 @@ public class TrimmingTask: WorkflowComponent {
         - tokenLimit: The maximum allowed token count (default is 1,024).
         - buffer: A buffer percentage to apply when calculating the token limit (default is 5%).
         - strategy: The trimming strategy to apply (default is `.middle`).
+        - inputs: Additional inputs for the task. If a value for a key is provided, it will overwritten by the parameter.
      */
     public init(
         name: String? = nil,
-        strings: [String],
-        tokenLimit: Int? = 1024,
-        buffer: Double? = 0.05,
-        strategy: String.TrimmingStrategy? = .middle
+        strings: [String]? = nil,
+        tokenLimit: Int = 1024,
+        buffer: Double = 0.05,
+        strategy: String.TrimmingStrategy = .middle,
+        inputs: [String: Any?] = [:]
     ) {
-        let description = strings.count <= 1 ? "Trim string to fit within the token limit using \(strategy!) strategy" : "Trim multiple strings to fit within the token limit using \(strategy!) strategy"
+        let stringsCount = strings?.count ?? 0
+        let description = stringsCount <= 1 ? "Trim string to fit within the token limit using \(strategy) strategy" : "Trim multiple strings to fit within the token limit using \(strategy) strategy"
         self.task = Workflow.Task(
             name: name,
             description: description,
-            inputs: [
-                "strings": strings,
-                "tokenLimit": tokenLimit,
-                "buffer": buffer,
-                "strategy": strategy
-            ]
+            inputs: inputs
         ) { inputs in
-            // Retrieve inputs with default values
-            let strings = inputs["strings"] as? [String] ?? []
-            let tokenLimit = inputs["tokenLimit"] as? Int ?? 1024
-            let buffer = inputs["buffer"] as? Double ?? 0.05
-            let strategy = inputs["strategy"] as? String.TrimmingStrategy ?? .middle
+            /// Resolve values from the inputs if it exists, otherwise use the provided parameter or an empty array
+            let resolvedStrings = inputs.resolve(key: "strings", fallback: strings) ?? []
 
             // Validate required inputs
-            guard !strings.isEmpty else {
+            guard !resolvedStrings.isEmpty else {
                 throw NSError(domain: "TrimmingTask", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid inputs for TrimmingTask"])
             }
 
             // Perform the trimming operation for each string in the array
-            let trimmedStrings = strings.map { $0.trimmedToFit(tokenLimit: tokenLimit, buffer: buffer, strategy: strategy) }
+            let trimmedStrings = resolvedStrings.map {
+                $0.trimmedToFit(tokenLimit: tokenLimit, buffer: buffer, strategy: strategy)
+            }
 
             return ["trimmedStrings": trimmedStrings]
         }
@@ -76,7 +73,7 @@ public class TrimmingTask: WorkflowComponent {
      - Parameter buffer: A buffer percentage to apply when calculating the token limit (default is 5%).
      - Parameter strategy: The trimming strategy to apply (default is `.middle`).
      */
-    public convenience init(string: String, tokenLimit: Int? = 1024, buffer: Double? = 0.05, strategy: String.TrimmingStrategy? = .middle) {
+    public convenience init(string: String, tokenLimit: Int = 1024, buffer: Double = 0.05, strategy: String.TrimmingStrategy = .middle) {
         self.init(strings: [string], tokenLimit: tokenLimit, buffer: buffer, strategy: strategy)
     }
 

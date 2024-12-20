@@ -32,30 +32,25 @@ public class RSSParsingTask: WorkflowComponent {
      - Parameters:
         - name: The name of the task (default is `RSSParsingTask`).
         - feedData: The data of the RSS feed to parse.
-        - inputs: A dictionary of additional inputs to the task.
+        - inputs: Additional inputs for the task. Defaults to an empty dictionary.
 
-     - Note: The `feedData` parameter provided during initialization takes precedence over inputs with the same key.
-     However, at execution time, any resolved `feedData` value in the `inputs` dictionary will overwrite both the initialized parameter and the raw input value.
-     This ensures dynamic flexibility within the workflow.
+     - Note: The `inputs` array can contain direct values for keys like `feedData`, or dynamic references that will be resolved at runtime.
      */
     public init(
         name: String? = nil,
         feedData: Data? = nil,
         inputs: [String: Any?] = [:]
     ) {
-        // Merge direct parameters into inputs
-        var mergedInputs = inputs
-        if let feedData {
-            mergedInputs["feedData"] = feedData
-        }
-
         self.task = Workflow.Task(
             name: name,
             description: "Extract article links from the RSS feed",
-            inputs: mergedInputs
+            inputs: inputs
         ) { inputs in
+            /// Resolve the feedData from the inputs if it exists, otherwise use the provided `feedData` parameter or default
+            let resolvedFeedData = inputs.resolve(key: "feedData", fallback: feedData)
+
             // Validate the input data
-            guard let feedData = inputs["feedData"] as? Data, !feedData.isEmpty else {
+            guard let feedData = resolvedFeedData, !feedData.isEmpty else {
                 throw NSError(domain: "RSSParsingTask", code: 1, userInfo: [NSLocalizedDescriptionKey: "Missing or invalid RSS feed data"])
             }
 

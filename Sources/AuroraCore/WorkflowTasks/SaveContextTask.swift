@@ -31,18 +31,28 @@ public class SaveContextTask: WorkflowComponent {
         - name: Optionally pass the name of the task.
         - context: The `Context` object to save.
         - filename: The name of the file (without extension) used for saving the context.
+        - inputs: Additional inputs for the task. Defaults to an empty dictionary.
+
+     - Note: The `inputs` array can contain direct values for keys like `filename`, or dynamic references that will be resolved at runtime.
      */
-    public init(name: String? = nil, context: Context, filename: String) {
-        var inputs: [String: Any?] = [:]
-        inputs["context"] = context
-        inputs["filename"] = filename.hasSuffix(".json") ? filename : "\(filename).json"
+    public init(
+        name: String? = nil,
+        context: Context? = nil,
+        filename: String? = nil,
+        inputs: [String: Any?] = [:]
+    ) {
         self.task = Workflow.Task(
             name: name,
             description: "Save the context to disk",
             inputs: inputs
         ) { inputs in
-            guard let context = inputs["context"] as? Context,
-                  let filename = inputs["filename"] as? String else {
+            /// Resolve the context from the inputs if it exists, otherwise use the provided `context` parameter
+            let resolvedContext = inputs.resolve(key: "context", fallback: context)
+
+            /// Resolve the filename from the inputs if it exists, otherwise use the provided `filename` parameter
+            let resolvedFilename = inputs.resolve(key: "filename", fallback: filename)
+
+            guard let context = resolvedContext, let filename = resolvedFilename else {
                 throw NSError(domain: "SaveContextTask", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid inputs for SaveContextTask"])
             }
             do {

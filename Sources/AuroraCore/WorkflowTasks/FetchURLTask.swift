@@ -30,12 +30,10 @@ public struct FetchURLTask: WorkflowComponent {
         - name: The name of the task (default is `FetchURLTask`).
         - url: The string for the `URL` to fetch.
         - session: The `URLSession` to use for the request. Defaults to `.shared`.
-        - inputs: Additional inputs for the task. If a value for the `url` key is provided, it will overwritten by the `url` parameter.
+        - inputs: Additional inputs for the task. Defaults to an empty dictionary.
 
      - Throws: An error if the `url` parameter is invalid.
-     - Note: The `url` parameter provided during initialization takes precedence over inputs with the same key.
-     However, at execution time, any resolved `url` value in the `inputs` dictionary will overwrite both the initialized parameter and the raw input value.
-     This ensures dynamic flexibility within the workflow.
+     - Note: The `inputs` array can contain direct values for keys like `url`, or dynamic references that will be resolved at runtime.
      */
     public init(
         name: String? = nil,
@@ -43,19 +41,16 @@ public struct FetchURLTask: WorkflowComponent {
         session: URLSession = .shared,
         inputs: [String: Any?] = [:]
     ) {
-        // Merge direct parameters into inputs
-        var mergedInputs = inputs
-        if let url {
-            mergedInputs["url"] = url
-        }
-
         self.session = session
         self.task = Workflow.Task(
             name: name,
             description: "Fetches data from \(url ?? "a URL")",
-            inputs: mergedInputs
+            inputs: inputs
         ) { inputs in
-            guard let urlString = inputs["url"] as? String else {
+            /// Resolve the url from the inputs if it exists, otherwise use the provided `url` parameter
+            let resolvedUrl = inputs.resolve(key: "url", fallback: url)
+
+            guard let urlString = resolvedUrl else {
                 throw NSError(
                     domain: "FetchURLTask",
                     code: 1,

@@ -29,10 +29,10 @@ struct TVScriptWorkflowExample {
             return
         }
 
-        // Initialize LLM service
-        let anthropicService = AnthropicService(apiKey: anthropicAIKey)
+        // Initialize LLM service, e.g., Anthropic, OpenAI, or Ollama
+//        let anthropicService = AnthropicService(apiKey: anthropicAIKey)
+//        let ollamaService = OllamaService()
         let openAIService = OpenAIService(apiKey: openAIKey)
-        let ollamaService = OllamaService()
 
         // Choose which service to use for generating the TV script
         let aiService = openAIService

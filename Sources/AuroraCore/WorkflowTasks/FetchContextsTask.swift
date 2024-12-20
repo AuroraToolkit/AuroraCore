@@ -26,24 +26,31 @@ public struct FetchContextsTask: WorkflowComponent {
      - Parameters:
         - name: An optional name for the task. Defaults to the type name if `nil`.
         - filenames: An optional array of filenames (without extensions) specifying which contexts to retrieve.
+        - inputs: Additional inputs for the task. Defaults to an empty dictionary.
+
+     - Note: The `inputs` array can contain direct values for keys like `filenames`, or dynamic references that will be resolved at runtime.
      */
-    public init(name: String? = nil, filenames: [String]? = nil) {
+    public init(
+        name: String? = nil,
+        filenames: [String]? = nil,
+        inputs: [String: Any?] = [:]
+    ) {
         self.task = Workflow.Task(
             name: name,
             description: "Fetch stored contexts from disk",
-            inputs: ["filenames": filenames]
+            inputs: inputs
         ) { inputs in
+            /// Resolve filenames from inputs or use the provided `filenames` parameter
+            let resolvedFilenames = inputs.resolve(key: "filenames", fallback: filenames)
+
             do {
                 // Ensure the contexts directory exists
                 let documentDirectory = try FileManager.default.createContextsDirectory()
-
-                // Retrieve filenames from inputs or fetch all JSON files
-                let filenames = inputs["filenames"] as? [String]
                 let existingFilenames = try FileManager.default.contentsOfDirectory(at: documentDirectory, includingPropertiesForKeys: nil)
                     .map { $0.lastPathComponent.lowercased() }
 
                 let contextFiles: [URL]
-                if let filenames = filenames {
+                if let filenames = resolvedFilenames {
                     contextFiles = filenames.compactMap { filename in
                         let normalizedFilename = filename.hasSuffix(".json") ? filename.lowercased() : "\(filename).json".lowercased()
                         if let matchingFile = existingFilenames.first(where: { $0 == normalizedFilename }) {
