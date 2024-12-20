@@ -5,28 +5,26 @@ AuroraCore is the foundational library within the AuroraToolkit—a suite of too
 ## Features
 
 - **Context Management**: Handle and maintain conversation or task-specific context, including adding, retrieving, and summarizing items.
-- **Task and Workflow Handling**: Built-in support for defining and managing tasks and workflows, including the ability to track task status and manage dependent workflows. Now supports asynchronous task execution for handling complex, long-running tasks.
+- **Task and Workflow Handling**: Built-in support for defining and managing tasks and workflows, supporting asynchronous task execution for handling complex, long-running tasks.
+- **Declarative Workflow syntax**: Define workflows declaratively, similar to SwiftUI for UI.
 - **LLM Integration**: Seamless integration with various LLM services via an extendable `LLMManager`. Supports token management, trimming strategies, domain-routing, and fallback mechanisms.
 - **Domain-Specific Routing**: Route requests to the most appropriate LLM service based on predefined domains or fallback options, enabling modular and efficient service management.
 - **Examples for Quick Start**: Includes ready-to-run examples demonstrating common patterns like domain-specific routing and fallback handling.
 - **Modular and Extendable**: AuroraCore is designed to be modular, allowing developers to plug in their own services, workflows, or task managers.
 
-## Components
+## Major Components
 
 ### 1. **ContextController**
 The `ContextController` manages context data, including adding, updating, and summarizing items. It works closely with summarizers and handles context tokenization.
 
-### 2. **WorkflowTask and Workflow**
-The `WorkflowTask` and `Workflow` classes provide mechanisms to define tasks, monitor their progress, and execute complex workflows that are built from multiple tasks.
-
-### 3. **WorkflowManager**
-The `WorkflowManager` is responsible for managing and executing workflows. It coordinates task execution, handles task failures, and manages workflow states such as `inProgress`, `stopped`, `completed`, and `failed`. It supports asynchronous execution, making it suitable for workflows involving AI, network requests, and other asynchronous tasks.
-
-### 4. **LLMManager**
+### 2. **LLMManager**
 The `LLMManager` is responsible for managing connections to various language model services, handling requests, and managing token limits. It supports trimming strategies (start, middle, end) to fit within LLM token limits.
 
-### 5. **ContextManager**
+### 3. **ContextManager**
 `ContextManager` supervises multiple `ContextController` instances, allowing for the management of multiple contexts. It handles saving and loading contexts to disk, as well as setting the active context.
+
+### 4. **Workflow**
+The `Workflow` provide declarative mechanisms to define tasks and task groups, to execute complex workflows. It supports asynchronous task execution, making it suitable for workflows involving AI, network requests, and other asynchronous tasks.
 
 ## Installation
 
@@ -58,20 +56,22 @@ contextController.addItem(content: "This is a new item.")
 let summary = contextController.summarizeContext()
 ```
 
-### Using WorkflowTask and Workflow
+### Using Workflows and Tasks
 
 ```swift
 import AuroraCore
 
-let task = WorkflowTask(name: "Example Task", description: "This is a sample task.")
-var workflow = Workflow(name: "Example Workflow", description: "This is a sample workflow", tasks: [task])
-
-let workflowManager = WorkflowManager(workflow: workflow)
-
-// Starting the workflow
-Task {
-    await workflowManager.start()
+let workflow = Workflow(name: "Example Workflow", description: "This is a sample workflow") {
+    Workflow.Task(name: "Task_1", description: "This is the first task.")
+    Workflow.Task(name: "Task_2", description: "This is the second task.") { inputs in
+        // Perform some task-specific logic
+        return ["result": "Task 2 completed."]
+    }
 }
+
+await workflow.start()
+
+print("Workflow completed. Result: \(workflow.outputs["Task_2.result"] as? String)")
 ```
 
 ### LLM Integration
@@ -189,14 +189,11 @@ With this setup, you can run the tests on multiple LLMs and ensure your sensitiv
 
 ## Future Ideas
 
-- **On-device LLM support**: Integration with on-device language models.
-- **Google LLM support**: Support for Gemeni and future Google-built language models.
-- **Multimodal LLM support**: Support multimodal LLMs for use cases beyond plain text.
-- **Declarative Workflow syntax**: Define workflows declaratively, similar to SwiftUI for UI.
-- **Parallel task execution**: Support for parallel task execution in workflows.
-- **Dynamic task execution**: Support for dynamic task creation and execution.
-- **Template workflows**: Prebuilt workflows for common AI tasks (e.g., summarization, Q&A, data extraction) to jumpstart development.
-- **Time-based triggers**: Add support for workflows that execute at scheduled intervals or based on real-time events.
+- **On-device LLM support**: Integrate with on-device language models to enable fast, private, and offline AI capabilities.
+- **Google LLM support**: Support Gemini and future Google-built language models.
+- **Multimodal LLM support**: Enable multimodal LLMs for use cases beyond plain text.
+- **Advanced Workflow features**: Include dynamic task execution, prebuilt workflow templates for common AI tasks (e.g., summarization, Q&A, data extraction) to jumpstart development.
+- **Time-based triggers**: Automate workflows to execute at scheduled intervals or in response to real-world events for monitoring and alerting systems.
 
 ## Contributing
 
