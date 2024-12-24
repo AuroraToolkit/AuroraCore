@@ -9,7 +9,7 @@ import Foundation
 
 extension FileManager {
     /// Helper function to create the `contexts` directory in the documents folder if it doesn't exist.
-    func createContextsDirectory() throws -> URL {
+    public func createContextsDirectory() throws -> URL {
         guard let documentDirectory = urls(for: .documentDirectory, in: .userDomainMask).first else {
             throw NSError(domain: "FileManager", code: 1, userInfo: [NSLocalizedDescriptionKey: "Document directory not found"])
         }

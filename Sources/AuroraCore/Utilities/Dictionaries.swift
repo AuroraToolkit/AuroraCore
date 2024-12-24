@@ -16,7 +16,7 @@ extension Dictionary {
 
      - Note:This is used for example, to prefix task group names to keys in task output.
      */
-    func mapKeys<NewKey: Hashable>(_ transform: (Key) -> NewKey) -> [NewKey: Value] {
+    public func mapKeys<NewKey: Hashable>(_ transform: (Key) -> NewKey) -> [NewKey: Value] {
         return Dictionary<NewKey, Value>(uniqueKeysWithValues: map { (transform($0.key), $0.value) })
     }
 }
@@ -31,7 +31,7 @@ extension Dictionary where Key == String {
         - fallback: The fallback value to use if the key does not exist in the dictionary.
      - Returns: The resolved value or the fallback.
      */
-    func resolve<T>(key: String, fallback: T?) -> T? {
+    public func resolve<T>(key: String, fallback: T?) -> T? {
         if self.keys.contains(key) {
             return self[key] as? T
         }
