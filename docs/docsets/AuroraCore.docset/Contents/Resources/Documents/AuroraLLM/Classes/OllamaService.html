@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>OllamaService Class Reference</title>
+    <link rel="stylesheet" type="text/css" href="../../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../../js/jquery.min.js" defer></script>
+    <script src="../../js/jazzy.js" defer></script>
+    
+    <script src="../../js/lunr.min.js" defer></script>
+    <script src="../../js/typeahead.jquery.js" defer></script>
+    <script src="../../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Class/OllamaService" class="dashAnchor"></a>
+    <a title="OllamaService Class Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../../index.html">AuroraCore Docs</a> (93% documented)</p>
+        <div class="header-right">
+          <form role="search" action="../../search.json">
+            <input type="text" placeholder="Search documentation" data-typeahead>
+          </form>
+        </div>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../../index.html">AuroraCore</a>
+        <img id="carat" src="../../img/carat.png" alt=""/>
+        <a href="../../AuroraLLM.html">AuroraLLM</a>
+        <img id="carat" src="../../img/carat.png" alt=""/>
+        OllamaService Class Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../../AuroraCore.html">AuroraCore</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/AnyWorkflowComponent.html">AnyWorkflowComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Classes/CustomLogger.html">CustomLogger</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Extensions/Swift/Dictionary.html">Dictionary</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Extensions/Foundation/FileManager.html">FileManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Classes/SecureStorage.html">SecureStorage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Extensions/Swift/String.html">String</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Extensions/Swift/String/TrimmingStrategy.html">– TrimmingStrategy</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow.html">Workflow</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow/State.html">– State</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow/Component.html">– Component</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow/Task.html">– Task</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow/TaskGroup.html">– TaskGroup</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/WorkflowBuilder.html">WorkflowBuilder</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../../AuroraLLM.html">AuroraLLM</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMResponse.html">AnthropicLLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMResponse.html#/s:9AuroraLLM20AnthropicLLMResponseV7ContentV">– Content</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMResponse.html#/s:9AuroraLLM20AnthropicLLMResponseV5UsageV">– Usage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMStreamingResponse.html">AnthropicLLMStreamingResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMStreamingResponse/Delta.html">– Delta</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMStreamingResponse/ContentBlock.html">– ContentBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMStreamingResponse/Usage.html">– Usage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/AnthropicService.html">AnthropicService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/Bookmark.html">Bookmark</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/Context.html">Context</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/ContextController.html">ContextController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/ContextItem.html">ContextItem</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/ContextManager.html">ContextManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/FetchContextsTask.html">FetchContextsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/LLMDomainRouter.html">LLMDomainRouter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Protocols/LLMDomainRouterProtocol.html">LLMDomainRouterProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/LLMManager.html">LLMManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/LLMManager/Routing.html">– Routing</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/LLMMessage.html">LLMMessage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/LLMRequest.html">LLMRequest</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/LLMRequestOptions.html">LLMRequestOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Enums/LLMRole.html">LLMRole</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Enums/LLMServiceError.html">LLMServiceError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/LLMServiceFactory.html">LLMServiceFactory</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/LLMTokenUsage.html">LLMTokenUsage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/LoadContextTask.html">LoadContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/OllamaLLMResponse.html">OllamaLLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/OllamaService.html">OllamaService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/OpenAILLMResponse.html">OpenAILLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/OpenAILLMResponse/Choice.html">– Choice</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/OpenAILLMResponse.html#/s:9AuroraLLM17OpenAILLMResponseV5UsageV">– Usage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/OpenAIService.html">OpenAIService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/SaveContextTask.html">SaveContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/Summarizer.html">Summarizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/SummarizerOptions.html">SummarizerOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Protocols/SummarizerProtocol.html">SummarizerProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Enums/SummaryType.html">SummaryType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Enums/TokenAdjustmentPolicy.html">TokenAdjustmentPolicy</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../../AuroraTaskLibrary.html">AuroraTaskLibrary</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Structs/FetchURLTask.html">FetchURLTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/LLMTask.html">LLMTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Structs/RSSArticle.html">RSSArticle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/RSSParsingTask.html">RSSParsingTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/SummarizeContextTask.html">SummarizeContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/SummarizeStringsTask.html">SummarizeStringsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/TrimmingTask.html">TrimmingTask</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>OllamaService</h1>
+              <div class="declaration">
+                <div class="language">
+                  
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">OllamaService</span> <span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></span></code></pre>
+
+                </div>
+              </div>
+            <p><code>OllamaService</code> implements the <code><a href="../../AuroraLLM/Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></code> to interact with the Ollama models via its API.
+This service supports customizable API base URLs and allows interaction with models using both streaming and non-streaming modes.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM13OllamaServiceC6vendorSSvp"></a>
+                    <a name="//apple_ref/swift/Property/vendor" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM13OllamaServiceC6vendorSSvp">vendor</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The name of the service vendor, required by the protocol.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">vendor</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM13OllamaServiceC4nameSSvp"></a>
+                    <a name="//apple_ref/swift/Property/name" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM13OllamaServiceC4nameSSvp">name</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The name of the service instance, which can be customized during initialization</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM13OllamaServiceC7baseURLSSvp"></a>
+                    <a name="//apple_ref/swift/Property/baseURL" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM13OllamaServiceC7baseURLSSvp">baseURL</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The base URL for the Ollama API (e.g., <code>http://localhost:11434</code>).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">baseURL</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM13OllamaServiceC6apiKeySSSgvp"></a>
+                    <a name="//apple_ref/swift/Property/apiKey" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM13OllamaServiceC6apiKeySSSgvp">apiKey</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Not required for Ollama but included to satisfy the protocol</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">apiKey</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM13OllamaServiceC14requiresAPIKeySbvp"></a>
+                    <a name="//apple_ref/swift/Property/requiresAPIKey" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM13OllamaServiceC14requiresAPIKeySbvp">requiresAPIKey</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Ollama does not require an API key for authentication.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">requiresAPIKey</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM13OllamaServiceC17contextWindowSizeSivp"></a>
+                    <a name="//apple_ref/swift/Property/contextWindowSize" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM13OllamaServiceC17contextWindowSizeSivp">contextWindowSize</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The maximum context window size (total tokens, input + output) supported by the service, defaults to 4k.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">contextWindowSize</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM13OllamaServiceC15maxOutputTokensSivp"></a>
+                    <a name="//apple_ref/swift/Property/maxOutputTokens" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM13OllamaServiceC15maxOutputTokensSivp">maxOutputTokens</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The maximum number of tokens allowed for output (completion) in a single request, defaults to 4k.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">maxOutputTokens</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM13OllamaServiceC16inputTokenPolicyAA0f10AdjustmentG0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/inputTokenPolicy" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM13OllamaServiceC16inputTokenPolicyAA0f10AdjustmentG0Ovp">inputTokenPolicy</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Specifies the policy to handle input tokens when they exceed the service&rsquo;s input token limit, defaults to <code>.adjustToServiceLimits</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">inputTokenPolicy</span><span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Enums/TokenAdjustmentPolicy.html">TokenAdjustmentPolicy</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM13OllamaServiceC17outputTokenPolicyAA0f10AdjustmentG0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/outputTokenPolicy" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM13OllamaServiceC17outputTokenPolicyAA0f10AdjustmentG0Ovp">outputTokenPolicy</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Specifies the policy to handle output tokens when they exceed the service&rsquo;s max output token limit, defaults to <code>adjustToServiceLimits</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">outputTokenPolicy</span><span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Enums/TokenAdjustmentPolicy.html">TokenAdjustmentPolicy</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM13OllamaServiceC12systemPromptSSSgvp"></a>
+                    <a name="//apple_ref/swift/Property/systemPrompt" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM13OllamaServiceC12systemPromptSSSgvp">systemPrompt</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The default system prompt for this service, used to set the behavior or persona of the model.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">systemPrompt</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM13OllamaServiceC6vendor4name7baseURL17contextWindowSize15maxOutputTokens16inputTokenPolicy06outputpQ012systemPrompt10urlSessionACSS_S2SS2iAA0p10AdjustmentQ0OANSSSgSo12NSURLSessionCtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(vendor:name:baseURL:contextWindowSize:maxOutputTokens:inputTokenPolicy:outputTokenPolicy:systemPrompt:urlSession:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM13OllamaServiceC6vendor4name7baseURL17contextWindowSize15maxOutputTokens16inputTokenPolicy06outputpQ012systemPrompt10urlSessionACSS_S2SS2iAA0p10AdjustmentQ0OANSSSgSo12NSURLSessionCtcfc">init(vendor:<wbr>name:<wbr>baseURL:<wbr>contextWindowSize:<wbr>maxOutputTokens:<wbr>inputTokenPolicy:<wbr>outputTokenPolicy:<wbr>systemPrompt:<wbr>urlSession:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Initializes a new <code>OllamaService</code> instance.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">vendor</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"Ollama"</span><span class="p">,</span> <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"Ollama"</span><span class="p">,</span> <span class="nv">baseURL</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"http://localhost:11434"</span><span class="p">,</span> <span class="nv">contextWindowSize</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">4096</span><span class="p">,</span> <span class="nv">maxOutputTokens</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">4096</span><span class="p">,</span> <span class="nv">inputTokenPolicy</span><span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Enums/TokenAdjustmentPolicy.html">TokenAdjustmentPolicy</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">adjustToServiceLimits</span><span class="p">,</span> <span class="nv">outputTokenPolicy</span><span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Enums/TokenAdjustmentPolicy.html">TokenAdjustmentPolicy</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">adjustToServiceLimits</span><span class="p">,</span> <span class="nv">systemPrompt</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">urlSession</span><span class="p">:</span> <span class="kt">URLSession</span> <span class="o">=</span> <span class="kt">URLSession</span><span class="p">(</span><span class="nv">configuration</span><span class="p">:</span> <span class="o">.</span><span class="k">default</span><span class="p">))</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>vendor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The name of the service vendor (default is <code>&quot;Ollama&quot;</code>).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>name</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The name of the service instance (default is <code>&quot;Ollama&quot;</code>).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>baseURL</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The base URL for the Ollama API (default is <code>&quot;http://localhost:11434&quot;</code>).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>apiKey</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>An optional API key, though not required for local Ollama instances.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>contextWindowSize</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The size of the context window used by the service. Defaults to 4096.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>maxOutputTokens</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The maximum number of tokens allowed for output in a single request. Defaults to 4096.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>inputTokenPolicy</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The policy to handle input tokens exceeding the service&rsquo;s limit. Defaults to <code>.adjustToServiceLimits</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>outputTokenPolicy</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The policy to handle output tokens exceeding the service&rsquo;s limit. Defaults to <code>.adjustToServiceLimits</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>systemPrompt</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The default system prompt for this service, used to set the behavior or persona of the model.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>urlSession</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code>URLSession</code> instance used for network requests. Defaults to a <code>.default</code> configuration.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Non-streaming%20Request"></a>
+                <a name="//apple_ref/swift/Section/Non-streaming Request" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Non-streaming%20Request"></a>
+                  <h3 class="section-name"><span>Non-streaming Request</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM13OllamaServiceC11sendRequestyAA19LLMResponseProtocol_pAA10LLMRequestVYaKF"></a>
+                    <a name="//apple_ref/swift/Method/sendRequest(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM13OllamaServiceC11sendRequestyAA19LLMResponseProtocol_pAA10LLMRequestVYaKF">sendRequest(_:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sends a non-streaming request to the Ollama API and retrieves the response asynchronously.</p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../../AuroraLLM/Enums/LLMServiceError.html">LLMServiceError</a></code> if the request encounters an issue (e.g., invalid response, decoding error, etc.).</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">sendRequest</span><span class="p">(</span><span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Structs/LLMRequest.html">LLMRequest</a></span><span class="p">)</span> <span class="k">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../../AuroraLLM/Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>request</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code><a href="../../AuroraLLM/Structs/LLMRequest.html">LLMRequest</a></code> containing the messages and model configuration.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The <code><a href="../../AuroraLLM/Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a></code> containing the generated text or an error if the request fails.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Streaming%20Request"></a>
+                <a name="//apple_ref/swift/Section/Streaming Request" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Streaming%20Request"></a>
+                  <h3 class="section-name"><span>Streaming Request</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM13OllamaServiceC20sendStreamingRequest_17onPartialResponseAA19LLMResponseProtocol_pAA10LLMRequestV_ySScSgtYaKF"></a>
+                    <a name="//apple_ref/swift/Method/sendStreamingRequest(_:onPartialResponse:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM13OllamaServiceC20sendStreamingRequest_17onPartialResponseAA19LLMResponseProtocol_pAA10LLMRequestV_ySScSgtYaKF">sendStreamingRequest(_:<wbr>onPartialResponse:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sends a streaming request to the Ollama API and retrieves partial responses asynchronously.</p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../../AuroraLLM/Enums/LLMServiceError.html">LLMServiceError</a></code> if the request encounters an issue (e.g., invalid response, decoding error, etc.).</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">sendStreamingRequest</span><span class="p">(</span><span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Structs/LLMRequest.html">LLMRequest</a></span><span class="p">,</span> <span class="nv">onPartialResponse</span><span class="p">:</span> <span class="p">((</span><span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="k">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../../AuroraLLM/Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>request</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code><a href="../../AuroraLLM/Structs/LLMRequest.html">LLMRequest</a></code> containing the messages and model configuration.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>onPartialResponse</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A closure to handle partial responses during streaming.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The <code><a href="../../AuroraLLM/Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a></code> containing the final text or an error if the request fails.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-12-24)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</html>

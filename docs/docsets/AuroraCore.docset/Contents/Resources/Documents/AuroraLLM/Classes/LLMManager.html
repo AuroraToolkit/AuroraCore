@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>LLMManager Class Reference</title>
+    <link rel="stylesheet" type="text/css" href="../../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../../js/jquery.min.js" defer></script>
+    <script src="../../js/jazzy.js" defer></script>
+    
+    <script src="../../js/lunr.min.js" defer></script>
+    <script src="../../js/typeahead.jquery.js" defer></script>
+    <script src="../../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Class/LLMManager" class="dashAnchor"></a>
+    <a title="LLMManager Class Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../../index.html">AuroraCore Docs</a> (93% documented)</p>
+        <div class="header-right">
+          <form role="search" action="../../search.json">
+            <input type="text" placeholder="Search documentation" data-typeahead>
+          </form>
+        </div>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../../index.html">AuroraCore</a>
+        <img id="carat" src="../../img/carat.png" alt=""/>
+        <a href="../../AuroraLLM.html">AuroraLLM</a>
+        <img id="carat" src="../../img/carat.png" alt=""/>
+        LLMManager Class Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../../AuroraCore.html">AuroraCore</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/AnyWorkflowComponent.html">AnyWorkflowComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Classes/CustomLogger.html">CustomLogger</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Extensions/Swift/Dictionary.html">Dictionary</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Extensions/Foundation/FileManager.html">FileManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Classes/SecureStorage.html">SecureStorage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Extensions/Swift/String.html">String</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Extensions/Swift/String/TrimmingStrategy.html">– TrimmingStrategy</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow.html">Workflow</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow/State.html">– State</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow/Component.html">– Component</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow/Task.html">– Task</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow/TaskGroup.html">– TaskGroup</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/WorkflowBuilder.html">WorkflowBuilder</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../../AuroraLLM.html">AuroraLLM</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMResponse.html">AnthropicLLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMResponse.html#/s:9AuroraLLM20AnthropicLLMResponseV7ContentV">– Content</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMResponse.html#/s:9AuroraLLM20AnthropicLLMResponseV5UsageV">– Usage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMStreamingResponse.html">AnthropicLLMStreamingResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMStreamingResponse/Delta.html">– Delta</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMStreamingResponse/ContentBlock.html">– ContentBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMStreamingResponse/Usage.html">– Usage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/AnthropicService.html">AnthropicService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/Bookmark.html">Bookmark</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/Context.html">Context</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/ContextController.html">ContextController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/ContextItem.html">ContextItem</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/ContextManager.html">ContextManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/FetchContextsTask.html">FetchContextsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/LLMDomainRouter.html">LLMDomainRouter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Protocols/LLMDomainRouterProtocol.html">LLMDomainRouterProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/LLMManager.html">LLMManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/LLMManager/Routing.html">– Routing</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/LLMMessage.html">LLMMessage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/LLMRequest.html">LLMRequest</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/LLMRequestOptions.html">LLMRequestOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Enums/LLMRole.html">LLMRole</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Enums/LLMServiceError.html">LLMServiceError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/LLMServiceFactory.html">LLMServiceFactory</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/LLMTokenUsage.html">LLMTokenUsage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/LoadContextTask.html">LoadContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/OllamaLLMResponse.html">OllamaLLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/OllamaService.html">OllamaService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/OpenAILLMResponse.html">OpenAILLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/OpenAILLMResponse/Choice.html">– Choice</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/OpenAILLMResponse.html#/s:9AuroraLLM17OpenAILLMResponseV5UsageV">– Usage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/OpenAIService.html">OpenAIService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/SaveContextTask.html">SaveContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/Summarizer.html">Summarizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/SummarizerOptions.html">SummarizerOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Protocols/SummarizerProtocol.html">SummarizerProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Enums/SummaryType.html">SummaryType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Enums/TokenAdjustmentPolicy.html">TokenAdjustmentPolicy</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../../AuroraTaskLibrary.html">AuroraTaskLibrary</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Structs/FetchURLTask.html">FetchURLTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/LLMTask.html">LLMTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Structs/RSSArticle.html">RSSArticle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/RSSParsingTask.html">RSSParsingTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/SummarizeContextTask.html">SummarizeContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/SummarizeStringsTask.html">SummarizeStringsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/TrimmingTask.html">TrimmingTask</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>LLMManager</h1>
+              <div class="declaration">
+                <div class="language">
+                  
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">LLMManager</span></code></pre>
+
+                </div>
+              </div>
+            <p><code>LLMManager</code> is responsible for managing multiple LLM services and routing requests to the appropriate service based on the specified criteria.
+It allows registering, unregistering, and selecting services based on routing options such as token limit or domain, as well as providing fallback service support.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM10LLMManagerC7RoutingO"></a>
+                    <a name="//apple_ref/swift/Enum/Routing" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM10LLMManagerC7RoutingO">Routing</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Routing options for selecting an appropriate LLM service.</p>
+
+                        <a href="../../AuroraLLM/Classes/LLMManager/Routing.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">Routing</span> <span class="p">:</span> <span class="kt">CustomStringConvertible</span><span class="p">,</span> <span class="kt">Equatable</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM10LLMManagerCACycfc"></a>
+                    <a name="//apple_ref/swift/Method/init()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM10LLMManagerCACycfc">init()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Registering%20Services"></a>
+                <a name="//apple_ref/swift/Section/Registering Services" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Registering%20Services"></a>
+                  <h3 class="section-name"><span>Registering Services</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM10LLMManagerC20registerDomainRouteryyAA09LLMDomainF8Protocol_pF"></a>
+                    <a name="//apple_ref/swift/Method/registerDomainRouter(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM10LLMManagerC20registerDomainRouteryyAA09LLMDomainF8Protocol_pF">registerDomainRouter(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Registers a new domain routing service or replaces an existing one.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">registerDomainRouter</span><span class="p">(</span><span class="n">_</span> <span class="nv">router</span><span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Protocols/LLMDomainRouterProtocol.html">LLMDomainRouterProtocol</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>router</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The domain router conforming to <code><a href="../../AuroraLLM/Protocols/LLMDomainRouterProtocol.html">LLMDomainRouterProtocol</a></code> to be registered for domain routing.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM10LLMManagerC23registerFallbackServiceyyAA18LLMServiceProtocol_pF"></a>
+                    <a name="//apple_ref/swift/Method/registerFallbackService(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM10LLMManagerC23registerFallbackServiceyyAA18LLMServiceProtocol_pF">registerFallbackService(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Registers a new fallback LLM service or replaces an existing one.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">registerFallbackService</span><span class="p">(</span><span class="n">_</span> <span class="nv">service</span><span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>service</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The service conforming to <code><a href="../../AuroraLLM/Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></code> to be registered as a fallback.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM10LLMManagerC15registerService_12withRoutingsyAA18LLMServiceProtocol_p_SayAC7RoutingOGtF"></a>
+                    <a name="//apple_ref/swift/Method/registerService(_:withRoutings:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM10LLMManagerC15registerService_12withRoutingsyAA18LLMServiceProtocol_p_SayAC7RoutingOGtF">registerService(_:<wbr>withRoutings:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Registers a new LLM service or replaces an existing one with the same name.</p>
+
+<p>If a service with the same name already exists, it is replaced. Sets the first registered service as the active service if no active service is set.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">registerService</span><span class="p">(</span><span class="n">_</span> <span class="nv">service</span><span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></span><span class="p">,</span> <span class="n">withRoutings</span> <span class="nv">routing</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../../AuroraLLM/Classes/LLMManager/Routing.html">Routing</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="o">.</span><span class="nf">inputTokenLimit</span><span class="p">(</span><span class="mi">256</span><span class="p">)])</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>service</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The service conforming to <code><a href="../../AuroraLLM/Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></code> to be registered.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM10LLMManagerC17unregisterService8withNameySS_tF"></a>
+                    <a name="//apple_ref/swift/Method/unregisterService(withName:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM10LLMManagerC17unregisterService8withNameySS_tF">unregisterService(withName:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Unregisters an LLM service with a specified name.</p>
+
+<p>If the service being unregistered is the active service, the active service is reset to the first available service or nil if no services are left.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">unregisterService</span><span class="p">(</span><span class="n">withName</span> <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>name</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The name under which the service is registered.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Set%20Active%20Service"></a>
+                <a name="//apple_ref/swift/Section/Set Active Service" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Set%20Active%20Service"></a>
+                  <h3 class="section-name"><span>Set Active Service</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM10LLMManagerC16setActiveService6byNameySS_tF"></a>
+                    <a name="//apple_ref/swift/Method/setActiveService(byName:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM10LLMManagerC16setActiveService6byNameySS_tF">setActiveService(byName:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sets the active LLM service by its registered name.</p>
+
+<p>Logs an error if the specified name does not correspond to a registered service.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">setActiveService</span><span class="p">(</span><span class="n">byName</span> <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>name</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The name of the service to be set as active.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Route%20Request"></a>
+                <a name="//apple_ref/swift/Section/Route Request" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Route%20Request"></a>
+                  <h3 class="section-name"><span>Route Request</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM10LLMManagerC12routeRequest_6buffer8trimmingAA19LLMResponseProtocol_pSgAA10LLMRequestV_SdSS0A4CoreE16TrimmingStrategyOtYaF"></a>
+                    <a name="//apple_ref/swift/Method/routeRequest(_:buffer:trimming:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM10LLMManagerC12routeRequest_6buffer8trimmingAA19LLMResponseProtocol_pSgAA10LLMRequestV_SdSS0A4CoreE16TrimmingStrategyOtYaF">routeRequest(_:<wbr>buffer:<wbr>trimming:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Routes a request to an appropriate LLM service based on the presence of a domain routing service and registered routings.</p>
+
+<ul>
+<li><p>Discussion:
+This function first checks if a domain routing service is available:</p></li>
+<li><p>If a domain routing service exists, it uses the service to determine the appropriate domain for the request.</p></li>
+<li><p>If no domain routing service is present, the function defaults to no routings (<code>[]</code>).</p></li>
+</ul>
+
+<p>Once the <code>routings</code> are determined, the function delegates to <code>sendRequest()</code>, which handles actual service selection and fallback logic.</p>
+
+<ul>
+<li><p>Behavior:</p>
+
+<ul>
+<li><strong>With a Domain Routing Service:</strong> The request is sent to the routing service to identify the domain, and the result is used to create routing options.</li>
+<li><strong>Without a Domain Routing Service:</strong> The request is directly passed to <code>sendRequest()</code> with no routings (<code>[]</code>), defaulting to fallback logic if no matching services are found.</li>
+</ul></li>
+<li><p>Example Usage:</p>
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">manager</span><span class="o">.</span><span class="nf">routeRequest</span><span class="p">(</span><span class="n">myRequest</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">response</span><span class="p">?</span><span class="o">.</span><span class="n">text</span> <span class="p">??</span> <span class="s">"No response received"</span><span class="p">)</span>
+</code></pre></li>
+</ul><div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>The <code>sendRequest()</code> method handles registered services and fallback logic, ensuring robust and flexible routing.</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">routeRequest</span><span class="p">(</span>
+    <span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Structs/LLMRequest.html">LLMRequest</a></span><span class="p">,</span>
+    <span class="nv">buffer</span><span class="p">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="nv">trimming</span><span class="p">:</span> <span class="kt">String</span><span class="o">.</span><span class="kt">TrimmingStrategy</span> <span class="o">=</span> <span class="o">.</span><span class="n">end</span>
+<span class="p">)</span> <span class="k">async</span> <span class="o">-&gt;</span> <span class="kt"><a href="../../AuroraLLM/Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a></span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>request</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code><a href="../../AuroraLLM/Structs/LLMRequest.html">LLMRequest</a></code> object containing the prompt and configuration for the LLM.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>buffer</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>trimming</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The trimming strategy to apply when tokens exceed the limit. Defaults to <code>.end</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>An optional <code><a href="../../AuroraLLM/Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a></code> containing the response from the routed service.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Send%20Request"></a>
+                <a name="//apple_ref/swift/Section/Send Request" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Send%20Request"></a>
+                  <h3 class="section-name"><span>Send Request</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM10LLMManagerC11sendRequest_8routings6buffer8trimmingAA19LLMResponseProtocol_pSgAA10LLMRequestV_SayAC7RoutingOGSdSS0A4CoreE16TrimmingStrategyOtYaF"></a>
+                    <a name="//apple_ref/swift/Method/sendRequest(_:routings:buffer:trimming:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM10LLMManagerC11sendRequest_8routings6buffer8trimmingAA19LLMResponseProtocol_pSgAA10LLMRequestV_SayAC7RoutingOGSdSS0A4CoreE16TrimmingStrategyOtYaF">sendRequest(_:<wbr>routings:<wbr>buffer:<wbr>trimming:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sends a request to an LLM service, applying the specified routing and token trimming strategies if necessary.</p>
+
+<p>This function trims the content if it exceeds the token limit of the selected service and sends the request.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">sendRequest</span><span class="p">(</span>
+    <span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Structs/LLMRequest.html">LLMRequest</a></span><span class="p">,</span>
+    <span class="nv">routings</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../../AuroraLLM/Classes/LLMManager/Routing.html">Routing</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="o">.</span><span class="nf">inputTokenLimit</span><span class="p">(</span><span class="mi">256</span><span class="p">)],</span>
+    <span class="nv">buffer</span><span class="p">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="nv">trimming</span><span class="p">:</span> <span class="kt">String</span><span class="o">.</span><span class="kt">TrimmingStrategy</span> <span class="o">=</span> <span class="o">.</span><span class="n">end</span>
+<span class="p">)</span> <span class="k">async</span> <span class="o">-&gt;</span> <span class="kt"><a href="../../AuroraLLM/Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a></span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>request</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code><a href="../../AuroraLLM/Structs/LLMRequest.html">LLMRequest</a></code> containing the messages and parameters.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>routings</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The routing options to select the appropriate service. Defaults to <code>[.inputTokenLimit(256)]</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>buffer</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>trimming</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The trimming strategy to apply when tokens exceed the limit. Defaults to <code>.end</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>An optional <code><a href="../../AuroraLLM/Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a></code> object.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Streaming%20Request"></a>
+                <a name="//apple_ref/swift/Section/Streaming Request" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Streaming%20Request"></a>
+                  <h3 class="section-name"><span>Streaming Request</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM10LLMManagerC20sendStreamingRequest_17onPartialResponse8routings6buffer8trimmingAA19LLMResponseProtocol_pSgAA10LLMRequestV_ySScSgSayAC7RoutingOGSdSS0A4CoreE16TrimmingStrategyOtYaF"></a>
+                    <a name="//apple_ref/swift/Method/sendStreamingRequest(_:onPartialResponse:routings:buffer:trimming:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM10LLMManagerC20sendStreamingRequest_17onPartialResponse8routings6buffer8trimmingAA19LLMResponseProtocol_pSgAA10LLMRequestV_ySScSgSayAC7RoutingOGSdSS0A4CoreE16TrimmingStrategyOtYaF">sendStreamingRequest(_:<wbr>onPartialResponse:<wbr>routings:<wbr>buffer:<wbr>trimming:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sends a streaming request to an LLM service, applying the specified routing and token trimming strategies if necessary.</p>
+
+<p>This function trims the content if it exceeds the token limit of the selected service and sends the streaming request.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">sendStreamingRequest</span><span class="p">(</span>
+    <span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Structs/LLMRequest.html">LLMRequest</a></span><span class="p">,</span>
+    <span class="nv">onPartialResponse</span><span class="p">:</span> <span class="p">((</span><span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?,</span>
+    <span class="nv">routings</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../../AuroraLLM/Classes/LLMManager/Routing.html">Routing</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="o">.</span><span class="nf">inputTokenLimit</span><span class="p">(</span><span class="mi">256</span><span class="p">)],</span>
+    <span class="nv">buffer</span><span class="p">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="nv">trimming</span><span class="p">:</span> <span class="kt">String</span><span class="o">.</span><span class="kt">TrimmingStrategy</span> <span class="o">=</span> <span class="o">.</span><span class="n">end</span>
+<span class="p">)</span> <span class="k">async</span> <span class="o">-&gt;</span> <span class="kt"><a href="../../AuroraLLM/Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a></span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>request</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code><a href="../../AuroraLLM/Structs/LLMRequest.html">LLMRequest</a></code> containing the messages and parameters.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>onPartialResponse</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A closure that handles partial responses during streaming.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>routing</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The routing options to select the appropriate service. Defaults to <code>[.inputTokenLimit(256)]</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>buffer</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The buffer percentage to apply to the token limit. Defaults to 0.05 (5%).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>trimming</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The trimming strategy to apply when tokens exceed the limit. Defaults to <code>.end</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>An optional <code><a href="../../AuroraLLM/Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a></code> object.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-12-24)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>AuroraCore  Reference</title>
+    <link rel="stylesheet" type="text/css" href="css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="js/jquery.min.js" defer></script>
+    <script src="js/jazzy.js" defer></script>
+    
+    <script src="js/lunr.min.js" defer></script>
+    <script src="js/typeahead.jquery.js" defer></script>
+    <script src="js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Section/AuroraCore" class="dashAnchor"></a>
+    <a title="AuroraCore  Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="index.html">AuroraCore Docs</a> (93% documented)</p>
+        <div class="header-right">
+          <form role="search" action="search.json">
+            <input type="text" placeholder="Search documentation" data-typeahead>
+          </form>
+        </div>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="index.html">AuroraCore</a>
+        <img id="carat" src="img/carat.png" alt=""/>
+        AuroraCore  Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="AuroraCore.html">AuroraCore</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="AuroraCore/Structs/AnyWorkflowComponent.html">AnyWorkflowComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraCore/Classes/CustomLogger.html">CustomLogger</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraCore/Extensions/Swift/Dictionary.html">Dictionary</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraCore/Extensions/Foundation/FileManager.html">FileManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraCore/Classes/SecureStorage.html">SecureStorage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraCore/Extensions/Swift/String.html">String</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraCore/Extensions/Swift/String/TrimmingStrategy.html">– TrimmingStrategy</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraCore/Structs/Workflow.html">Workflow</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraCore/Structs/Workflow/State.html">– State</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraCore/Structs/Workflow/Component.html">– Component</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraCore/Structs/Workflow/Task.html">– Task</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraCore/Structs/Workflow/TaskGroup.html">– TaskGroup</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraCore/Structs/WorkflowBuilder.html">WorkflowBuilder</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="AuroraLLM.html">AuroraLLM</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Structs/AnthropicLLMResponse.html">AnthropicLLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Structs/AnthropicLLMResponse.html#/s:9AuroraLLM20AnthropicLLMResponseV7ContentV">– Content</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Structs/AnthropicLLMResponse.html#/s:9AuroraLLM20AnthropicLLMResponseV5UsageV">– Usage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Structs/AnthropicLLMStreamingResponse.html">AnthropicLLMStreamingResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Structs/AnthropicLLMStreamingResponse/Delta.html">– Delta</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Structs/AnthropicLLMStreamingResponse/ContentBlock.html">– ContentBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Structs/AnthropicLLMStreamingResponse/Usage.html">– Usage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Classes/AnthropicService.html">AnthropicService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Structs/Bookmark.html">Bookmark</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Structs/Context.html">Context</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Classes/ContextController.html">ContextController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Structs/ContextItem.html">ContextItem</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Classes/ContextManager.html">ContextManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Structs/FetchContextsTask.html">FetchContextsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Classes/LLMDomainRouter.html">LLMDomainRouter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Protocols/LLMDomainRouterProtocol.html">LLMDomainRouterProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Classes/LLMManager.html">LLMManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Classes/LLMManager/Routing.html">– Routing</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Structs/LLMMessage.html">LLMMessage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Structs/LLMRequest.html">LLMRequest</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Structs/LLMRequestOptions.html">LLMRequestOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Enums/LLMRole.html">LLMRole</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Enums/LLMServiceError.html">LLMServiceError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Classes/LLMServiceFactory.html">LLMServiceFactory</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Structs/LLMTokenUsage.html">LLMTokenUsage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Classes/LoadContextTask.html">LoadContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Structs/OllamaLLMResponse.html">OllamaLLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Classes/OllamaService.html">OllamaService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Structs/OpenAILLMResponse.html">OpenAILLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Structs/OpenAILLMResponse/Choice.html">– Choice</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Structs/OpenAILLMResponse.html#/s:9AuroraLLM17OpenAILLMResponseV5UsageV">– Usage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Classes/OpenAIService.html">OpenAIService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Classes/SaveContextTask.html">SaveContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Classes/Summarizer.html">Summarizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Structs/SummarizerOptions.html">SummarizerOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Protocols/SummarizerProtocol.html">SummarizerProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Enums/SummaryType.html">SummaryType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Enums/TokenAdjustmentPolicy.html">TokenAdjustmentPolicy</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="AuroraTaskLibrary.html">AuroraTaskLibrary</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Structs/FetchURLTask.html">FetchURLTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/LLMTask.html">LLMTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Structs/RSSArticle.html">RSSArticle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/RSSParsingTask.html">RSSParsingTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/SummarizeContextTask.html">SummarizeContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/SummarizeStringsTask.html">SummarizeStringsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/TrimmingTask.html">TrimmingTask</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>AuroraCore</h1>
+            <p>The following declarations are provided by module AuroraCore.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:objc(cs)NSFileManager"></a>
+                    <a name="//apple_ref/swift/Extension/FileManager" class="dashAnchor"></a>
+                    <a class="token" href="#/c:objc(cs)NSFileManager">FileManager</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                        <a href="AuroraCore/Extensions/Foundation/FileManager.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">FileManager</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore12CustomLoggerC"></a>
+                    <a name="//apple_ref/swift/Class/CustomLogger" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore12CustomLoggerC">CustomLogger</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The <code>CustomLogger</code> class provides a centralized logging system for the app. It allows for logging messages at different severity levels and categories, as well as enabling or disabling debug logs.</p>
+
+<p>Usage:</p>
+<pre class="highlight swift"><code><span class="kt">CustomLogger</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">debug</span><span class="p">(</span><span class="s">"Debug message"</span><span class="p">,</span> <span class="nv">category</span><span class="p">:</span> <span class="s">"MyCategory"</span><span class="p">)</span>
+<span class="kt">CustomLogger</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">info</span><span class="p">(</span><span class="s">"Info message"</span><span class="p">)</span>
+<span class="kt">CustomLogger</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">error</span><span class="p">(</span><span class="s">"Error message"</span><span class="p">,</span> <span class="nv">category</span><span class="p">:</span> <span class="s">"MyCategory"</span><span class="p">)</span>
+<span class="kt">CustomLogger</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">fault</span><span class="p">(</span><span class="s">"Fault message"</span><span class="p">)</span>
+
+<span class="kt">CustomLogger</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">toggleDebugLogs</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
+
+<span class="kt">CustomLogger</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">log</span><span class="p">(</span><span class="nv">level</span><span class="p">:</span> <span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="s">"Custom log message"</span><span class="p">,</span> <span class="nv">category</span><span class="p">:</span> <span class="s">"MyCategory"</span><span class="p">,</span> <span class="nv">metadata</span><span class="p">:</span> <span class="p">[</span><span class="s">"key"</span><span class="p">:</span> <span class="s">"value"</span><span class="p">])</span>
+</code></pre>
+
+                        <a href="AuroraCore/Classes/CustomLogger.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">final</span> <span class="kd">public</span> <span class="kd">class</span> <span class="kt">CustomLogger</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:SD"></a>
+                    <a name="//apple_ref/swift/Extension/Dictionary" class="dashAnchor"></a>
+                    <a class="token" href="#/s:SD">Dictionary</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                        <a href="AuroraCore/Extensions/Swift/Dictionary.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Dictionary</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Dictionary</span> <span class="k">where</span> <span class="kt">Key</span> <span class="o">==</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore13SecureStorageC"></a>
+                    <a name="//apple_ref/swift/Class/SecureStorage" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore13SecureStorageC">SecureStorage</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>SecureStorage</code> is responsible for securely saving, retrieving, and deleting API keys and base URLs using the Keychain on Apple devices.
+This is useful for storing sensitive information like API keys and custom base URLs in a secure and persistent manner.</p>
+
+                        <a href="AuroraCore/Classes/SecureStorage.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">SecureStorage</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:SS"></a>
+                    <a name="//apple_ref/swift/Extension/String" class="dashAnchor"></a>
+                    <a class="token" href="#/s:SS">String</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                        <a href="AuroraCore/Extensions/Swift/String.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">extension</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore8WorkflowV"></a>
+                    <a name="//apple_ref/swift/Struct/Workflow" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore8WorkflowV">Workflow</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A declarative representation of a workflow, consisting of tasks and task groups.</p>
+
+<p>The <code>Workflow</code> struct allows developers to define complex workflows using a clear and concise declarative syntax.
+Workflows are composed of individual tasks and task groups, enabling sequential and parallel execution patterns.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    Tasks and task groups are represented by the <code><a href="AuroraCore/Structs/Workflow/Task.html">Workflow.Task</a></code> and <code><a href="AuroraCore/Structs/Workflow/TaskGroup.html">Workflow.TaskGroup</a></code> types, respectively.
+
+</div>
+
+                        <a href="AuroraCore/Structs/Workflow.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Workflow</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore15WorkflowBuilderV"></a>
+                    <a name="//apple_ref/swift/Struct/WorkflowBuilder" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore15WorkflowBuilderV">WorkflowBuilder</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A result builder designed to construct workflows using a declarative syntax.</p>
+
+<p>The <code>WorkflowBuilder</code> enables developers to define workflows with a clean and concise structure,
+allowing for the creation of <code><a href="AuroraCore/Structs/Workflow.html">Workflow</a></code> objects containing <code>TaskGroup</code> and <code>Task</code> instances.</p>
+<h2 id='example' class='heading'>Example</h2>
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">workflow</span> <span class="o">=</span> <span class="kt">Workflow</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Sample Workflow"</span><span class="p">,</span> <span class="nv">description</span><span class="p">:</span> <span class="s">"An example workflow"</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">Workflow</span><span class="o">.</span><span class="kt">TaskGroup</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Group 1"</span><span class="p">,</span> <span class="nv">description</span><span class="p">:</span> <span class="s">"First group"</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">Workflow</span><span class="o">.</span><span class="kt">Task</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Task 1"</span><span class="p">,</span> <span class="nv">description</span><span class="p">:</span> <span class="s">"Perform task 1"</span><span class="p">)</span> <span class="p">{</span> <span class="n">_</span> <span class="k">in</span>
+            <span class="p">[</span><span class="s">"result"</span><span class="p">:</span> <span class="s">"Task 1 complete"</span><span class="p">]</span>
+        <span class="p">}</span>
+        <span class="kt">Workflow</span><span class="o">.</span><span class="kt">Task</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Task 2"</span><span class="p">,</span> <span class="nv">description</span><span class="p">:</span> <span class="s">"Perform task 2"</span><span class="p">,</span> <span class="nv">inputs</span><span class="p">:</span> <span class="p">[</span><span class="s">"result"</span><span class="p">:</span> <span class="kc">nil</span><span class="p">])</span> <span class="p">{</span> <span class="n">inputs</span> <span class="k">in</span>
+            <span class="k">guard</span> <span class="k">let</span> <span class="nv">result</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">[</span><span class="s">"result"</span><span class="p">]</span> <span class="k">as?</span> <span class="kt">String</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="p">[:]</span> <span class="p">}</span>
+            <span class="k">return</span> <span class="p">[</span><span class="s">"output"</span><span class="p">:</span> <span class="s">"</span><span class="se">\(</span><span class="n">result</span><span class="se">)</span><span class="s">, and Task 2 complete"</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="kt">Workflow</span><span class="o">.</span><span class="kt">Task</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Task 3"</span><span class="p">,</span> <span class="nv">description</span><span class="p">:</span> <span class="s">"Independent task"</span><span class="p">)</span> <span class="p">{</span> <span class="n">_</span> <span class="k">in</span>
+        <span class="p">[</span><span class="s">"final"</span><span class="p">:</span> <span class="s">"Workflow complete"</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    The <code>WorkflowBuilder</code> is used to construct workflows in a declarative manner. Components in a workflow must conform to the
+<code><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></code> protocol, which provides a unified interface for tasks and task groups.
+
+</div>
+
+                        <a href="AuroraCore/Structs/WorkflowBuilder.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@resultBuilder</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">WorkflowBuilder</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore17WorkflowComponentP"></a>
+                    <a name="//apple_ref/swift/Protocol/WorkflowComponent" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore17WorkflowComponentP">WorkflowComponent</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A protocol representing any component of a workflow.</p>
+
+<p>Components conforming to <code>WorkflowComponent</code> can be tasks, task groups, or any other custom workflow elements.
+This protocol provides a unified interface to convert components into the <code><a href="AuroraCore/Structs/Workflow/Component.html">Workflow.Component</a></code> enum.</p>
+
+                        <a href="AuroraCore/Protocols/WorkflowComponent.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">WorkflowComponent</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore20AnyWorkflowComponentV"></a>
+                    <a name="//apple_ref/swift/Struct/AnyWorkflowComponent" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore20AnyWorkflowComponentV">AnyWorkflowComponent</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A type-erased wrapper for any <code><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></code>.</p>
+
+<p><code>AnyWorkflowComponent</code> allows developers to include heterogeneous workflow components in a unified structure.
+It abstracts the underlying type of the component while still conforming to <code><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></code>.</p>
+
+                        <a href="AuroraCore/Structs/AnyWorkflowComponent.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">AnyWorkflowComponent</span> <span class="p">:</span> <span class="kt"><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-12-24)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</html>

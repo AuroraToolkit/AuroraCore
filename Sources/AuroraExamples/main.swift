@@ -29,7 +29,7 @@ import AuroraCore
 
  To run these examples, execute the following command in the terminal from the root directory of the project:
     ```
-    swift run Examples
+    swift run AuroraExamples
     ```
  */
 

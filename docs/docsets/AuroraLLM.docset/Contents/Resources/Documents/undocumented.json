@@ -1,0 +1,89 @@
+{
+  "warnings": [
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Utilities/Debugging.swift",
+      "line": 27,
+      "symbol": "CustomLogger.shared",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Utilities/TokenHandling.swift",
+      "line": 71,
+      "symbol": "String.TrimmingStrategy.start",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Utilities/TokenHandling.swift",
+      "line": 72,
+      "symbol": "String.TrimmingStrategy.middle",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Utilities/TokenHandling.swift",
+      "line": 73,
+      "symbol": "String.TrimmingStrategy.end",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Utilities/TokenHandling.swift",
+      "line": 74,
+      "symbol": "String.TrimmingStrategy.none",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/Workflow.swift",
+      "line": 40,
+      "symbol": "Workflow.State",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/Workflow.swift",
+      "line": 41,
+      "symbol": "Workflow.State.notStarted",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/Workflow.swift",
+      "line": 42,
+      "symbol": "Workflow.State.inProgress",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/Workflow.swift",
+      "line": 43,
+      "symbol": "Workflow.State.completed",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/Workflow.swift",
+      "line": 44,
+      "symbol": "Workflow.State.failed",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/Workflow.swift",
+      "line": 325,
+      "symbol": "Workflow.TaskGroup.ExecutionMode.sequential",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/Workflow.swift",
+      "line": 326,
+      "symbol": "Workflow.TaskGroup.ExecutionMode.parallel",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    }
+  ],
+  "source_directory": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore"
+}
