@@ -28,12 +28,6 @@ public class OpenAIService: LLMServiceProtocol {
     /// The base url for the OpenAI API.
     public var baseURL: String
 
-    /// The API key used for authenticating requests to the OpenAI API.
-    public var apiKey: String?
-
-    /// OpenAI requires an API key for authentication.
-    public var requiresAPIKey = true
-
     /// The maximum context window size (total tokens, input + output) supported by the service, defaults to 128k.
     public var contextWindowSize: Int
 
@@ -69,13 +63,16 @@ public class OpenAIService: LLMServiceProtocol {
     public init(name: String = "OpenAI", baseURL: String = "https://api.openai.com", apiKey: String?, contextWindowSize: Int = 128_000, maxOutputTokens: Int = 16384, inputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, outputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, systemPrompt: String? = nil, urlSession: URLSession = URLSession(configuration: .default)) {
         self.name = name
         self.baseURL = baseURL
-        self.apiKey = apiKey
         self.contextWindowSize = contextWindowSize
         self.maxOutputTokens = maxOutputTokens
         self.inputTokenPolicy = inputTokenPolicy
         self.outputTokenPolicy = outputTokenPolicy
         self.systemPrompt = systemPrompt
         self.urlSession = urlSession
+
+        if let apiKey {
+            SecureStorage.saveAPIKey(apiKey, for: name)
+        }
     }
 
     // MARK: - Non-streaming Request
@@ -92,10 +89,6 @@ public class OpenAIService: LLMServiceProtocol {
         // Ensure streaming is disabled for this method
         guard request.stream == false else {
             throw LLMServiceError.custom(message: "Streaming is not supported in sendRequest(). Use sendStreamingRequest() instead.")
-        }
-
-        guard let apiKey = apiKey else {
-            throw LLMServiceError.missingAPIKey
         }
 
         // Setup URL and URLRequest
@@ -130,9 +123,14 @@ public class OpenAIService: LLMServiceProtocol {
         urlRequest.httpMethod = "POST"
         urlRequest.httpBody = jsonData
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        urlRequest.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
 
         logger.debug("OpenAIService [sendRequest] Sending request with keys: \(body.keys)", category: "OpenAIService")
+
+        // Minimize the risk of API key exposure
+        guard let apiKey = SecureStorage.getAPIKey(for: name) else {
+            throw LLMServiceError.missingAPIKey
+        }
+        urlRequest.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
 
         // Non-streaming response handling
         let (data, response) = try await urlSession.data(for: urlRequest)
@@ -166,7 +164,7 @@ public class OpenAIService: LLMServiceProtocol {
             throw LLMServiceError.custom(message: "Streaming is required in sendStreamingRequest(). Set request.stream to true.")
         }
 
-        guard let apiKey = apiKey else {
+        guard let apiKey = SecureStorage.getAPIKey(for: name) else {
             throw LLMServiceError.missingAPIKey
         }
 
@@ -200,9 +198,14 @@ public class OpenAIService: LLMServiceProtocol {
         urlRequest.httpMethod = "POST"
         urlRequest.httpBody = jsonData
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        urlRequest.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
 
         logger.debug("OpenAIService [sendStreamingRequest] Sending streaming request with keys: \(body.keys).", category: "OpenAIService")
+
+        // Minimize the risk of API key exposure
+        guard let apiKey = SecureStorage.getAPIKey(for: name) else {
+            throw LLMServiceError.missingAPIKey
+        }
+        urlRequest.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
 
         return try await withCheckedThrowingContinuation { continuation in
             let streamingDelegate = StreamingDelegate(

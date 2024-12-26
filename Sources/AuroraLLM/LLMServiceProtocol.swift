@@ -62,18 +62,6 @@ public protocol LLMServiceProtocol {
     var name: String { get set }
 
     /**
-     The API key or authentication token required to interact with the LLM service.
-
-     - Note: Some services, like Ollama, may not require an API key. For others, such as OpenAI, this key is mandatory for authentication.
-     */
-    var apiKey: String? { get set }
-
-    /**
-     Not all LLM services require an API key for authentication. This property indicates whether the service requires one.
-     */
-    var requiresAPIKey: Bool { get }
-
-    /**
      The maximum context window size (total tokens, input + output) supported by the service.
 
      - Note: Requests should not exceed this limit to ensure they are processed correctly.

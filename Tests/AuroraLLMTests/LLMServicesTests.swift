@@ -17,6 +17,7 @@ struct LLMServiceTests {
     private func getServices() -> [LLMServiceProtocol] {
         var services: [LLMServiceProtocol] = []
 
+        #if os(macOS)
         let openAIAPIKey = ProcessInfo.processInfo.environment["OPENAI_API_KEY"]
         let anthropicAPIKey = ProcessInfo.processInfo.environment["ANTHROPIC_API_KEY"]
 
@@ -31,6 +32,7 @@ struct LLMServiceTests {
         } else {
             print("Skipping AnthropicService tests - API key not provided")
         }
+        #endif
 
         // Ollama service doesn't need an API key
         services.append(OllamaService(baseURL: "http://localhost:11434"))

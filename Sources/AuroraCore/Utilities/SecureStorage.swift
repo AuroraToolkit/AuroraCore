@@ -36,6 +36,9 @@ public class SecureStorage {
         SecItemDelete(query as CFDictionary)
         // Add the new key
         let status = SecItemAdd(query as CFDictionary, nil)
+        if status != errSecSuccess {
+            print("Failed to add item to Keychain. Status: \(status)")
+        }
         return status == errSecSuccess
     }
 
@@ -141,10 +144,8 @@ public class SecureStorage {
 
      - Note: This is an optional method that can be used for testing or when you need to reset stored keys.
      */
-    public static func clearAll() {
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword
-        ]
-        SecItemDelete(query as CFDictionary)
+    public static func clearAll(for serviceName: String) {
+        deleteAPIKey(for: serviceName)
+        deleteBaseURL(for: serviceName)
     }
 }

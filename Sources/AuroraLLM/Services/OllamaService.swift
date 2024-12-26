@@ -27,12 +27,6 @@ public class OllamaService: LLMServiceProtocol {
     /// The base URL for the Ollama API (e.g., `http://localhost:11434`).
     public var baseURL: String
 
-    /// Not required for Ollama but included to satisfy the protocol
-    public var apiKey: String?
-
-    /// Ollama does not require an API key for authentication.
-    public let requiresAPIKey = false
-
     /// The maximum context window size (total tokens, input + output) supported by the service, defaults to 4k.
     public var contextWindowSize: Int
 

@@ -28,12 +28,6 @@ public class AnthropicService: LLMServiceProtocol {
     /// The base URL for the Anthropic API.
     private let baseURL: String
 
-    /// The API key used for authenticating requests to the Anthropic API.
-    public var apiKey: String?
-
-    /// Anthropic requires an API key for authentication.
-    public var requiresAPIKey = true
-
     /// The maximum context window size (total tokens, input + output) supported by the service, defaults to 200k.
     public var contextWindowSize: Int
 
@@ -69,13 +63,16 @@ public class AnthropicService: LLMServiceProtocol {
     public init(name: String = "Anthropic", baseURL: String = "https://api.anthropic.com", apiKey: String?, contextWindowSize: Int = 200_000, maxOutputTokens: Int = 4096, inputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, outputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, systemPrompt: String? = nil, urlSession: URLSession = URLSession(configuration: .default)) {
         self.name = name
         self.baseURL = baseURL
-        self.apiKey = apiKey
         self.contextWindowSize = contextWindowSize
         self.maxOutputTokens = maxOutputTokens
         self.inputTokenPolicy = inputTokenPolicy
         self.outputTokenPolicy = outputTokenPolicy
         self.systemPrompt = systemPrompt
         self.urlSession = urlSession
+
+        if let apiKey {
+            SecureStorage.saveAPIKey(apiKey, for: name)
+        }
     }
 
     actor StreamingState {
@@ -114,10 +111,6 @@ public class AnthropicService: LLMServiceProtocol {
             throw LLMServiceError.custom(message: "Streaming is not supported in sendRequest(). Use sendStreamingRequest() instead.")
         }
 
-        guard let apiKey = apiKey else {
-            throw LLMServiceError.missingAPIKey
-        }
-
         // Map LLMMessage instances to the format expected by the API
         var systemMessage: String? = nil
         let userMessages = request.messages.compactMap { message -> [String: String]? in
@@ -154,9 +147,14 @@ public class AnthropicService: LLMServiceProtocol {
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         urlRequest.httpBody = jsonData
-        urlRequest.setValue(apiKey, forHTTPHeaderField: "x-api-key")
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")  // Required Anthropic version header
+
+        // Minimize the risk of API key exposure
+        guard let apiKey = SecureStorage.getAPIKey(for: name) else {
+            throw LLMServiceError.missingAPIKey
+        }
+        urlRequest.setValue(apiKey, forHTTPHeaderField: "x-api-key")
 
         let (data, response) = try await urlSession.data(for: urlRequest)
 
@@ -184,10 +182,6 @@ public class AnthropicService: LLMServiceProtocol {
         // Ensure streaming is enabled for this method
         guard request.stream else {
             throw LLMServiceError.custom(message: "Streaming is required in sendStreamingRequest(). Set request.stream to true.")
-        }
-
-        guard let apiKey = apiKey else {
-            throw LLMServiceError.missingAPIKey
         }
 
         // Map LLMMessage instances to the format expected by the API
@@ -226,11 +220,16 @@ public class AnthropicService: LLMServiceProtocol {
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         urlRequest.httpBody = jsonData
-        urlRequest.setValue(apiKey, forHTTPHeaderField: "x-api-key")
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")  // Required Anthropic version header
 
         logger.debug("AnthropicService [sendStreamingRequest] Sending streaming request with keys: \(body.keys)", category: "AnthropicService")
+
+        // Minimize the risk of API key exposure
+        guard let apiKey = SecureStorage.getAPIKey(for: name) else {
+            throw LLMServiceError.missingAPIKey
+        }
+        urlRequest.setValue(apiKey, forHTTPHeaderField: "x-api-key")
 
         return try await withCheckedThrowingContinuation { continuation in
             let streamingDelegate = StreamingDelegate(

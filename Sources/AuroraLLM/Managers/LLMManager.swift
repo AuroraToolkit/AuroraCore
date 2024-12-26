@@ -546,8 +546,6 @@ public class LLMManager {
         for request: LLMRequest,
         trimming: String.TrimmingStrategy = .none
     ) -> Bool {
-        let apiKeyRequirementMet = !service.requiresAPIKey || service.apiKey != nil
-
         logger.debug("Evaluating service \(service.name) for multiple routing strategies: \(routings)", category: "LLMManager")
 
         for routing in routings {
@@ -563,7 +561,8 @@ public class LLMManager {
             }
         }
 
-        return apiKeyRequirementMet
+        // assume meets criteria
+        return true
     }
 
     /**
