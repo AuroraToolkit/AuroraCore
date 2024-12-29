@@ -164,10 +164,6 @@ public class OpenAIService: LLMServiceProtocol {
             throw LLMServiceError.custom(message: "Streaming is required in sendStreamingRequest(). Set request.stream to true.")
         }
 
-        guard let apiKey = SecureStorage.getAPIKey(for: name) else {
-            throw LLMServiceError.missingAPIKey
-        }
-
         // URL and request setup
         guard var components = URLComponents(string: baseURL) else {
             throw LLMServiceError.invalidURL
