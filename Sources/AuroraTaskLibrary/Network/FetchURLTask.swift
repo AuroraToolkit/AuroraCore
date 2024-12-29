@@ -44,7 +44,7 @@ public struct FetchURLTask: WorkflowComponent {
     ) {
         self.session = session
         self.task = Workflow.Task(
-            name: name,
+            name: name ?? String(describing: Self.self),
             description: "Fetches data from \(url ?? "a URL")",
             inputs: inputs
         ) { inputs in

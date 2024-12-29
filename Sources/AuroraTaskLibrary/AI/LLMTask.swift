@@ -45,7 +45,7 @@ public class LLMTask: WorkflowComponent {
         inputs: [String: Any?] = [:]
     ) {
         self.task = Workflow.Task(
-            name: name,
+            name: name ?? String(describing: Self.self),
             description: description ?? "Send a prompt to the LLM service",
             inputs: inputs
         ) { inputs in

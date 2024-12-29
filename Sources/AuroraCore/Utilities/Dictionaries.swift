@@ -37,4 +37,20 @@ extension Dictionary where Key == String {
         }
         return fallback
     }
+
+    /**
+     Resolves a value from the dictionary by its key.
+     If the key exists in the dictionary, its value is returned. Otherwise, the provided fallback value is returned.
+
+     - Parameters:
+        - key: The key to resolve.
+        - fallback: The fallback value to use if the key does not exist in the dictionary.
+     - Returns: The resolved value or the fallback.
+     */
+    public func resolve<T>(key: String, fallback: T) -> T {
+        if let value = self[key] as? T {
+            return value
+        }
+        return fallback
+    }
 }

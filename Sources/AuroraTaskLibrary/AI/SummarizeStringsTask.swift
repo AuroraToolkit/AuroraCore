@@ -48,7 +48,7 @@ public class SummarizeStringsTask: WorkflowComponent {
         inputs: [String: Any?] = [:]
     ) {
         self.task = Workflow.Task(
-            name: name,
+            name: name ?? String(describing: Self.self),
             description: "Summarize a list of strings using the LLM service",
             inputs: inputs
         ) { inputs in

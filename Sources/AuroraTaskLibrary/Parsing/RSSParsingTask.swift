@@ -43,7 +43,7 @@ public class RSSParsingTask: WorkflowComponent {
         inputs: [String: Any?] = [:]
     ) {
         self.task = Workflow.Task(
-            name: name,
+            name: name ?? String(describing: Self.self),
             description: "Extract article links from the RSS feed",
             inputs: inputs
         ) { inputs in
@@ -65,8 +65,6 @@ public class RSSParsingTask: WorkflowComponent {
                 let parseError = parser.parserError?.localizedDescription ?? "Unknown error"
                 throw NSError(domain: "RSSParsingTask", code: 2, userInfo: [NSLocalizedDescriptionKey: "Failed to parse RSS feed: \(parseError)"])
             }
-
-            print("Parsed \(parserDelegate.articles.count) articles")
 
             return ["articles": parserDelegate.articles]
         }

@@ -45,7 +45,7 @@ public class TrimmingTask: WorkflowComponent {
         let stringsCount = strings?.count ?? 0
         let description = stringsCount <= 1 ? "Trim string to fit within the token limit using \(strategy) strategy" : "Trim multiple strings to fit within the token limit using \(strategy) strategy"
         self.task = Workflow.Task(
-            name: name,
+            name: name ?? String(describing: Self.self),
             description: description,
             inputs: inputs
         ) { inputs in

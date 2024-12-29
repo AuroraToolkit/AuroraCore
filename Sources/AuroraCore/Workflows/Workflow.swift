@@ -74,10 +74,13 @@ public struct Workflow {
 
         state = .inProgress
 
+        let timer = ExecutionTimer().start()
+
         do {
             try await executeComponents()
             state = .completed
-            logger.debug("Workflow \(name) completed successfully.", category: "Workflow")
+            timer.stop()
+            logger.debug("Workflow \(name) completed successfully in \(String(format: "%.2f", timer.duration ?? 0)) seconds.", category: "Workflow")
         } catch {
             state = .failed
             logger.error("Workflow \(name) failed: \(error.localizedDescription)", category: "Workflow")
@@ -140,7 +143,7 @@ public struct Workflow {
     private func executeTask(_ task: Task, workflowOutputs: [String: Any]) async throws -> [String: Any] {
         logger.debug("Executing task: \(task.name)", category: "Workflow")
 
-        let startTime = Date() // Start timing
+        let timer = ExecutionTimer().start()
 
         // Resolve inputs dynamically
         let resolvedInputs = resolveInputs(for: task, using: workflowOutputs)
@@ -148,10 +151,9 @@ public struct Workflow {
         // Execute the task with resolved inputs
         let outputs = try await task.execute(inputs: resolvedInputs)
 
-        let endTime = Date() // End timing
-        let duration = endTime.timeIntervalSince(startTime)
+        timer.stop()
 
-        logger.debug("Task \(task.name) completed in \(String(format: "%.2f", duration)) seconds.", category: "Workflow")
+        logger.debug("Task \(task.name) completed in \(String(format: "%.2f", timer.duration ?? 0)) seconds.", category: "Workflow")
 
         return outputs
     }
@@ -169,7 +171,7 @@ public struct Workflow {
     private func executeTaskGroup(_ group: TaskGroup, workflowOutputs: [String: Any]) async throws -> [String: Any]  {
         logger.debug("Executing task group: \(group.name)", category: "Workflow")
 
-        let startTime = Date() // Start timing
+        let timer = ExecutionTimer().start()
 
         let queue = DispatchQueue(label: "com.workflow.groupOutputs")
         var groupOutputs: [String: Any] = [:]
@@ -201,10 +203,9 @@ public struct Workflow {
             }
         }
 
-        let endTime = Date() // End timing
-        let duration = endTime.timeIntervalSince(startTime)
+        timer.stop()
 
-        logger.debug("Task group \(group.name) completed in \(String(format: "%.2f", duration)) seconds.", category: "Workflow")
+        logger.debug("Task group \(group.name) completed in \(String(format: "%.2f", timer.duration ?? 0)) seconds.", category: "Workflow")
 
         return groupOutputs
     }
@@ -262,7 +263,7 @@ public struct Workflow {
             executeBlock: (([String: Any]) async throws -> [String: Any])? = nil
         ) {
             self.id = UUID()
-            self.name = name ?? String(describing: type(of: self)) // Default to the class name
+            self.name = name ?? String(describing: Self.self) // Default to the class name
             self.description = description
             self.inputs = inputs.compactMapValues { $0 }
             self.executeBlock = executeBlock

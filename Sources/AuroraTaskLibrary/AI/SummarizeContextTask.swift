@@ -43,7 +43,7 @@ public class SummarizeContextTask: WorkflowComponent {
         inputs: [String: Any?] = [:]
     ) {
         self.task = Workflow.Task(
-            name: name,
+            name: name ?? String(describing: Self.self),
             description: "Summarize the content in the context controller",
             inputs: inputs
         ) { inputs in
