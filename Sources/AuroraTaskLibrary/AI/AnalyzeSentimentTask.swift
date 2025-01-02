@@ -1,0 +1,194 @@
+//
+//  AnalyzeSentimentTask.swift
+//  AuroraToolkit
+//
+//  Created by Dan Murrell Jr on 1/2/25.
+//
+
+import Foundation
+import AuroraCore
+import AuroraLLM
+
+/**
+ `AnalyzeSentimentTask` analyzes the sentiment of a list of strings using an LLM service.
+
+ - **Inputs**
+    - `strings`: The list of strings to analyze.
+    - `detailed`: Boolean indicating whether to return detailed sentiment analysis. Defaults to `false`.
+ - **Outputs**
+    - `sentiments`: A dictionary where keys are the input strings and values are their respective sentiments.
+
+ ### Use Cases:
+ - Understand the emotional tone of user feedback, social media posts, or reviews.
+ - Categorize content into positive, neutral, or negative sentiment for analytics or moderation.
+ - Identify emotional trends over time in a dataset.
+
+ ### Example:
+ **Input Strings**
+ - "I love this product!"
+ - "The service was okay."
+ - "I’m very disappointed with the quality."
+
+ **Output JSON:**
+ ```
+ {
+   "sentiments": {
+     "I love this product!": "Positive",
+     "The service was okay.": "Neutral",
+     "I’m very disappointed with the quality.": "Negative"
+   }
+ }
+ ```
+
+ **Output JSON with detailed analysis:**
+ ```
+ {
+   "sentiments": {
+     "I love this product!": {"sentiment": "Positive", "confidence": 95},
+     "The service was okay.": {"sentiment": "Neutral", "confidence": 70},
+     "I’m very disappointed with the quality.": {"sentiment": "Negative", "confidence": 90}
+   }
+ }
+ ```
+ */
+public class AnalyzeSentimentTask: WorkflowComponent {
+    /// The wrapped task.
+    private let task: Workflow.Task
+
+    /**
+     Initializes a new `AnalyzeSentimentTask`.
+
+     - Parameters:
+        - name: The name of the task.
+        - llmService: The LLM service used for sentiment analysis.
+        - strings: The list of strings to analyze.
+        - detailed: Whether to return detailed sentiment analysis (e.g., confidence scores). Defaults to `false`.
+        - maxTokens: The maximum number of tokens to generate in the response. Defaults to 500.
+        - inputs: Additional inputs for the task. Defaults to an empty dictionary.
+     */
+    public init(
+        name: String? = nil,
+        llmService: LLMServiceProtocol,
+        strings: [String]? = nil,
+        detailed: Bool = false,
+        maxTokens: Int = 500,
+        inputs: [String: Any?] = [:]
+    ) {
+        self.task = Workflow.Task(
+            name: name ?? String(describing: Self.self),
+            description: "Analyze the sentiment of a list of strings using an LLM service",
+            inputs: inputs
+        ) { inputs in
+            let resolvedStrings = inputs.resolve(key: "strings", fallback: strings) ?? []
+            guard !resolvedStrings.isEmpty else {
+                throw NSError(
+                    domain: "AnalyzeSentimentTask",
+                    code: 1,
+                    userInfo: [NSLocalizedDescriptionKey: "No strings provided for sentiment analysis."]
+                )
+            }
+
+            let resolvedDetailed = inputs.resolve(key: "detailed", fallback: detailed)
+
+            // Build the prompt for the LLM
+            var sentimentPrompt = """
+            Analyze the sentiment of the following strings. For each string, return the sentiment (Positive, Neutral, or Negative).
+
+            Return the result as a JSON object with each string as a key and the sentiment as the value.
+            Only return the JSON object, and nothing else.
+
+            """
+
+            if resolvedDetailed {
+                sentimentPrompt += """
+                Return the result as a JSON object where each input string is a key, and the value is an object containing the sentiment (Positive, Neutral, or Negative) and a confidence score as a percentage.
+
+                Example:
+                Input Strings:
+                - "I love this product!"
+                - "The service was okay."
+                - "I’m very disappointed with the quality."
+
+                Output JSON:
+                {
+                  "sentiments": {
+                    "I love this product!": {"sentiment": "Positive", "confidence": 95},
+                    "The service was okay.": {"sentiment": "Neutral", "confidence": 70},
+                    "I’m very disappointed with the quality.": {"sentiment": "Negative", "confidence": 90}
+                  }
+                }
+                """
+            } else {
+                sentimentPrompt += """
+                Return the result as a JSON object where each input string is a key, and the value is the sentiment (Positive, Neutral, or Negative).
+
+                Example:
+                Input Strings:
+                - "I love this product!"
+                - "The service was okay."
+                - "I’m very disappointed with the quality."
+
+                Output JSON:
+                {
+                  "sentiments": {
+                    "I love this product!": "Positive",
+                    "The service was okay.": "Neutral",
+                    "I’m very disappointed with the quality.": "Negative"
+                  }
+                }
+                """
+            }
+
+            sentimentPrompt += """
+
+            Important: Only use the following input strings for analysis. Do not include the example strings in the output.
+
+
+            Strings:
+            \(resolvedStrings.joined(separator: "\n"))
+            """
+
+            let request = LLMRequest(
+                messages: [
+                    LLMMessage(role: .system, content: "You are a sentiment analysis expert."),
+                    LLMMessage(role: .user, content: sentimentPrompt)
+                ],
+                maxTokens: maxTokens
+            )
+
+            do {
+                let response = try await llmService.sendRequest(request)
+                // Parse the response into a dictionary (assumes LLM returns JSON-like structure).
+                guard let data = response.text.data(using: .utf8),
+                      let jsonResponse = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                      let sentiments = jsonResponse["sentiments"] else {
+                    throw NSError(
+                        domain: "AnalyzeSentimentTask",
+                        code: 2,
+                        userInfo: [NSLocalizedDescriptionKey: "Failed to parse LLM response."]
+                    )
+                }
+
+                // Handle detailed or simple sentiment analysis based on response format
+                if let detailedSentiments = sentiments as? [String: [String: Any]] {
+                    return ["sentiments": detailedSentiments]
+                } else if let simpleSentiments = sentiments as? [String: String] {
+                    return ["sentiments": simpleSentiments]
+                } else {
+                    throw NSError(
+                        domain: "AnalyzeSentimentTask",
+                        code: 3,
+                        userInfo: [NSLocalizedDescriptionKey: "Unexpected format for sentiment analysis response."]
+                    )
+                }
+            } catch {
+                throw error
+            }
+        }
+    }
+
+    /// Converts this `AnalyzeSentimentTask` to a `Workflow.Component`.
+    public func toComponent() -> Workflow.Component {
+        .task(task)
+    }
+}

@@ -23,6 +23,20 @@ import AuroraLLM
 - **Content Clustering**: Organizing blog posts, news articles, or research papers into topic-based clusters.
 - **Unsupervised Data Exploration**: Automatically grouping strings for exploratory analysis when categories are unknown.
 - **Semantic Deduplication**: Identifying and grouping similar strings to detect duplicates or near-duplicates.
+
+ ### Example:
+ **Input Strings:**
+ - "The stock market dropped today."
+ - "AI is transforming software development."
+ - "The S&P 500 index fell by 2%."
+
+ **Output JSON:**
+ ```
+ {
+   "Cluster 1": ["The stock market dropped today.", "The S&P 500 index fell by 2%."],
+   "Cluster 2": ["AI is transforming software development."]
+ }
+ ```
 */
 public class ClusterStringsTask: WorkflowComponent {
     /// The wrapped task.
@@ -66,6 +80,8 @@ public class ClusterStringsTask: WorkflowComponent {
             // Build the prompt for the LLM
             var clusteringPrompt = """
             Cluster the following strings based on semantic similarity. Return the result as a JSON object with cluster IDs as keys and arrays of strings as values.
+            Only return the JSON object, and nothing else.
+
             """
 
             if let maxClusters = resolvedMaxClusters {
@@ -91,8 +107,6 @@ public class ClusterStringsTask: WorkflowComponent {
             Cluster the strings based on **semantic meaning and context**. Strings that describe similar topics, themes, or ideas should belong to the same cluster. For example:
             - Group strings about technology or artificial intelligence together.
             - Group strings about finance, economy, or stock markets together.
-
-            Only return the JSON object, and nothing else.
 
             Strings:
             \(resolvedStrings.joined(separator: "\n"))

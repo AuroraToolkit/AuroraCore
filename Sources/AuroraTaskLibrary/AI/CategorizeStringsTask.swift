@@ -26,6 +26,21 @@ import AuroraLLM
  - **Dynamic Tagging**: Infer or apply tags/categories to user-generated content in applications like social media or e-commerce platforms.
  - **Custom Applications**: Useful in workflows where contextual grouping or classification of text is a key step.
 
+ ### Example:
+ **Input Strings:**
+ - "Researchers discover a breakthrough in cancer treatment."
+ - "The stock market experienced a significant downturn yesterday."
+
+ **Output JSON:**
+ ```
+ {
+   "categories": {
+     "Health": ["Researchers discover a breakthrough in cancer treatment."],
+     "Finance": ["The stock market experienced a significant downturn yesterday."]
+   }
+ }
+ ```
+
  ### Notes
  The task leverages a language model to handle flexible and nuanced categorization needs. When predefined categories are not supplied, the model dynamically determines suitable groupings, making it highly adaptable for unstructured or semi-structured data scenarios.
  */
@@ -68,55 +83,39 @@ public class CategorizeStringsTask: WorkflowComponent {
 
             let resolvedCategories = inputs.resolve(key: "categories", fallback: categories)
 
-            let categorizationPrompt: String
+            let categorizationInstruction: String
             if let predefinedCategories = resolvedCategories, !predefinedCategories.isEmpty {
-                categorizationPrompt = """
-                Categorize the following strings into the predefined categories: \(predefinedCategories.joined(separator: ", ")).
-                Return the result as a JSON object with each category as a key and an array of strings as the value.
-                Only return the JSON object, and nothing else.
-
-                Example:
-                Input Strings:
-                - "The stock market experienced a significant downturn yesterday."
-                - "A new AI tool is revolutionizing how developers write code."
-
-                Categories: ["Finance", "Technology"]
-
-                Output JSON:
-                {
-                  "categories": {
-                    "Finance": ["The stock market experienced a significant downturn yesterday."],
-                    "Technology": ["A new AI tool is revolutionizing how developers write code."]
-                  }
-                }
-
-                Strings:
-                \(resolvedStrings.joined(separator: "\n"))
-                """
+                categorizationInstruction = "Categorize the following strings into the predefined categories: \(predefinedCategories.joined(separator: ", "))."
             } else {
-                categorizationPrompt = """
-                Infer appropriate categories for the following strings and categorize them.
-                Return the result as a JSON object with each category as a key and an array of strings as the value.
-                Only return the JSON object, and nothing else.
-
-                Example:
-                Input Strings:
-                - "Researchers discover a breakthrough in cancer treatment."
-                - "The stock market experienced a significant downturn yesterday."
-
-                Output JSON:
-                {
-                  "categories": {
-                    "Health": ["Researchers discover a breakthrough in cancer treatment."],
-                    "Finance": ["The stock market experienced a significant downturn yesterday."]
-                  }
-                }
-
-                Strings:
-                \(resolvedStrings.joined(separator: "\n"))
-                """
+                categorizationInstruction = "Infer appropriate categories for the following strings and categorize them."
             }
 
+            let categorizationPrompt = """
+            \(categorizationInstruction)
+            Return the result as a JSON object with each category as a key and an array of strings as the value.
+            Only return the JSON object, and nothing else.
+
+            Example (for format illustration purposes only):
+            Input Strings:
+            - "The stock market experienced a significant downturn yesterday."
+            - "A new AI tool is revolutionizing how developers write code."
+
+            Categories: ["Finance", "Technology"]
+
+            Output JSON:
+            {
+              "categories": {
+                "Finance": ["The stock market experienced a significant downturn yesterday."],
+                "Technology": ["A new AI tool is revolutionizing how developers write code."]
+              }
+            }
+
+            Important: Only use the following input strings for categorization. Do not include the example strings in the output.
+
+            Strings:
+            \(resolvedStrings.joined(separator: "\n"))
+            """
+            
             let request = LLMRequest(
                 messages: [
                     LLMMessage(role: .system, content: "You are a text categorization expert."),
