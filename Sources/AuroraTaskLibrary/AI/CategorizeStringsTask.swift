@@ -1,0 +1,153 @@
+//
+//  CategorizeStringsTask.swift
+//  AuroraToolkit
+//
+//  Created by Dan Murrell Jr on 1/1/25.
+//
+
+import Foundation
+import AuroraCore
+import AuroraLLM
+
+/**
+ `CategorizeStringsTask` is a versatile task that categorizes strings into predefined or inferred categories using a language model.
+
+ - **Inputs**
+    - `strings`: The list of strings to categorize. This input represents the content you wish to organize into logical groups or topics.
+    - `categories`: Optional predefined categories for classification. If provided, the task ensures all strings are grouped into these categories. If not provided, the language model will infer suitable categories based on the content of the strings.
+
+ - **Outputs**
+    - `categorizedStrings`: A dictionary where keys are the category names, and values are lists of strings belonging to each category. This output provides a structured way to analyze and use the categorized data.
+
+ ### Use Cases
+ - **Content Organization**: Automatically group articles, headlines, or other textual content by topic or theme for easier processing.
+ - **Knowledge Management**: Categorize knowledge base entries or customer support tickets for efficient searching and retrieval.
+ - **Data Analysis**: Pre-process datasets by grouping entries into logical categories for downstream tasks like visualization or reporting.
+ - **Dynamic Tagging**: Infer or apply tags/categories to user-generated content in applications like social media or e-commerce platforms.
+ - **Custom Applications**: Useful in workflows where contextual grouping or classification of text is a key step.
+
+ ### Notes
+ The task leverages a language model to handle flexible and nuanced categorization needs. When predefined categories are not supplied, the model dynamically determines suitable groupings, making it highly adaptable for unstructured or semi-structured data scenarios.
+ */
+public class CategorizeStringsTask: WorkflowComponent {
+    /// The wrapped task.
+    private let task: Workflow.Task
+
+    /**
+     Initializes a new `CategorizeStringsTask`.
+
+     - Parameters:
+        - name: The name of the task.
+        - llmService: The LLM service used for categorization.
+        - strings: The list of strings to categorize.
+        - categories: Optional predefined categories.
+        - maxTokens: The maximum number of tokens to generate in the response. Defaults to 500.
+        - inputs: Additional inputs for the task. Defaults to an empty dictionary.
+     */
+    public init(
+        name: String? = nil,
+        llmService: LLMServiceProtocol,
+        strings: [String]? = nil,
+        categories: [String]? = nil,
+        maxTokens: Int = 500,
+        inputs: [String: Any?] = [:]
+    ) {
+        self.task = Workflow.Task(
+            name: name ?? String(describing: Self.self),
+            description: "Categorize strings using predefined or inferred categories",
+            inputs: inputs
+        ) { inputs in
+            let resolvedStrings = inputs.resolve(key: "strings", fallback: strings) ?? []
+            guard !resolvedStrings.isEmpty else {
+                throw NSError(
+                    domain: "CategorizeStringsTask",
+                    code: 1,
+                    userInfo: [NSLocalizedDescriptionKey: "No strings provided for categorization."]
+                )
+            }
+
+            let resolvedCategories = inputs.resolve(key: "categories", fallback: categories)
+
+            let categorizationPrompt: String
+            if let predefinedCategories = resolvedCategories, !predefinedCategories.isEmpty {
+                categorizationPrompt = """
+                Categorize the following strings into the predefined categories: \(predefinedCategories.joined(separator: ", ")).
+                Return the result as a JSON object with each category as a key and an array of strings as the value.
+                Only return the JSON object, and nothing else.
+
+                Example:
+                Input Strings:
+                - "The stock market experienced a significant downturn yesterday."
+                - "A new AI tool is revolutionizing how developers write code."
+
+                Categories: ["Finance", "Technology"]
+
+                Output JSON:
+                {
+                  "categories": {
+                    "Finance": ["The stock market experienced a significant downturn yesterday."],
+                    "Technology": ["A new AI tool is revolutionizing how developers write code."]
+                  }
+                }
+
+                Strings:
+                \(resolvedStrings.joined(separator: "\n"))
+                """
+            } else {
+                categorizationPrompt = """
+                Infer appropriate categories for the following strings and categorize them.
+                Return the result as a JSON object with each category as a key and an array of strings as the value.
+                Only return the JSON object, and nothing else.
+
+                Example:
+                Input Strings:
+                - "Researchers discover a breakthrough in cancer treatment."
+                - "The stock market experienced a significant downturn yesterday."
+
+                Output JSON:
+                {
+                  "categories": {
+                    "Health": ["Researchers discover a breakthrough in cancer treatment."],
+                    "Finance": ["The stock market experienced a significant downturn yesterday."]
+                  }
+                }
+
+                Strings:
+                \(resolvedStrings.joined(separator: "\n"))
+                """
+            }
+
+            let request = LLMRequest(
+                messages: [
+                    LLMMessage(role: .system, content: "You are a text categorization expert."),
+                    LLMMessage(role: .user, content: categorizationPrompt)
+                ],
+                maxTokens: maxTokens
+            )
+
+            do {
+                let response = try await llmService.sendRequest(request)
+                // Parse the response into a dictionary (assumes LLM returns JSON-like structure).
+                guard
+                    let data = response.text.data(using: .utf8),
+                    let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                    let categorizedStrings = jsonObject["categories"] as? [String: [String]]
+                else {
+                    throw NSError(
+                        domain: "CategorizeStringsTask",
+                        code: 2,
+                        userInfo: [NSLocalizedDescriptionKey: "Failed to parse LLM response."]
+                    )
+                }
+                return ["categorizedStrings": categorizedStrings]
+            } catch {
+                throw error
+            }
+        }
+    }
+
+    /// Converts this `CategorizeStringsTask` to a `Workflow.Component`.
+    public func toComponent() -> Workflow.Component {
+        .task(task)
+    }
+}
