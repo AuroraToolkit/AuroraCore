@@ -14,7 +14,14 @@ final class TranslateStringsTaskTests: XCTestCase {
 
     func testTranslateStringsTaskSuccess() async throws {
         // Given
-        let mockResponse = MockLLMResponse(text: "Bonjour tout le monde", vendor: "Test Vendor")
+        let mockResponseText = """
+        {
+          "translations": {
+            "Hello world": "Bonjour tout le monde"
+          }
+        }
+        """
+        let mockResponse = MockLLMResponse(text: mockResponseText, vendor: "Test Vendor")
         let mockService = MockLLMService(
             name: "Mock Translator",
             expectedResult: .success(mockResponse)
@@ -35,11 +42,11 @@ final class TranslateStringsTaskTests: XCTestCase {
         let outputs = try await unwrappedTask.execute()
 
         // Then
-        guard let translatedStrings = outputs["translatedStrings"] as? [String] else {
-            XCTFail("Output 'translatedStrings' not found or invalid")
+        guard let translations = outputs["translations"] as? [String: String] else {
+            XCTFail("Output 'translations' not found or invalid.")
             return
         }
-        XCTAssertEqual(translatedStrings, ["Bonjour tout le monde"], "The translated text should match the expected output.")
+        XCTAssertEqual(translations, ["Hello world": "Bonjour tout le monde"], "The translations should match the expected output.")
     }
 
     func testTranslateStringsTaskEmptyInput() async {
@@ -51,7 +58,8 @@ final class TranslateStringsTaskTests: XCTestCase {
 
         let task = TranslateStringsTask(
             llmService: mockService,
-            strings: [""]
+            strings: [],
+            targetLanguage: "fr"
         )
 
         // When/Then
@@ -124,5 +132,37 @@ final class TranslateStringsTaskTests: XCTestCase {
             XCTAssertEqual((error as NSError).domain, expectedError.domain, "Error domain should match the simulated error.")
             XCTAssertEqual((error as NSError).code, expectedError.code, "Error code should match the simulated error.")
         }
+    }
+
+    func testTranslateStringsTaskIntegrationWithOllama() async throws {
+        // Given
+        let ollamaService = OllamaService(name: "Ollama Translator")
+        let task = TranslateStringsTask(
+            llmService: ollamaService,
+            strings: [
+                "Bonjour tout le monde",
+                "Comment ça va?"
+            ],
+            targetLanguage: "en",
+            sourceLanguage: "fr"
+        )
+
+        // When
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap the Workflow.Task from the component.")
+            return
+        }
+
+        let outputs = try await unwrappedTask.execute()
+
+        // Then
+        guard let translations = outputs["translations"] as? [String: String] else {
+            XCTFail("Output 'translations' not found or invalid.")
+            return
+        }
+        XCTAssertEqual(translations.keys.count, 2, "There should be two translations.")
+        XCTAssertNotNil(translations["Bonjour tout le monde"], "Translation for 'Bonjour tout le monde' should exist.")
+        XCTAssertNotNil(translations["Comment ça va?"], "Translation for 'Comment ça va?' should exist.")
+        print("Integration test results: \(translations)")
     }
 }

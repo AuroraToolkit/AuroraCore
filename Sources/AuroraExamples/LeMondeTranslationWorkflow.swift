@@ -59,23 +59,24 @@ struct LeMondeTranslationWorkflow {
                     throw NSError(domain: "TranslateArticles", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid articles input"])
                 }
 
-                var translatedArticles: [String] = []
                 let articlesToTranslate = articles.map { $0.description }
 
                 let task = TranslateStringsTask(
                     llmService: llmService,
                     strings: articlesToTranslate,
-                    sourceLanguage: "fr",
-                    targetLanguage: "en"
+                    targetLanguage: "en",
+                    sourceLanguage: "fr"
                 )
                 guard case let .task(unwrappedTask) = task.toComponent() else {
                     throw NSError(domain: "TranslateArticles", code: 2, userInfo: [NSLocalizedDescriptionKey: "Failed to create TranslateStringsTask."])
                 }
 
                 let outputs = try await unwrappedTask.execute()
-                if let translatedStrings = outputs["translatedStrings"] as? [String] {
-                    translatedArticles = translatedStrings
+                guard let translations = outputs["translations"] as? [String: String] else {
+                    throw NSError(domain: "TranslateArticles", code: 3, userInfo: [NSLocalizedDescriptionKey: "Failed to retrieve translations"])
                 }
+
+                let translatedArticles = articles.map { translations[$0.description] ?? $0.description }
 
                 return ["articles": translatedArticles]
             }
