@@ -103,7 +103,7 @@ public class AnalyzeSentimentTask: WorkflowComponent {
                 sentimentPrompt += """
                 Return the result as a JSON object where each input string is a key, and the value is an object containing the sentiment (Positive, Neutral, or Negative) and a confidence score as a percentage.
 
-                Example:
+                Example (for format illustration purposes only):
                 Input Strings:
                 - "I love this product!"
                 - "The service was okay."

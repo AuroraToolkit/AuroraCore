@@ -97,7 +97,7 @@ public class TranslateStringsTask: WorkflowComponent {
            3. Only use the provided input strings. Do not include any additional text, examples, or explanations in the output.
            4. Do not include anything else, like markdown notation around it.
            
-           Example:
+            Example (for format illustration purposes only):
            Input Strings:
            - "Hello, how are you?"
            - "This is an example sentence."

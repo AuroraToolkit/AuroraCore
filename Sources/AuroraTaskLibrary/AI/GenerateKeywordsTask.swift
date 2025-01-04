@@ -84,7 +84,7 @@ public class GenerateKeywordsTask: WorkflowComponent {
            Return the result as a JSON object with each string as a key and an array of keywords as the value.
            Only return the JSON object, and nothing else.
 
-           Example:
+            Example (for format illustration purposes only):
            Input Strings:
            - "AI is transforming the healthcare industry."
            - "Quantum computing will revolutionize cryptography."

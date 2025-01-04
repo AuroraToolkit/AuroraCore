@@ -102,12 +102,15 @@ public class ClusterStringsTask: WorkflowComponent {
               "Cluster 2": ["AI is transforming software development."]
             }
 
-            Important: Only use the following input strings for clustering. Do not include the example strings in the output.
+            Important Instructions:
+            1. Do not include any other text, examples, or explanations in the output.
+            2. Only return the JSON object with cluster IDs and string arrays.
+            3. Ensure that the clusters are meaningful and relevant.
+            4. Cluster the strings based on **semantic meaning and context**. Strings that describe similar topics, themes, or ideas should belong to the same cluster. For example:
+                - Group strings about technology or artificial intelligence together.
+                - Group strings about finance, economy, or stock markets together. 
+            5. Only use the following strings, and do not use the examples in the prompt.
             
-            Cluster the strings based on **semantic meaning and context**. Strings that describe similar topics, themes, or ideas should belong to the same cluster. For example:
-            - Group strings about technology or artificial intelligence together.
-            - Group strings about finance, economy, or stock markets together.
-
             Strings:
             \(resolvedStrings.joined(separator: "\n"))
             """
