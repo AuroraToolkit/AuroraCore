@@ -11,6 +11,7 @@ import AuroraCore
 
  - **Inputs**
     - `url`: The string for the `URL` to fetch.
+    - `headers`: An optional dictionary of headers to include in the request.
  - **Outputs**
     - `data`: The raw data fetched from the URL.
 
@@ -30,15 +31,17 @@ public struct FetchURLTask: WorkflowComponent {
      - Parameters:
         - name: The name of the task (default is `FetchURLTask`).
         - url: The string for the `URL` to fetch.
+        - headers: An optional dictionary of headers to include in the request.
         - session: The `URLSession` to use for the request. Defaults to `.shared`.
         - inputs: Additional inputs for the task. Defaults to an empty dictionary.
 
      - Throws: An error if the `url` parameter is invalid.
-     - Note: The `inputs` array can contain direct values for keys like `url`, or dynamic references that will be resolved at runtime.
+     - Note: The `inputs` array can contain direct values for keys like `url` and `headers`, or dynamic references that will be resolved at runtime.
      */
     public init(
         name: String? = nil,
         url: String? = nil,
+        headers: [String: String]? = nil,
         session: URLSession = .shared,
         inputs: [String: Any?] = [:]
     ) {
@@ -48,7 +51,7 @@ public struct FetchURLTask: WorkflowComponent {
             description: "Fetches data from \(url ?? "a URL")",
             inputs: inputs
         ) { inputs in
-            /// Resolve the url from the inputs if it exists, otherwise use the provided `url` parameter
+            /// Resolve the `url` from the inputs if it exists, otherwise use the provided `url` parameter
             let resolvedUrl = inputs.resolve(key: "url", fallback: url)
 
             guard let urlString = resolvedUrl else {
@@ -65,7 +68,19 @@ public struct FetchURLTask: WorkflowComponent {
                     userInfo: [NSLocalizedDescriptionKey: "URL string provided is invalid: \(urlString)"]
                 )
             }
-            let (data, _) = try await session.data(from: url)
+
+            /// Resolve headers from inputs if provided
+            let resolvedHeaders = inputs.resolve(key: "headers", fallback: headers) ?? [:]
+
+            var request = URLRequest(url: url)
+            request.httpMethod = "GET"
+
+            // Add headers if available
+            for (headerField, value) in resolvedHeaders {
+                request.addValue(value, forHTTPHeaderField: headerField)
+            }
+
+            let (data, _) = try await session.data(for: request)
             return ["data": data]
         }
     }

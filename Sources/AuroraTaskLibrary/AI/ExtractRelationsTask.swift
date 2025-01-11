@@ -107,11 +107,11 @@ public class ExtractRelationsTask: WorkflowComponent {
            1. Analyze the input strings and identify explicit relationships between entities.
            2. Use concise relationship types and entity names.
            3. Do not infer or guess relationships—only extract those explicitly stated.
-           4. Ensure the JSON object is formatted correctly.
-           5. Do not include any additional text, explanations, or examples in the output.
-           6. Only analyze the following strings:
+           4. Ensure the JSON object is properly formatted and valid.
+           5. Ensure the JSON object is properly terminated and complete. Do not cut off or truncate the response.
+           6. Do not include anything else, like markdown notation around it or any extraneous characters. The ONLY thing you should return is properly formatted, valid JSON and absolutely nothing else.
+           7. Only analyze the following texts:
 
-           Strings:
            \(resolvedStrings.joined(separator: "\n"))
            """
 
@@ -125,8 +125,11 @@ public class ExtractRelationsTask: WorkflowComponent {
 
            do {
                let response = try await llmService.sendRequest(request)
-               guard
-                   let data = response.text.data(using: .utf8),
+
+               // Strip json markdown if necessary
+               let rawResponse = response.text.stripMarkdownJSON()
+
+               guard let data = rawResponse.data(using: .utf8),
                    let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
                    let relations = jsonObject["relations"] as? [String: [[String]]]
                else {

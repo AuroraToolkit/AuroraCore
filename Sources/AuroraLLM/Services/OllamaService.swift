@@ -147,7 +147,7 @@ public class OllamaService: LLMServiceProtocol {
             throw LLMServiceError.invalidResponse(statusCode: (response as? HTTPURLResponse)?.statusCode ?? -1)
         }
 
-        logger.debug("OpenAIService [sendRequest] Response received from Ollama.", category: "OllamaService")
+        logger.debug("OllamaService [sendRequest] Response received from Ollama.", category: "OllamaService")
 
         // Attempt to decode the response from the Ollama API
         do {
@@ -214,7 +214,7 @@ public class OllamaService: LLMServiceProtocol {
         return try await withCheckedThrowingContinuation { continuation in
             let streamingDelegate = StreamingDelegate(
                 vendor: vendor,
-                model: request.model ?? "gpt-4o",
+                model: request.model ?? "llama3.2",
                 onPartialResponse: onPartialResponse ?? { _ in },
                 continuation: continuation
             )

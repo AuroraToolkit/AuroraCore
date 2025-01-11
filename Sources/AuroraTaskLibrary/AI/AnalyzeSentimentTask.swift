@@ -122,13 +122,13 @@ public class AnalyzeSentimentTask: WorkflowComponent {
                 sentimentPrompt += """
                 Return the result as a JSON object where each input string is a key, and the value is the sentiment (Positive, Neutral, or Negative).
 
-                Example:
+                Example (for format illustration purposes only):
                 Input Strings:
                 - "I love this product!"
                 - "The service was okay."
                 - "I’m very disappointed with the quality."
 
-                Output JSON:
+                Expected Output JSON:
                 {
                   "sentiments": {
                     "I love this product!": "Positive",
@@ -141,10 +141,14 @@ public class AnalyzeSentimentTask: WorkflowComponent {
 
             sentimentPrompt += """
 
-            Important: Only use the following input strings for analysis. Do not include the example strings in the output.
+            Important Instructions:
+            1. Only return the JSON object with the sentiment analysis.
+            2. Do not include any additional text, examples, or explanations in the output.
+            3. Ensure the JSON object is properly formatted and valid.
+            4. Ensure the JSON object is properly terminated and complete. Do not cut off or truncate the response.
+            5. Do not include anything else, like markdown notation around it or any extraneous characters. The ONLY thing you should return is properly formatted, valid JSON and absolutely nothing else.
+            6. Only process the following texts:
 
-
-            Strings:
             \(resolvedStrings.joined(separator: "\n"))
             """
 
@@ -158,8 +162,12 @@ public class AnalyzeSentimentTask: WorkflowComponent {
 
             do {
                 let response = try await llmService.sendRequest(request)
+
+                // Strip json markdown if necessary
+                let rawResponse = response.text.stripMarkdownJSON()
+
                 // Parse the response into a dictionary (assumes LLM returns JSON-like structure).
-                guard let data = response.text.data(using: .utf8),
+                guard let data = rawResponse.data(using: .utf8),
                       let jsonResponse = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
                       let sentiments = jsonResponse["sentiments"] else {
                     throw NSError(

@@ -16,9 +16,9 @@ final class TranslateStringsTaskTests: XCTestCase {
         // Given
         let mockResponseText = """
         {
-          "translations": {
-            "Hello world": "Bonjour tout le monde"
-          }
+          "translations": [
+            "Bonjour tout le monde"
+          ]
         }
         """
         let mockResponse = MockLLMResponse(text: mockResponseText, vendor: "Test Vendor")
@@ -42,11 +42,11 @@ final class TranslateStringsTaskTests: XCTestCase {
         let outputs = try await unwrappedTask.execute()
 
         // Then
-        guard let translations = outputs["translations"] as? [String: String] else {
+        guard let translations = outputs["translations"] as? [String] else {
             XCTFail("Output 'translations' not found or invalid.")
             return
         }
-        XCTAssertEqual(translations, ["Hello world": "Bonjour tout le monde"], "The translations should match the expected output.")
+        XCTAssertEqual(translations, ["Bonjour tout le monde"], "The translations should match the expected output.")
     }
 
     func testTranslateStringsTaskEmptyInput() async {
@@ -156,13 +156,11 @@ final class TranslateStringsTaskTests: XCTestCase {
         let outputs = try await unwrappedTask.execute()
 
         // Then
-        guard let translations = outputs["translations"] as? [String: String] else {
+        guard let translations = outputs["translations"] as? [String] else {
             XCTFail("Output 'translations' not found or invalid.")
             return
         }
-        XCTAssertEqual(translations.keys.count, 2, "There should be two translations.")
-        XCTAssertNotNil(translations["Bonjour tout le monde"], "Translation for 'Bonjour tout le monde' should exist.")
-        XCTAssertNotNil(translations["Comment ça va?"], "Translation for 'Comment ça va?' should exist.")
+        XCTAssertEqual(translations.count, 2, "There should be two translations.")
         print("Integration test results: \(translations)")
     }
 }

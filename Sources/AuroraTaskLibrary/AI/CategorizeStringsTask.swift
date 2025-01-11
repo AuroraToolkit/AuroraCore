@@ -109,10 +109,15 @@ public class CategorizeStringsTask: WorkflowComponent {
                 "Technology": ["A new AI tool is revolutionizing how developers write code."]
               }
             }
+            
+            Important Instructions:
+            1. Ensure each string is categorized into one or more categories.
+            2. Do not include any additional text, explanations, code, or examples in the output.
+            3. Ensure the JSON object is properly formatted and valid.
+            4. Ensure the JSON object is properly terminated and complete. Do not cut off or truncate the response.
+            5. Do not include anything else, like markdown notation around it or any extraneous characters. The ONLY thing you should return is properly formatted, valid JSON and absolutely nothing else.
+            6. Only process the following texts:
 
-            Important: Only use the following input strings for categorization. Do not include the example strings in the output.
-
-            Strings:
             \(resolvedStrings.joined(separator: "\n"))
             """
             
@@ -126,9 +131,12 @@ public class CategorizeStringsTask: WorkflowComponent {
 
             do {
                 let response = try await llmService.sendRequest(request)
+
+                // Strip json markdown if necessary
+                let rawResponse = response.text.stripMarkdownJSON()
+
                 // Parse the response into a dictionary (assumes LLM returns JSON-like structure).
-                guard
-                    let data = response.text.data(using: .utf8),
+                guard let data = rawResponse.data(using: .utf8),
                     let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
                     let categorizedStrings = jsonObject["categories"] as? [String: [String]]
                 else {

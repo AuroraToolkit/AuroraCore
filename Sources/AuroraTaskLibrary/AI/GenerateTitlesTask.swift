@@ -91,11 +91,11 @@ public class GenerateTitlesTask: WorkflowComponent {
             1. Titles should be concise, accurate, and engaging.
             2. Ensure titles are unique and relevant to the content of the text.
             3. Generate titles in the following languages: \(resolvedLanguages.joined(separator: ", ")).
-            4. Do not include any additional text, explanations, code, or examples in the output.
-            5. The output should ONLY be JSON. Do not include any other formats.
-            6. Only process the following texts:
+            4. Ensure the JSON object is properly formatted and valid.
+            5. Ensure the JSON object is properly terminated and complete. Do not cut off or truncate the response.
+            6. Do not include anything else, like markdown notation around it or any extraneous characters. The ONLY thing you should return is properly formatted, valid JSON and absolutely nothing else.
+            7. Only analyze the following texts:
 
-            Texts:
             \(resolvedStrings.joined(separator: "\n"))
             """
 
@@ -109,9 +109,12 @@ public class GenerateTitlesTask: WorkflowComponent {
 
             do {
                 let response = try await llmService.sendRequest(request)
+
+                // Strip json markdown if necessary
+                let rawResponse = response.text.stripMarkdownJSON()
+
                 // Parse the response
-                guard
-                    let data = response.text.data(using: .utf8),
+                guard let data = rawResponse.data(using: .utf8),
                     let jsonResponse = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
                     let titles = jsonResponse["titles"] as? [String: [String: String]]
                 else {

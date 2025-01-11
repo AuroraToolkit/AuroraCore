@@ -82,7 +82,6 @@ public class GenerateKeywordsTask: WorkflowComponent {
            Extract up to \(resolvedMaxKeywords) significant and meaningful keywords from the following strings. Focus on terms that capture the essence or main ideas of the content. Avoid generic or overly broad terms (e.g., "sources", "like").
 
            Return the result as a JSON object with each string as a key and an array of keywords as the value.
-           Only return the JSON object, and nothing else.
 
             Example (for format illustration purposes only):
            Input Strings:
@@ -97,9 +96,15 @@ public class GenerateKeywordsTask: WorkflowComponent {
              }
            }
 
-           Important: Only use the following input strings for keyword generation. Do not include the example strings in the output.
+           Important Instructions:
+           1. Focus on extracting keywords that are relevant and specific to the content.
+           2. Avoid generic terms or phrases that do not add value to the keyword list.
+           3. Ensure the keywords are sgnificant, meaningful, and capture the main ideas or topics of the content.
+           4. Ensure the JSON object is properly formatted and valid.
+           5. Ensure the JSON object is properly terminated and complete. Do not cut off or truncate the response.
+           6. Do not include anything else, like markdown notation around it or any extraneous characters. The ONLY thing you should return is properly formatted, valid JSON and absolutely nothing else.
+           7. Only analyze the following texts:
 
-           Strings:
            \(resolvedStrings.joined(separator: "\n"))
            """
 
@@ -113,9 +118,12 @@ public class GenerateKeywordsTask: WorkflowComponent {
 
            do {
                let response = try await llmService.sendRequest(request)
+
+               // Strip json markdown if necessary
+               let rawResponse = response.text.stripMarkdownJSON()
+
                // Parse the response into a dictionary.
-               guard
-                   let data = response.text.data(using: .utf8),
+               guard let data = rawResponse.data(using: .utf8),
                    let jsonResponse = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
                    let keywords = jsonResponse["keywords"] as? [String: [String]]
                else {

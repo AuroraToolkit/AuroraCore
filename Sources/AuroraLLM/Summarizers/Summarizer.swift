@@ -82,7 +82,7 @@ public class Summarizer: SummarizerProtocol {
             guard let responseData = response.data(using: .utf8),
                   let jsonResponse = try? JSONSerialization.jsonObject(with: responseData) as? [String: Any],
                   let summaries = jsonResponse["summaries"] as? [String] else {
-                throw NSError(domain: "Summarizer", code: 2, userInfo: [NSLocalizedDescriptionKey: "Invalid JSON response from LLM"])
+                throw NSError(domain: "Summarizer", code: 2, userInfo: [NSLocalizedDescriptionKey: "Invalid JSON response from LLM: \(response)"])
             }
 
             return summaries

@@ -123,10 +123,11 @@ public class ExtractEntitiesTask: WorkflowComponent {
                   "Location": []
                 }
               }
-           6. Do not include any additional text, explanations, or examples in the output.
-           7. Only analyze the following strings:
+           6. Ensure the JSON object is properly formatted and valid.
+           7. Ensure the JSON object is properly terminated and complete. Do not cut off or truncate the response.
+           8. Do not include anything else, like markdown notation around it or any extraneous characters. The ONLY thing you should return is properly formatted, valid JSON and absolutely nothing else.
+           9. Only analyze the following texts:
 
-           Strings:
            \(resolvedStrings.joined(separator: "\n"))
            """
 
@@ -140,9 +141,12 @@ public class ExtractEntitiesTask: WorkflowComponent {
 
            do {
                let response = try await llmService.sendRequest(request)
+
+               // Strip json markdown if necessary
+               let rawResponse = response.text.stripMarkdownJSON()
+
                // Parse the response into a dictionary (assumes LLM returns JSON-like structure).
-               guard
-                   let data = response.text.data(using: .utf8),
+               guard let data = rawResponse.data(using: .utf8),
                    let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
                    let entities = jsonObject["entities"] as? [String: [String]]
                else {

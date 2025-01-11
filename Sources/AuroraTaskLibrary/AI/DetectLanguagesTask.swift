@@ -94,12 +94,12 @@ public class DetectLanguagesTask: WorkflowComponent {
            1. Analyze the input strings and determine the language of each string.
            2. Use ISO 639-1 format for language codes (e.g., "es" for Spanish, "fr" for French).
            3. Return the result as a JSON object with the original strings as keys and their detected language codes as values.
-           4. Ensure the JSON object is formatted correctly.
-           5. Do not infer or guess the meaning of strings—only analyze the languages explicitly present.
-           6. Do not include any additional text, explanations, or examples in the output.
-           7. Only analyze the following strings:
+           4. Ensure the JSON object is properly terminated and complete. Do not cut off or truncate the response.
+           5. Ensure the JSON object is formatted correctly.
+           6. Do not infer or guess the meaning of strings—only analyze the languages explicitly present.
+           7. Do not include anything else, like markdown notation around it or any extraneous characters. The ONLY thing you should return is properly formatted, valid JSON and absolutely nothing else. 
+           8. Only analyze the following texts:
 
-           Strings:
            \(resolvedStrings.joined(separator: "\n"))
            """
 
@@ -114,9 +114,11 @@ public class DetectLanguagesTask: WorkflowComponent {
            do {
                let response = try await llmService.sendRequest(request)
 
+               // Strip json markdown if necessary
+               let rawResponse = response.text.stripMarkdownJSON()
+
                // Parse the response into a dictionary
-               guard
-                   let data = response.text.data(using: .utf8),
+               guard let data = rawResponse.data(using: .utf8),
                    let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
                    let detectedLanguages = jsonObject["languages"] as? [String: String]
                else {

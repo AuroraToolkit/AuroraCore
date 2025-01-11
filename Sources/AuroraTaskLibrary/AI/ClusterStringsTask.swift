@@ -109,9 +109,11 @@ public class ClusterStringsTask: WorkflowComponent {
             4. Cluster the strings based on **semantic meaning and context**. Strings that describe similar topics, themes, or ideas should belong to the same cluster. For example:
                 - Group strings about technology or artificial intelligence together.
                 - Group strings about finance, economy, or stock markets together. 
-            5. Only use the following strings, and do not use the examples in the prompt.
+            5. Ensure the JSON object is properly formatted and valid.
+            6. Ensure the JSON object is properly terminated and complete. Do not cut off or truncate the response.
+            7. Do not include anything else, like markdown notation around it or any extraneous characters. The ONLY thing you should return is properly formatted, valid JSON and absolutely nothing else.
+            8. Only process the following texts:
             
-            Strings:
             \(resolvedStrings.joined(separator: "\n"))
             """
 
@@ -125,8 +127,12 @@ public class ClusterStringsTask: WorkflowComponent {
 
             do {
                 let response = try await llmService.sendRequest(request)
+
+                // Strip json markdown if necessary
+                let rawResponse = response.text.stripMarkdownJSON()
+
                 // Parse the response into a dictionary (assumes LLM returns JSON-like structure).
-                guard let data = response.text.data(using: .utf8),
+                guard let data = rawResponse.data(using: .utf8),
                       let clusters = try? JSONSerialization.jsonObject(with: data) as? [String: [String]] else {
                     throw NSError(
                         domain: "ClusterStringsTask",
