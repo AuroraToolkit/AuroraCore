@@ -29,13 +29,10 @@ extension Dictionary where Key == String {
      - Parameters:
         - key: The key to resolve.
         - fallback: The fallback value to use if the key does not exist in the dictionary.
-     - Returns: The resolved value or the fallback.
+     - Returns: The resolved value or the fallback, which can be `nil`.
      */
     public func resolve<T>(key: String, fallback: T?) -> T? {
-        if self.keys.contains(key) {
-            return self[key] as? T
-        }
-        return fallback
+        return resolveInternal(key: key, fallback: fallback)
     }
 
     /**
@@ -48,9 +45,38 @@ extension Dictionary where Key == String {
      - Returns: The resolved value or the fallback.
      */
     public func resolve<T>(key: String, fallback: T) -> T {
-        if let value = self[key] as? T {
-            return value
+        return resolveInternal(key: key, fallback: fallback) ?? fallback
+    }
+
+    private func resolveInternal<T>(key: String, fallback: T? = nil) -> T? {
+        // Retrieve the optional value
+        guard let optionalValue = self[key] else {
+            return fallback
         }
+
+        let unwrappedType = unwrapOptionalType(T.self)
+        switch unwrappedType {
+        case is [String].Type:
+            return asArray(optionalValue, of: String.self) as? T ?? fallback
+            case is [Int].Type:
+            return asArray(optionalValue, of: Int.self) as? T ?? fallback
+            case is [Double].Type:
+            return asArray(optionalValue, of: Double.self) as? T ?? fallback
+            case is [Float].Type:
+            return asArray(optionalValue, of: Float.self) as? T ?? fallback
+            case is [Bool].Type:
+            return asArray(optionalValue, of: Bool.self) as? T ?? fallback
+            case is [Date].Type:
+            return asArray(optionalValue, of: Date.self) as? T ?? fallback
+            case is [Data].Type:
+            return asArray(optionalValue, of: Data.self) as? T ?? fallback
+        default:
+            // Handle direct casting
+            if let castValue = optionalValue as? T {
+                return castValue
+            }
+        }
+
         return fallback
     }
 }
