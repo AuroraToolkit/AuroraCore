@@ -73,8 +73,8 @@ public class DetectLanguagesTask: WorkflowComponent {
 
            // Build the detection prompt
            let detectionPrompt = """
-           Detect the language of each of the following strings.
-           Return the result as a JSON object with the original strings as keys and their detected language codes (ISO 639-1 format) as values.
+           Your job is to detect the language of a set of provided text strings, and format your results as JSON.
+           You must return the results as a JSON object with the original strings as keys and their detected language codes (ISO 639-1 format) as values.
            Only return the JSON object, and nothing else.
 
            Example (for format illustration purposes only):
@@ -97,8 +97,9 @@ public class DetectLanguagesTask: WorkflowComponent {
            4. Ensure the JSON object is properly terminated and complete. Do not cut off or truncate the response.
            5. Ensure the JSON object is formatted correctly.
            6. Do not infer or guess the meaning of strings—only analyze the languages explicitly present.
-           7. Do not include anything else, like markdown notation around it or any extraneous characters. The ONLY thing you should return is properly formatted, valid JSON and absolutely nothing else. 
-           8. Only analyze the following texts:
+           7. Do not include anything else, like markdown notation around it or any extraneous characters. 
+           8. The *ONLY* thing you should return is properly formatted, valid JSON and absolutely nothing else. 
+           9. Only analyze the following texts:
 
            \(resolvedStrings.joined(separator: "\n"))
            """
