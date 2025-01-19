@@ -45,10 +45,14 @@ A dedicated package for managing large language models (LLMs) and facilitating A
 A collection of prebuilt tasks designed to jumpstart development and integrate seamlessly with workflows. These tasks cover common AI and utility-based operations.
 
 #### Notable Tasks:
+- **JSONParsingTask**: Parses JSON data and extracts values based on key paths.
 - **RSSParsingTask**: Parses RSS feeds and extracts articles.
 - **TrimmingTask**: Cleans and trims text input for better processing.
 - **FetchURLTask**: Fetches data from a given URL.
-- **SummarizeContextTask**: Summarizes text or contextual data using registered LLMs.
+- **AnalyzeSentimentTask** (LLM): Analyzes the sentiment of the input text.
+- **DetectLanguagesTask** (LLM): Identifies the language of the input text.
+- **GenerateKeywordsTask** (LLM): Extracts keywords from the input text.
+- **SummarizeContextTask** (LLM): Summarizes text or contextual data using registered LLMs.
 
 ### **4. AuroraExamples**
 A separate package showcasing real-world implementations of workflows, LLM integrations, and tasks. Examples serve as a reference for best practices and quick-start guides.

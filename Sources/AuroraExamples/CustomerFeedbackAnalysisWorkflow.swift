@@ -2,7 +2,7 @@
 //  CustomerFeedbackAnalysisWorkflow.swift
 //  AuroraToolkit
 //
-//  Created by Dan Murrell Jr on 1/4/25.
+//  Created by Dan Murrell Jr on 1/8/25.
 //
 
 import Foundation
@@ -29,6 +29,11 @@ struct CustomerFeedbackAnalysisWorkflow {
         let llmService = OpenAIService(apiKey: openAIKey)
         let summarizer = Summarizer(llmService: llmService)
 
+        // URL to retrieve app store reviews
+        let countryCode = "us"  // Change to your country code if needed
+        let appId = "284708449" // Replace with your app ID, e.g. UrbanSpoon app
+        let appStoreReviewsURL = "https://itunes.apple.com/\(countryCode)/rss/customerreviews/page=1/id=\(appId)/sortBy=mostRecent/json"
+
         // Workflow initialization
         var workflow = Workflow(
             name: "Customer Feedback Analysis Workflow",
@@ -38,39 +43,71 @@ struct CustomerFeedbackAnalysisWorkflow {
             // Step 1: Fetch App Store Reviews
             FetchURLTask(
                 name: "FetchReviews",
-                url: "https://api.example.com/appstore/reviews?appId=com.example.app"
+                url: appStoreReviewsURL
             )
 
-            // Step 2: Trim Review Text
-            TrimmingTask(
-                name: "TrimReviews",
-                inputs: ["strings": "{FetchReviews.response}"]
+            // Step 2: Parse the reviews feed
+            JSONParsingTask(
+                name: "ParseReviewsFeed",
+                inputs: ["jsonData": "{FetchReviews.data}"]
             )
+
+            // Step 3: Extract Review Text
+            Workflow.Task(
+                name: "ExtractReviewText",
+                inputs: ["parsedJSON": "{ParseReviewsFeed.parsedJSON}"]
+            ) { inputs in
+                guard let parsedJSON = inputs["parsedJSON"] as? JSONElement,
+                let feed = parsedJSON["feed"],
+                let entries = feed["entry"]?.asArray else {
+                    throw NSError(
+                        domain: "CustomerFeedbackAnalysisWorkflow",
+                        code: 1,
+                        userInfo: [NSLocalizedDescriptionKey: "No reviews found in the feed."]
+                        )
+                }
+
+                // Extract the review text from the JSON feed
+                let reviews = entries.compactMap { entry in
+                    entry["content"]?["label"]?.asString
+                }
+
+                // Limit to 10 reviews for simpler processing
+                return ["strings": reviews.prefix(10)]
+            }
 
             // Step 3: Detect Languages of the Reviews
             DetectLanguagesTask(
                 name: "DetectReviewLanguages",
-                inputs: ["strings": "{TrimReviews.trimmedStrings}"]
+                llmService: llmService,
+                maxTokens: 1000,
+                inputs: ["strings": "{ExtractReviewText.strings}"]
             )
 
             // Step 4: Analyze Sentiment
             AnalyzeSentimentTask(
                 name: "AnalyzeReviewSentiment",
-                inputs: ["strings": "{TrimReviews.trimmedStrings}"],
-                detailed: true
+                llmService: llmService,
+                detailed: true,
+                maxTokens: 1000,
+                inputs: ["strings": "{ExtractReviewText.strings}"]
             )
 
             // Step 5: Extract Keywords from Reviews
             GenerateKeywordsTask(
                 name: "ExtractReviewKeywords",
-                inputs: ["strings": "{TrimReviews.trimmedStrings}"]
+                llmService: llmService,
+                maxTokens: 1000,
+                inputs: ["strings": "{ExtractReviewText.strings}"]
             )
 
             // Step 6: Generate Actionable Suggestions
             GenerateTitlesTask(
                 name: "GenerateReviewSuggestions",
-                inputs: ["strings": "{TrimReviews.trimmedStrings}"],
-                languages: ["en"]
+                llmService: llmService,
+                languages: ["en"],
+                maxTokens: 1000,
+                inputs: ["strings": "{ExtractReviewText.strings}"]
             )
 
             // Step 7: Summarize Findings
@@ -78,7 +115,7 @@ struct CustomerFeedbackAnalysisWorkflow {
                 name: "SummarizeReviewFindings",
                 summarizer: summarizer,
                 summaryType: .multiple,
-                inputs: ["strings": "{TrimReviews.trimmedStrings}"]
+                inputs: ["strings": "{ExtractReviewText.strings}"]
             )
         }
 
@@ -90,7 +127,7 @@ struct CustomerFeedbackAnalysisWorkflow {
 
         // Print the workflow outputs
         if let summaries = workflow.outputs["SummarizeReviewFindings.summaries"] as? [String] {
-            print("Generated Summaries:\n")
+            print("Review Findings Summaries:")
             summaries.enumerated().forEach { index, summary in
                 print("\(index + 1): \(summary)")
             }
@@ -98,13 +135,66 @@ struct CustomerFeedbackAnalysisWorkflow {
             print("No summaries generated.")
         }
 
-        if let suggestions = workflow.outputs["GenerateReviewSuggestions.titles"] as? [String: [String: String]] {
-            print("\nActionable Suggestions:\n")
-            suggestions.forEach { review, titles in
-                print("Review: \(review)")
-                titles.forEach { language, title in
-                    print(" - [\(language)]: \(title)")
+        // Gather and process additional results
+        if let detectedLanguages = workflow.outputs["DetectReviewLanguages.languages"] as? [String: String] {
+            let languages = detectedLanguages.values
+                .reduce(into: [String: Int]()) { counts, language in
+                    counts[language, default: 0] += 1
                 }
+                .sorted { $0.key < $1.key }
+            print("\nLanguages found in reviews:")
+            languages.forEach { language, count in
+                print("- \(language): \(count) review(s)")
+            }
+        }
+
+        if let keywordsDict = workflow.outputs["ExtractReviewKeywords.keywords"] as? [String: [String]] {
+            let keywords = Set(keywordsDict.values.flatMap { $0 }).sorted()
+            print("\nKeywords found in reviews:\n- \(keywords.joined(separator: ", "))")
+        }
+
+        // Collect sentiment data
+        if let sentiments = workflow.outputs["AnalyzeReviewSentiment.sentiments"] as? [String: [String: Any]] {
+            var sentimentCounts = ["Positive": 0, "Neutral": 0, "Negative": 0]
+            var sentimentExamples = ["Positive": [String](), "Neutral": [String](), "Negative": [String]()]
+
+            sentiments.forEach { review, sentimentInfo in
+                guard
+                    let sentiment = sentimentInfo["sentiment"] as? String,
+                    let confidence = sentimentInfo["confidence"] as? Int
+                else { return }
+
+                sentimentCounts[sentiment, default: 0] += 1
+
+                // Add example review for each sentiment category
+                if sentimentExamples[sentiment]?.count ?? 0 < 2 {
+                    sentimentExamples[sentiment]?.append("\"\(review)\" (\(confidence)% confidence)")
+                }
+            }
+
+            // Display sentiment analysis summary
+            let totalReviews = sentiments.count
+            print("\nOverall sentiment for \(totalReviews) reviews:")
+            sentimentCounts.forEach { sentiment, count in
+                let percentage = (Double(count) / Double(totalReviews) * 100).rounded()
+                print("- \(sentiment): \(Int(percentage))% (\(count) review(s))")
+            }
+
+            // Display examples for each sentiment
+            print("\nSentiment examples:")
+            sentimentExamples.forEach { sentiment, examples in
+                print("- \(sentiment):")
+                examples.forEach { print("  \(String(describing: $0))") }
+            }
+        }
+
+        if let suggestions = workflow.outputs["GenerateReviewSuggestions.titles"] as? [String: [String: String]] {
+            print("\nActionable Insights:")
+            suggestions.forEach { review, titles in
+                titles.forEach { _, title in
+                    print("Insight: \(title)")
+                }
+                print("  Based on review: \(review)")
             }
         } else {
             print("No suggestions generated.")
