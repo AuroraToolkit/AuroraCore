@@ -52,6 +52,49 @@ final class GenerateKeywordsTaskTests: XCTestCase {
         XCTAssertEqual(keywords, expectedKeywords, "The generated keywords should match the expected output.")
     }
 
+    func testGenerateKeywordsTaskWithCategories() async throws {
+        // Given
+        let stringsToAnalyze = ["AI is transforming the healthcare industry.", "Quantum computing will revolutionize cryptography."]
+        let predefinedCategories = ["Technology", "Healthcare"]
+        let mockResponseText = """
+        {
+          "keywords": {
+            "AI is transforming the healthcare industry.": ["AI", "healthcare", "industry", "transformation"],
+            "Quantum computing will revolutionize cryptography.": ["quantum computing", "cryptography", "revolution"]
+          },
+          "categorizedKeywords": {
+            "Technology": ["quantum computing", "cryptography", "AI"],
+            "Healthcare": ["healthcare", "industry", "transformation"]
+          }
+        }
+        """
+        let mockService = MockLLMService(
+            name: "MockService",
+            expectedResult: .success(MockLLMResponse(text: mockResponseText))
+        )
+
+        let task = GenerateKeywordsTask(
+            llmService: mockService,
+            strings: stringsToAnalyze,
+            categories: predefinedCategories
+        )
+
+        // When
+        guard case let .task(unwrappedTask) = task.toComponent() else {
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
+        }
+        let outputs = try await unwrappedTask.execute()
+
+        // Then
+        guard let categorizedKeywords = outputs["categorizedKeywords"] as? [String: [String]] else {
+            XCTFail("Output 'categorizedKeywords' not found or invalid.")
+            return
+        }
+        XCTAssertEqual(categorizedKeywords["Technology"], ["quantum computing", "cryptography", "AI"], "Technology keywords should match.")
+        XCTAssertEqual(categorizedKeywords["Healthcare"], ["healthcare", "industry", "transformation"], "Healthcare keywords should match.")
+    }
+
     func testGenerateKeywordsTaskEmptyInput() async {
         // Given
         let mockService = MockLLMService(

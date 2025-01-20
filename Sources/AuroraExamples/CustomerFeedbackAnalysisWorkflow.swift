@@ -149,8 +149,17 @@ struct CustomerFeedbackAnalysisWorkflow {
         }
 
         if let keywordsDict = workflow.outputs["ExtractReviewKeywords.keywords"] as? [String: [String]] {
+            // Extract and display the flat list of keywords
             let keywords = Set(keywordsDict.values.flatMap { $0 }).sorted()
             print("\nKeywords found in reviews:\n- \(keywords.joined(separator: ", "))")
+        }
+
+        if let categorizedKeywords = workflow.outputs["ExtractReviewKeywords.categorizedKeywords"] as? [String: [String]] {
+            // Display categorized keywords
+            print("\nCategorized Keywords:")
+            for (category, keywords) in categorizedKeywords.sorted(by: { $0.key < $1.key }) {
+                print("- \(category): \(keywords.joined(separator: ", "))")
+            }
         }
 
         // Collect sentiment data
