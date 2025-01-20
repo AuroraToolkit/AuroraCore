@@ -48,6 +48,9 @@
                 <a href="AuroraCore/Extensions/Swift/Dictionary.html">Dictionary</a>
               </li>
               <li class="nav-group-task">
+                <a href="AuroraCore/Classes/ExecutionTimer.html">ExecutionTimer</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="AuroraCore/Extensions/Foundation/FileManager.html">FileManager</a>
               </li>
               <li class="nav-group-task">
@@ -191,6 +194,9 @@
                 <a href="AuroraLLM/Classes/SaveContextTask.html">SaveContextTask</a>
               </li>
               <li class="nav-group-task">
+                <a href="AuroraLLM/Extensions/Swift/String.html">String</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="AuroraLLM/Classes/Summarizer.html">Summarizer</a>
               </li>
               <li class="nav-group-task">
@@ -211,7 +217,40 @@
             <a href="AuroraTaskLibrary.html">AuroraTaskLibrary</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/AnalyzeSentimentTask.html">AnalyzeSentimentTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/AnalyzeTextReadabilityTask.html">AnalyzeTextReadabilityTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/CategorizeStringsTask.html">CategorizeStringsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/ClusterStringsTask.html">ClusterStringsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/DetectLanguagesTask.html">DetectLanguagesTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/ExtractEntitiesTask.html">ExtractEntitiesTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/ExtractRelationsTask.html">ExtractRelationsTask</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="AuroraTaskLibrary/Structs/FetchURLTask.html">FetchURLTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/GenerateKeywordsTask.html">GenerateKeywordsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/GenerateTitlesTask.html">GenerateTitlesTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Enums/JSONElement.html">JSONElement</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/JSONParsingTask.html">JSONParsingTask</a>
               </li>
               <li class="nav-group-task">
                 <a href="AuroraTaskLibrary/Classes/LLMTask.html">LLMTask</a>
@@ -227,6 +266,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="AuroraTaskLibrary/Classes/SummarizeStringsTask.html">SummarizeStringsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/TranslateStringsTask.html">TranslateStringsTask</a>
               </li>
               <li class="nav-group-task">
                 <a href="AuroraTaskLibrary/Classes/TrimmingTask.html">TrimmingTask</a>
@@ -245,6 +287,576 @@
           <section class="section task-group-section">
             <div class="task-group">
               <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:17AuroraTaskLibrary016AnalyzeSentimentB0C"></a>
+                    <a name="//apple_ref/swift/Class/AnalyzeSentimentTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:17AuroraTaskLibrary016AnalyzeSentimentB0C">AnalyzeSentimentTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>AnalyzeSentimentTask</code> analyzes the sentiment of a list of strings using an LLM service.</p>
+
+<ul>
+<li><strong>Inputs</strong>
+
+<ul>
+<li><code>strings</code>: The list of strings to analyze.</li>
+<li><code>detailed</code>: Boolean indicating whether to return detailed sentiment analysis. Defaults to <code>false</code>.</li>
+</ul></li>
+<li><strong>Outputs</strong>
+
+<ul>
+<li><code>sentiments</code>: A dictionary where keys are the input strings and values are their respective sentiments.</li>
+</ul></li>
+</ul>
+<h3 id='use-cases' class='heading'>Use Cases:</h3>
+
+<ul>
+<li>Understand the emotional tone of user feedback, social media posts, or reviews.</li>
+<li>Categorize content into positive, neutral, or negative sentiment for analytics or moderation.</li>
+<li>Identify emotional trends over time in a dataset.</li>
+</ul>
+<h3 id='example' class='heading'>Example:</h3>
+
+<p><strong>Input Strings</strong></p>
+
+<ul>
+<li>&ldquo;I love this product!&rdquo;</li>
+<li>&ldquo;The service was okay.&rdquo;</li>
+<li>&ldquo;I’m very disappointed with the quality.&rdquo;</li>
+</ul>
+
+<p><strong>Output JSON:</strong></p>
+<pre class="highlight swift"><code><span class="p">{</span>
+  <span class="s">"sentiments"</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s">"I love this product!"</span><span class="p">:</span> <span class="s">"Positive"</span><span class="p">,</span>
+    <span class="s">"The service was okay."</span><span class="p">:</span> <span class="s">"Neutral"</span><span class="p">,</span>
+    <span class="s">"I’m very disappointed with the quality."</span><span class="p">:</span> <span class="s">"Negative"</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+<p><strong>Output JSON with detailed analysis:</strong></p>
+<pre class="highlight swift"><code><span class="p">{</span>
+  <span class="s">"sentiments"</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s">"I love this product!"</span><span class="p">:</span> <span class="p">{</span><span class="s">"sentiment"</span><span class="p">:</span> <span class="s">"Positive"</span><span class="p">,</span> <span class="s">"confidence"</span><span class="p">:</span> <span class="mi">95</span><span class="p">},</span>
+    <span class="s">"The service was okay."</span><span class="p">:</span> <span class="p">{</span><span class="s">"sentiment"</span><span class="p">:</span> <span class="s">"Neutral"</span><span class="p">,</span> <span class="s">"confidence"</span><span class="p">:</span> <span class="mi">70</span><span class="p">},</span>
+    <span class="s">"I’m very disappointed with the quality."</span><span class="p">:</span> <span class="p">{</span><span class="s">"sentiment"</span><span class="p">:</span> <span class="s">"Negative"</span><span class="p">,</span> <span class="s">"confidence"</span><span class="p">:</span> <span class="mi">90</span><span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+                        <a href="AuroraTaskLibrary/Classes/AnalyzeSentimentTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">AnalyzeSentimentTask</span> <span class="p">:</span> <span class="kt"><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:17AuroraTaskLibrary022AnalyzeTextReadabilityB0C"></a>
+                    <a name="//apple_ref/swift/Class/AnalyzeTextReadabilityTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:17AuroraTaskLibrary022AnalyzeTextReadabilityB0C">AnalyzeTextReadabilityTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>AnalyzeTextReadabilityTask</code> analyzes the readability of input strings using an LLM service.</p>
+
+<ul>
+<li><p><strong>Inputs</strong></p>
+
+<ul>
+<li><code>strings</code>: The list of strings to analyze for readability.</li>
+<li><code>maxTokens</code>: The maximum number of tokens allowed for the LLM response. Defaults to 500.</li>
+</ul></li>
+<li><p><strong>Outputs</strong></p>
+
+<ul>
+<li><code>readabilityScores</code>: A dictionary where keys are the input strings and values are their readability scores (e.g., Flesch–Kincaid grade level, average word length).</li>
+</ul></li>
+</ul>
+<h3 id='use-cases' class='heading'>Use Cases</h3>
+
+<ul>
+<li>Assess the complexity of text content for target audiences.</li>
+<li>Pre-process content to ensure it meets accessibility standards.</li>
+<li>Compare readability metrics across different content pieces.</li>
+</ul>
+
+                        <a href="AuroraTaskLibrary/Classes/AnalyzeTextReadabilityTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">AnalyzeTextReadabilityTask</span> <span class="p">:</span> <span class="kt"><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:17AuroraTaskLibrary017CategorizeStringsB0C"></a>
+                    <a name="//apple_ref/swift/Class/CategorizeStringsTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:17AuroraTaskLibrary017CategorizeStringsB0C">CategorizeStringsTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>CategorizeStringsTask</code> is a versatile task that categorizes strings into predefined or inferred categories using a language model.</p>
+
+<ul>
+<li><p><strong>Inputs</strong></p>
+
+<ul>
+<li><code>strings</code>: The list of strings to categorize. This input represents the content you wish to organize into logical groups or topics.</li>
+<li><code>categories</code>: Optional predefined categories for classification. If provided, the task ensures all strings are grouped into these categories. If not provided, the language model will infer suitable categories based on the content of the strings.</li>
+</ul></li>
+<li><p><strong>Outputs</strong></p>
+
+<ul>
+<li><code>categorizedStrings</code>: A dictionary where keys are the category names, and values are lists of strings belonging to each category. This output provides a structured way to analyze and use the categorized data.</li>
+</ul></li>
+</ul>
+<h3 id='use-cases' class='heading'>Use Cases</h3>
+
+<ul>
+<li><strong>Content Organization</strong>: Automatically group articles, headlines, or other textual content by topic or theme for easier processing.</li>
+<li><strong>Knowledge Management</strong>: Categorize knowledge base entries or customer support tickets for efficient searching and retrieval.</li>
+<li><strong>Data Analysis</strong>: Pre-process datasets by grouping entries into logical categories for downstream tasks like visualization or reporting.</li>
+<li><strong>Dynamic Tagging</strong>: Infer or apply tags/categories to user-generated content in applications like social media or e-commerce platforms.</li>
+<li><strong>Custom Applications</strong>: Useful in workflows where contextual grouping or classification of text is a key step.</li>
+</ul>
+<h3 id='example' class='heading'>Example:</h3>
+
+<p><strong>Input Strings:</strong></p>
+
+<ul>
+<li>&ldquo;Researchers discover a breakthrough in cancer treatment.&rdquo;</li>
+<li>&ldquo;The stock market experienced a significant downturn yesterday.&rdquo;</li>
+</ul>
+
+<p><strong>Output JSON:</strong></p>
+<pre class="highlight swift"><code><span class="p">{</span>
+  <span class="s">"categories"</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s">"Health"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Researchers discover a breakthrough in cancer treatment."</span><span class="p">],</span>
+    <span class="s">"Finance"</span><span class="p">:</span> <span class="p">[</span><span class="s">"The stock market experienced a significant downturn yesterday."</span><span class="p">]</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+<h3 id='notes' class='heading'>Notes</h3>
+
+<p>The task leverages a language model to handle flexible and nuanced categorization needs. When predefined categories are not supplied, the model dynamically determines suitable groupings, making it highly adaptable for unstructured or semi-structured data scenarios.</p>
+
+                        <a href="AuroraTaskLibrary/Classes/CategorizeStringsTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">CategorizeStringsTask</span> <span class="p">:</span> <span class="kt"><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:17AuroraTaskLibrary014ClusterStringsB0C"></a>
+                    <a name="//apple_ref/swift/Class/ClusterStringsTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:17AuroraTaskLibrary014ClusterStringsB0C">ClusterStringsTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>ClusterStringsTask</code> groups strings into clusters based on semantic similarity, without requiring predefined categories.</p>
+
+<ul>
+<li><strong>Inputs</strong>
+
+<ul>
+<li><code>strings</code>: The list of strings to cluster.</li>
+<li><code>maxClusters</code>: Optional maximum number of clusters to create. If not provided, the LLM determines the optimal number dynamically.</li>
+</ul></li>
+<li><strong>Outputs</strong>
+
+<ul>
+<li><code>clusters</code>: A dictionary where keys are cluster IDs or inferred names, and values are lists of strings belonging to each cluster.</li>
+</ul></li>
+</ul>
+<h3 id='use-cases' class='heading'>Use Cases:</h3>
+
+<ul>
+<li><strong>Customer Feedback Analysis</strong>: Grouping customer reviews or feedback to identify trends.</li>
+<li><strong>Content Clustering</strong>: Organizing blog posts, news articles, or research papers into topic-based clusters.</li>
+<li><strong>Unsupervised Data Exploration</strong>: Automatically grouping strings for exploratory analysis when categories are unknown.</li>
+<li><strong>Semantic Deduplication</strong>: Identifying and grouping similar strings to detect duplicates or near-duplicates.</li>
+</ul>
+
+<p>### Example:
+ <strong>Input Strings:</strong></p>
+
+<ul>
+<li>&ldquo;The stock market dropped today.&rdquo;</li>
+<li>&ldquo;AI is transforming software development.&rdquo;</li>
+<li>&ldquo;The S&amp;P 500 index fell by 2%.&rdquo;</li>
+</ul>
+
+<p><strong>Output JSON:</strong></p>
+<pre class="highlight swift"><code> <span class="p">{</span>
+   <span class="s">"Cluster 1"</span><span class="p">:</span> <span class="p">[</span><span class="s">"The stock market dropped today."</span><span class="p">,</span> <span class="s">"The S&amp;P 500 index fell by 2%."</span><span class="p">],</span>
+   <span class="s">"Cluster 2"</span><span class="p">:</span> <span class="p">[</span><span class="s">"AI is transforming software development."</span><span class="p">]</span>
+ <span class="p">}</span>
+</code></pre>
+
+                        <a href="AuroraTaskLibrary/Classes/ClusterStringsTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">ClusterStringsTask</span> <span class="p">:</span> <span class="kt"><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:17AuroraTaskLibrary015DetectLanguagesB0C"></a>
+                    <a name="//apple_ref/swift/Class/DetectLanguagesTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:17AuroraTaskLibrary015DetectLanguagesB0C">DetectLanguagesTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>DetectLanguagesTask</code> identifies the language(s) of the provided strings using an LLM service.</p>
+
+<ul>
+<li><strong>Inputs</strong>
+
+<ul>
+<li><code>strings</code>: An array of strings for which the language needs to be detected.</li>
+<li><code>maxTokens</code>: The maximum number of tokens allowed for the LLM response. Defaults to 500.</li>
+</ul></li>
+<li><strong>Outputs</strong>
+
+<ul>
+<li><code>languages</code>: A dictionary where the keys are the input strings, and the values are the detected language codes (e.g., &ldquo;en&rdquo; for English, &ldquo;fr&rdquo; for French).</li>
+</ul></li>
+</ul>
+
+<p>### Use Cases</p>
+
+<ul>
+<li>Analyze user-generated content to understand the languages used.</li>
+<li>Preprocess multilingual datasets for translation or other tasks.</li>
+<li>Detect and handle language-specific workflows in applications.</li>
+</ul>
+
+<p>### Example:
+ <strong>Input Strings:</strong></p>
+
+<ul>
+<li>&ldquo;Bonjour tout le monde.&rdquo;</li>
+<li>&ldquo;Hello world!&rdquo;</li>
+</ul>
+
+<p><strong>Output JSON:</strong></p>
+<pre class="highlight swift"><code><span class="p">{</span>
+    <span class="err">“</span><span class="n">languages</span><span class="err">”</span><span class="p">:</span> <span class="p">{</span>
+        <span class="err">“</span><span class="kt">Bonjour</span> <span class="n">tout</span> <span class="n">le</span> <span class="n">monde</span><span class="o">.</span><span class="err">”</span><span class="p">:</span> <span class="err">“</span><span class="n">fr</span><span class="err">”</span><span class="p">,</span>
+        <span class="err">“</span><span class="kt">Hello</span> <span class="n">world</span><span class="o">!</span><span class="err">”</span><span class="p">:</span> <span class="err">“</span><span class="n">en</span><span class="err">”</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+                        <a href="AuroraTaskLibrary/Classes/DetectLanguagesTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">DetectLanguagesTask</span> <span class="p">:</span> <span class="kt"><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:17AuroraTaskLibrary015ExtractEntitiesB0C"></a>
+                    <a name="//apple_ref/swift/Class/ExtractEntitiesTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:17AuroraTaskLibrary015ExtractEntitiesB0C">ExtractEntitiesTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>ExtractEntitiesTask</code> extracts named entities from a list of strings using an LLM service.</p>
+
+<ul>
+<li><p><strong>Inputs</strong></p>
+
+<ul>
+<li><code>strings</code>: The array of strings to extract entities from.</li>
+<li><code>entityTypes</code>: An optional array of entity types to extract (e.g., &ldquo;Person&rdquo;, &ldquo;Organization&rdquo;, &ldquo;Location&rdquo;). If not provided, all entity types will be extracted.</li>
+<li><code>maxTokens</code>: The maximum number of tokens allowed for the LLM response. Defaults to 500.</li>
+</ul></li>
+<li><p><strong>Outputs</strong></p>
+
+<ul>
+<li><code>entities</code>: A dictionary where keys are the entity types and values are arrays of the extracted entities.</li>
+</ul></li>
+</ul>
+
+<p>### Use Cases:</p>
+
+<ul>
+<li>Extract names, dates, and other entities from user-generated content for analytics or reporting.</li>
+<li>Enhance search capabilities by tagging documents with extracted entities.</li>
+<li>Build knowledge graphs or enrich datasets with structured information.</li>
+</ul>
+
+<p>### Example:
+ <strong>Input Strings:</strong></p>
+
+<ul>
+<li>&ldquo;Sam Altman is the CEO of OpenAI.&rdquo;</li>
+<li>&ldquo;Apple is headquartered in Cupertino, California.&rdquo;</li>
+</ul>
+
+<p><strong>Output JSON:</strong></p>
+<pre class="highlight swift"><code><span class="p">{</span>
+    <span class="err">“</span><span class="n">entities</span><span class="err">”</span><span class="p">:</span> <span class="p">{</span>
+        <span class="err">“</span><span class="kt">Person</span><span class="err">”</span><span class="p">:</span> <span class="p">[</span><span class="err">“</span><span class="kt">Sam</span> <span class="kt">Altman</span><span class="err">”</span><span class="p">],</span>
+        <span class="err">“</span><span class="kt">Organization</span><span class="err">”</span><span class="p">:</span> <span class="p">[</span><span class="err">“</span><span class="kt">OpenAI</span><span class="err">”</span><span class="p">,</span> <span class="err">“</span><span class="kt">Apple</span><span class="err">”</span><span class="p">],</span>
+        <span class="err">“</span><span class="kt">Location</span><span class="err">”</span><span class="p">:</span> <span class="p">[</span><span class="err">“</span><span class="kt">Cupertino</span><span class="p">,</span> <span class="kt">California</span><span class="err">”</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+                        <a href="AuroraTaskLibrary/Classes/ExtractEntitiesTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">ExtractEntitiesTask</span> <span class="p">:</span> <span class="kt"><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:17AuroraTaskLibrary016ExtractRelationsB0C"></a>
+                    <a name="//apple_ref/swift/Class/ExtractRelationsTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:17AuroraTaskLibrary016ExtractRelationsB0C">ExtractRelationsTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>ExtractRelationsTask</code> extracts relationships between entities mentioned in the input strings.</p>
+
+<ul>
+<li><p><strong>Inputs</strong></p>
+
+<ul>
+<li><code>strings</code>: The list of strings to analyze for relationships.</li>
+<li><code>relationTypes</code>: Optional predefined types of relationships to extract (e.g., &ldquo;works_at&rdquo;, &ldquo;located_in&rdquo;).</li>
+<li><code>maxTokens</code>: The maximum number of tokens allowed for the LLM response. Defaults to 500.</li>
+</ul></li>
+<li><p><strong>Outputs</strong></p>
+
+<ul>
+<li><code>relations</code>: A dictionary where keys are relationship types and values are arrays of tuples representing the entities involved in the relationship.</li>
+</ul></li>
+</ul>
+
+<p>### Use Cases:</p>
+
+<ul>
+<li>Extract organizational structures, geographical locations, or professional roles from text.</li>
+<li>Analyze structured relationships in unstructured data.</li>
+<li>Create knowledge graphs for downstream tasks.</li>
+</ul>
+
+<p>### Example:
+ <strong>Input Strings:</strong></p>
+
+<ul>
+<li>&ldquo;Sam Altman is the CEO of OpenAI, headquartered in San Francisco.&rdquo;</li>
+<li>&ldquo;Elon Musk founded SpaceX and Tesla.&rdquo;</li>
+</ul>
+
+<p><strong>Output JSON:</strong></p>
+
+<p>{
+“relations”: {
+“works_at”: [[“Sam Altman”, “OpenAI”]],
+“located_in”: [[“OpenAI”, “San Francisco”]],
+“founded”: [[“Elon Musk”, “SpaceX”], [“Elon Musk”, “Tesla”]]
+}
+}</p>
+
+                        <a href="AuroraTaskLibrary/Classes/ExtractRelationsTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">ExtractRelationsTask</span> <span class="p">:</span> <span class="kt"><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:17AuroraTaskLibrary016GenerateKeywordsB0C"></a>
+                    <a name="//apple_ref/swift/Class/GenerateKeywordsTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:17AuroraTaskLibrary016GenerateKeywordsB0C">GenerateKeywordsTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>GenerateKeywordsTask</code> extracts and optionally categorizes keywords from a list of strings using an LLM service.</p>
+
+<ul>
+<li><strong>Inputs</strong>
+
+<ul>
+<li><code>strings</code>: The list of strings to extract keywords from.</li>
+<li><code>maxKeywords</code>: Maximum number of keywords to generate per string. Defaults to <code>5</code>.</li>
+<li><code>categories</code>: Optional predefined categories for grouping keywords. If provided, keywords will be grouped under these categories.</li>
+</ul></li>
+<li><strong>Outputs</strong>
+
+<ul>
+<li><code>keywords</code>: A dictionary where keys are input strings and values are arrays of generated keywords.</li>
+<li><code>categorizedKeywords</code>: A dictionary of categories mapping to their associated keywords (if categories are provided).</li>
+</ul></li>
+</ul>
+<h3 id='use-cases' class='heading'>Use Cases:</h3>
+
+<ul>
+<li>Summarize the main topics or themes of articles, blogs, or reports.</li>
+<li>Organize keywords into logical categories for better interpretation.</li>
+<li>Extract key terms from user feedback or reviews for data analysis.</li>
+</ul>
+
+                        <a href="AuroraTaskLibrary/Classes/GenerateKeywordsTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">GenerateKeywordsTask</span> <span class="p">:</span> <span class="kt"><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:17AuroraTaskLibrary014GenerateTitlesB0C"></a>
+                    <a name="//apple_ref/swift/Class/GenerateTitlesTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:17AuroraTaskLibrary014GenerateTitlesB0C">GenerateTitlesTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>GenerateTitlesTask</code> generates succinct and informative titles for a given list of strings using an LLM service.</p>
+
+<ul>
+<li><strong>Inputs</strong>
+
+<ul>
+<li><code>strings</code>: The list of strings to generate titles for.</li>
+<li><code>languages</code>: An optional array of languages (ISO 639-1 format) for the generated titles. Defaults to English if not provided.</li>
+<li><code>maxTokens</code>: Maximum tokens for the LLM response. Defaults to <code>100</code>.</li>
+</ul></li>
+<li><strong>Outputs</strong>
+
+<ul>
+<li><code>titles</code>: A dictionary where keys are the original strings and values are dictionaries of generated titles keyed by language.</li>
+</ul></li>
+</ul>
+<h3 id='use-cases' class='heading'>Use Cases</h3>
+
+<ul>
+<li>Generate multilingual headlines for articles, blog posts, or content summaries.</li>
+<li>Suggest titles for user-generated content or creative works in different locales.</li>
+<li>Simplify and condense complex information into concise titles.</li>
+</ul>
+
+                        <a href="AuroraTaskLibrary/Classes/GenerateTitlesTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">GenerateTitlesTask</span> <span class="p">:</span> <span class="kt"><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -387,6 +999,81 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:17AuroraTaskLibrary016TranslateStringsB0C"></a>
+                    <a name="//apple_ref/swift/Class/TranslateStringsTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:17AuroraTaskLibrary016TranslateStringsB0C">TranslateStringsTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>TranslateStringsTask</code> translates a list of strings into a specified target language using an LLM service.</p>
+
+<ul>
+<li><strong>Inputs</strong>
+
+<ul>
+<li><code>strings</code>: The list of strings to translate.</li>
+<li><code>targetLanguage</code>: The target language for the translation (e.g., &ldquo;fr&rdquo; for French, &ldquo;es&rdquo; for Spanish).</li>
+<li><code>sourceLanguage</code>: The source language of the strings (optional). Defaults to <code>nil</code> (infers the language if not provided).</li>
+<li><code>maxTokens</code>: The maximum number of tokens to generate in the response. Defaults to <code>500</code>.</li>
+</ul></li>
+<li><strong>Outputs</strong>
+
+<ul>
+<li><code>translations</code>: A dictionary where keys are the original strings and values are the translated strings.</li>
+</ul></li>
+</ul>
+
+<p>### Use Cases</p>
+
+<ul>
+<li>Translate user-generated content into a standard language for consistency in applications.</li>
+<li>Provide multi-language support for articles, reviews, or other content.</li>
+<li>Enable real-time translation of chat messages in global communication tools.</li>
+</ul>
+
+<p>### Example:
+ <strong>Input Strings:</strong></p>
+
+<ul>
+<li>&ldquo;Hello, how are you?&rdquo;</li>
+<li>&ldquo;This is an example sentence.&rdquo;</li>
+</ul>
+
+<p><strong>Target Language:</strong></p>
+
+<ul>
+<li>French</li>
+</ul>
+
+<p><strong>Output JSON:</strong></p>
+<pre class="highlight swift"><code><span class="p">{</span>
+    <span class="err">“</span><span class="n">translations</span><span class="err">”</span><span class="p">:</span> <span class="p">{</span>
+        <span class="err">“</span><span class="kt">Hello</span><span class="p">,</span> <span class="n">how</span> <span class="n">are</span> <span class="n">you</span><span class="p">?</span><span class="err">”</span><span class="p">:</span> <span class="err">“</span><span class="kt">Bonjour</span><span class="p">,</span> <span class="n">comment</span> <span class="n">ça</span> <span class="n">va</span><span class="p">?</span><span class="err">”</span><span class="p">,</span>
+        <span class="err">“</span><span class="kt">This</span> <span class="k">is</span> <span class="n">an</span> <span class="n">example</span> <span class="n">sentence</span><span class="o">.</span><span class="err">”</span><span class="p">:</span> <span class="err">“</span><span class="kt">Ceci</span> <span class="n">est</span> <span class="n">une</span> <span class="n">phrase</span> <span class="n">d</span><span class="err">’</span><span class="n">exemple</span><span class="o">.</span><span class="err">”</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+                        <a href="AuroraTaskLibrary/Classes/TranslateStringsTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">TranslateStringsTask</span> <span class="p">:</span> <span class="kt"><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:17AuroraTaskLibrary08TrimmingB0C"></a>
                     <a name="//apple_ref/swift/Class/TrimmingTask" class="dashAnchor"></a>
                     <a class="token" href="#/s:17AuroraTaskLibrary08TrimmingB0C">TrimmingTask</a>
@@ -444,6 +1131,7 @@
 
 <ul>
 <li><code>url</code>: The string for the <code>URL</code> to fetch.</li>
+<li><code>headers</code>: An optional dictionary of headers to include in the request.</li>
 </ul></li>
 <li><strong>Outputs</strong>
 
@@ -462,6 +1150,79 @@ fetching JSON, or reading RSS feeds.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">FetchURLTask</span> <span class="p">:</span> <span class="kt"><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:17AuroraTaskLibrary11JSONElementO"></a>
+                    <a name="//apple_ref/swift/Enum/JSONElement" class="dashAnchor"></a>
+                    <a class="token" href="#/s:17AuroraTaskLibrary11JSONElementO">JSONElement</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A representation of a JSON element for structured JSON parsing.</p>
+
+<p>This enum can represent any JSON structure, including objects, arrays, strings, numbers, booleans, and null values.</p>
+
+                        <a href="AuroraTaskLibrary/Enums/JSONElement.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">JSONElement</span> <span class="p">:</span> <span class="kt">Equatable</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:17AuroraTaskLibrary011JSONParsingB0C"></a>
+                    <a name="//apple_ref/swift/Class/JSONParsingTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:17AuroraTaskLibrary011JSONParsingB0C">JSONParsingTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>JSONParsingTask</code> parses a JSON blob and extracts its nested structure into a <code><a href="AuroraTaskLibrary/Enums/JSONElement.html">JSONElement</a></code>.</p>
+
+<ul>
+<li><strong>Inputs</strong>
+
+<ul>
+<li><code>jsonData</code>: The data of the JSON to parse.</li>
+</ul></li>
+<li><strong>Outputs</strong>
+
+<ul>
+<li><code>parsedJSON</code>: The root <code><a href="AuroraTaskLibrary/Enums/JSONElement.html">JSONElement</a></code> containing the parsed details.</li>
+</ul></li>
+</ul>
+
+<p>This task is general-purpose and can handle any JSON structure.</p>
+
+                        <a href="AuroraTaskLibrary/Classes/JSONParsingTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">JSONParsingTask</span> <span class="p">:</span> <span class="kt"><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
 
                         </div>
                       </div>
@@ -544,7 +1305,7 @@ fetching JSON, or reading RSS feeds.</p>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2024 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2024-12-24)</p>
+          <p>&copy; 2025 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2025-01-20)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
