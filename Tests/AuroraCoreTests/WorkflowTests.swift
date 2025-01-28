@@ -81,7 +81,8 @@ final class WorkflowTests: XCTestCase {
         var executableWorkflow = workflow
         await executableWorkflow.start()
 
-        XCTAssertEqual(executableWorkflow.state, .completed, "Workflow should complete successfully.")
+        let state = await executableWorkflow.state
+        XCTAssertEqual(state, .completed, "Workflow should complete successfully.")
     }
 
     func testWorkflowExecutionWithTaskGroupSequential() async throws {
@@ -101,7 +102,8 @@ final class WorkflowTests: XCTestCase {
         var executableWorkflow = workflow
         await executableWorkflow.start()
 
-        XCTAssertEqual(executableWorkflow.state, .completed, "Workflow should complete successfully.")
+        let state = await executableWorkflow.state
+        XCTAssertEqual(state, .completed, "Workflow should complete successfully.")
     }
 
     func testWorkflowExecutionWithTaskGroupParallel() async throws {
@@ -122,7 +124,8 @@ final class WorkflowTests: XCTestCase {
         var executableWorkflow = workflow
         await executableWorkflow.start()
 
-        XCTAssertEqual(executableWorkflow.state, .completed, "Workflow should complete successfully.")
+        let state = await executableWorkflow.state
+        XCTAssertEqual(state, .completed, "Workflow should complete successfully.")
     }
 
     func testWorkflowExecutionFailure() async throws {
@@ -136,7 +139,8 @@ final class WorkflowTests: XCTestCase {
         var executableWorkflow = workflow
         await executableWorkflow.start()
 
-        XCTAssertEqual(executableWorkflow.state, .failed, "Workflow should fail if a task throws an error.")
+        let state = await executableWorkflow.state
+        XCTAssertEqual(state, .failed, "Workflow should fail if a task throws an error.")
     }
 
     func testTaskGroupSequentialFailure() async throws {
@@ -160,7 +164,8 @@ final class WorkflowTests: XCTestCase {
         var executableWorkflow = workflow
         await executableWorkflow.start()
 
-        XCTAssertEqual(executableWorkflow.state, .failed, "Workflow should fail if a task in a sequential group throws an error.")
+        let state = await executableWorkflow.state
+        XCTAssertEqual(state, .failed, "Workflow should fail if a task in a sequential group throws an error.")
     }
 
     func testTaskGroupParallelFailure() async throws {
@@ -182,6 +187,111 @@ final class WorkflowTests: XCTestCase {
         var executableWorkflow = workflow
         await executableWorkflow.start()
 
-        XCTAssertEqual(executableWorkflow.state, .failed, "Workflow should fail if a task in a parallel group throws an error.")
+        let state = await executableWorkflow.state
+        XCTAssertEqual(state, .failed, "Workflow should fail if a task in a parallel group throws an error.")
+    }
+
+    func testWorkflowCancelation() async throws {
+        let workflow = Workflow(name: "Cancelable Workflow", description: "Workflow that can be canceled.") {
+            Workflow.Task(name: "Task 1") { _ in
+                print("Executing Task 1")
+                try await Task.sleep(nanoseconds: 5_000_000_000) // Simulate a 5s delay
+                return ["result": "Task 1 complete"]
+            }
+            Workflow.Task(name: "Task 2") { _ in
+                XCTFail("Task 2 should not execute after cancelation.")
+                return [:]
+            }
+        }
+
+        var cancelableWorkflow = workflow
+
+        Task {
+            try await Task.sleep(nanoseconds: 1_000_000_000) // Simulate a delay before canceling
+            print("Canceling workflow...")
+            await cancelableWorkflow.cancel()
+        }
+
+        await cancelableWorkflow.start()
+
+        let state = await cancelableWorkflow.state
+        XCTAssertEqual(state, .canceled, "Workflow should be in the canceled state.")
+    }
+
+    func testWorkflowPauseAndResume() async throws {
+        let workflow = Workflow(name: "Pausable Workflow", description: "Workflow that can be paused and resumed.") {
+            Workflow.Task(name: "Task 1") { _ in
+                print("Executing Task 1")
+                try await Task.sleep(nanoseconds: 500_000_000) // Simulate delay
+                return ["result": "Task 1 complete"]
+            }
+            Workflow.Task(name: "Task 2") { _ in
+                print("Executing Task 2")
+                return ["result": "Task 2 complete"]
+            }
+        }
+
+        var pausableWorkflow = workflow
+        Task {
+            try await Task.sleep(nanoseconds: 300_000_000) // Pause after 300ms
+            await pausableWorkflow.pause()
+            try await Task.sleep(nanoseconds: 700_000_000) // Resume after an additional 700ms
+            await pausableWorkflow.resume()
+        }
+
+        await pausableWorkflow.start()
+
+        let state = await pausableWorkflow.state
+        XCTAssertEqual(state, .completed, "Workflow should complete successfully after pausing and resuming.")
+    }
+
+    func testCancelWhilePaused() async throws {
+        let workflow = Workflow(name: "Pause and Cancel Workflow", description: "Workflow that is paused and then canceled.") {
+            Workflow.Task(name: "Task 1") { _ in
+                print("Executing Task 1")
+                try await Task.sleep(nanoseconds: 1_000_000_000) // Simulate delay
+                return ["result": "Task 1 complete"]
+            }
+            Workflow.Task(name: "Task 2") { _ in
+                XCTFail("Task 2 should not execute after cancelation.")
+                return [:]
+            }
+        }
+
+        var workflowInstance = workflow
+        Task {
+            try await Task.sleep(nanoseconds: 500_000_000) // Pause after 500ms
+            await workflowInstance.pause()
+            try await Task.sleep(nanoseconds: 500_000_000) // Cancel while paused
+            await workflowInstance.cancel()
+        }
+
+        await workflowInstance.start()
+
+        let state = await workflowInstance.state
+        XCTAssertEqual(state, .canceled, "Workflow should be in the canceled state.")
+    }
+
+    func testWorkflowTaskTimeout() async throws {
+        let workflow = Workflow(name: "Timeout Workflow", description: "Workflow with a task timeout.") {
+            Workflow.Task(name: "Long Task") { _ in
+                print("Executing Long Task")
+                try await Task.sleep(nanoseconds: 3_000_000_000) // Simulate a 3s delay
+                return ["result": "Long Task complete"]
+            }
+        }
+
+        var timeoutWorkflow = workflow
+        let timeoutDuration: UInt64 = 1_000_000_000 // 1 second
+
+        Task {
+            try await Task.sleep(nanoseconds: timeoutDuration)
+            await timeoutWorkflow.cancel()
+        }
+
+        await timeoutWorkflow.start()
+
+        let state = await timeoutWorkflow.state
+        XCTAssertEqual(state, .canceled, "Workflow should be in the canceled state due to timeout.")
     }
 }

@@ -61,3 +61,13 @@ print("--------------------\n")
 
 print("TV Script Workflow Example:\n")
 await TVScriptWorkflowExample().execute()
+
+print("--------------------\n")
+
+print("Translate Text Workflow Example:\n")
+await LeMondeTranslationWorkflow().execute()
+
+print("--------------------\n")
+
+print("Translate Text Workflow Example:\n")
+await CustomerFeedbackAnalysisWorkflow().execute()
