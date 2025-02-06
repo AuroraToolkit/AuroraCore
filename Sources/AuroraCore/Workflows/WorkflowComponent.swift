@@ -19,6 +19,16 @@ public protocol WorkflowComponent {
 }
 
 /**
+    Allow `Workflow.Component` to conform to `WorkflowComponent` to simplify the conversion process.
+    This allows components to be defined outside of `Workflow` and `Workflow.TaskGroup` and still be used in workflows.
+ */
+extension Workflow.Component: WorkflowComponent {
+    public func toComponent() -> Workflow.Component {
+        return self
+    }
+}
+
+/**
  A type-erased wrapper for any `WorkflowComponent`.
 
  `AnyWorkflowComponent` allows developers to include heterogeneous workflow components in a unified structure.
