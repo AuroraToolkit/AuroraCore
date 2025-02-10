@@ -11,8 +11,8 @@ import Foundation
     A simple timer for measuring the execution time of code blocks.
  */
 public class ExecutionTimer {
-    private var startTime: Date?
-    private var endTime: Date?
+    private(set) var startTime: Date?
+    private(set) var endTime: Date?
 
     /**
      Starts the timer and returns self for chaining.

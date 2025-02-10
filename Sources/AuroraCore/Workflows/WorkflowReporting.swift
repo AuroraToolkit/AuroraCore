@@ -22,7 +22,7 @@ public struct WorkflowComponentReport {
     public let executionTime: TimeInterval? // in seconds
     public let outputs: [String: Any]?
     public let childReports: [WorkflowComponentReport]?
-    public let error: String?
+    public let error: Error?
 
     public init(
         id: UUID,
@@ -32,7 +32,7 @@ public struct WorkflowComponentReport {
         executionTime: TimeInterval? = nil,
         outputs: [String: Any]? = nil,
         childReports: [WorkflowComponentReport]? = nil,
-        error: String? = nil
+        error: Error? = nil
     ) {
         self.id = id
         self.name = name
@@ -56,32 +56,58 @@ public protocol WorkflowReportable {
 
 extension Workflow.Task: WorkflowReportable {
     public func generateReport() -> WorkflowComponentReport {
-        // Note: Replace placeholder values with actual recorded metrics as needed.
-        return WorkflowComponentReport(
-            id: self.id,
-            name: self.name,
-            description: self.description,
-            state: .notStarted, // placeholder; update this as execution progresses
-            executionTime: nil,
-            outputs: nil,
-            error: nil
-        )
+        if let details = self.detailsHolder.details {
+            return WorkflowComponentReport(
+                id: self.id,
+                name: self.name,
+                description: self.description,
+                state: details.state,
+                executionTime: details.executionTime,
+                outputs: details.outputs,
+                childReports: nil,
+                error: details.error
+            )
+        } else {
+            return WorkflowComponentReport(
+                id: self.id,
+                name: self.name,
+                description: self.description,
+                state: .notStarted,
+                executionTime: nil,
+                outputs: nil,
+                childReports: nil,
+                error: nil
+            )
+        }
     }
 }
 
 extension Workflow.TaskGroup: WorkflowReportable {
     public func generateReport() -> WorkflowComponentReport {
         let childReports = self.tasks.map { $0.generateReport() }
-        return WorkflowComponentReport(
-            id: self.id,
-            name: self.name,
-            description: self.description,
-            state: .notStarted, // placeholder; update this as execution progresses
-            executionTime: nil,
-            outputs: nil,
-            childReports: childReports,
-            error: nil
-        )
+        if let details = self.detailsHolder.details {
+            return WorkflowComponentReport(
+                id: self.id,
+                name: self.name,
+                description: self.description,
+                state: details.state,
+                executionTime: details.executionTime,
+                outputs: details.outputs,
+                childReports: childReports,
+                error: details.error
+            )
+        } else {
+            return WorkflowComponentReport(
+                id: self.id,
+                name: self.name,
+                description: self.description,
+                state: .notStarted,
+                executionTime: nil,
+                outputs: nil,
+                childReports: childReports,
+                error: nil
+            )
+        }
     }
 }
 
@@ -112,8 +138,8 @@ public struct WorkflowReport {
     public let executionTime: TimeInterval? // in seconds
     public let outputs: [String: Any]?
     public let componentReports: [WorkflowComponentReport]
-    public let error: String?
-    
+    public let error: Error?
+
     public init(
         id: UUID,
         name: String,
@@ -122,7 +148,7 @@ public struct WorkflowReport {
         executionTime: TimeInterval? = nil,
         outputs: [String: Any]? = nil,
         componentReports: [WorkflowComponentReport] = [],
-        error: String? = nil
+        error: Error? = nil
     ) {
         self.id = id
         self.name = name
@@ -141,12 +167,13 @@ extension Workflow {
     /// Generates an overall report for the workflow.
     public func generateReport() async -> WorkflowReport {
         let componentReports = components.map { $0.report }
+        let executionTime = components.reduce(0.0) { $0 + $1.executionTime }
         return WorkflowReport(
             id: self.id,
             name: self.name,
             description: self.description,
             state: await self.state,
-            executionTime: nil, // Replace with actual total execution time if tracked
+            executionTime: executionTime,
             outputs: self.outputs,
             componentReports: componentReports,
             error: nil // Update with error info if applicable

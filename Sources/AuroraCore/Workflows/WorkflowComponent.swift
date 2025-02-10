@@ -56,3 +56,48 @@ public struct AnyWorkflowComponent: WorkflowComponent {
         _toComponent()
     }
 }
+
+/**
+    Extensions to simplify the retrieval of execution details from a `Workflow.Component`.
+ */
+extension Workflow.Component {
+    /// Returns the total execution time of the component.
+    var executionTime: TimeInterval {
+        switch self {
+        case .task(let task):
+            return task.detailsHolder.details?.executionTime ?? 0
+        case .taskGroup(let group):
+            return group.detailsHolder.details?.executionTime ?? 0
+        }
+    }
+
+    /// Returns the current or final state of the component.
+    var state: Workflow.State {
+        switch self {
+        case .task(let task):
+            return task.detailsHolder.details?.state ?? .notStarted
+        case .taskGroup(let group):
+            return group.detailsHolder.details?.state ?? .notStarted
+        }
+    }
+
+    /// Returns the outputs of the component
+    var outputs: [String: Any] {
+        switch self {
+        case .task(let task):
+            return task.detailsHolder.details?.outputs ?? [:]
+        case .taskGroup(let group):
+            return group.detailsHolder.details?.outputs ?? [:]
+        }
+    }
+
+    /// Returns the error that occurred during execution, if any.
+    var error: Error? {
+        switch self {
+        case .task(let task):
+            return task.detailsHolder.details?.error
+        case .taskGroup(let group):
+            return group.detailsHolder.details?.error
+        }
+    }
+}

@@ -270,7 +270,17 @@ public struct Workflow {
 
         timer.stop()
 
-        logger.debug("Task \(task.name) completed in \(String(format: "%.2f", timer.duration ?? 0)) seconds.", category: "Workflow")
+        // Update the execution details of the task
+        let duration = timer.duration ?? 0
+        let executionDetails = ExecutionDetails(
+            state: .completed,
+            startedAt: timer.startTime,
+            endedAt: timer.endTime,
+            executionTime: duration,
+            outputs: outputs)
+        task.updateExecutionDetails(executionDetails)
+
+        logger.debug("Task \(task.name) completed in \(String(format: "%.2f", duration)) seconds.", category: "Workflow")
 
         return outputs
     }
@@ -322,7 +332,17 @@ public struct Workflow {
 
         timer.stop()
 
-        logger.debug("Task group \(group.name) completed in \(String(format: "%.2f", timer.duration ?? 0)) seconds.", category: "Workflow")
+        // Update the execution details of the task
+        let duration = timer.duration ?? 0
+        let executionDetails = ExecutionDetails(
+            state: .completed,
+            startedAt: timer.startTime,
+            endedAt: timer.endTime,
+            executionTime: duration,
+            outputs: groupOutputs)
+        group.updateExecutionDetails(executionDetails)
+
+        logger.debug("Task group \(group.name) completed in \(String(format: "%.2f", duration)) seconds.", category: "Workflow")
 
         return groupOutputs
     }
@@ -351,6 +371,51 @@ public struct Workflow {
         case taskGroup(TaskGroup)
     }
 
+    // MARK: - Execution Details
+
+    /**
+        Represents the details of a workflow or task execution, used for logging and reporting.
+     */
+    public struct ExecutionDetails {
+        /// The state of the workflow or task after execution.
+        public let state: Workflow.State
+
+        /// The time when the workflow or task started execution.
+        public let startedAt: Date?
+
+        /// The time when the workflow or task ended execution.
+        public let endedAt: Date?
+
+        /// The time taken to execute the workflow or task in seconds.
+        public let executionTime: TimeInterval
+
+        /// The outputs produced by the workflow or task.
+        public let outputs: [String: Any]
+
+        /// An error that occurred during execution, if any.
+        public let error: Error?
+
+        public init(state: Workflow.State, startedAt: Date?, endedAt: Date?, executionTime: TimeInterval, outputs: [String: Any], error: Error? = nil) {
+            self.state = state
+            self.startedAt = startedAt
+            self.endedAt = endedAt
+            self.executionTime = executionTime
+            self.outputs = outputs
+            self.error = error
+        }
+    }
+
+    /**
+        A holder for the execution details of a workflow, task, or task group, used to mutate details after execution.
+     */
+    public final class ExecutionDetailsHolder {
+        public var details: ExecutionDetails?
+
+        public init(details: ExecutionDetails? = nil) {
+            self.details = details
+        }
+    }
+
     // MARK: - Task
 
     /**
@@ -374,6 +439,9 @@ public struct Workflow {
 
         /// A closure representing the work to be performed by the task.
         public let executeBlock: (([String: Any]) async throws -> [String: Any])?
+
+        /// Holds the execution details of the task.
+        public let detailsHolder = ExecutionDetailsHolder()
 
         /**
          Initializes a new task.
@@ -419,6 +487,17 @@ public struct Workflow {
             }
         }
 
+        /**
+            Updates the execution details of the task.
+
+            - Parameter details: The updated execution details.
+
+            This method allows the workflow to update the task details after execution.
+         */
+        public func updateExecutionDetails(_ details: ExecutionDetails) {
+            detailsHolder.details = details
+        }
+
         /// Converts this task into a `Workflow.Component`.
         public func toComponent() -> Workflow.Component {
             .task(self)
@@ -455,6 +534,10 @@ public struct Workflow {
             case parallel
         }
 
+        /// Holds the execution details of the task group.
+        public let detailsHolder = ExecutionDetailsHolder()
+
+
         /**
          Initializes a new task group.
 
@@ -474,6 +557,17 @@ public struct Workflow {
                 }
                 return nil
             }
+        }
+
+        /**
+            Updates the execution details of the task group.
+
+            - Parameter details: The updated execution details.
+
+            This method allows the workflow to update the task group details after execution.
+         */
+        public func updateExecutionDetails(_ details: ExecutionDetails) {
+            detailsHolder.details = details
         }
 
         /// Converts this task group into a `Workflow.Component`.
