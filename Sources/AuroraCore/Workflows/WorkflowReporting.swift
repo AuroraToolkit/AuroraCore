@@ -18,6 +18,7 @@ public struct WorkflowComponentReport {
     public let id: UUID
     public let name: String
     public let description: String
+    public let type: String
     public let state: Workflow.State
     public let executionTime: TimeInterval? // in seconds
     public let outputs: [String: Any]?
@@ -28,6 +29,7 @@ public struct WorkflowComponentReport {
         id: UUID,
         name: String,
         description: String,
+        type: String,
         state: Workflow.State,
         executionTime: TimeInterval? = nil,
         outputs: [String: Any]? = nil,
@@ -37,6 +39,7 @@ public struct WorkflowComponentReport {
         self.id = id
         self.name = name
         self.description = description
+        self.type = type
         self.state = state
         self.executionTime = executionTime
         self.outputs = outputs
@@ -61,6 +64,7 @@ extension Workflow.Task: WorkflowReportable {
                 id: self.id,
                 name: self.name,
                 description: self.description,
+                type: "Task",
                 state: details.state,
                 executionTime: details.executionTime,
                 outputs: details.outputs,
@@ -72,6 +76,7 @@ extension Workflow.Task: WorkflowReportable {
                 id: self.id,
                 name: self.name,
                 description: self.description,
+                type: "Task",
                 state: .notStarted,
                 executionTime: nil,
                 outputs: nil,
@@ -90,6 +95,7 @@ extension Workflow.TaskGroup: WorkflowReportable {
                 id: self.id,
                 name: self.name,
                 description: self.description,
+                type: "TaskGroup",
                 state: details.state,
                 executionTime: details.executionTime,
                 outputs: details.outputs,
@@ -101,6 +107,7 @@ extension Workflow.TaskGroup: WorkflowReportable {
                 id: self.id,
                 name: self.name,
                 description: self.description,
+                type: "TaskGroup",
                 state: .notStarted,
                 executionTime: nil,
                 outputs: nil,
@@ -178,5 +185,81 @@ extension Workflow {
             componentReports: componentReports,
             error: nil // Update with error info if applicable
         )
+    }
+}
+
+// MARK: - Report Printing Extensions
+
+extension WorkflowComponentReport {
+
+    /**
+    Returns a formatted string representation of the report.
+
+    - Parameters:
+        - compact: When true, prints child reports in a condensed format.
+        - showOutputs: When true, includes the outputs in the report.
+        - indent: A string to prepend to each line (for nested reports).
+     */
+    public func printedReport(compact: Bool = false, showOutputs: Bool = true, indent: String = "") -> String {
+        var output = ""
+        output += "\(indent)Type: \(type)\n" // NEW
+        output += "\(indent)ID: \(id)\n"
+        output += "\(indent)Name: \(name)\n"
+        output += "\(indent)Description: \(description)\n"
+        output += "\(indent)State: \(state)\n"
+        if let execTime = executionTime {
+            output += "\(indent)Execution Time: \(String(format: "%.2f", execTime)) sec\n"
+        }
+        if showOutputs, let outs = outputs, !outs.isEmpty {
+            output += "\(indent)Outputs: \(outs)\n"
+        }
+        if let error = error {
+            output += "\(indent)Error: \(error.localizedDescription)\n"
+        }
+        if let children = childReports, !children.isEmpty {
+            output += "\(indent)Child Reports:\n"
+            for child in children {
+                if compact {
+                    output += "\(indent)  - \(child.name) (\(child.state))\n"
+                } else {
+                    output += child.printedReport(compact: false, showOutputs: showOutputs, indent: indent + "   ") + "\n"
+                }
+            }
+        }
+        return output
+    }
+}
+
+extension WorkflowReport {
+
+    /**
+    Returns a formatted string representation of the overall workflow report.
+
+    - Parameters:
+        - compact: When true, child components are printed in a condensed format.
+        - showOutputs: When true, includes the outputs in the report.
+     */
+    public func printedReport(compact: Bool = false, showOutputs: Bool = true) -> String {
+        var output = "Workflow Report:\n"
+        output += "ID: \(id)\n"
+        output += "Name: \(name)\n"
+        output += "Description: \(description)\n"
+        output += "State: \(state)\n"
+        if let execTime = executionTime {
+            output += "Total Execution Time: \(String(format: "%.2f", execTime)) sec\n"
+        }
+        if showOutputs, let outs = outputs, !outs.isEmpty {
+            output += "Workflow Outputs: \(outs)\n"
+        }
+        if let error = error {
+            output += "Workflow Error: \(error.localizedDescription)\n"
+        }
+        if !componentReports.isEmpty {
+            output += "Component Reports:\n"
+            for component in componentReports {
+                output += component.printedReport(compact: compact, showOutputs: showOutputs, indent: "   ") + "\n"
+            }
+        }
+        return output
     }
 }

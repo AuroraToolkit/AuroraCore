@@ -208,5 +208,11 @@ struct CustomerFeedbackAnalysisWorkflow {
         } else {
             print("No suggestions generated.")
         }
+
+
+        print("\n-------\n")
+
+        let report = await workflow.generateReport()
+        print(report.printedReport(compact: true, showOutputs: false))
     }
 }

@@ -99,6 +99,11 @@ struct TVScriptWorkflowExample {
 
         print("Workflow completed successfully.")
         print("TV script generated:\n\(workflow.outputs["GenerateTVScript.tvScript"] as? String ?? "No script generated.")")
+
+        print("\n-------\n")
+
+        let report = await workflow.generateReport()
+        print(report.printedReport(compact: true, showOutputs: false))
     }
 
     private func generateScriptFrom(_ summaries: [String], llmService: LLMServiceProtocol) async throws -> String? {
