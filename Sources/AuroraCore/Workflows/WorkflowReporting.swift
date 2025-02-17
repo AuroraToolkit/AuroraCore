@@ -118,6 +118,66 @@ extension Workflow.TaskGroup: WorkflowReportable {
     }
 }
 
+extension Workflow.Logic: WorkflowReportable {
+    public func generateReport() -> WorkflowComponentReport {
+        if let details = self.detailsHolder.details {
+            return WorkflowComponentReport(
+                id: self.id,
+                name: self.name,
+                description: self.description,
+                type: "Logic",
+                state: details.state,
+                executionTime: details.executionTime,
+                outputs: details.outputs,
+                childReports: nil,
+                error: details.error
+            )
+        } else {
+            return WorkflowComponentReport(
+                id: self.id,
+                name: self.name,
+                description: self.description,
+                type: "Logic",
+                state: .notStarted,
+                executionTime: nil,
+                outputs: nil,
+                childReports: nil,
+                error: nil
+            )
+        }
+    }
+}
+
+extension Workflow.Trigger: WorkflowReportable {
+    public func generateReport() -> WorkflowComponentReport {
+        if let details = self.detailsHolder.details {
+            return WorkflowComponentReport(
+                id: self.id,
+                name: self.name,
+                description: self.description,
+                type: "Trigger",
+                state: details.state,
+                executionTime: details.executionTime,
+                outputs: details.outputs,
+                childReports: nil,
+                error: details.error
+            )
+        } else {
+            return WorkflowComponentReport(
+                id: self.id,
+                name: self.name,
+                description: self.description,
+                type: "Trigger",
+                state: .notStarted,
+                executionTime: nil,
+                outputs: nil,
+                childReports: nil,
+                error: nil
+            )
+        }
+    }
+}
+
 extension Workflow.Component {
     /// Returns the report for this workflow component.
     public var report: WorkflowComponentReport {
@@ -126,6 +186,10 @@ extension Workflow.Component {
             return task.generateReport()
         case .taskGroup(let group):
             return group.generateReport()
+        case .logic(let logic):
+            return logic.generateReport()
+        case .trigger(let trigger):
+            return trigger.generateReport()
         }
     }
 }

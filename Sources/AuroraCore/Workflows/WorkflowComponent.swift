@@ -68,6 +68,10 @@ extension Workflow.Component {
             return task.detailsHolder.details?.executionTime ?? 0
         case .taskGroup(let group):
             return group.detailsHolder.details?.executionTime ?? 0
+        case .logic(let logic):
+            return logic.detailsHolder.details?.executionTime ?? 0
+        case .trigger(let trigger):
+            return trigger.detailsHolder.details?.executionTime ?? 0
         }
     }
 
@@ -78,16 +82,24 @@ extension Workflow.Component {
             return task.detailsHolder.details?.state ?? .notStarted
         case .taskGroup(let group):
             return group.detailsHolder.details?.state ?? .notStarted
+        case .logic(let logic):
+            return logic.detailsHolder.details?.state ?? .notStarted
+        case .trigger(let trigger):
+            return trigger.detailsHolder.details?.state ?? .notStarted
         }
     }
 
-    /// Returns the outputs of the component
+    /// Returns the outputs of the component.
     var outputs: [String: Any] {
         switch self {
         case .task(let task):
             return task.detailsHolder.details?.outputs ?? [:]
         case .taskGroup(let group):
             return group.detailsHolder.details?.outputs ?? [:]
+        case .logic(let logic):
+            return logic.detailsHolder.details?.outputs ?? [:]
+        case .trigger(let trigger):
+            return trigger.detailsHolder.details?.outputs ?? [:]
         }
     }
 
@@ -98,6 +110,10 @@ extension Workflow.Component {
             return task.detailsHolder.details?.error
         case .taskGroup(let group):
             return group.detailsHolder.details?.error
+        case .logic(let logic):
+            return logic.detailsHolder.details?.error
+        case .trigger(let trigger):
+            return trigger.detailsHolder.details?.error
         }
     }
 }

@@ -176,35 +176,81 @@ public struct Workflow {
         Task outputs are collected and stored in the `outputs` dictionary for use in subsequent tasks.
      */
     private mutating func executeComponents() async throws {
-        for component in components {
-            // Check state before executing each component
-            let currentState = await stateManager.getState()
+        // Initialize the pending components manager with our initial components.
+        let manager = PendingComponentsManager(initialComponents: components)
+        let asyncManager = AsyncComponentsManager()
 
-            if currentState == .inProgress {
-                // Proceed with execution
-            } else if currentState == .canceled {
-                logger.debug("Workflow \(name) execution canceled.", category: "Workflow")
-                return
-            } else if currentState == .paused {
-                logger.debug("Workflow \(name) execution paused.", category: "Workflow")
-                await waitUntilResumed() // Wait until the state changes
+        // Continue looping until both pending components and active async components are empty.
+        while true {
+            // Remove the next component.
+            if let component = await manager.removeFirst() {
+
+                // Check state before executing each component
+                let currentState = await stateManager.getState()
+
+                if currentState == .inProgress {
+                    // Proceed with execution
+                } else if currentState == .canceled {
+                    logger.debug("Workflow \(name) execution canceled.", category: "Workflow")
+                    break
+                } else if currentState == .paused {
+                    logger.debug("Workflow \(name) execution paused.", category: "Workflow")
+                    await waitUntilResumed() // Wait until the state changes
+                } else {
+                    logger.debug("Workflow \(name) in unexpected state: \(currentState)", category: "Workflow")
+                    throw NSError(
+                        domain: "Workflow",
+                        code: 2,
+                        userInfo: [NSLocalizedDescriptionKey: "Workflow in unexpected state: \(currentState)"]
+                    )
+                }
+
+                switch component {
+                case .task(let task):
+                    let taskOutputs = try await executeTask(task, workflowOutputs: outputs)
+                    self.outputs.merge(taskOutputs.mapKeys { "\(task.name).\($0)" }) { _, new in new }
+
+                case .taskGroup(let group):
+                    let groupOutputs = try await executeTaskGroup(group, workflowOutputs: outputs)
+                    self.outputs.merge(groupOutputs.mapKeys { "\(group.name).\($0)" }) { _, new in new }
+
+                case .logic(let logicComponent):
+                    // Evaluate the logic component, which returns new components.
+                    let newComponents = try await logicComponent.evaluate()
+                    await manager.insert(components: newComponents)
+
+                case .trigger(let triggerComponent):
+                    // Run the trigger asynchronously so it doesn't block the main loop.
+                    let managerRef = manager
+                    let loggerRef = logger
+
+                    // Add this trigger to the async tracking collection.
+                    await asyncManager.add(componentID: triggerComponent.id)
+
+                    SwiftTask {
+                        do {
+                            let triggeredComponents = try await triggerComponent.waitForTrigger()
+                            await managerRef.insert(components: triggeredComponents)
+                        } catch {
+                            loggerRef.error("Trigger \(triggerComponent.name) failed: \(error.localizedDescription)", category: "Workflow")
+                        }
+                        // Remove the trigger component once it completes.
+                        await asyncManager.remove(componentID: triggerComponent.id)
+                    }
+                }
             } else {
-                logger.debug("Workflow \(name) in unexpected state: \(currentState)", category: "Workflow")
-                throw NSError(
-                    domain: "Workflow",
-                    code: 2,
-                    userInfo: [NSLocalizedDescriptionKey: "Workflow in unexpected state: \(currentState)"]
-                )
-            }
-            
-            switch component {
-            case .task(let task):
-                let taskOutputs = try await executeTask(task, workflowOutputs: outputs)
-                self.outputs.merge(taskOutputs.mapKeys { "\(task.name).\($0)" }) { _, new in new }
-
-            case .taskGroup(let group):
-                let taskGroupOutputs = try await executeTaskGroup(group, workflowOutputs: outputs)
-                self.outputs.merge(taskGroupOutputs.mapKeys { "\(group.name).\($0)" }) { _, new in new }
+                // No pending components, so check if any async tasks are still active.
+                let currentState = await stateManager.getState()
+                if currentState == .canceled {
+                    break
+                }
+                if await asyncManager.isEmpty {
+                    // Both queues are empty, so break out.
+                    break
+                } else {
+                    // Wait a short while and then check again.
+                    try await SwiftTask.sleep(nanoseconds: 200_000_000)
+                }
             }
         }
 
@@ -369,6 +415,12 @@ public struct Workflow {
 
         /// A group of tasks that may execute in parallel or sequentially.
         case taskGroup(TaskGroup)
+
+        /// A conditional logic component that can be used to insert dynamic components based on logical conditions.
+        case logic(Logic)
+
+        /// A trigger component that can be used to insert dynamic components based on external events (e.g. time).
+        case trigger(Trigger)
     }
 
     // MARK: - Execution Details
@@ -413,6 +465,57 @@ public struct Workflow {
 
         public init(details: ExecutionDetails? = nil) {
             self.details = details
+        }
+    }
+
+    // MARK: - AsyncComponentsManager
+
+    /**
+     An actor for tracking active asynchronous components in a workflow, like triggers.
+
+     The manager used to keep track of asynchronous components that have not completed. It allows workflows to dynamically wait for all possible components to comlete execution, by safely managing a mutable active components array.
+     */
+    actor AsyncComponentsManager {
+        private(set) var activeComponents: Set<UUID> = []
+
+        func add(componentID: UUID) {
+            activeComponents.insert(componentID)
+        }
+
+        func remove(componentID: UUID) {
+            activeComponents.remove(componentID)
+        }
+
+        var isEmpty: Bool {
+            activeComponents.isEmpty
+        }
+    }
+
+    // MARK: - PendingComponentsManager
+
+    /**
+        An actor for tracking pending components in a workflow.
+
+        The manager is used to keep track of components that are being processed. It allows some workflows to dynamically insert new components during execution, by safely managing a mutable pending components array..
+    */
+    actor PendingComponentsManager {
+        var pendingComponents: [Workflow.Component]
+
+        init(initialComponents: [Workflow.Component]) {
+            self.pendingComponents = initialComponents
+        }
+
+        func removeFirst() -> Workflow.Component? {
+            guard !pendingComponents.isEmpty else { return nil }
+            return pendingComponents.removeFirst()
+        }
+
+        func insert(components: [Workflow.Component]) {
+            pendingComponents.insert(contentsOf: components, at: 0)
+        }
+
+        var isEmpty: Bool {
+            pendingComponents.isEmpty
         }
     }
 
@@ -573,6 +676,154 @@ public struct Workflow {
         /// Converts this task group into a `Workflow.Component`.
         public func toComponent() -> Workflow.Component {
             .taskGroup(self)
+        }
+    }
+
+    // MARK: - Logic
+
+    /**
+        Represents a conditional logic component that can evaluate conditions and produce new components.
+
+        Logic components allow workflows to make decisions based on dynamic conditions and insert new components as needed.
+     */
+    public struct Logic: WorkflowComponent, LogicComponent {
+        /// A unique identifier for the logic component.
+        public let id: UUID
+
+        /// The name of the logic component.
+        public let name: String
+
+        /// A brief description of the logic component.
+        public let description: String
+
+        /// A closure that encapsulates the logic to evaluate conditions and produce new components.
+        public let evaluateBlock: () async throws -> [Workflow.Component]
+
+        /// Holds the execution details of the logic component.
+        public let detailsHolder = ExecutionDetailsHolder()
+
+        /**
+         Initializes a new Logic component.
+
+         - Parameters:
+            - name: The name of the component.
+            - description: A brief description of the component.
+            - evaluateBlock: A closure that returns new components when evaluated.
+         */
+        public init(
+            name: String?,
+            description: String = "",
+            evaluateBlock: @escaping () async throws -> [Workflow.Component]
+        ) {
+            self.id = UUID()
+            self.name = name ?? String(describing: Self.self)
+            self.description = description
+            self.evaluateBlock = evaluateBlock
+        }
+
+        /**
+         Evaluates the logic component and returns new components.
+         */
+        public func evaluate() async throws -> [Workflow.Component] {
+            let timer = ExecutionTimer().start()
+            let newComponents = try await evaluateBlock()
+            timer.stop()
+            let duration = timer.duration ?? 0
+            let details = ExecutionDetails(
+                state: .completed,
+                startedAt: timer.startTime,
+                endedAt: timer.endTime,
+                executionTime: duration,
+                outputs: [:]
+            )
+            updateExecutionDetails(details)
+            return newComponents
+        }
+
+        /**
+         Updates the execution details of the logic component.
+         */
+        public func updateExecutionDetails(_ details: ExecutionDetails) {
+            detailsHolder.details = details
+        }
+
+        /// Converts this logic component into a `Workflow.Component`.
+        public func toComponent() -> Workflow.Component {
+            .logic(self)
+        }
+    }
+
+    // MARK: - Trigger
+
+    /**
+        Represents a trigger component that can wait for a condition and produce new components.
+
+        Trigger components allow workflows to wait for specific conditions (e.g., time-based or event-based) and insert new components as needed.
+     */
+    public struct Trigger: WorkflowComponent, TriggerComponent {
+        /// A unique identifier for the trigger component.
+        public let id: UUID
+
+        /// The name of the trigger component.
+        public let name: String
+
+        /// A brief description of the trigger component.
+        public let description: String
+
+        /// A closure that waits for a condition (e.g., time-based or event-based) and returns new components.
+        public let triggerBlock: () async throws -> [Workflow.Component]
+
+        /// Holds the execution details of the trigger component.
+        public let detailsHolder = ExecutionDetailsHolder()
+
+        /**
+         Initializes a new Trigger component.
+
+         - Parameters:
+            - name: The name of the component.
+            - description: A brief description of the component.
+            - triggerBlock: A closure that waits for a condition and returns new components.
+         */
+        public init(
+            name: String?,
+            description: String = "",
+            triggerBlock: @escaping () async throws -> [Workflow.Component]
+        ) {
+            self.id = UUID()
+            self.name = name ?? String(describing: Self.self)
+            self.description = description
+            self.triggerBlock = triggerBlock
+        }
+
+        /**
+         Waits for the trigger condition and returns new components.
+         */
+        public func waitForTrigger() async throws -> [Workflow.Component] {
+            let timer = ExecutionTimer().start()
+            let newComponents = try await triggerBlock()
+            timer.stop()
+            let duration = timer.duration ?? 0
+            let details = ExecutionDetails(
+                state: .completed,
+                startedAt: timer.startTime,
+                endedAt: timer.endTime,
+                executionTime: duration,
+                outputs: [:]
+            )
+            updateExecutionDetails(details)
+            return newComponents
+        }
+
+        /**
+         Updates the execution details of the trigger component.
+         */
+        public func updateExecutionDetails(_ details: ExecutionDetails) {
+            detailsHolder.details = details
+        }
+
+        /// Converts this trigger component into a `Workflow.Component`.
+        public func toComponent() -> Workflow.Component {
+            .trigger(self)
         }
     }
 }
