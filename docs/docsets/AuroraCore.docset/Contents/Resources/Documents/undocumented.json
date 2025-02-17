@@ -72,14 +72,14 @@
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/Workflow.swift",
-      "line": 325,
+      "line": 326,
       "symbol": "Workflow.TaskGroup.ExecutionMode.sequential",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/Workflow.swift",
-      "line": 326,
+      "line": 327,
       "symbol": "Workflow.TaskGroup.ExecutionMode.parallel",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
@@ -165,6 +165,41 @@
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraLLM/Summarizers/SummarizerProtocol.swift",
       "line": 46,
       "symbol": "SummaryType.multiple",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraTaskLibrary/Parsing/JSONElement.swift",
+      "line": 16,
+      "symbol": "JSONElement.object(_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraTaskLibrary/Parsing/JSONElement.swift",
+      "line": 17,
+      "symbol": "JSONElement.array(_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraTaskLibrary/Parsing/JSONElement.swift",
+      "line": 18,
+      "symbol": "JSONElement.string(_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraTaskLibrary/Parsing/JSONElement.swift",
+      "line": 19,
+      "symbol": "JSONElement.number(_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraTaskLibrary/Parsing/JSONElement.swift",
+      "line": 20,
+      "symbol": "JSONElement.null",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     }

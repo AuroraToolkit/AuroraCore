@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>WorkflowReport Structure Reference</title>
+    <link rel="stylesheet" type="text/css" href="../../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../../js/jquery.min.js" defer></script>
+    <script src="../../js/jazzy.js" defer></script>
+    
+    <script src="../../js/lunr.min.js" defer></script>
+    <script src="../../js/typeahead.jquery.js" defer></script>
+    <script src="../../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Struct/WorkflowReport" class="dashAnchor"></a>
+    <a title="WorkflowReport Structure Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../../index.html">AuroraCore Docs</a> (89% documented)</p>
+        <div class="header-right">
+          <form role="search" action="../../search.json">
+            <input type="text" placeholder="Search documentation" data-typeahead>
+          </form>
+        </div>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../../index.html">AuroraCore</a>
+        <img id="carat" src="../../img/carat.png" alt=""/>
+        <a href="../../AuroraCore.html">AuroraCore</a>
+        <img id="carat" src="../../img/carat.png" alt=""/>
+        WorkflowReport Structure Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../../AuroraCore.html">AuroraCore</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/AnyWorkflowComponent.html">AnyWorkflowComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Classes/CustomLogger.html">CustomLogger</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Extensions/Swift/Dictionary.html">Dictionary</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Classes/ExecutionTimer.html">ExecutionTimer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Extensions/Foundation/FileManager.html">FileManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Protocols/LogicComponent.html">LogicComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Classes/SecureStorage.html">SecureStorage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Extensions/Swift/String.html">String</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Extensions/Swift/String/TrimmingStrategy.html">– TrimmingStrategy</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Protocols/TriggerComponent.html">TriggerComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow.html">Workflow</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow/State.html">– State</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow/Component.html">– Component</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow/ExecutionDetails.html">– ExecutionDetails</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow/ExecutionDetailsHolder.html">– ExecutionDetailsHolder</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow/Task.html">– Task</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow/TaskGroup.html">– TaskGroup</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow/Logic.html">– Logic</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow/Trigger.html">– Trigger</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/WorkflowBuilder.html">WorkflowBuilder</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/WorkflowComponentReport.html">WorkflowComponentReport</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/WorkflowReport.html">WorkflowReport</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Protocols/WorkflowReportable.html">WorkflowReportable</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../../AuroraLLM.html">AuroraLLM</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMResponse.html">AnthropicLLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMResponse.html#/s:9AuroraLLM20AnthropicLLMResponseV7ContentV">– Content</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMResponse.html#/s:9AuroraLLM20AnthropicLLMResponseV5UsageV">– Usage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMStreamingResponse.html">AnthropicLLMStreamingResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMStreamingResponse/Delta.html">– Delta</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMStreamingResponse/ContentBlock.html">– ContentBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMStreamingResponse/Usage.html">– Usage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/AnthropicService.html">AnthropicService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/Bookmark.html">Bookmark</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/Context.html">Context</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/ContextController.html">ContextController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/ContextItem.html">ContextItem</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/ContextManager.html">ContextManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/FetchContextsTask.html">FetchContextsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/LLMDomainRouter.html">LLMDomainRouter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Protocols/LLMDomainRouterProtocol.html">LLMDomainRouterProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/LLMManager.html">LLMManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/LLMManager/Routing.html">– Routing</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/LLMMessage.html">LLMMessage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/LLMRequest.html">LLMRequest</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/LLMRequestOptions.html">LLMRequestOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Enums/LLMRole.html">LLMRole</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Enums/LLMServiceError.html">LLMServiceError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/LLMServiceFactory.html">LLMServiceFactory</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/LLMTokenUsage.html">LLMTokenUsage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/LoadContextTask.html">LoadContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/OllamaLLMResponse.html">OllamaLLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/OllamaService.html">OllamaService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/OpenAILLMResponse.html">OpenAILLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/OpenAILLMResponse/Choice.html">– Choice</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/OpenAILLMResponse.html#/s:9AuroraLLM17OpenAILLMResponseV5UsageV">– Usage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/OpenAIService.html">OpenAIService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/SaveContextTask.html">SaveContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Extensions/Swift/String.html">String</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/Summarizer.html">Summarizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/SummarizerOptions.html">SummarizerOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Protocols/SummarizerProtocol.html">SummarizerProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Enums/SummaryType.html">SummaryType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Enums/TokenAdjustmentPolicy.html">TokenAdjustmentPolicy</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../../AuroraTaskLibrary.html">AuroraTaskLibrary</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/AnalyzeSentimentTask.html">AnalyzeSentimentTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/AnalyzeTextReadabilityTask.html">AnalyzeTextReadabilityTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/CategorizeStringsTask.html">CategorizeStringsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/ClusterStringsTask.html">ClusterStringsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/DetectLanguagesTask.html">DetectLanguagesTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/ExtractEntitiesTask.html">ExtractEntitiesTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/ExtractRelationsTask.html">ExtractRelationsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Structs/FetchURLTask.html">FetchURLTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/GenerateKeywordsTask.html">GenerateKeywordsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/GenerateTitlesTask.html">GenerateTitlesTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Enums/JSONElement.html">JSONElement</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/JSONParsingTask.html">JSONParsingTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/LLMTask.html">LLMTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Structs/RSSArticle.html">RSSArticle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/RSSParsingTask.html">RSSParsingTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/SummarizeContextTask.html">SummarizeContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/SummarizeStringsTask.html">SummarizeStringsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/TranslateStringsTask.html">TranslateStringsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/TrimmingTask.html">TrimmingTask</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>WorkflowReport</h1>
+              <div class="declaration">
+                <div class="language">
+                  
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">WorkflowReport</span></code></pre>
+
+                </div>
+              </div>
+            <p>A report that summarizes the overall workflow execution.</p>
+
+<p>This report includes information such as the workflow&rsquo;s ID, name, description, state, execution time, outputs, component reports, and any error messages.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore14WorkflowReportV2id10Foundation4UUIDVvp"></a>
+                    <a name="//apple_ref/swift/Property/id" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore14WorkflowReportV2id10Foundation4UUIDVvp">id</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">id</span><span class="p">:</span> <span class="kt">UUID</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore14WorkflowReportV4nameSSvp"></a>
+                    <a name="//apple_ref/swift/Property/name" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore14WorkflowReportV4nameSSvp">name</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore14WorkflowReportV11descriptionSSvp"></a>
+                    <a name="//apple_ref/swift/Property/description" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore14WorkflowReportV11descriptionSSvp">description</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">description</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore14WorkflowReportV5stateAA0C0V5StateOvp"></a>
+                    <a name="//apple_ref/swift/Property/state" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore14WorkflowReportV5stateAA0C0V5StateOvp">state</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">state</span><span class="p">:</span> <span class="kt"><a href="../../AuroraCore/Structs/Workflow.html">Workflow</a></span><span class="o">.</span><span class="kt">State</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore14WorkflowReportV13executionTimeSdSgvp"></a>
+                    <a name="//apple_ref/swift/Property/executionTime" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore14WorkflowReportV13executionTimeSdSgvp">executionTime</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">executionTime</span><span class="p">:</span> <span class="kt">TimeInterval</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore14WorkflowReportV7outputsSDySSypGSgvp"></a>
+                    <a name="//apple_ref/swift/Property/outputs" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore14WorkflowReportV7outputsSDySSypGSgvp">outputs</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">outputs</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span> <span class="p">:</span> <span class="kt">Any</span><span class="p">]?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore14WorkflowReportV16componentReportsSayAA0c9ComponentD0VGvp"></a>
+                    <a name="//apple_ref/swift/Property/componentReports" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore14WorkflowReportV16componentReportsSayAA0c9ComponentD0VGvp">componentReports</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">componentReports</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../../AuroraCore/Structs/WorkflowComponentReport.html">WorkflowComponentReport</a></span><span class="p">]</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore14WorkflowReportV5errors5Error_pSgvp"></a>
+                    <a name="//apple_ref/swift/Property/error" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore14WorkflowReportV5errors5Error_pSgvp">error</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore14WorkflowReportV2id4name11description5state13executionTime7outputs16componentReports5errorAC10Foundation4UUIDV_S2SAA0C0V5StateOSdSgSDySSypGSgSayAA0c9ComponentD0VGs5Error_pSgtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(id:name:description:state:executionTime:outputs:componentReports:error:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore14WorkflowReportV2id4name11description5state13executionTime7outputs16componentReports5errorAC10Foundation4UUIDV_S2SAA0C0V5StateOSdSgSDySSypGSgSayAA0c9ComponentD0VGs5Error_pSgtcfc">init(id:<wbr>name:<wbr>description:<wbr>state:<wbr>executionTime:<wbr>outputs:<wbr>componentReports:<wbr>error:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span>
+    <span class="nv">id</span><span class="p">:</span> <span class="kt">UUID</span><span class="p">,</span>
+    <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+    <span class="nv">description</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+    <span class="nv">state</span><span class="p">:</span> <span class="kt"><a href="../../AuroraCore/Structs/Workflow.html">Workflow</a></span><span class="o">.</span><span class="kt">State</span><span class="p">,</span>
+    <span class="nv">executionTime</span><span class="p">:</span> <span class="kt">TimeInterval</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+    <span class="nv">outputs</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">Any</span><span class="p">]?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+    <span class="nv">componentReports</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../../AuroraCore/Structs/WorkflowComponentReport.html">WorkflowComponentReport</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+    <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span>
+<span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Report%20Printing%20Extensions"></a>
+                <a name="//apple_ref/swift/Section/Report Printing Extensions" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Report%20Printing%20Extensions"></a>
+                  <h3 class="section-name"><span>Report Printing Extensions</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore14WorkflowReportV07printedD07compact11showOutputsSSSb_SbtF"></a>
+                    <a name="//apple_ref/swift/Method/printedReport(compact:showOutputs:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore14WorkflowReportV07printedD07compact11showOutputsSSSb_SbtF">printedReport(compact:<wbr>showOutputs:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Returns a formatted string representation of the overall workflow report.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">printedReport</span><span class="p">(</span><span class="nv">compact</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="nv">showOutputs</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>compact</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>When true, child components are printed in a condensed format.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>showOutputs</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>When true, includes the outputs in the report.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2025 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2025-02-17)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</html>

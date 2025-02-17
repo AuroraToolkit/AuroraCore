@@ -17,7 +17,7 @@
     <a title="Component Enumeration Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../../../index.html">AuroraCore Docs</a> (93% documented)</p>
+        <p><a href="../../../index.html">AuroraCore Docs</a> (89% documented)</p>
         <div class="header-right">
           <form role="search" action="../../../search.json">
             <input type="text" placeholder="Search documentation" data-typeahead>
@@ -58,6 +58,9 @@
                 <a href="../../../AuroraCore/Extensions/Foundation/FileManager.html">FileManager</a>
               </li>
               <li class="nav-group-task">
+                <a href="../../../AuroraCore/Protocols/LogicComponent.html">LogicComponent</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../../../AuroraCore/Classes/SecureStorage.html">SecureStorage</a>
               </li>
               <li class="nav-group-task">
@@ -65,6 +68,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../../../AuroraCore/Extensions/Swift/String/TrimmingStrategy.html">– TrimmingStrategy</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../../AuroraCore/Protocols/TriggerComponent.html">TriggerComponent</a>
               </li>
               <li class="nav-group-task">
                 <a href="../../../AuroraCore/Structs/Workflow.html">Workflow</a>
@@ -76,16 +82,37 @@
                 <a href="../../../AuroraCore/Structs/Workflow/Component.html">– Component</a>
               </li>
               <li class="nav-group-task">
+                <a href="../../../AuroraCore/Structs/Workflow/ExecutionDetails.html">– ExecutionDetails</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../../AuroraCore/Structs/Workflow/ExecutionDetailsHolder.html">– ExecutionDetailsHolder</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../../../AuroraCore/Structs/Workflow/Task.html">– Task</a>
               </li>
               <li class="nav-group-task">
                 <a href="../../../AuroraCore/Structs/Workflow/TaskGroup.html">– TaskGroup</a>
               </li>
               <li class="nav-group-task">
+                <a href="../../../AuroraCore/Structs/Workflow/Logic.html">– Logic</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../../AuroraCore/Structs/Workflow/Trigger.html">– Trigger</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../../../AuroraCore/Structs/WorkflowBuilder.html">WorkflowBuilder</a>
               </li>
               <li class="nav-group-task">
                 <a href="../../../AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../../AuroraCore/Structs/WorkflowComponentReport.html">WorkflowComponentReport</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../../AuroraCore/Structs/WorkflowReport.html">WorkflowReport</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../../AuroraCore/Protocols/WorkflowReportable.html">WorkflowReportable</a>
               </li>
             </ul>
           </li>
@@ -289,6 +316,7 @@
                 <div class="language">
                   
                   <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">Component</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt"><a href="../../../AuroraCore/Structs/Workflow.html">Workflow</a></span><span class="o">.</span><span class="kt">Component</span><span class="p">:</span> <span class="kt"><a href="../../../AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
 
                 </div>
               </div>
@@ -352,12 +380,132 @@
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore8WorkflowV9ComponentO5logicyAeC5LogicVcAEmF"></a>
+                    <a name="//apple_ref/swift/Element/logic(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore8WorkflowV9ComponentO5logicyAeC5LogicVcAEmF">logic(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A conditional logic component that can be used to insert dynamic components based on logical conditions.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">logic</span><span class="p">(</span><span class="kt"><a href="../../../AuroraCore/Structs/Workflow/Logic.html">Logic</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore8WorkflowV9ComponentO7triggeryAeC7TriggerVcAEmF"></a>
+                    <a name="//apple_ref/swift/Element/trigger(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore8WorkflowV9ComponentO7triggeryAeC7TriggerVcAEmF">trigger(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A trigger component that can be used to insert dynamic components based on external events (e.g. time).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">trigger</span><span class="p">(</span><span class="kt"><a href="../../../AuroraCore/Structs/Workflow/Trigger.html">Trigger</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore17WorkflowComponentP02toD0AA0C0V0D0OyF"></a>
+                    <a name="//apple_ref/swift/Method/toComponent()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore17WorkflowComponentP02toD0AA0C0V0D0OyF">toComponent()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">toComponent</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt"><a href="../../../AuroraCore/Structs/Workflow.html">Workflow</a></span><span class="o">.</span><span class="kt">Component</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Extensions%20for%20Workflow%20Components"></a>
+                <a name="//apple_ref/swift/Section/Extensions for Workflow Components" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Extensions%20for%20Workflow%20Components"></a>
+                  <h3 class="section-name"><span>Extensions for Workflow Components</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore8WorkflowV9ComponentO6reportAA0cD6ReportVvp"></a>
+                    <a name="//apple_ref/swift/Property/report" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore8WorkflowV9ComponentO6reportAA0cD6ReportVvp">report</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Returns the report for this workflow component.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">report</span><span class="p">:</span> <span class="kt"><a href="../../../AuroraCore/Structs/WorkflowComponentReport.html">WorkflowComponentReport</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2025 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2025-01-20)</p>
+          <p>&copy; 2025 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2025-02-17)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>

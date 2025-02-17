@@ -17,7 +17,7 @@
     <a title="AuroraCore  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">AuroraCore Docs</a> (93% documented)</p>
+        <p><a href="index.html">AuroraCore Docs</a> (89% documented)</p>
         <div class="header-right">
           <form role="search" action="search.json">
             <input type="text" placeholder="Search documentation" data-typeahead>
@@ -54,6 +54,9 @@
                 <a href="AuroraCore/Extensions/Foundation/FileManager.html">FileManager</a>
               </li>
               <li class="nav-group-task">
+                <a href="AuroraCore/Protocols/LogicComponent.html">LogicComponent</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="AuroraCore/Classes/SecureStorage.html">SecureStorage</a>
               </li>
               <li class="nav-group-task">
@@ -61,6 +64,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="AuroraCore/Extensions/Swift/String/TrimmingStrategy.html">– TrimmingStrategy</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraCore/Protocols/TriggerComponent.html">TriggerComponent</a>
               </li>
               <li class="nav-group-task">
                 <a href="AuroraCore/Structs/Workflow.html">Workflow</a>
@@ -72,16 +78,37 @@
                 <a href="AuroraCore/Structs/Workflow/Component.html">– Component</a>
               </li>
               <li class="nav-group-task">
+                <a href="AuroraCore/Structs/Workflow/ExecutionDetails.html">– ExecutionDetails</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraCore/Structs/Workflow/ExecutionDetailsHolder.html">– ExecutionDetailsHolder</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="AuroraCore/Structs/Workflow/Task.html">– Task</a>
               </li>
               <li class="nav-group-task">
                 <a href="AuroraCore/Structs/Workflow/TaskGroup.html">– TaskGroup</a>
               </li>
               <li class="nav-group-task">
+                <a href="AuroraCore/Structs/Workflow/Logic.html">– Logic</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraCore/Structs/Workflow/Trigger.html">– Trigger</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="AuroraCore/Structs/WorkflowBuilder.html">WorkflowBuilder</a>
               </li>
               <li class="nav-group-task">
                 <a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraCore/Structs/WorkflowComponentReport.html">WorkflowComponentReport</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraCore/Structs/WorkflowReport.html">WorkflowReport</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraCore/Protocols/WorkflowReportable.html">WorkflowReportable</a>
               </li>
             </ul>
           </li>
@@ -617,12 +644,199 @@ It abstracts the underlying type of the component while still conforming to <cod
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore14LogicComponentP"></a>
+                    <a name="//apple_ref/swift/Protocol/LogicComponent" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore14LogicComponentP">LogicComponent</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A protocol defining a logic-based component in a workflow.</p>
+
+<p>Components conforming to <code>LogicComponent</code> are evaluated to determine if additional components should be executed.</p>
+
+                        <a href="AuroraCore/Protocols/LogicComponent.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">LogicComponent</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore16TriggerComponentP"></a>
+                    <a name="//apple_ref/swift/Protocol/TriggerComponent" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore16TriggerComponentP">TriggerComponent</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A protocol defining a trigger-based component in a workflow.</p>
+
+<p>Components conforming to <code>TriggerComponent</code> wait for a trigger (time-based, event-based, etc.) and return new components when the condition is met.</p>
+
+                        <a href="AuroraCore/Protocols/TriggerComponent.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">TriggerComponent</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Workflow%20Component%20Report"></a>
+                <a name="//apple_ref/swift/Section/Workflow Component Report" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Workflow%20Component%20Report"></a>
+                  <h3 class="section-name"><span>Workflow Component Report</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore23WorkflowComponentReportV"></a>
+                    <a name="//apple_ref/swift/Struct/WorkflowComponentReport" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore23WorkflowComponentReportV">WorkflowComponentReport</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A report for an individual workflow component (either a task or a task group).</p>
+
+<p>This report includes information such as the component&rsquo;s ID, name, description, state, execution time, outputs, and any error messages.</p>
+
+                        <a href="AuroraCore/Structs/WorkflowComponentReport.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">WorkflowComponentReport</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Reporting%20Protocol"></a>
+                <a name="//apple_ref/swift/Section/Reporting Protocol" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Reporting%20Protocol"></a>
+                  <h3 class="section-name"><span>Reporting Protocol</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore18WorkflowReportableP"></a>
+                    <a name="//apple_ref/swift/Protocol/WorkflowReportable" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore18WorkflowReportableP">WorkflowReportable</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A protocol that defines the ability to generate a report for a workflow component.</p>
+
+                        <a href="AuroraCore/Protocols/WorkflowReportable.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">WorkflowReportable</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Overall%20Workflow%20Report"></a>
+                <a name="//apple_ref/swift/Section/Overall Workflow Report" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Overall%20Workflow%20Report"></a>
+                  <h3 class="section-name"><span>Overall Workflow Report</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore14WorkflowReportV"></a>
+                    <a name="//apple_ref/swift/Struct/WorkflowReport" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore14WorkflowReportV">WorkflowReport</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A report that summarizes the overall workflow execution.</p>
+
+<p>This report includes information such as the workflow&rsquo;s ID, name, description, state, execution time, outputs, component reports, and any error messages.</p>
+
+                        <a href="AuroraCore/Structs/WorkflowReport.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">WorkflowReport</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2025 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2025-01-20)</p>
+          <p>&copy; 2025 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2025-02-17)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
