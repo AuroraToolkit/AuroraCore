@@ -69,5 +69,5 @@ await LeMondeTranslationWorkflow().execute()
 
 print("--------------------\n")
 
-print("Translate Text Workflow Example:\n")
+print("App Store Customer Feedback Analysis Workflow Example:\n")
 await CustomerFeedbackAnalysisWorkflow().execute()

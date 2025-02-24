@@ -118,6 +118,23 @@ extension Workflow.TaskGroup: WorkflowReportable {
     }
 }
 
+extension Workflow.Subflow: WorkflowReportable {
+    public func generateReport() -> WorkflowComponentReport {
+        // Map properties from the wrapped Workflow into a WorkflowComponentReport.
+        return WorkflowComponentReport(
+            id: self.workflow.id,
+            name: self.workflow.name,
+            description: self.workflow.description,
+            type: "Subflow",
+            state: self.workflow.detailsHolder.details?.state ?? .notStarted,
+            executionTime: self.workflow.detailsHolder.details?.executionTime ?? 0.0,
+            outputs: self.workflow.outputs,
+            childReports: self.workflow.components.map { $0.report },
+            error: nil
+        )
+    }
+}
+
 extension Workflow.Logic: WorkflowReportable {
     public func generateReport() -> WorkflowComponentReport {
         if let details = self.detailsHolder.details {
@@ -186,6 +203,8 @@ extension Workflow.Component {
             return task.generateReport()
         case .taskGroup(let group):
             return group.generateReport()
+        case .subflow(let subflow):
+            return subflow.generateReport()
         case .logic(let logic):
             return logic.generateReport()
         case .trigger(let trigger):

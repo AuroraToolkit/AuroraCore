@@ -15,7 +15,8 @@ Whether you're building sophisticated AI-powered applications or integrating mod
 ## Features
 
 - **Modular Design**: Organized into distinct modules for core workflow management, LLM integration, and reusable tasks, providing flexibility and maintainability.
-- **Declarative Workflows**: Define workflows declaratively, similar to SwiftUI, enabling clear and concise task orchestration.
+- **Declarative Workflows**: Define workflows and subflows declaratively, similar to SwiftUI, enabling clear and concise task orchestration.
+- **Dynamic Workflows**: Use logic and triggers to create dynamic workflows that adapt to changing conditions, scheduled intervals, or user input.
 - **Reusable Tasks**: A library of prebuilt tasks for common development needs, from URL fetching to context summarization, accelerates your workflow setup.
 - **LLM Integration**: Effortless integration with major LLM providers like OpenAI, Anthropic, and Ollama, with support for token management, domain-specific routing, and fallback strategies.
 - **Domain-Specific Routing**: Automatically route requests to the most appropriate LLM service based on predefined domains, optimizing task execution and resource allocation.
@@ -30,7 +31,7 @@ Whether you're building sophisticated AI-powered applications or integrating mod
 The foundational library providing the core framework for workflows, task orchestration, and utility functions. 
 
 #### Key Features:
-- **Workflow**: A declarative system for defining and executing tasks and task groups. Workflows support asynchronous task execution, making them ideal for chaining AI-driven operations, network calls, or any other asynchronous logic.
+- **Workflow**: A declarative system for defining and executing tasks and task groups. Workflows support asynchronous and dynamic task execution, making them ideal for chaining AI-driven operations, network calls, or any other asynchronous logic.
 - **Utilities**: A collection of helper functions, including token handling, secure storage, debugging, and file management.
 
 ### **2. AuroraLLM**
@@ -233,8 +234,7 @@ With this setup, you can run the tests on multiple LLMs and ensure your sensitiv
 - **On-device LLM support**: Integrate with on-device language models to enable fast, private, and offline AI capabilities.
 - **Google LLM support**: Support Gemini and future Google-built language models.
 - **Multimodal LLM support**: Enable multimodal LLMs for use cases beyond plain text.
-- **Advanced Workflow features**: Include dynamic task execution, prebuilt workflow templates for common AI tasks (e.g., summarization, Q&A, data extraction) to jumpstart development.
-- **Time-based triggers**: Automate workflows to execute at scheduled intervals or in response to real-world events for monitoring and alerting systems.
+- **Advanced Workflow features**: Include prebuilt workflow templates for common AI tasks (e.g., summarization, Q&A, data extraction) to jumpstart development.
 
 ## Contributing
 

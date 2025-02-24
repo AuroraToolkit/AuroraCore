@@ -68,6 +68,8 @@ extension Workflow.Component {
             return task.detailsHolder.details?.executionTime ?? 0
         case .taskGroup(let group):
             return group.detailsHolder.details?.executionTime ?? 0
+        case .subflow(let subflow):
+            return subflow.detailsHolder.details?.executionTime ?? 0
         case .logic(let logic):
             return logic.detailsHolder.details?.executionTime ?? 0
         case .trigger(let trigger):
@@ -82,6 +84,9 @@ extension Workflow.Component {
             return task.detailsHolder.details?.state ?? .notStarted
         case .taskGroup(let group):
             return group.detailsHolder.details?.state ?? .notStarted
+        case .subflow(let subflow):
+            // If subflow outputs are non-empty, assume it completed.
+            return subflow.workflow.detailsHolder.details?.state ?? .notStarted
         case .logic(let logic):
             return logic.detailsHolder.details?.state ?? .notStarted
         case .trigger(let trigger):
@@ -96,6 +101,8 @@ extension Workflow.Component {
             return task.detailsHolder.details?.outputs ?? [:]
         case .taskGroup(let group):
             return group.detailsHolder.details?.outputs ?? [:]
+        case .subflow(let subflow):
+            return subflow.workflow.outputs
         case .logic(let logic):
             return logic.detailsHolder.details?.outputs ?? [:]
         case .trigger(let trigger):
@@ -110,6 +117,8 @@ extension Workflow.Component {
             return task.detailsHolder.details?.error
         case .taskGroup(let group):
             return group.detailsHolder.details?.error
+        case .subflow(_):
+            return nil
         case .logic(let logic):
             return logic.detailsHolder.details?.error
         case .trigger(let trigger):

@@ -38,6 +38,12 @@ public struct Workflow {
         }
     }
 
+    /// Holds the execution details of the workflow.
+    public let detailsHolder = ExecutionDetailsHolder()
+
+    /// A timer for tracking the execution time of the workflow.
+    public var timer = ExecutionTimer()
+
     /// A collection of outputs resulting from executing one or more tasks.
     public private(set) var outputs: [String: Any] = [:]
 
@@ -104,15 +110,32 @@ public struct Workflow {
 
         await stateManager.updateState(to: .inProgress)
 
-        let timer = ExecutionTimer().start()
+        /// Start tracking execution time
+        timer.start()
 
         do {
             try await executeComponents()
             timer.stop()
             let currentState = await stateManager.getState()
+            // Update the execution details in the shared holder.
+            detailsHolder.details = ExecutionDetails(
+                state: currentState,
+                startedAt: timer.startTime,
+                endedAt: timer.endTime,
+                executionTime: timer.duration ?? 0,
+                outputs: outputs
+            )
             logger.debug("Workflow \(name) ended with state \(currentState) in \(String(format: "%.2f", timer.duration ?? 0)) seconds.", category: "Workflow")
         } catch {
             await stateManager.updateState(to: .failed)
+            detailsHolder.details = ExecutionDetails(
+                state: .failed,
+                startedAt: timer.startTime,
+                endedAt: timer.endTime,
+                executionTime: timer.duration ?? 0,
+                outputs: outputs,
+                error: error
+            )
             logger.error("Workflow \(name) failed: \(error.localizedDescription)", category: "Workflow")
         }
     }
@@ -122,6 +145,13 @@ public struct Workflow {
      */
     public func cancel() async {
         await stateManager.updateState(to: .canceled)
+        detailsHolder.details = ExecutionDetails(
+                state: .canceled,
+                startedAt: nil,
+                endedAt: Date(),
+                executionTime: 0,
+                outputs: outputs
+            )
         logger.debug("Workflow \(name) canceled.", category: "Workflow")
     }
 
@@ -161,10 +191,29 @@ public struct Workflow {
         do {
             // Resume execution of remaining components
             try await executeComponents()
+            timer.stop()
             let currentState = await stateManager.getState()
+            let details = ExecutionDetails(
+                state: currentState,
+                startedAt: timer.startTime,
+                endedAt: timer.endTime,
+                executionTime: timer.duration ?? 0,
+                outputs: outputs
+            )
+            detailsHolder.details = details
             logger.debug("Workflow \(name) ended with state \(currentState) after resuming.", category: "Workflow")
         } catch {
             await stateManager.updateState(to: .failed)
+            timer.stop()
+            let details = ExecutionDetails(
+                state: .failed,
+                startedAt: timer.startTime,
+                endedAt: timer.endTime,
+                executionTime: timer.duration ?? 0,
+                outputs: outputs,
+                error: error
+            )
+            detailsHolder.details = details
             logger.error("Workflow \(name) failed after resuming: \(error.localizedDescription)", category: "Workflow")
         }
     }
@@ -213,6 +262,12 @@ public struct Workflow {
                 case .taskGroup(let group):
                     let groupOutputs = try await executeTaskGroup(group, workflowOutputs: outputs)
                     self.outputs.merge(groupOutputs.mapKeys { "\(group.name).\($0)" }) { _, new in new }
+
+                case .subflow(var subflow):
+                    // Execute the subflow.
+                    await subflow.workflow.start()
+                    // Merge subflow outputs (optionally, you can namespace these).
+                    self.outputs.merge(subflow.workflow.outputs) { _, new in new }
 
                 case .logic(let logicComponent):
                     // Evaluate the logic component, which returns new components.
@@ -421,6 +476,9 @@ public struct Workflow {
 
         /// A trigger component that can be used to insert dynamic components based on external events (e.g. time).
         case trigger(Trigger)
+
+        /// A subflow component that represents a nested workflow.
+        case subflow(Subflow)
     }
 
     // MARK: - Execution Details
@@ -676,6 +734,32 @@ public struct Workflow {
         /// Converts this task group into a `Workflow.Component`.
         public func toComponent() -> Workflow.Component {
             .taskGroup(self)
+        }
+    }
+
+    // MARK: - Subflow
+
+    /**
+        Represents a nested workflow within the main workflow.
+
+        Subflows allow workflows to be composed of other workflows, enabling modular design and reusability.
+     */
+    public struct Subflow: WorkflowComponent {
+        /// A wrapped workflow.
+        internal var workflow: Workflow
+
+        /// Reference the execution details of the wrapped workflow.
+        public var detailsHolder: ExecutionDetailsHolder {
+            return workflow.detailsHolder
+        }
+
+        public init(name: String, description: String, @WorkflowBuilder _ content: () -> [Workflow.Component]) {
+            self.workflow = Workflow(name: name, description: description, content)
+        }
+
+        /// Converts this subflow into a `Workflow.Component`.
+        public func toComponent() -> Workflow.Component {
+            return .subflow(self)
         }
     }
 
