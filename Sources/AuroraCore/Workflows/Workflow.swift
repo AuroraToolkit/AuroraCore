@@ -227,84 +227,61 @@ public struct Workflow {
     private mutating func executeComponents() async throws {
         // Initialize the pending components manager with our initial components.
         let manager = PendingComponentsManager(initialComponents: components)
-        let asyncManager = AsyncComponentsManager()
+        var step: Int = 0
 
-        // Continue looping until both pending components and active async components are empty.
-        while true {
-            // Remove the next component.
-            if let component = await manager.removeFirst() {
+        // Remove the next component until pending components is empty.
+        while let component = await manager.removeFirst() {
 
-                // Check state before executing each component
-                let currentState = await stateManager.getState()
+            step += 1
+            logger.debug("\(name) Step \(step)")
 
-                if currentState == .inProgress {
-                    // Proceed with execution
-                } else if currentState == .canceled {
-                    logger.debug("Workflow \(name) execution canceled.", category: "Workflow")
-                    break
-                } else if currentState == .paused {
-                    logger.debug("Workflow \(name) execution paused.", category: "Workflow")
-                    await waitUntilResumed() // Wait until the state changes
-                } else {
-                    logger.debug("Workflow \(name) in unexpected state: \(currentState)", category: "Workflow")
-                    throw NSError(
-                        domain: "Workflow",
-                        code: 2,
-                        userInfo: [NSLocalizedDescriptionKey: "Workflow in unexpected state: \(currentState)"]
-                    )
-                }
+            // Check state before executing each component
+            let currentState = await stateManager.getState()
 
-                switch component {
-                case .task(let task):
-                    let taskOutputs = try await executeTask(task, workflowOutputs: outputs)
-                    self.outputs.merge(taskOutputs.mapKeys { "\(task.name).\($0)" }) { _, new in new }
+            switch currentState {
+            case .inProgress:
+                break
+            case .canceled:
+                logger.debug("Workflow \(name) execution canceled.", category: "Workflow")
+                return
+            case .paused:
+                logger.debug("Workflow \(name) execution paused.", category: "Workflow")
+                await waitUntilResumed() // Wait until the state changes
+            default:
+                logger.debug("Workflow \(name) in unexpected state: \(currentState)", category: "Workflow")
+                throw NSError(
+                    domain: "Workflow",
+                    code: 2,
+                    userInfo: [NSLocalizedDescriptionKey: "Workflow in unexpected state: \(currentState)"]
+                )
+            }
 
-                case .taskGroup(let group):
-                    let groupOutputs = try await executeTaskGroup(group, workflowOutputs: outputs)
-                    self.outputs.merge(groupOutputs.mapKeys { "\(group.name).\($0)" }) { _, new in new }
+            switch component {
+            case .task(let task):
+                let taskOutputs = try await executeTask(task, workflowOutputs: outputs)
+                self.outputs.merge(taskOutputs.mapKeys { "\(task.name).\($0)" }) { _, new in new }
 
-                case .subflow(var subflow):
-                    // Execute the subflow.
-                    await subflow.workflow.start()
-                    // Merge subflow outputs (optionally, you can namespace these).
-                    self.outputs.merge(subflow.workflow.outputs) { _, new in new }
+            case .taskGroup(let group):
+                let groupOutputs = try await executeTaskGroup(group, workflowOutputs: outputs)
+                self.outputs.merge(groupOutputs.mapKeys { "\(group.name).\($0)" }) { _, new in new }
 
-                case .logic(let logicComponent):
-                    // Evaluate the logic component, which returns new components.
-                    let newComponents = try await logicComponent.evaluate()
-                    await manager.insert(components: newComponents)
+            case .subflow(var subflow):
+                // Execute the subflow.
+                await subflow.workflow.start()
+                // Merge subflow outputs (optionally, you can namespace these).
+                self.outputs.merge(subflow.workflow.outputs) { _, new in new }
 
-                case .trigger(let triggerComponent):
-                    // Run the trigger asynchronously so it doesn't block the main loop.
-                    let managerRef = manager
-                    let loggerRef = logger
-
-                    // Add this trigger to the async tracking collection.
-                    await asyncManager.add(componentID: triggerComponent.id)
-
-                    SwiftTask {
-                        do {
-                            let triggeredComponents = try await triggerComponent.waitForTrigger()
-                            await managerRef.insert(components: triggeredComponents)
-                        } catch {
-                            loggerRef.error("Trigger \(triggerComponent.name) failed: \(error.localizedDescription)", category: "Workflow")
-                        }
-                        // Remove the trigger component once it completes.
-                        await asyncManager.remove(componentID: triggerComponent.id)
-                    }
-                }
-            } else {
-                // No pending components, so check if any async tasks are still active.
-                let currentState = await stateManager.getState()
-                if currentState == .canceled {
-                    break
-                }
-                if await asyncManager.isEmpty {
-                    // Both queues are empty, so break out.
-                    break
-                } else {
-                    // Wait a short while and then check again.
-                    try await SwiftTask.sleep(nanoseconds: 200_000_000)
+            case .logic(let logicComponent):
+                // Evaluate the logic component, which returns new components.
+                let newComponents = try await logicComponent.evaluate()
+                await manager.insert(components: newComponents)
+                
+            case .trigger(let triggerComponent):
+                do {
+                    let triggeredComponents = try await triggerComponent.waitForTrigger()
+                    await manager.insert(components: triggeredComponents)
+                } catch {
+                    logger.error("Trigger \(triggerComponent.name) failed: \(error.localizedDescription)", category: "Workflow")
                 }
             }
         }
@@ -523,29 +500,6 @@ public struct Workflow {
 
         public init(details: ExecutionDetails? = nil) {
             self.details = details
-        }
-    }
-
-    // MARK: - AsyncComponentsManager
-
-    /**
-     An actor for tracking active asynchronous components in a workflow, like triggers.
-
-     The manager used to keep track of asynchronous components that have not completed. It allows workflows to dynamically wait for all possible components to comlete execution, by safely managing a mutable active components array.
-     */
-    actor AsyncComponentsManager {
-        private(set) var activeComponents: Set<UUID> = []
-
-        func add(componentID: UUID) {
-            activeComponents.insert(componentID)
-        }
-
-        func remove(componentID: UUID) {
-            activeComponents.remove(componentID)
-        }
-
-        var isEmpty: Bool {
-            activeComponents.isEmpty
         }
     }
 
