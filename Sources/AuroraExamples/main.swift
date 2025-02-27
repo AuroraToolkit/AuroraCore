@@ -71,3 +71,8 @@ print("--------------------\n")
 
 print("App Store Customer Feedback Analysis Workflow Example:\n")
 await CustomerFeedbackAnalysisWorkflow().execute()
+
+print("--------------------\n")
+
+print("Temperature Monitor Workflow Example:\n")
+await TemperatureMonitorWorkflow().execute()

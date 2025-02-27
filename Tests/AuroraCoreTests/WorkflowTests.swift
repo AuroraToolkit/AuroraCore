@@ -16,9 +16,9 @@ final class WorkflowTests: XCTestCase {
             Workflow.Task(name: "Task 2", description: "Second task")
         }
 
-        XCTAssertEqual(workflow.components.count, 2, "Workflow should have two components.")
+        XCTAssertEqual(workflow.componentsManager.components.count, 2, "Workflow should have two components.")
 
-        guard case let .task(task1) = workflow.components[0] else {
+        guard case let .task(task1) = workflow.componentsManager.components[0] else {
             XCTFail("First component should be a task.")
             return
         }
@@ -26,7 +26,7 @@ final class WorkflowTests: XCTestCase {
         XCTAssertEqual(task1.name, "Task 1")
         XCTAssertEqual(task1.description, "First task")
 
-        guard case let .task(task2) = workflow.components[1] else {
+        guard case let .task(task2) = workflow.componentsManager.components[1] else {
             XCTFail("Second component should be a task.")
             return
         }
@@ -43,9 +43,9 @@ final class WorkflowTests: XCTestCase {
             }
         }
 
-        XCTAssertEqual(workflow.components.count, 1, "Workflow should have one component (a task group).")
+        XCTAssertEqual(workflow.componentsManager.components.count, 1, "Workflow should have one component (a task group).")
 
-        guard case let .taskGroup(taskGroup) = workflow.components.first else {
+        guard case let .taskGroup(taskGroup) = workflow.componentsManager.components.first else {
             XCTFail("First component should be a task group.")
             return
         }
@@ -62,7 +62,7 @@ final class WorkflowTests: XCTestCase {
 
     func testEmptyWorkflow() {
         let workflow = Workflow(name: "Empty Workflow", description: "This workflow has no tasks.") { }
-        XCTAssertTrue(workflow.components.isEmpty, "Workflow should have no components.")
+        XCTAssertTrue(workflow.componentsManager.components.isEmpty, "Workflow should have no components.")
     }
 
     func testWorkflowExecutionWithTasks() async throws {

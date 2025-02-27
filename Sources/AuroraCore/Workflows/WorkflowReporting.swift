@@ -129,7 +129,7 @@ extension Workflow.Subflow: WorkflowReportable {
             state: self.workflow.detailsHolder.details?.state ?? .notStarted,
             executionTime: self.workflow.detailsHolder.details?.executionTime ?? 0.0,
             outputs: self.workflow.outputs,
-            childReports: self.workflow.components.map { $0.report },
+            childReports: self.workflow.componentsManager.completedComponents.map { $0.report },
             error: nil
         )
     }
@@ -256,8 +256,8 @@ public struct WorkflowReport {
 extension Workflow {
     /// Generates an overall report for the workflow.
     public func generateReport() async -> WorkflowReport {
-        let componentReports = components.map { $0.report }
-        let executionTime = components.reduce(0.0) { $0 + $1.executionTime }
+        let componentReports = componentsManager.completedComponents.map { $0.report }
+        let executionTime = componentsManager.completedComponents.reduce(0.0) { $0 + $1.executionTime }
         return WorkflowReport(
             id: self.id,
             name: self.name,

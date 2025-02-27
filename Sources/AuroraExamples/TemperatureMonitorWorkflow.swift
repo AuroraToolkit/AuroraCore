@@ -32,7 +32,8 @@ struct TemperatureMonitorWorkflow {
     // A helper function to simulate reading the current temperature.
     func getCurrentTemperature() -> Double {
         // For demo purposes, return a random temperature between 60 and 90.
-        return Double.random(in: 60...90)
+        let temperature = Double.random(in: 60...90)
+        return (temperature * 100).rounded() / 100
     }
 
     // A simple class to hold temperature history.
@@ -184,11 +185,11 @@ struct TemperatureMonitorWorkflow {
 
         // Print the average temperature.
         if let average = workflow.outputs["AnalyzeTempHistory.average"] as? Double {
-            print("Average temperature: \(average)")
+            print("Average temperature: \(String(format: "%.2f", average))")
         }
         // Print the median temperature.
         if let median = workflow.outputs["AnalyzeTempHistory.median"] as? Double {
-            print("Median temperature: \(median)")
+            print("Median temperature: \(String(format: "%.2f", median))")
         }
 
         print("\n-------\n")

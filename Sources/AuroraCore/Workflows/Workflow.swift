@@ -28,8 +28,8 @@ public struct Workflow {
     /// A brief description of the workflow.
     public let description: String
 
-    /// The components of the workflow, which can be individual tasks or task groups.
-    public let components: [Component]
+    /// The components manager of the workflow, which manages individual tasks, task groups, logic, and triggers.
+    public let componentsManager: ComponentsManager
 
     /// The current state of the workflow. Note this is an asynchronous property for thread-safety.
     public var state: State {
@@ -90,7 +90,7 @@ public struct Workflow {
         self.id = UUID()
         self.name = name
         self.description = description
-        self.components = content()
+        self.componentsManager = ComponentsManager(initialComponents: content())
     }
 
     // MARK: - Workflow Lifecycle
@@ -225,12 +225,10 @@ public struct Workflow {
         Task outputs are collected and stored in the `outputs` dictionary for use in subsequent tasks.
      */
     private mutating func executeComponents() async throws {
-        // Initialize the pending components manager with our initial components.
-        let manager = PendingComponentsManager(initialComponents: components)
         var step: Int = 0
 
         // Remove the next component until pending components is empty.
-        while let component = await manager.removeFirst() {
+        while !componentsManager.isEmpty, let component = componentsManager.removeFirst() {
 
             step += 1
             logger.debug("\(name) Step \(step)")
@@ -274,16 +272,18 @@ public struct Workflow {
             case .logic(let logicComponent):
                 // Evaluate the logic component, which returns new components.
                 let newComponents = try await logicComponent.evaluate()
-                await manager.insert(components: newComponents)
-                
+                componentsManager.insert(newComponents)
+
             case .trigger(let triggerComponent):
                 do {
-                    let triggeredComponents = try await triggerComponent.waitForTrigger()
-                    await manager.insert(components: triggeredComponents)
+                    let newComponents = try await triggerComponent.waitForTrigger()
+                    componentsManager.insert(newComponents)
                 } catch {
                     logger.error("Trigger \(triggerComponent.name) failed: \(error.localizedDescription)", category: "Workflow")
                 }
             }
+
+            componentsManager.complete(component)
         }
 
         let finalState = await stateManager.getState()
@@ -458,6 +458,69 @@ public struct Workflow {
         case subflow(Subflow)
     }
 
+    // MARK: - Components Manager
+
+    /**
+     A helper that manages initial and completed components of a workflow.
+
+        The manager is responsible for storing the components of a workflow, including tasks, task groups, logic, and triggers. As components are executed, they can be removed from the components list and added to the list of completed components.
+
+     - Note: It is the responsibility of the workflow to move components as needed during execution.
+     */
+    public final class ComponentsManager {
+        /// The components that have not yet been executed.
+        public private(set) var components: [Component]
+        /// The components that have been completed.
+        public private(set) var completedComponents: [Component] = []
+
+        /**
+            Initializes a new components manager with an optional list of initial components.
+
+            - Parameter initialComponents: An optional list of initial components.
+         */
+        public init(initialComponents: [Component] = []) {
+            self.components = initialComponents
+        }
+
+        /**
+            Removes the first component from the list of components.
+
+            - Returns: The first component in the list, or nil if the list is empty
+         */
+        func removeFirst() -> Workflow.Component? {
+            guard !components.isEmpty else { return nil }
+            return components.removeFirst()
+        }
+
+        /**
+            Inserts one or more components at the beginning of the list.
+
+            - Parameter components: The components to insert.
+        */
+        func insert(_ components: [Workflow.Component]) {
+            self.components.insert(contentsOf: components, at: 0)
+        }
+
+        /**
+            Marks a component as completed and moves it to the list of completed components.
+
+            - Parameter component: The component to mark as completed.
+         */
+        func complete(_ component: Component) {
+            completedComponents.append(component)
+        }
+
+        /**
+            Checks if the components list is empty.
+
+            - Returns: `true` if the components list is empty, otherwise `false`.
+         */
+        var isEmpty: Bool {
+            components.isEmpty
+        }
+    }
+
+
     // MARK: - Execution Details
 
     /**
@@ -500,34 +563,6 @@ public struct Workflow {
 
         public init(details: ExecutionDetails? = nil) {
             self.details = details
-        }
-    }
-
-    // MARK: - PendingComponentsManager
-
-    /**
-        An actor for tracking pending components in a workflow.
-
-        The manager is used to keep track of components that are being processed. It allows some workflows to dynamically insert new components during execution, by safely managing a mutable pending components array..
-    */
-    actor PendingComponentsManager {
-        var pendingComponents: [Workflow.Component]
-
-        init(initialComponents: [Workflow.Component]) {
-            self.pendingComponents = initialComponents
-        }
-
-        func removeFirst() -> Workflow.Component? {
-            guard !pendingComponents.isEmpty else { return nil }
-            return pendingComponents.removeFirst()
-        }
-
-        func insert(components: [Workflow.Component]) {
-            pendingComponents.insert(contentsOf: components, at: 0)
-        }
-
-        var isEmpty: Bool {
-            pendingComponents.isEmpty
         }
     }
 

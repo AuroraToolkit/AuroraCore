@@ -64,20 +64,21 @@ final class WorkflowReportingTests: XCTestCase {
             task1.toComponent()
         }
         
-        let workflow = Workflow(name: "Reporting Workflow", description: "Workflow to test reporting") {
+        var workflow = Workflow(name: "Reporting Workflow", description: "Workflow to test reporting") {
             task1
             taskGroup
         }
+
+        await workflow.start()
 
         let report = await workflow.generateReport()
         
         XCTAssertEqual(report.id, workflow.id)
         XCTAssertEqual(report.name, "Reporting Workflow")
         XCTAssertEqual(report.description, "Workflow to test reporting")
-        // Since the workflow hasn't executed, the state should be .notStarted, execution time should be 0.0, and no outputs.
-        XCTAssertEqual(report.state, .notStarted)
-        XCTAssertEqual(report.executionTime, 0.0)
-        XCTAssertEqual(report.outputs?.keys.count, 0)
+        XCTAssertEqual(report.state, .completed)
+        XCTAssertNotEqual(report.executionTime, 0.0)
+        XCTAssertEqual(report.outputs?.keys.count, 2)
         XCTAssertEqual(report.componentReports.count, 2)
 
         let componentReportNames = report.componentReports.map { $0.name }
