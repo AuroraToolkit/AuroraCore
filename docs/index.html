@@ -16,7 +16,7 @@
     <a title="AuroraCore  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">AuroraCore Docs</a> (89% documented)</p>
+        <p><a href="index.html">AuroraCore Docs</a> (88% documented)</p>
         <div class="header-right">
           <form role="search" action="search.json">
             <input type="text" placeholder="Search documentation" data-typeahead>
@@ -75,6 +75,9 @@
                 <a href="AuroraCore/Structs/Workflow/Component.html">– Component</a>
               </li>
               <li class="nav-group-task">
+                <a href="AuroraCore/Structs/Workflow/ComponentsManager.html">– ComponentsManager</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="AuroraCore/Structs/Workflow/ExecutionDetails.html">– ExecutionDetails</a>
               </li>
               <li class="nav-group-task">
@@ -85,6 +88,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="AuroraCore/Structs/Workflow/TaskGroup.html">– TaskGroup</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraCore/Structs/Workflow/Subflow.html">– Subflow</a>
               </li>
               <li class="nav-group-task">
                 <a href="AuroraCore/Structs/Workflow/Logic.html">– Logic</a>
@@ -323,7 +329,8 @@
 
 <ul>
 <li><strong>Modular Design</strong>: Organized into distinct modules for core workflow management, LLM integration, and reusable tasks, providing flexibility and maintainability.</li>
-<li><strong>Declarative Workflows</strong>: Define workflows declaratively, similar to SwiftUI, enabling clear and concise task orchestration.</li>
+<li><strong>Declarative Workflows</strong>: Define workflows and subflows declaratively, similar to SwiftUI, enabling clear and concise task orchestration.</li>
+<li><strong>Dynamic Workflows</strong>: Use logic and triggers to create dynamic workflows that adapt to changing conditions, scheduled intervals, or user input.</li>
 <li><strong>Reusable Tasks</strong>: A library of prebuilt tasks for common development needs, from URL fetching to context summarization, accelerates your workflow setup.</li>
 <li><strong>LLM Integration</strong>: Effortless integration with major LLM providers like OpenAI, Anthropic, and Ollama, with support for token management, domain-specific routing, and fallback strategies.</li>
 <li><strong>Domain-Specific Routing</strong>: Automatically route requests to the most appropriate LLM service based on predefined domains, optimizing task execution and resource allocation.</li>
@@ -338,7 +345,7 @@
 <h4 id='key-features' class='heading'>Key Features:</h4>
 
 <ul>
-<li><strong>Workflow</strong>: A declarative system for defining and executing tasks and task groups. Workflows support asynchronous task execution, making them ideal for chaining AI-driven operations, network calls, or any other asynchronous logic.</li>
+<li><strong>Workflow</strong>: A declarative system for defining and executing tasks and task groups. Workflows support asynchronous and dynamic task execution, making them ideal for chaining AI-driven operations, network calls, or any other asynchronous logic.</li>
 <li><strong>Utilities</strong>: A collection of helper functions, including token handling, secure storage, debugging, and file management.</li>
 </ul>
 <h3 id='strong-2-aurorallm-strong' class='heading'><strong>2. AuroraLLM</strong></h3>
@@ -526,8 +533,7 @@ You are a helpful assistant. Answer any general questions accurately and concise
 <li><strong>On-device LLM support</strong>: Integrate with on-device language models to enable fast, private, and offline AI capabilities.</li>
 <li><strong>Google LLM support</strong>: Support Gemini and future Google-built language models.</li>
 <li><strong>Multimodal LLM support</strong>: Enable multimodal LLMs for use cases beyond plain text.</li>
-<li><strong>Advanced Workflow features</strong>: Include dynamic task execution, prebuilt workflow templates for common AI tasks (e.g., summarization, Q&amp;A, data extraction) to jumpstart development.</li>
-<li><strong>Time-based triggers</strong>: Automate workflows to execute at scheduled intervals or in response to real-world events for monitoring and alerting systems.</li>
+<li><strong>Advanced Workflow features</strong>: Include prebuilt workflow templates for common AI tasks (e.g., summarization, Q&amp;A, data extraction) to jumpstart development.</li>
 </ul>
 <h2 id='contributing' class='heading'>Contributing</h2>
 
@@ -545,7 +551,7 @@ You are a helpful assistant. Answer any general questions accurately and concise
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2025 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2025-02-17)</p>
+          <p>&copy; 2025 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2025-02-27)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>

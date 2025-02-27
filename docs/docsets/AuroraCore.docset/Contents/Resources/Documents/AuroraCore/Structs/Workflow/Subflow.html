@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Choice Structure Reference</title>
+    <title>Subflow Structure Reference</title>
     <link rel="stylesheet" type="text/css" href="../../../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../../../css/highlight.css" />
     <meta charset='utf-8'>
@@ -13,8 +13,8 @@
     <script src="../../../js/jazzy.search.js" defer></script>
   </head>
   <body>
-    <a name="//apple_ref/swift/Struct/Choice" class="dashAnchor"></a>
-    <a title="Choice Structure Reference"></a>
+    <a name="//apple_ref/swift/Struct/Subflow" class="dashAnchor"></a>
+    <a title="Subflow Structure Reference"></a>
     <header>
       <div class="content-wrapper">
         <p><a href="../../../index.html">AuroraCore Docs</a> (88% documented)</p>
@@ -29,11 +29,11 @@
       <p id="breadcrumbs">
         <a href="../../../index.html">AuroraCore</a>
         <img id="carat" src="../../../img/carat.png" alt=""/>
-        <a href="../../../AuroraLLM.html">AuroraLLM</a>
+        <a href="../../../AuroraCore.html">AuroraCore</a>
         <img id="carat" src="../../../img/carat.png" alt=""/>
-        <a href="../../../AuroraLLM/Structs/OpenAILLMResponse.html">OpenAILLMResponse</a>
+        <a href="../../../AuroraCore/Structs/Workflow.html">Workflow</a>
         <img id="carat" src="../../../img/carat.png" alt=""/>
-        Choice Structure Reference
+        Subflow Structure Reference
       </p>
     </div>
     <div class="content-wrapper">
@@ -317,15 +317,18 @@
       <article class="main-content">
         <section>
           <section class="section">
-            <h1>Choice</h1>
+            <h1>Subflow</h1>
               <div class="declaration">
                 <div class="language">
                   
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Choice</span> <span class="p">:</span> <span class="kt">Codable</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Subflow</span> <span class="p">:</span> <span class="kt"><a href="../../../AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt"><a href="../../../AuroraCore/Structs/Workflow.html">Workflow</a></span><span class="o">.</span><span class="kt">Subflow</span><span class="p">:</span> <span class="kt"><a href="../../../AuroraCore/Protocols/WorkflowReportable.html">WorkflowReportable</a></span></code></pre>
 
                 </div>
               </div>
-            <p>Undocumented</p>
+            <p>Represents a nested workflow within the main workflow.</p>
+
+<p>Subflows allow workflows to be composed of other workflows, enabling modular design and reusability.</p>
 
           </section>
           <section class="section task-group-section">
@@ -334,9 +337,36 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9AuroraLLM17OpenAILLMResponseV6ChoiceV7MessageV"></a>
-                    <a name="//apple_ref/swift/Struct/Message" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9AuroraLLM17OpenAILLMResponseV6ChoiceV7MessageV">Message</a>
+                    <a name="/s:10AuroraCore8WorkflowV7SubflowV13detailsHolderAC016ExecutionDetailsF0Cvp"></a>
+                    <a name="//apple_ref/swift/Property/detailsHolder" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore8WorkflowV7SubflowV13detailsHolderAC016ExecutionDetailsF0Cvp">detailsHolder</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Reference the execution details of the wrapped workflow.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">detailsHolder</span><span class="p">:</span> <span class="kt"><a href="../../../AuroraCore/Structs/Workflow/ExecutionDetailsHolder.html">ExecutionDetailsHolder</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore8WorkflowV7SubflowV4name11description_AESS_SSSayAC9ComponentOGyXEtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(name:description:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore8WorkflowV7SubflowV4name11description_AESS_SSSayAC9ComponentOGyXEtcfc">init(name:<wbr>description:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -351,7 +381,74 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Message</span> <span class="p">:</span> <span class="kt">Codable</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">description</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="kd"><a href="../../../AuroraCore/Structs/WorkflowBuilder.html">@WorkflowBuilder</a></span> <span class="n">_</span> <span class="nv">content</span><span class="p">:</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="kt"><a href="../../../AuroraCore/Structs/Workflow.html">Workflow</a></span><span class="o">.</span><span class="kt"><a href="../../../AuroraCore/Structs/Workflow/Component.html">Component</a></span><span class="p">])</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore8WorkflowV7SubflowV11toComponentAC0F0OyF"></a>
+                    <a name="//apple_ref/swift/Method/toComponent()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore8WorkflowV7SubflowV11toComponentAC0F0OyF">toComponent()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Converts this subflow into a <code><a href="../../../AuroraCore/Structs/Workflow/Component.html">Workflow.Component</a></code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">toComponent</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt"><a href="../../../AuroraCore/Structs/Workflow.html">Workflow</a></span><span class="o">.</span><span class="kt"><a href="../../../AuroraCore/Structs/Workflow/Component.html">Component</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Extensions%20for%20Workflow%20Components"></a>
+                <a name="//apple_ref/swift/Section/Extensions for Workflow Components" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Extensions%20for%20Workflow%20Components"></a>
+                  <h3 class="section-name"><span>Extensions for Workflow Components</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10AuroraCore8WorkflowV7SubflowV14generateReportAA0c9ComponentF0VyF"></a>
+                    <a name="//apple_ref/swift/Method/generateReport()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10AuroraCore8WorkflowV7SubflowV14generateReportAA0c9ComponentF0VyF">generateReport()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">generateReport</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt"><a href="../../../AuroraCore/Structs/WorkflowComponentReport.html">WorkflowComponentReport</a></span></code></pre>
 
                         </div>
                       </div>
