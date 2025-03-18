@@ -14,6 +14,11 @@ let package = Package(
             name: "AuroraCore",
             targets: ["AuroraCore"]
         ),
+        // Agent library
+        .library(
+            name: "AuroraAgent",
+            targets: ["AuroraAgent"]
+        ),
         // LLM management
         .library(
             name: "AuroraLLM",
@@ -38,6 +43,12 @@ let package = Package(
             dependencies: [],
             path: "Sources/AuroraCore"
         ),
+        // Agent
+        .target(
+            name: "AuroraAgent",
+            dependencies: ["AuroraCore", "AuroraLLM", "AuroraTaskLibrary"],
+            path: "Sources/AuroraAgent"
+        ),
         // LLM management
         .target(
             name: "AuroraLLM",
@@ -61,6 +72,11 @@ let package = Package(
             name: "AuroraCoreTests",
             dependencies: ["AuroraCore"],
             path: "Tests/AuroraCoreTests"
+        ),
+        .testTarget(
+            name: "AuroraAgentTests",
+            dependencies: ["AuroraAgent"],
+            path: "Tests/AuroraAgentTests"
         ),
         .testTarget(
             name: "AuroraLLMTests",
