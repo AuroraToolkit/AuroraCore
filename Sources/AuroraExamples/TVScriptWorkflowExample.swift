@@ -30,14 +30,21 @@ struct TVScriptWorkflowExample {
             print("No API key provided. Please set the OPENAI_API_KEY environment variable.")
             return
         }
+        // Set your Google API key as an environment variable to run this example, e.g., `export GOOGLE_API_KEY="your-api-key"`
+        let googleKey = ProcessInfo.processInfo.environment["GOOGLE_API_KEY"] ?? ""
+        if googleKey.isEmpty {
+            print("No API key provided. Please set the GOOGLE_API_KEY environment variable.")
+            return
+        }
 
         // Initialize LLM service, e.g., Anthropic, OpenAI, or Ollama
 //        let anthropicService = AnthropicService(apiKey: anthropicAIKey)
 //        let ollamaService = OllamaService()
-        let openAIService = OpenAIService(apiKey: openAIKey)
+//        let openAIService = OpenAIService(apiKey: openAIKey)
+        let googleService = GoogleService(apiKey: googleKey)
 
         // Choose which service to use for generating the TV script
-        let aiService = openAIService
+        let aiService = googleService
 
         // Workflow initialization
         var workflow = Workflow(

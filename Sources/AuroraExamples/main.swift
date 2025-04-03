@@ -5,11 +5,12 @@ import Foundation
 import AuroraCore
 
 /**
- These examples use a mix of Anthropic, OpenAI, and Ollama models.
+ These examples use a mix of Anthropic, OpenAI, Google, and Ollama models.
 
  To run these examples, you must have the following environment variables set:
     - OPENAI_API_KEY: Your OpenAI API key
     - ANTHROPIC_API_KEY: Your Anthropic API key
+    - GOOGLE_API_KEY: Your Google API key
 
     You can set these environment variables in the `Examples` scheme or by using the following commands:
     ```
