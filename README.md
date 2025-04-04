@@ -1,11 +1,11 @@
 # AuroraCore
 
-AuroraCore is the foundational library within the **AuroraToolkit**—a suite of tools designed to simplify the integration of AI capabilities into your projects. This package offers robust support for AI-driven workflows, including task orchestration, workflow management, and seamless integration with large language models (LLMs) like OpenAI, Anthropic, and Ollama. Its modular architecture empowers developers to customize, extend, and integrate with external services effortlessly.
+AuroraCore is the foundational library within the **AuroraToolkit**—a suite of tools designed to simplify the integration of AI capabilities into your projects. This package offers robust support for AI-driven workflows, including task orchestration, workflow management, and seamless integration with large language models (LLMs) like Anthropic Claude, Google Gemini, OpenAI ChatGPT, and open-source Ollama models. Its modular architecture empowers developers to customize, extend, and integrate with external services effortlessly.
 
 The AuroraToolkit core package is organized into several modules to enhance flexibility and maintainability:
 
 - **AuroraCore**: The foundational library for workflow orchestration, utilities, and declarative task management.
-- **AuroraLLM**: A dedicated package for integrating large language models (LLMs) such as OpenAI, Anthropic, and Ollama.
+- **AuroraLLM**: A dedicated package for integrating large language models (LLMs) such as Anthropic, Google, OpenAI, and Ollama.
 - **AuroraTaskLibrary**: A growing collection of prebuilt, reusable tasks designed to accelerate development.
 - **AuroraExamples**: Practical examples demonstrating how to leverage the toolkit for real-world scenarios.
 
@@ -18,7 +18,7 @@ Whether you're building sophisticated AI-powered applications or integrating mod
 - **Declarative Workflows**: Define workflows and subflows declaratively, similar to SwiftUI, enabling clear and concise task orchestration.
 - **Dynamic Workflows**: Use logic and triggers to create dynamic workflows that adapt to changing conditions, scheduled intervals, or user input.
 - **Reusable Tasks**: A library of prebuilt tasks for common development needs, from URL fetching to context summarization, accelerates your workflow setup.
-- **LLM Integration**: Effortless integration with major LLM providers like OpenAI, Anthropic, and Ollama, with support for token management, domain-specific routing, and fallback strategies.
+- **LLM Integration**: Effortless integration with major LLM providers like Anthropic, Google, OpenAI, and Ollama, with support for token management, domain-specific routing, and fallback strategies.
 - **Domain-Specific Routing**: Automatically route requests to the most appropriate LLM service based on predefined domains, optimizing task execution and resource allocation.
 - **Customizable and Extendable**: Easily add custom tasks, workflows, or LLM integrations to suit your project needs.
 - **Practical Examples**: Includes real-world examples to help developers get started quickly with common use cases and advanced patterns.
@@ -35,7 +35,7 @@ The foundational library providing the core framework for workflows, task orches
 - **Utilities**: A collection of helper functions, including token handling, secure storage, debugging, and file management.
 
 ### **2. AuroraLLM**
-A dedicated package for managing large language models (LLMs) and facilitating AI-driven workflows. It includes multi-model management, domain routing, and token handling.
+A dedicated package for managing large language models (LLMs) and facilitating AI-driven workflows. It includes multi-model management, domain routing, and token handling. Provides support for various LLM vendors, including Anthropic, Google, OpenAI, and Ollama.
 
 #### Key Features:
 - **LLMManager**: Centralized management of multiple LLMs, with support for routing requests to appropriate models based on predefined rules.
@@ -213,18 +213,19 @@ for question in questions {
 
 ## Running Tests
 
-AuroraCore includes tests for multiple language model services. The Ollama tests will always run, as they do not require any API keys. For testing OpenAI or Anthropic services, you will need to manually provide your API keys.
+AuroraCore includes tests for multiple language model services. The Ollama tests will always run, as they do not require any API keys. For testing Anthropic, Google, or OpenAI services, you will need to manually provide your API keys.
 
-### Adding API Keys for OpenAI and Anthropic:
+### Adding API Keys for Anthropic, Google, and OpenAI:
 
 Some test and example files use OpenAI or Anthropic services and need API keys to function correctly. To use these services, add the following keys to the `AuroraToolkit-Package` and `AuroraExamples` schemes. Make sure these schemes are not shared, and take extra precaution to avoid committing API keys into the repository.
 
 - For Anthropic, add the environment variable `ANTHROPIC_API_KEY` with a valid test API key.
+- For Google, add the environment variable `GOOGLE_API_KEY` with a valid test API key.
 - For OpenAI, add the environment variable `OPENAI_API_KEY` with a valid test API key.
 - Ollama does not require API keys, but does require the Ollama service to be running at the default service URL, `http://localhost:11434`.
 
 ### Important:
-- **Never commit your API keys to the repository**. The tests are designed to run with Ollama by default, and you can enable additional tests for OpenAI and Anthropic by manually adding your keys for local testing.
+- **Never commit your API keys to the repository**. The tests are designed to run with Ollama by default, and you can enable additional tests for Anthropic, Google, and OpenAI by manually adding your keys for local testing.
 - Be sure to remove or replace your keys with empty strings before committing any changes.
 
 With this setup, you can run the tests on multiple LLMs and ensure your sensitive keys are not inadvertently shared.
@@ -232,7 +233,6 @@ With this setup, you can run the tests on multiple LLMs and ensure your sensitiv
 ## Future Ideas
 
 - **On-device LLM support**: Integrate with on-device language models to enable fast, private, and offline AI capabilities.
-- **Google LLM support**: Support Gemini and future Google-built language models.
 - **Multimodal LLM support**: Enable multimodal LLMs for use cases beyond plain text.
 - **Advanced Workflow features**: Include prebuilt workflow templates for common AI tasks (e.g., summarization, Q&A, data extraction) to jumpstart development.
 

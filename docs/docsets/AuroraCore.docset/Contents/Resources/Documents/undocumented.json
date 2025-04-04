@@ -37,79 +37,86 @@
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/Workflow.swift",
-      "line": 46,
+      "line": 52,
       "symbol": "Workflow.State.notStarted",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/Workflow.swift",
-      "line": 47,
+      "line": 53,
       "symbol": "Workflow.State.inProgress",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/Workflow.swift",
-      "line": 48,
+      "line": 54,
       "symbol": "Workflow.State.paused",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/Workflow.swift",
-      "line": 49,
+      "line": 55,
       "symbol": "Workflow.State.canceled",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/Workflow.swift",
-      "line": 50,
+      "line": 56,
       "symbol": "Workflow.State.completed",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/Workflow.swift",
-      "line": 51,
+      "line": 57,
       "symbol": "Workflow.State.failed",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/Workflow.swift",
-      "line": 450,
+      "line": 548,
       "symbol": "Workflow.ExecutionDetails.init(state:startedAt:endedAt:executionTime:outputs:error:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/Workflow.swift",
-      "line": 464,
+      "line": 562,
       "symbol": "Workflow.ExecutionDetailsHolder.details",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/Workflow.swift",
-      "line": 466,
+      "line": 564,
       "symbol": "Workflow.ExecutionDetailsHolder.init(details:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/Workflow.swift",
-      "line": 636,
+      "line": 683,
       "symbol": "Workflow.TaskGroup.ExecutionMode.sequential",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/Workflow.swift",
-      "line": 637,
+      "line": 684,
       "symbol": "Workflow.TaskGroup.ExecutionMode.parallel",
       "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/Workflow.swift",
+      "line": 745,
+      "symbol": "Workflow.Subflow.init(name:description:_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
@@ -206,76 +213,83 @@
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/WorkflowReporting.swift",
       "line": 122,
+      "symbol": "Workflow.Subflow.generateReport()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/WorkflowReporting.swift",
+      "line": 139,
       "symbol": "Workflow.Logic.generateReport()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/WorkflowReporting.swift",
-      "line": 152,
+      "line": 169,
       "symbol": "Workflow.Trigger.generateReport()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/WorkflowReporting.swift",
-      "line": 205,
+      "line": 224,
       "symbol": "WorkflowReport.id",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/WorkflowReporting.swift",
-      "line": 206,
+      "line": 225,
       "symbol": "WorkflowReport.name",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/WorkflowReporting.swift",
-      "line": 207,
+      "line": 226,
       "symbol": "WorkflowReport.description",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/WorkflowReporting.swift",
-      "line": 208,
+      "line": 227,
       "symbol": "WorkflowReport.state",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/WorkflowReporting.swift",
-      "line": 209,
+      "line": 228,
       "symbol": "WorkflowReport.executionTime",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/WorkflowReporting.swift",
-      "line": 210,
+      "line": 229,
       "symbol": "WorkflowReport.outputs",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/WorkflowReporting.swift",
-      "line": 211,
+      "line": 230,
       "symbol": "WorkflowReport.componentReports",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/WorkflowReporting.swift",
-      "line": 212,
+      "line": 231,
       "symbol": "WorkflowReport.error",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/WorkflowReporting.swift",
-      "line": 214,
+      "line": 233,
       "symbol": "WorkflowReport.init(id:name:description:state:executionTime:outputs:componentReports:error:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
