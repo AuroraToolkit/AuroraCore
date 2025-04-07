@@ -63,7 +63,7 @@ extension Agent {
         }
         
         // Record the query and response in memory.
-        await memoryToUse.addEntry(query: query, response: response)
+        await memoryToUse.addQuery(query, response: response)
 
         return response
     }

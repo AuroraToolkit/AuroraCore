@@ -1,6 +1,6 @@
 //
 //  AgentSkill.swift
-//  AuroraToolkit
+//  AuroraAgent
 //
 //  Created by Dan Murrell Jr on 3/25/25.
 //
