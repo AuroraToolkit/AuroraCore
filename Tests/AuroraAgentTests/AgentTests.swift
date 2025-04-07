@@ -11,9 +11,9 @@ import XCTest
 final class AgentTests: XCTestCase {
     let agent = Agent(
         name: "TestAgent",
-        description: "Test agent for unit tests",
-        instructions: "You are a test agent."
-    )
+        description: "Test agent for unit tests") {
+            Agent.Instructions("You are a test agent.")
+        }
 
     func testAgentInitialization() {
         XCTAssertNotNil(agent.id, "Agent id should be set")
@@ -27,7 +27,7 @@ final class AgentTests: XCTestCase {
     }
 
     func testAgentQueryAndMemory() async throws {
-        let agent = Agent(name: "MemoryAgent", description: "Agent with memory")
+        let agent = Agent(name: "MemoryAgent", description: "Agent with memory") {}
         let queryText = "What is the weather like?"
 
         // Process a query
@@ -36,13 +36,21 @@ final class AgentTests: XCTestCase {
 
         // Retrieve memory entries
         let entries = await agent.memory.getHistory()
+        let queries = entries.compactMap { event -> String? in
+            if case let .queryReceived(query) = event.eventType {
+                return query
+            }
+            return nil
+        }
+        let responses = await agent.memory.getAllResponses().map( { $0.value })
+
         XCTAssertEqual(entries.count, 1, "There should be one memory entry.")
-        XCTAssertEqual(entries.first?.query, queryText, "Memory entry should record the query.")
-        XCTAssertEqual(entries.first?.response, response, "Memory entry should record the correct response.")
+        XCTAssertEqual(queries.first, queryText, "Memory entry should record the query.")
+        XCTAssertEqual(responses.first, response, "Memory entry should record the correct response.")
     }
 
     func testSerialProcessing() async throws {
-        let agent = Agent(name: "SerialAgent")
+        let agent = Agent(name: "SerialAgent", description: "Serial agent") {}
         let queries = ["Query 1", "Query 2", "Query 3"]
 
         // Launch queries concurrently.
