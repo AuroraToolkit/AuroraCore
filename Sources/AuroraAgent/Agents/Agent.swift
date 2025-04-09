@@ -41,6 +41,9 @@ public struct Agent {
     /// An array of skills available to the agent.
     public let skills: [Skill]
 
+    /// An array of triggers that the agent can respond to.
+    public let triggers: [AgentTrigger]
+
     /// The queue used for processing queries.
     private let queue: Agent.Queue
 
@@ -74,6 +77,7 @@ public struct Agent {
         var personalityInstance: Personality? = nil
         var lifecycleInstance: Lifecycle? = nil
         var skillValues: [Skill] = []
+        var triggerValues: [AgentTrigger] = []
 
         // Process each declarative component.
         for component in components {
@@ -103,6 +107,9 @@ public struct Agent {
             case .skillGroup(let group):
                 // Append skills from the group.
                 skillValues.append(contentsOf: group.skills)
+            case .trigger(let trigger):
+                // Append triggers to the triggerValues array.
+                triggerValues.append(trigger)
             }
         }
 
@@ -117,6 +124,8 @@ public struct Agent {
         self.lifecycle = lifecycleInstance ?? Lifecycle()
         // Set the agent's skills.
         self.skills = skillValues
+        // Set the agent's triggers.
+        self.triggers = triggerValues
 
         // Execute the lifecycle onInit closure if defined.
         self.lifecycle.onInit?()
@@ -177,6 +186,9 @@ public struct Agent {
 
         /// Component to define a group of skills.
         case skillGroup(SkillGroup)
+
+        /// Component to define an expected trigger for the agent.
+        case trigger(AgentTrigger)
     }
 
     // MARK: - Instructions
