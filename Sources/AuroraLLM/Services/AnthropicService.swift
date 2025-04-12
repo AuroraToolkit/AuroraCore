@@ -25,6 +25,9 @@ public class AnthropicService: LLMServiceProtocol {
     /// The name of the service instance, which can be customized during initialization
     public var name: String
 
+    // `AnthropicService` is not a local LLM service.
+    public let isLocal: Bool = false
+
     /// The base URL for the Anthropic API.
     private let baseURL: String
 

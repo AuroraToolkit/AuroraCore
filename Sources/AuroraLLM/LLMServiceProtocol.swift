@@ -57,9 +57,14 @@ public protocol LLMServiceProtocol {
     var vendor: String { get }
 
     /**
-     The name of the service instance, which can be customized during initialization
+     The name of the service instance, which can be customized during initialization.
      */
     var name: String { get set }
+
+    /**
+     Indicates whether the service is running locally on the device.
+     */
+    var isLocal: Bool { get }
 
     /**
      The maximum context window size (total tokens, input + output) supported by the service.

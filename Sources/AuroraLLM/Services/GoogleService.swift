@@ -26,6 +26,9 @@ public class GoogleService: LLMServiceProtocol {
     /// The name of the service instance, which can be customized during initialization.
     public var name: String
 
+    // `GoogleService` is not a local LLM service.
+    public let isLocal: Bool = false
+
     /// The base URL for the Google Generative AI API.
     public var baseURL: String
 

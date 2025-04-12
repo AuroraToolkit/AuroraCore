@@ -1,0 +1,15 @@
+{
+  "originHash" : "3ecc3a239631001849576bb4d9d57c280bc243376ddcd0c261b46c1d820c5a44",
+  "pins" : [
+    {
+      "identity" : "llm.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/eastriverlee/LLM.swift.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "7584d0736fce6ec032ab357ee63a8e7b00c64d96"
+      }
+    }
+  ],
+  "version" : 3
+}

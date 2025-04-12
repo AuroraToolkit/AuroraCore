@@ -25,6 +25,9 @@ public class OpenAIService: LLMServiceProtocol {
     /// The name of the service instance, which can be customized during initialization
     public var name: String
 
+    // `OpenAIService` is not a local LLM service.
+    public let isLocal: Bool = false
+
     /// The base url for the OpenAI API.
     public var baseURL: String
 
