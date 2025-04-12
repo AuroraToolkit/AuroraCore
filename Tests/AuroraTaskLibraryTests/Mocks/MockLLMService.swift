@@ -14,6 +14,7 @@ final class MockLLMService: LLMServiceProtocol {
     var name: String
     var vendor: String
     var apiKey: String?
+    var isLocal = false
     var requiresAPIKey = false
     var contextWindowSize: Int
     var maxOutputTokens: Int

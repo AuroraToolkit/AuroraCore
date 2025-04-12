@@ -109,6 +109,7 @@ fileprivate class MockLLMService: LLMServiceProtocol {
     var name: String
     var vendor: String
     var apiKey: String?
+    var isLocal: Bool = false
     var requiresAPIKey = false
     var contextWindowSize: Int
     var maxOutputTokens: Int

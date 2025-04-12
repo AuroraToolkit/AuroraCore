@@ -6,7 +6,7 @@ let package = Package(
     name: "AuroraToolkit",
     platforms: [
         .iOS(.v14),
-        .macOS(.v11)
+        .macOS(.v14)
     ],
     products: [
         // Core library
@@ -30,7 +30,9 @@ let package = Package(
             targets: ["AuroraExamples"]
         )
     ],
-    dependencies: [],
+    dependencies: [
+        .package(url: "https://github.com/eastriverlee/LLM.swift.git", branch: "main")
+    ],
     targets: [
         // Core
         .target(
@@ -41,7 +43,10 @@ let package = Package(
         // LLM management
         .target(
             name: "AuroraLLM",
-            dependencies: ["AuroraCore"],
+            dependencies: [
+                "AuroraCore",
+                .product(name: "LLM", package: "LLM.swift") // Local llama model support
+            ],
             path: "Sources/AuroraLLM"
         ),
         // Task library

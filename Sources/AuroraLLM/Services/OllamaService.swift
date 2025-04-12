@@ -24,6 +24,9 @@ public class OllamaService: LLMServiceProtocol {
     /// The name of the service instance, which can be customized during initialization
     public var name: String
 
+    // `OllamaService` is not a local LLM service.
+    public let isLocal: Bool = false
+
     /// The base URL for the Ollama API (e.g., `http://localhost:11434`).
     public var baseURL: String
 
