@@ -1,0 +1,62 @@
+[
+  {
+    "metadataOutputVersion" : "3.0",
+    "shortDescription" : "A basic text classifier, with 100 examples from each of the supported domains.\n\nsupportedDomains = [\n    \"sports\", \"entertainment\", \"technology\", \"health\", \"finance\", \"general\"\n]\n\nNot production-ready, mainly for fast testing.\n",
+    "outputSchema" : [
+      {
+        "isOptional" : "0",
+        "formattedType" : "String",
+        "type" : "String",
+        "name" : "label",
+        "shortDescription" : "Text label"
+      }
+    ],
+    "modelParameters" : [
+
+    ],
+    "author" : "Dan Murrell Jr",
+    "specificationVersion" : 3,
+    "isUpdatable" : "0",
+    "stateSchema" : [
+
+    ],
+    "availability" : {
+      "macOS" : "10.14",
+      "tvOS" : "12.0",
+      "visionOS" : "1.0",
+      "watchOS" : "5.0",
+      "iOS" : "12.0",
+      "macCatalyst" : "12.0"
+    },
+    "modelType" : {
+      "name" : "MLModelType_textClassifier"
+    },
+    "inputSchema" : [
+      {
+        "isOptional" : "0",
+        "formattedType" : "String",
+        "type" : "String",
+        "name" : "text",
+        "shortDescription" : "Input text"
+      }
+    ],
+    "classLabels" : [
+      "entertainment",
+      "technology",
+      "finance",
+      "health",
+      "sports",
+      "general"
+    ],
+    "generatedClassName" : "BasicTextClassifier1",
+    "userDefinedMetadata" : {
+      "com.apple.createml.app.tag" : "151.2",
+      "com.apple.createml.training.finished" : "2025-04-14T12:27:11Z",
+      "com.apple.createml.model.created" : "2025-04-14T12:27:11Z",
+      "com.apple.coreml.model.preview.type" : "textClassifier",
+      "com.apple.createml.app.version" : "6.2",
+      "com.apple.createml.training.started" : "2025-04-14T12:27:11Z"
+    },
+    "method" : "predict"
+  }
+]
