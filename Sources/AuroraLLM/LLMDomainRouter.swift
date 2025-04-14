@@ -16,10 +16,6 @@ public protocol LLMDomainRouterProtocol {
     /// The name of the domain router, used for logging and identification purposes.
     var name: String { get }
 
-    /// The associated LLM service used to determine the domain.
-    /// The service is responsible for processing the request and identifying the domain.
-    var service: LLMServiceProtocol { get }
-
     /// A list of domains that the router supports.
     var supportedDomains: [String] { get }
 
