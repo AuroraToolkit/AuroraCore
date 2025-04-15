@@ -15,14 +15,24 @@ import AuroraLLM
  */
 struct CoreMLRoutingExample {
 
-    func execute() async {
-        let modelPath = URL(fileURLWithPath: #file)
+    private func modelPath(for filename: String) -> URL {
+        return URL(fileURLWithPath: #file)
             .deletingLastPathComponent()
             .appendingPathComponent("models")
-            .appendingPathComponent("500TextClassifier.mlmodelc")
+            .appendingPathComponent(filename)
+    }
 
-        guard FileManager.default.fileExists(atPath: modelPath.path) else {
-            print("Failed to locate model at \(modelPath.path)")
+    func execute() async {
+        let primaryModelPath = modelPath(for: "1000TextClassifier.mlmodelc")
+        let secondaryModelPath = modelPath(for: "ContrastiveTextClassifier.mlmodelc")
+
+        guard FileManager.default.fileExists(atPath: primaryModelPath.path) else {
+            print("Failed to locate model at \(primaryModelPath.path)")
+            return
+        }
+
+        guard FileManager.default.fileExists(atPath: secondaryModelPath.path) else {
+            print("Failed to locate model at \(secondaryModelPath.path)")
             return
         }
 
@@ -30,13 +40,40 @@ struct CoreMLRoutingExample {
             "sports", "entertainment", "technology", "health", "finance", "general"
         ]
 
-        guard let router = CoreMLDomainRouter(
+        guard let router1 = CoreMLDomainRouter(
             name: "ExampleRouter",
-            modelURL: modelPath,
+            modelURL: primaryModelPath,
             supportedDomains: supportedDomains
         ) else {
-            print("Failed to initialize CoreMLDomainRouter.")
+            print("Failed to initialize primary CoreMLDomainRouter.")
             return
+        }
+
+        guard let router2 = CoreMLDomainRouter(
+            name: "ExampleRouter2",
+            modelURL: secondaryModelPath,
+            supportedDomains: supportedDomains
+        ) else {
+            print("Failed to initialize secondary CoreMLDomainRouter.")
+            return
+        }
+
+        let router = DualDomainRouter(
+            name: "DualExampleRouter",
+            primary: router1,
+            secondary: router2,
+            supportedDomains: supportedDomains,
+            confidenceThreshold: 0.1, // override only if difference is 10% or more
+            fallbackDomain: "general",
+            fallbackConfidenceThreshold: 0.35 // fallback only if difference is 35% or more
+        ) { primary, secondary in
+            // Simple conflict strategy: fallback to 'general'
+            if primary == "general" || secondary == "general" {
+                return "general"
+            }
+
+            // Prefer primary unless it's 'general'
+            return primary
         }
 
         let baseTestCases: [(String, String)] = [
@@ -86,7 +123,7 @@ struct CoreMLRoutingExample {
         testCases.shuffle()
 
         var correct = 0
-        var total = testCases.count
+        let total = testCases.count
 
         print("\nCoreML Routing Test Results:\n")
 

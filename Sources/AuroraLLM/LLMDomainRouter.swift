@@ -32,6 +32,24 @@ public protocol LLMDomainRouterProtocol {
 
 
 /**
+    Protocol defining the behavior of a domain router that can provide confidence scores for domain determination.
+
+    - Note: This protocol extends `LLMDomainRouterProtocol` to include a method for determining the domain with a confidence score.
+ */
+public protocol ConfidentDomainRouter: LLMDomainRouterProtocol {
+    /**
+        Determines the domain for a given request using the associated LLM service.
+
+        - Parameters:
+            - request: The `LLMRequest` containing the prompt or context for domain determination.
+
+        - Returns: A string representing the determined domain, and double representing confidence.
+     */
+    func determineDomainWithConfidence(for request: LLMRequest) async throws -> (String, Double)
+}
+
+
+/**
     The `LLMDomainRouter` class is responsible for determining the domain of a request using an LLM service.
 
     The router uses the service to process the request and identify the domain. If the domain is not in the list of supported domains, a fallback ("general") is returned.

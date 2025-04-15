@@ -14,7 +14,7 @@ import AuroraCore
 /// 
 /// The router loads a compiled `.mlmodelc` file into an `NLModel` and uses it to classify incoming request content.
 /// If the predicted label is not found in the list of supported domains, the router returns "general" by default.
-public class CoreMLDomainRouter: LLMDomainRouterProtocol {
+public class CoreMLDomainRouter: ConfidentDomainRouter {
 
     /// The name of the router, used for logging and identification.
     public let name: String
@@ -75,6 +75,36 @@ public class CoreMLDomainRouter: LLMDomainRouterProtocol {
         } else {
             logger.debug("Unsupported domain '\(prediction)' returned. Defaulting to 'general'", category: "CoreMLDomainRouter")
             return "general"
+        }
+    }
+
+    /**
+        Determines the domain for the given `LLMRequest` and provides a confidence score.
+
+        - Parameters:
+            - request: The request containing messages to be analyzed for routing.
+        - Returns: A tuple containing the predicted domain and its confidence score.
+
+        - Throws: Never throws currently, but declared for protocol conformance and future flexibility.
+     */
+    public func determineDomainWithConfidence(for request: LLMRequest) async throws -> (String, Double) {
+        let prompt = request.messages.map(\.content).joined(separator: " ")
+
+        // Get top label hypotheses
+        let hypotheses = model.predictedLabelHypotheses(for: prompt, maximumCount: 1)
+
+        // Grab the most probable one
+        guard let (label, confidence) = hypotheses.first else {
+            logger.debug("No predictions. Defaulting to 'general'", category: "CoreMLDomainRouter")
+            return ("general", 0.0)
+        }
+
+        let domain = label.lowercased()
+        if supportedDomains.contains(domain) {
+            return (domain, confidence)
+        } else {
+            logger.debug("Unsupported domain '\(domain)' with confidence \(confidence). Defaulting to 'general'", category: "CoreMLDomainRouter")
+            return ("general", confidence)
         }
     }
 }

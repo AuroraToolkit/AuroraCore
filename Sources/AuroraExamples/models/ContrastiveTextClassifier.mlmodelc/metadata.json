@@ -1,0 +1,62 @@
+[
+  {
+    "metadataOutputVersion" : "3.0",
+    "shortDescription" : "Contrastive text classifier model with examples for each of the following domains. \n\nsupportedDomains = [\n\t\"sports\", \"entertainment\", \"technology\", \"health\", \"finance\", \"general\"\n]\n\nNot production-ready, for testing only.\n",
+    "outputSchema" : [
+      {
+        "isOptional" : "0",
+        "formattedType" : "String",
+        "type" : "String",
+        "name" : "label",
+        "shortDescription" : "Text label"
+      }
+    ],
+    "modelParameters" : [
+
+    ],
+    "author" : "Dan Murrell Jr",
+    "specificationVersion" : 3,
+    "isUpdatable" : "0",
+    "stateSchema" : [
+
+    ],
+    "availability" : {
+      "macOS" : "10.14",
+      "tvOS" : "12.0",
+      "visionOS" : "1.0",
+      "watchOS" : "5.0",
+      "iOS" : "12.0",
+      "macCatalyst" : "12.0"
+    },
+    "modelType" : {
+      "name" : "MLModelType_textClassifier"
+    },
+    "inputSchema" : [
+      {
+        "isOptional" : "0",
+        "formattedType" : "String",
+        "type" : "String",
+        "name" : "text",
+        "shortDescription" : "Input text"
+      }
+    ],
+    "classLabels" : [
+      "technology",
+      "sports",
+      "finance",
+      "entertainment",
+      "general",
+      "health"
+    ],
+    "generatedClassName" : "ContrastiveTextClassifier",
+    "userDefinedMetadata" : {
+      "com.apple.createml.app.tag" : "151.2",
+      "com.apple.createml.training.finished" : "2025-04-15T13:11:04Z",
+      "com.apple.createml.model.created" : "2025-04-15T13:11:04Z",
+      "com.apple.coreml.model.preview.type" : "textClassifier",
+      "com.apple.createml.app.version" : "6.2",
+      "com.apple.createml.training.started" : "2025-04-15T13:11:04Z"
+    },
+    "method" : "predict"
+  }
+]
