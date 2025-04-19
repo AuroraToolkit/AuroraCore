@@ -54,27 +54,27 @@ public class CoreMLDomainRouter: ConfidentDomainRouter {
      
      - Parameters:
         - request: The request containing messages to be analyzed for routing.
-
-     - Returns: A string representing the predicted domain. Returns `"general"` if prediction fails or is unsupported.
-     
+     - Returns: A string representing the predicted domain. Returns `nil` if prediction fails or is unsupported.
      - Throws: Never throws currently, but declared for protocol conformance and future flexibility.
+
+     For best results, consider normalizing the prompt text (e.g., removing emojis or punctuation) before calling this method.
      */
-    public func determineDomain(for request: LLMRequest) async throws -> String {
+    public func determineDomain(for request: LLMRequest) async throws -> String? {
         // Flatten all message contents into a single prompt string
         let prompt = request.messages.map(\.content).joined(separator: " ")
 
         // Run prediction using the loaded NLModel
         guard let prediction = model.predictedLabel(for: prompt)?.lowercased() else {
-            logger.debug("Model failed to predict. Defaulting to 'general'", category: "CoreMLDomainRouter")
-            return "general"
+            logger.debug("Model failed to predict. Returning 'nil'", category: "CoreMLDomainRouter")
+            return nil
         }
 
-        // Return predicted domain if it's supported, otherwise fallback
+        // Return predicted domain if it's supported, otherwise `nil`
         if supportedDomains.contains(prediction) {
             return prediction
         } else {
-            logger.debug("Unsupported domain '\(prediction)' returned. Defaulting to 'general'", category: "CoreMLDomainRouter")
-            return "general"
+            logger.debug("Unsupported domain '\(prediction)' returned. Returning 'nil'", category: "CoreMLDomainRouter")
+            return nil
         }
     }
 
@@ -83,11 +83,12 @@ public class CoreMLDomainRouter: ConfidentDomainRouter {
 
         - Parameters:
             - request: The request containing messages to be analyzed for routing.
-        - Returns: A tuple containing the predicted domain and its confidence score.
-
+        - Returns: A tuple containing the predicted domain and its confidence score, or `nil` if prediction fails or is unsupported.
         - Throws: Never throws currently, but declared for protocol conformance and future flexibility.
+
+        For best results, consider normalizing the prompt text (e.g., removing emojis or punctuation) before calling this method.
      */
-    public func determineDomainWithConfidence(for request: LLMRequest) async throws -> (String, Double) {
+    public func determineDomainWithConfidence(for request: LLMRequest) async throws -> (String, Double)? {
         let prompt = request.messages.map(\.content).joined(separator: " ")
 
         // Get top label hypotheses
@@ -95,16 +96,16 @@ public class CoreMLDomainRouter: ConfidentDomainRouter {
 
         // Grab the most probable one
         guard let (label, confidence) = hypotheses.first else {
-            logger.debug("No predictions. Defaulting to 'general'", category: "CoreMLDomainRouter")
-            return ("general", 0.0)
+            logger.debug("No predictions. Returning 'nil'", category: "CoreMLDomainRouter")
+            return nil
         }
 
         let domain = label.lowercased()
         if supportedDomains.contains(domain) {
             return (domain, confidence)
         } else {
-            logger.debug("Unsupported domain '\(domain)' with confidence \(confidence). Defaulting to 'general'", category: "CoreMLDomainRouter")
-            return ("general", confidence)
+            logger.debug("Unsupported domain '\(domain)' with confidence \(confidence). Returning 'nil'", category: "CoreMLDomainRouter")
+            return nil
         }
     }
 }

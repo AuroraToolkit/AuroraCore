@@ -1,7 +1,7 @@
 [
   {
     "metadataOutputVersion" : "3.0",
-    "shortDescription" : "A basic text classifier, with 100 examples from each of the supported domains.\n\nsupportedDomains = [\n    \"sports\", \"entertainment\", \"technology\", \"health\", \"finance\", \"general\"\n]\n\nNot production-ready, mainly for fast testing.\n",
+    "shortDescription" : "Text classifier model with 1000 examples for each of the following domains. \n\nsupportedDomains = [\n\t\"sports\", \"entertainment\", \"technology\", \"health\", \"finance\", “science”, “general”\n]\n\nNot production-ready, for testing only.\n",
     "outputSchema" : [
       {
         "isOptional" : "0",
@@ -41,21 +41,22 @@
       }
     ],
     "classLabels" : [
+      "health",
+      "science",
+      "general",
       "entertainment",
       "technology",
       "finance",
-      "health",
-      "sports",
-      "general"
+      "sports"
     ],
-    "generatedClassName" : "BasicTextClassifier1",
+    "generatedClassName" : "PrimaryTextClassifier",
     "userDefinedMetadata" : {
+      "com.apple.createml.training.finished" : "2025-04-18T12:07:25Z",
       "com.apple.createml.app.tag" : "151.2",
-      "com.apple.createml.training.finished" : "2025-04-14T12:27:11Z",
-      "com.apple.createml.model.created" : "2025-04-14T12:27:11Z",
+      "com.apple.createml.model.created" : "2025-04-18T12:07:25Z",
       "com.apple.coreml.model.preview.type" : "textClassifier",
       "com.apple.createml.app.version" : "6.2",
-      "com.apple.createml.training.started" : "2025-04-14T12:27:11Z"
+      "com.apple.createml.training.started" : "2025-04-18T12:07:24Z"
     },
     "method" : "predict"
   }

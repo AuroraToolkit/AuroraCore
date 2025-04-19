@@ -185,8 +185,7 @@ public class LLMManager {
 
             do {
                 // Send the request to the domain router
-                let domain = try await domainRouter.determineDomain(for: request)
-                if !domain.isEmpty {
+                if let domain = try await domainRouter.determineDomain(for: request), !domain.isEmpty {
                     logger.debug("Domain routing service identified domain: \(domain)", category: "LLMManager")
                     routings = [.domain([domain])]
                 } else {
