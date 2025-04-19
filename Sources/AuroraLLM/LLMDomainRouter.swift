@@ -25,9 +25,9 @@ public protocol LLMDomainRouterProtocol {
         - Parameters:
             - request: The `LLMRequest` containing the prompt or context for domain determination.
 
-        - Returns: A string representing the determined domain.
+        - Returns: A string representing the determined domain, or `nil` if not posslbe.
      */
-    func determineDomain(for request: LLMRequest) async throws -> String
+    func determineDomain(for request: LLMRequest) async throws -> String?
 }
 
 
@@ -43,16 +43,18 @@ public protocol ConfidentDomainRouter: LLMDomainRouterProtocol {
         - Parameters:
             - request: The `LLMRequest` containing the prompt or context for domain determination.
 
-        - Returns: A string representing the determined domain, and double representing confidence.
+        - Returns: A string representing the determined domain, and double representing confidence, or `nil` if not possible.
      */
-    func determineDomainWithConfidence(for request: LLMRequest) async throws -> (String, Double)
+    func determineDomainWithConfidence(for request: LLMRequest) async throws -> (String, Double)?
 }
 
 
 /**
     The `LLMDomainRouter` class is responsible for determining the domain of a request using an LLM service.
 
-    The router uses the service to process the request and identify the domain. If the domain is not in the list of supported domains, a fallback ("general") is returned.
+    The router uses the service to process the request and identify the domain. If the domain is not in the list of supported domains, a fallback ("unresolved") is returned.
+
+    - Note: The router is initialized with a list of supported domains and a system prompt that guides the LLM in determining the domain. The LLM is instructed to return "unresolved" if the domain is not supported, which will return "unresolved" if included in the supported domains, or `nil` if not.
  */
 public class LLMDomainRouter: LLMDomainRouterProtocol {
 
@@ -63,8 +65,8 @@ public class LLMDomainRouter: LLMDomainRouterProtocol {
     private let DEFAULT_INSTRUCTIONS = """
 Evaluate the following request and determine the domain it belongs to. Domains we support are: %@.
 
-If it doesn't fit any of these domains, just use general as the domain. You should respond to any question with ONLY 
-the domain name if we support it, or general if we don't. Do NOT try to answer the question or provide ANY additional 
+If it doesn't fit any of these domains, just use unresolved as the domain. You should respond to any question with ONLY 
+the domain name if we support it, or unresolved if we don't. Do NOT try to answer the question or provide ANY additional 
 information.
 """
 
@@ -113,7 +115,7 @@ information.
         The method uses the associated `LLMServiceProtocol` to process the request and identify the domain.
         If the domain is not in the list of supported domains, a fallback ("general") is returned.
      */
-    public func determineDomain(for request: LLMRequest) async throws -> String {
+    public func determineDomain(for request: LLMRequest) async throws -> String? {
         // Prepend the system prompt if defined for the service
         var routedRequest = request
         if let systemPrompt = service.systemPrompt {
@@ -140,8 +142,8 @@ information.
             if supportedDomains.contains(domain) {
                 return domain
             } else {
-                logger.debug("Domain '\(domain)' not in supported domains. Defaulting to 'general'.", category: "LLMDomainRouter")
-                return "general"
+                logger.debug("Domain '\(domain)' not in supported domains. Returning 'nil'.", category: "LLMDomainRouter")
+                return nil
             }
         } catch {
             logger.error("Failed to determine domain: \(error.localizedDescription)", category: "LLMDomainRouter")
