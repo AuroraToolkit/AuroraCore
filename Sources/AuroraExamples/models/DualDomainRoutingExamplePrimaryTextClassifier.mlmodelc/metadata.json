@@ -1,7 +1,7 @@
 [
   {
     "metadataOutputVersion" : "3.0",
-    "shortDescription" : "Contrastive text classifier model with 400 hard-negative and contrastive examples for each of the following domains. \n\nsupportedDomains = [\n\t\"sports\", \"entertainment\", \"technology\", \"health\", \"finance\", “science”, “general”\n]\n\nNot production-ready, for testing only.",
+    "shortDescription" : "Text classifier model with 1000 examples for each of the following domains. \n\nsupportedDomains = [\n\t\"sports\", \"entertainment\", \"technology\", \"health\", \"finance\", “science”, “general”\n]\n\nNot production-ready, for testing only.\n",
     "outputSchema" : [
       {
         "isOptional" : "0",
@@ -41,22 +41,22 @@
       }
     ],
     "classLabels" : [
-      "health",
       "technology",
       "science",
       "general",
       "finance",
-      "sports",
-      "entertainment"
+      "health",
+      "entertainment",
+      "sports"
     ],
-    "generatedClassName" : "SecondaryTextClassifier",
+    "generatedClassName" : "PrimaryTextClassifier",
     "userDefinedMetadata" : {
       "com.apple.createml.app.tag" : "151.2",
-      "com.apple.createml.training.finished" : "2025-04-18T13:03:25Z",
-      "com.apple.createml.model.created" : "2025-04-18T13:03:25Z",
+      "com.apple.createml.training.finished" : "2025-04-23T12:59:20Z",
+      "com.apple.createml.model.created" : "2025-04-23T12:59:20Z",
       "com.apple.coreml.model.preview.type" : "textClassifier",
       "com.apple.createml.app.version" : "6.2",
-      "com.apple.createml.training.started" : "2025-04-18T13:03:25Z"
+      "com.apple.createml.training.started" : "2025-04-23T12:59:20Z"
     },
     "method" : "predict"
   }

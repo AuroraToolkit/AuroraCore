@@ -69,6 +69,11 @@ public class CoreMLDomainRouter: ConfidentDomainRouter {
             return nil
         }
 
+        if prediction.isEmpty {
+            logger.error("Model returned an empty string as prediction for prompt: \(prompt)", category: "CoreMLDomainRouter")
+            return nil
+        }
+
         // Return predicted domain if it's supported, otherwise `nil`
         if supportedDomains.contains(prediction) {
             return prediction

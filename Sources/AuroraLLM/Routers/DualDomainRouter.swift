@@ -9,6 +9,16 @@ import Foundation
 import AuroraCore
 
 /**
+    A struct representing a domain prediction with a label and confidence score.
+ */
+public struct DualDomainPrediction: Equatable {
+    /// The predicted domain label.
+    public let label: String
+    /// The confidence score associated with the prediction.
+    public let confidence: Double
+}
+
+/**
 A domain router that combines two classifiers:
 
  - A **primary** router (default authority)
@@ -33,6 +43,9 @@ public struct DualDomainRouter: LLMDomainRouterProtocol {
 
     /// Optional confidence threshold for the fallback domain.
     public let fallbackConfidenceThreshold: Double?
+
+    /// If true, fallback predictions will be synthesized as "unknown" if `fallbackDomain` is unset instead of returning nil.
+    public let allowSyntheticFallbacks: Bool
 
     /// The primary router, considered the default source of truth unless contradicted by confidence logic or conflict resolution.
     private let primary: LLMDomainRouterProtocol
@@ -67,7 +80,7 @@ public struct DualDomainRouter: LLMDomainRouterProtocol {
             return primary ?? secondary
         }
     */
-    private let resolve: (_ primary: String?, _ secondary: String?) -> String?
+    private let resolve: (_ primary: DualDomainPrediction?, _ secondary: DualDomainPrediction?) -> String?
 
     /// Shared logger instance.
     private let logger = CustomLogger.shared
@@ -85,6 +98,7 @@ public struct DualDomainRouter: LLMDomainRouterProtocol {
         - confidenceThreshold: An optional confidence threshold for favoring the more confident prediction between the two routers.
         - fallbackDomain: An optional fallback domain if both routers are uncertain.
         - fallbackConfidenceThreshold: An optional confidence threshold under which both predictions are considered uncertain.
+        - allowSyntheticFallbacks: If true, fallback predictions will be synthesized instead of returning nil.
         - conflictLogger: A logging strategy for capturing conflicts between primary and secondary predictions.
         - resolveConflict: A closure that resolves conflicts between the two predictions when confidence thresholds don’t resolve it.
      */
@@ -96,8 +110,9 @@ public struct DualDomainRouter: LLMDomainRouterProtocol {
         confidenceThreshold: Double? = nil,
         fallbackDomain: String? = nil,
         fallbackConfidenceThreshold: Double? = nil,
+        allowSyntheticFallbacks: Bool = false,
         conflictLogger: ConflictLoggingStrategy? = nil,
-        resolveConflict: @escaping (_ primary: String?, _ secondary: String?) -> String?
+        resolveConflict: @escaping (_ primary: DualDomainPrediction?, _ secondary: DualDomainPrediction?) -> String?
     ) {
         self.name = name
         self.primary = primary
@@ -106,6 +121,7 @@ public struct DualDomainRouter: LLMDomainRouterProtocol {
         self.confidenceThreshold = confidenceThreshold
         self.fallbackDomain = fallbackDomain?.lowercased()
         self.fallbackConfidenceThreshold = fallbackConfidenceThreshold
+        self.allowSyntheticFallbacks = allowSyntheticFallbacks
         self.conflictLogger = conflictLogger
         self.resolve = resolveConflict
     }
@@ -119,52 +135,63 @@ public struct DualDomainRouter: LLMDomainRouterProtocol {
      - Throws: Never throws currently, but declared for protocol conformance and future flexibility.
      */
     public func determineDomain(for request: LLMRequest) async throws -> String? {
-        let (primaryPrediction, primaryConfidence) = try await prediction(from: primary, for: request)
-        let (secondaryPrediction, secondaryConfidence) = try await prediction(from: secondary, for: request)
+        let primaryPrediction = try await prediction(from: primary, for: request)
+        let secondaryPrediction = try await prediction(from: secondary, for: request)
+
+        /// Check predictions for nil values and log accordingly.
+        switch (primaryPrediction, secondaryPrediction) {
+        case let (p?, s?):
+            // Both predictions are valid — proceed with full conflict logic below
+            logger.debug("Both predictions available. Primary: '\(p.label)', Secondary: '\(s.label)'", category: "DualDomainRouter")
+            break
+        case let (p?, nil):
+            logger.debug("Only primary prediction available. Using '\(p.label)'", category: "DualDomainRouter")
+            return p.label
+        case let (nil, s?):
+            logger.debug("Only secondary prediction available. Using '\(s.label)'", category: "DualDomainRouter")
+            return s.label
+        default:
+            logger.debug("Both predictions are nil. Returning fallback or nil.", category: "DualDomainRouter")
+            return fallbackDomain
+        }
 
         /// if both predictions are the same, return the prediction
-        if primaryPrediction == secondaryPrediction {
-            return primaryPrediction
+        if primaryPrediction?.label == secondaryPrediction?.label {
+            return primaryPrediction?.label
         }
 
         // Log the conflict details using the shared logger.
         logger.debug("""
-        🧠 Conflict Detected:
+        Conflict Detected:
         Prompt: \(request.messages.map(\.content).joined(separator: " "))
-        Primary: \(primaryPrediction) (\(primaryConfidence))
-        Secondary: \(secondaryPrediction) (\(secondaryConfidence))
+        Primary: \(primaryPrediction?.label ?? "nil") (\(primaryPrediction?.confidence ?? 0))
+        Secondary: \(secondaryPrediction?.label ?? "nil") (\(secondaryPrediction?.confidence ?? 0))
         """, category: "DualDomainRouter")
 
         // Optionally, log conflicts to CSV via ConflictLogger.
         conflictLogger?.logConflict(
             prompt: request.messages.map(\.content).joined(separator: " "),
-            primary: primaryPrediction,
-            primaryConfidence: primaryConfidence,
-            secondary: secondaryPrediction,
-            secondaryConfidence: secondaryConfidence
+            primary: primaryPrediction?.label ?? "nil",
+            primaryConfidence: primaryPrediction?.confidence ?? 0,
+            secondary: secondaryPrediction?.label ?? "nil",
+            secondaryConfidence: secondaryPrediction?.confidence ?? 0
         )
 
-        /// If both predictions are below the fallback threshold, return nil
-        if let fallbackThreshold = fallbackConfidenceThreshold,
-              primaryConfidence < fallbackThreshold, secondaryConfidence < fallbackThreshold {
-            logger.debug("🔸 Both classifiers are uncertain (primary: \(primaryConfidence), secondary: \(secondaryConfidence)). Returning fallback domain or 'nil'.", category: "DualDomainRouter")
-            return fallbackDomain ?? nil
+        if shouldFallback(primaryPrediction, secondaryPrediction),
+           let fallback = fallbackDomain {
+            logger.debug("Both predictions are below fallback threshold. Returning fallback domain '\(fallback)'.", category: "DualDomainRouter")
+            return fallback
         }
 
-        /// If predictions are above the confidence threshold, return the higher confidence prediction
-        if let threshold = confidenceThreshold {
-            let delta = abs(primaryConfidence - secondaryConfidence)
-            if delta >= threshold {
-                logger.debug("🔸 Confidence difference exceeds threshold (\(delta) >= \(threshold)). Using '\(primaryConfidence > secondaryConfidence ? primaryPrediction : secondaryPrediction)'.", category: "DualDomainRouter")
-                return primaryConfidence > secondaryConfidence ? primaryPrediction : secondaryPrediction
-            }
+        if confidenceExceedsThreshold(primaryPrediction, secondaryPrediction) {
+            let winner = moreConfident(primaryPrediction, secondaryPrediction)
+            logger.debug("Confidence difference exceeds threshold. Using '\(winner?.label ?? "nil")'.", category: "DualDomainRouter")
+            return winner?.label
         }
 
-        /// If both predictions are below the confidence threshold, use the resolve function to determine the domain
-        guard let resolved = resolve(primaryPrediction, secondaryPrediction) else {
-            return fallbackDomain ?? nil
-        }
-        return validateDomain(resolved)
+        // If we reach here, we need to resolve the conflict using the provided closure.
+        logger.debug("Confidence difference does not exceed threshold. Using custom resolution logic.", category: "DualDomainRouter")
+        return resolve(primaryPrediction, secondaryPrediction)
     }
 
     //MARK: - Helper functions
@@ -175,34 +202,45 @@ public struct DualDomainRouter: LLMDomainRouterProtocol {
         - Parameters:
             - router: The router to retrieve the prediction from.
             - request: The request containing messages to be analyzed for routing.
-        - Returns: A tuple containing the predicted domain and its confidence level.
+        - Returns: A `DomainPrediction` containing the predicted domain and its confidence level.
         - Throws: An error if the prediction fails.
 
-        This function is private and used internally to retrieve the prediction and confidence from the specified router. It handles both confident and non-confident routers.
+        This function is private and used internally to retrieve the prediction and confidence from the specified router. It handles both confident and non-confident routers. If the domain cannot be determined, the `fallbackDomain` is returned with a confidence of 0. If `fallbackDomain` is not set and `allowSyntheticFallbacks` is `true`, "unknown" is returned.
      */
     private func prediction(from router: LLMDomainRouterProtocol,
                             for request: LLMRequest
-    ) async throws -> (String, Double) {
+    ) async throws -> DualDomainPrediction? {
         if let c = router as? ConfidentDomainRouter,
            let (label, conf) = try await c.determineDomainWithConfidence(for: request) {
-            return (label.lowercased(), conf)
+            return DualDomainPrediction(label: label.lowercased(), confidence: conf)
         } else if let label = try await router.determineDomain(for: request) {
-            return (label.lowercased(), 1.0)
+            return DualDomainPrediction(label: label.lowercased(), confidence: 1.0)
         } else {
-            return ("", 0)
+            guard allowSyntheticFallbacks else { return nil }
+            return DualDomainPrediction(label: fallbackDomain ?? "unknown", confidence: 0)
         }
     }
 
-    /**
-        Validates the domain name by converting it to lowercase and checking against supported domains.
+    // MARK: - Threshold Logic
 
-        - Parameters:
-            - domain: The domain name to validate.
-        - Returns: An optional sanitized domain name if valid, otherwise `nil`.
-     */
-    private func validateDomain(_ domain: String) -> String? {
-        let normalized = domain.lowercased()
-        return supportedDomains.contains(normalized) ? normalized : nil
+    /// Returns true if both predictions fall below the fallback threshold.
+    private func shouldFallback(_ p1: DualDomainPrediction?, _ p2: DualDomainPrediction?) -> Bool {
+        guard let threshold = fallbackConfidenceThreshold else { return false }
+        return (p1?.confidence ?? 0) < threshold && (p2?.confidence ?? 0) < threshold
+    }
+
+    /// Returns true if the confidence delta between predictions meets or exceeds the threshold.
+    private func confidenceExceedsThreshold(_ p1: DualDomainPrediction?, _ p2: DualDomainPrediction?) -> Bool {
+        guard let t = confidenceThreshold,
+              let p1 = p1,
+              let p2 = p2 else { return false }
+        return abs(p1.confidence - p2.confidence) >= t
+    }
+
+    /// Returns the prediction with higher confidence.
+    private func moreConfident(_ p1: DualDomainPrediction?, _ p2: DualDomainPrediction?) -> DualDomainPrediction? {
+        guard let p1 = p1, let p2 = p2 else { return p1 ?? p2 }
+        return p1.confidence >= p2.confidence ? p1 : p2
     }
 }
 
@@ -295,6 +333,10 @@ public final class FileConflictLogger: ConflictLoggingStrategy {
     A console-based conflict logger that prints conflict details to the console.
  */
 public final class ConsoleConflictLogger: ConflictLoggingStrategy {
+    private let logger = CustomLogger.shared
+
+    public init() {}
+    
     /**
      Logs a conflict with the provided details.
 
@@ -312,6 +354,6 @@ public final class ConsoleConflictLogger: ConflictLoggingStrategy {
         secondary: String,
         secondaryConfidence: Double
     ) {
-        print("[\(Date())] Conflict: \(prompt) | Primary: \(primary) (\(primaryConfidence)) | Secondary: \(secondary) (\(secondaryConfidence))")
+        logger.debug("[\(Date())] Conflict: \(prompt) | Primary: \(primary) (\(primaryConfidence)) | Secondary: \(secondary) (\(secondaryConfidence))", category: "ConsoleConflictLogger")
     }
 }

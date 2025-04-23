@@ -2,8 +2,19 @@ import Foundation
 import AuroraCore
 import AuroraLLM
 
-struct CoreMLRoutingExample {
+/**
+    This example demonstrates how to use a `DualDomainRouter` to classify input prompts into domains using two CoreML models.
+    It loads a primary and secondary model, runs each prompt through both, and resolves conflicts based on confidence thresholds.
 
+    The router evaluates predictions from both models:
+    - Uses the primary model for standard classification.
+    - Leverages the secondary model as a contrastive signal to improve accuracy.
+    - Applies confidence-based conflict resolution with optional fallback handling.
+
+    The example processes a predefined test set, compares results against expected domains, and outputs a detailed evaluation report,
+    including per-domain accuracy and misclassified prompts.
+ */
+struct DualDomainRoutingExample {
     private func modelPath(for filename: String) -> URL {
         URL(fileURLWithPath: #file)
             .deletingLastPathComponent()
@@ -12,7 +23,7 @@ struct CoreMLRoutingExample {
     }
 
     private var supportedDomains: [String] {
-        ["sports", "entertainment", "technology", "health", "finance", "science"]
+        ["sports", "entertainment", "technology", "health", "finance", "science", "general"]
     }
 
     private let testCases: [(String, String)]
@@ -65,12 +76,12 @@ struct CoreMLRoutingExample {
         guard
             let router1 = CoreMLDomainRouter(
                 name: "PrimaryRouter",
-                modelURL: modelPath(for: "PrimaryTextClassifier.mlmodelc"),
+                modelURL: modelPath(for: "DualDomainRoutingExamplePrimaryTextClassifier.mlmodelc"),
                 supportedDomains: supportedDomains
             ),
             let router2 = CoreMLDomainRouter(
                 name: "SecondaryRouter",
-                modelURL: modelPath(for: "SecondaryTextClassifier.mlmodelc"),
+                modelURL: modelPath(for: "DualDomainRoutingExampleSecondaryTextClassifier.mlmodelc"),
                 supportedDomains: supportedDomains
             )
         else {
@@ -78,7 +89,7 @@ struct CoreMLRoutingExample {
             return
         }
 
-        let conflictLogger = FileConflictLogger(fileName: "DualExampleRouterConflicts.csv")
+        let conflictLogger = FileConflictLogger(fileName: "DualDomainRoutingExampleConflicts.csv")
 
         let dualRouter = DualDomainRouter(
             name: "DualRouter",
@@ -88,10 +99,19 @@ struct CoreMLRoutingExample {
             confidenceThreshold: 0.1,
             fallbackDomain: "general",
             fallbackConfidenceThreshold: 0.35,
+            allowSyntheticFallbacks: false,
             conflictLogger: conflictLogger
         ) { primary, secondary in
-            guard let primary else { return "general" }
-            return primary
+            if let p = primary, p.confidence > 0.35 {
+                print("⚠️ Conflict detected (primary): \(p.label) vs \(secondary?.label ?? "nil")")
+                return p.label
+            } else if let s = secondary, s.confidence > 0.35 {
+                print("⚠️ Conflict detected (secondary): \(primary?.label ?? "nil") vs \(s.label)")
+                return s.label
+            } else {
+                print("⚠️ No strong predictions, defaulting to general domain")
+                return "general"
+            }
         }
 
         let (results1, correct1) = await runTest(named: "Primary", router: router1)
@@ -99,6 +119,10 @@ struct CoreMLRoutingExample {
         let (results3, correct3) = await runTest(named: "Dual", router: dualRouter)
 
         compareResults(primary: results1, secondary: results2, dual: results3)
+
+        printDomainAccuracyBreakdown(name: "Primary", results: results1)
+        printDomainAccuracyBreakdown(name: "Secondary", results: results2)
+        printDomainAccuracyBreakdown(name: "Dual", results: results3)
 
         print("\n📈 Final Accuracy Comparison:")
         print("- Primary:   \(correct1)/\(testCases.count) = \(String(format: "%.2f", Double(correct1) / Double(testCases.count) * 100))%")
@@ -117,11 +141,13 @@ struct CoreMLRoutingExample {
         for (prompt, expected) in testCases {
             let request = LLMRequest(messages: [.init(role: .user, content: prompt)], stream: false)
             do {
+                print("🔍 [\(name)] Prompt: \(prompt)")
                 let predicted = try await router.determineDomain(for: request)
                 if predicted == expected {
+                    print("✅ [\(name)] Expected: \(expected) Got: \(predicted ?? "nil")")
                     correct += 1
                 } else {
-                    print("❌ [\(name)] Prompt: \(prompt)\nExpected: \(expected), Got: \(predicted ?? "nil")\n")
+                    print("❌ [\(name)] Prompt: \(prompt)\nExpected: \(expected), Got: \(predicted ?? "nil")")
                 }
                 results.append((prompt, expected, predicted))
             } catch {
@@ -149,8 +175,34 @@ struct CoreMLRoutingExample {
             let d = dual[i].2 ?? "nil"
 
             if p != s || p != d || s != d {
-                print("🔀 Prompt: \(prompt)\nExpected: \(expected)\nPrimary: \(p), Secondary: \(s), Dual: \(d)\n")
+                print("🔀 Prompt: \(prompt)\nExpected: \(expected)\nPrimary: \(p), Secondary: \(s), Dual: \(d)")
             }
+        }
+    }
+
+    private func printDomainAccuracyBreakdown(name: String, results: [(prompt: String, expected: String, predicted: String?)]) {
+        var totalByDomain: [String: Int] = [:]
+        var correctByDomain: [String: Int] = [:]
+
+        for (_, expected, predicted) in results {
+            totalByDomain[expected, default: 0] += 1
+            if expected == predicted {
+                correctByDomain[expected, default: 0] += 1
+            }
+        }
+
+        let sorted = totalByDomain.keys.sorted {
+            let acc1 = Double(correctByDomain[$0] ?? 0) / Double(totalByDomain[$0] ?? 1)
+            let acc2 = Double(correctByDomain[$1] ?? 0) / Double(totalByDomain[$1] ?? 1)
+            return acc1 > acc2
+        }
+
+        print("\n📊 \(name) Domain-Level Accuracy:")
+        for domain in sorted {
+            let total = totalByDomain[domain] ?? 0
+            let correct = correctByDomain[domain] ?? 0
+            let accuracy = Double(correct) / Double(total) * 100
+            print("- \(domain): \(correct)/\(total) = \(String(format: "%.2f", accuracy))%")
         }
     }
 }
