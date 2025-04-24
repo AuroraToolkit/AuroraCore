@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>DualDomainRouter Structure Reference</title>
+    <link rel="stylesheet" type="text/css" href="../../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../../js/jquery.min.js" defer></script>
+    <script src="../../js/jazzy.js" defer></script>
+    
+    <script src="../../js/lunr.min.js" defer></script>
+    <script src="../../js/typeahead.jquery.js" defer></script>
+    <script src="../../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Struct/DualDomainRouter" class="dashAnchor"></a>
+    <a title="DualDomainRouter Structure Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../../index.html">AuroraCore Docs</a> (89% documented)</p>
+        <div class="header-right">
+          <form role="search" action="../../search.json">
+            <input type="text" placeholder="Search documentation" data-typeahead>
+          </form>
+        </div>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../../index.html">AuroraCore</a>
+        <img id="carat" src="../../img/carat.png" alt=""/>
+        <a href="../../AuroraLLM.html">AuroraLLM</a>
+        <img id="carat" src="../../img/carat.png" alt=""/>
+        DualDomainRouter Structure Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../../AuroraCore.html">AuroraCore</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/AnyWorkflowComponent.html">AnyWorkflowComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Classes/CustomLogger.html">CustomLogger</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Extensions/Swift/Dictionary.html">Dictionary</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Classes/ExecutionTimer.html">ExecutionTimer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Extensions/Foundation/FileManager.html">FileManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Protocols/LogicComponent.html">LogicComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Classes/SecureStorage.html">SecureStorage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Extensions/Swift/String.html">String</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Extensions/Swift/String/TrimmingStrategy.html">– TrimmingStrategy</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Protocols/TriggerComponent.html">TriggerComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow.html">Workflow</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow/State.html">– State</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow/Component.html">– Component</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow/ComponentsManager.html">– ComponentsManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow/ExecutionDetails.html">– ExecutionDetails</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow/ExecutionDetailsHolder.html">– ExecutionDetailsHolder</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow/Task.html">– Task</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow/TaskGroup.html">– TaskGroup</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow/Subflow.html">– Subflow</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow/Logic.html">– Logic</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/Workflow/Trigger.html">– Trigger</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/WorkflowBuilder.html">WorkflowBuilder</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/WorkflowComponentReport.html">WorkflowComponentReport</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Structs/WorkflowReport.html">WorkflowReport</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraCore/Protocols/WorkflowReportable.html">WorkflowReportable</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../../AuroraLLM.html">AuroraLLM</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMResponse.html">AnthropicLLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMResponse.html#/s:9AuroraLLM20AnthropicLLMResponseV7ContentV">– Content</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMResponse.html#/s:9AuroraLLM20AnthropicLLMResponseV5UsageV">– Usage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMStreamingResponse.html">AnthropicLLMStreamingResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMStreamingResponse/Delta.html">– Delta</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMStreamingResponse/ContentBlock.html">– ContentBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/AnthropicLLMStreamingResponse/Usage.html">– Usage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/AnthropicService.html">AnthropicService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/Bookmark.html">Bookmark</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Protocols/ConfidentDomainRouter.html">ConfidentDomainRouter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Protocols/ConflictLoggingStrategy.html">ConflictLoggingStrategy</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/ConsoleConflictLogger.html">ConsoleConflictLogger</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/Context.html">Context</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/ContextController.html">ContextController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/ContextItem.html">ContextItem</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/ContextManager.html">ContextManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/CoreMLDomainRouter.html">CoreMLDomainRouter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/DualDomainPrediction.html">DualDomainPrediction</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/DualDomainRouter.html">DualDomainRouter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/FetchContextsTask.html">FetchContextsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/FileConflictLogger.html">FileConflictLogger</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/GoogleService.html">GoogleService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/LLMDomainRouter.html">LLMDomainRouter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Protocols/LLMDomainRouterProtocol.html">LLMDomainRouterProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/LLMManager.html">LLMManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/LLMManager/Routing.html">– Routing</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/LLMMessage.html">LLMMessage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/LLMRequest.html">LLMRequest</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/LLMRequestOptions.html">LLMRequestOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Protocols/LLMResponseProtocol.html">LLMResponseProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Enums/LLMRole.html">LLMRole</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Enums/LLMServiceError.html">LLMServiceError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/LLMServiceFactory.html">LLMServiceFactory</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/LLMTokenUsage.html">LLMTokenUsage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/LoadContextTask.html">LoadContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/OllamaLLMResponse.html">OllamaLLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/OllamaService.html">OllamaService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/OpenAILLMResponse.html">OpenAILLMResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/OpenAILLMResponse/Choice.html">– Choice</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/OpenAILLMResponse.html#/s:9AuroraLLM17OpenAILLMResponseV5UsageV">– Usage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/OpenAIService.html">OpenAIService</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/SaveContextTask.html">SaveContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Extensions/Swift/String.html">String</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/Summarizer.html">Summarizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/SummarizerOptions.html">SummarizerOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Protocols/SummarizerProtocol.html">SummarizerProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Enums/SummaryType.html">SummaryType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Enums/TokenAdjustmentPolicy.html">TokenAdjustmentPolicy</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../../AuroraTaskLibrary.html">AuroraTaskLibrary</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/AnalyzeSentimentTask.html">AnalyzeSentimentTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/AnalyzeTextReadabilityTask.html">AnalyzeTextReadabilityTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/CategorizeStringsTask.html">CategorizeStringsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/ClusterStringsTask.html">ClusterStringsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/DetectLanguagesTask.html">DetectLanguagesTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/ExtractEntitiesTask.html">ExtractEntitiesTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/ExtractRelationsTask.html">ExtractRelationsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Structs/FetchURLTask.html">FetchURLTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/GenerateKeywordsTask.html">GenerateKeywordsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/GenerateTitlesTask.html">GenerateTitlesTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Enums/JSONElement.html">JSONElement</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/JSONParsingTask.html">JSONParsingTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/LLMTask.html">LLMTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Structs/RSSArticle.html">RSSArticle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/RSSParsingTask.html">RSSParsingTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/SummarizeContextTask.html">SummarizeContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/SummarizeStringsTask.html">SummarizeStringsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/TranslateStringsTask.html">TranslateStringsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraTaskLibrary/Classes/TrimmingTask.html">TrimmingTask</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>DualDomainRouter</h1>
+              <div class="declaration">
+                <div class="language">
+                  
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DualDomainRouter</span> <span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Protocols/LLMDomainRouterProtocol.html">LLMDomainRouterProtocol</a></span></code></pre>
+
+                </div>
+              </div>
+            <p>A domain router that combines two classifiers:</p>
+
+<ul>
+<li>A <strong>primary</strong> router (default authority)</li>
+<li>A <strong>secondary</strong> contrastive router (used to validate, challenge, or help resolve uncertain predictions)</li>
+</ul>
+
+<p>The router uses confidence thresholds and an optional fallback domain to resolve disagreements.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM16DualDomainRouterV4nameSSvp"></a>
+                    <a name="//apple_ref/swift/Property/name" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM16DualDomainRouterV4nameSSvp">name</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The name of the router, used for logging and identification.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM16DualDomainRouterV16supportedDomainsSaySSGvp"></a>
+                    <a name="//apple_ref/swift/Property/supportedDomains" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM16DualDomainRouterV16supportedDomainsSaySSGvp">supportedDomains</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The list of valid domains this router recognizes.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">supportedDomains</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">]</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM16DualDomainRouterV19confidenceThresholdSdSgvp"></a>
+                    <a name="//apple_ref/swift/Property/confidenceThreshold" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM16DualDomainRouterV19confidenceThresholdSdSgvp">confidenceThreshold</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Optional confidence threshold to auto-resolve conflicts.
+If the difference in confidence exceeds this value, the higher-confidence result is used.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">confidenceThreshold</span><span class="p">:</span> <span class="kt">Double</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM16DualDomainRouterV08fallbackD0SSSgvp"></a>
+                    <a name="//apple_ref/swift/Property/fallbackDomain" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM16DualDomainRouterV08fallbackD0SSSgvp">fallbackDomain</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>If both classifiers return confidence scores below this threshold, fallback to this domain.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">fallbackDomain</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM16DualDomainRouterV27fallbackConfidenceThresholdSdSgvp"></a>
+                    <a name="//apple_ref/swift/Property/fallbackConfidenceThreshold" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM16DualDomainRouterV27fallbackConfidenceThresholdSdSgvp">fallbackConfidenceThreshold</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Optional confidence threshold for the fallback domain.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">fallbackConfidenceThreshold</span><span class="p">:</span> <span class="kt">Double</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM16DualDomainRouterV23allowSyntheticFallbacksSbvp"></a>
+                    <a name="//apple_ref/swift/Property/allowSyntheticFallbacks" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM16DualDomainRouterV23allowSyntheticFallbacksSbvp">allowSyntheticFallbacks</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>If true, fallback predictions will be synthesized as &ldquo;unknown&rdquo; if <code><a href="../../AuroraLLM/Structs/DualDomainRouter.html#/s:9AuroraLLM16DualDomainRouterV08fallbackD0SSSgvp">fallbackDomain</a></code> is unset instead of returning nil.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">allowSyntheticFallbacks</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM16DualDomainRouterV4name7primary9secondary16supportedDomains19confidenceThreshold08fallbackD00m10ConfidenceL023allowSyntheticFallbacks14conflictLogger15resolveConflictACSS_AA09LLMDomainE8Protocol_pAaN_pSaySSGSdSgSSSgAPSbAA0U15LoggingStrategy_pSgAqA0cD10PredictionVSg_AVtctcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(name:primary:secondary:supportedDomains:confidenceThreshold:fallbackDomain:fallbackConfidenceThreshold:allowSyntheticFallbacks:conflictLogger:resolveConflict:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM16DualDomainRouterV4name7primary9secondary16supportedDomains19confidenceThreshold08fallbackD00m10ConfidenceL023allowSyntheticFallbacks14conflictLogger15resolveConflictACSS_AA09LLMDomainE8Protocol_pAaN_pSaySSGSdSgSSSgAPSbAA0U15LoggingStrategy_pSgAqA0cD10PredictionVSg_AVtctcfc">init(name:<wbr>primary:<wbr>secondary:<wbr>supportedDomains:<wbr>confidenceThreshold:<wbr>fallbackDomain:<wbr>fallbackConfidenceThreshold:<wbr>allowSyntheticFallbacks:<wbr>conflictLogger:<wbr>resolveConflict:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Initializes a new <code>DualDomainRouter</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span>
+    <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+    <span class="nv">primary</span><span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Protocols/LLMDomainRouterProtocol.html">LLMDomainRouterProtocol</a></span><span class="p">,</span>
+    <span class="nv">secondary</span><span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Protocols/LLMDomainRouterProtocol.html">LLMDomainRouterProtocol</a></span><span class="p">,</span>
+    <span class="nv">supportedDomains</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">],</span>
+    <span class="nv">confidenceThreshold</span><span class="p">:</span> <span class="kt">Double</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+    <span class="nv">fallbackDomain</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+    <span class="nv">fallbackConfidenceThreshold</span><span class="p">:</span> <span class="kt">Double</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+    <span class="nv">allowSyntheticFallbacks</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nv">conflictLogger</span><span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Protocols/ConflictLoggingStrategy.html">ConflictLoggingStrategy</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+    <span class="nv">resolveConflict</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="n">_</span> <span class="nv">primary</span><span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Structs/DualDomainPrediction.html">DualDomainPrediction</a></span><span class="p">?,</span> <span class="n">_</span> <span class="nv">secondary</span><span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Structs/DualDomainPrediction.html">DualDomainPrediction</a></span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">?</span>
+<span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>name</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The name of the router.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>primary</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The primary (default) router whose prediction is preferred unless overridden by confidence or conflict resolution logic.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>secondary</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The contrastive router used to provide a second opinion or trigger conflict resolution logic.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>supportedDomains</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A list of valid domains this router recognizes.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>confidenceThreshold</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>An optional confidence threshold for favoring the more confident prediction between the two routers.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>fallbackDomain</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>An optional fallback domain if both routers are uncertain.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>fallbackConfidenceThreshold</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>An optional confidence threshold under which both predictions are considered uncertain.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>allowSyntheticFallbacks</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>If true, fallback predictions will be synthesized instead of returning nil.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>conflictLogger</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A logging strategy for capturing conflicts between primary and secondary predictions.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>resolveConflict</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A closure that resolves conflicts between the two predictions when confidence thresholds don’t resolve it.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM16DualDomainRouterV09determineD03forSSSgAA10LLMRequestV_tYaKF"></a>
+                    <a name="//apple_ref/swift/Method/determineDomain(for:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM16DualDomainRouterV09determineD03forSSSgAA10LLMRequestV_tYaKF">determineDomain(for:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Determines the domain for the given <code><a href="../../AuroraLLM/Structs/LLMRequest.html">LLMRequest</a></code> using the primary and secondary routers.</p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    Never throws currently, but declared for protocol conformance and future flexibility.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">determineDomain</span><span class="p">(</span><span class="k">for</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Structs/LLMRequest.html">LLMRequest</a></span><span class="p">)</span> <span class="k">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>request</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The request containing messages to be analyzed for routing.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>A string representing the predicted domain if supported, or <code>nil</code> if not supported or below our confidence threshold.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2025 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2025-04-24)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</html>

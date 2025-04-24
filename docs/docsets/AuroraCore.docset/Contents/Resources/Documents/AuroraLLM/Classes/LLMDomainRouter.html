@@ -151,6 +151,15 @@
                 <a href="../../AuroraLLM/Structs/Bookmark.html">Bookmark</a>
               </li>
               <li class="nav-group-task">
+                <a href="../../AuroraLLM/Protocols/ConfidentDomainRouter.html">ConfidentDomainRouter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Protocols/ConflictLoggingStrategy.html">ConflictLoggingStrategy</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/ConsoleConflictLogger.html">ConsoleConflictLogger</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../../AuroraLLM/Structs/Context.html">Context</a>
               </li>
               <li class="nav-group-task">
@@ -163,7 +172,19 @@
                 <a href="../../AuroraLLM/Classes/ContextManager.html">ContextManager</a>
               </li>
               <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/CoreMLDomainRouter.html">CoreMLDomainRouter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/DualDomainPrediction.html">DualDomainPrediction</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/DualDomainRouter.html">DualDomainRouter</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../../AuroraLLM/Structs/FetchContextsTask.html">FetchContextsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/FileConflictLogger.html">FileConflictLogger</a>
               </li>
               <li class="nav-group-task">
                 <a href="../../AuroraLLM/Classes/GoogleService.html">GoogleService</a>
@@ -328,7 +349,12 @@
               </div>
             <p>The <code>LLMDomainRouter</code> class is responsible for determining the domain of a request using an LLM service.</p>
 
-<p>The router uses the service to process the request and identify the domain. If the domain is not in the list of supported domains, a fallback (&ldquo;general&rdquo;) is returned.</p>
+<p>The router uses the service to process the request and identify the domain. If the domain is not in the list of supported domains, a fallback (&ldquo;unresolved&rdquo;) is returned.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    The router is initialized with a list of supported domains and a system prompt that guides the LLM in determining the domain. The LLM is instructed to return &ldquo;unresolved&rdquo; if the domain is not supported, which will return &ldquo;unresolved&rdquo; if included in the supported domains, or <code>nil</code> if not.
+
+</div>
 
           </section>
           <section class="section task-group-section">
@@ -363,9 +389,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9AuroraLLM23LLMDomainRouterProtocolP7serviceAA010LLMServiceE0_pvp"></a>
+                    <a name="/s:9AuroraLLM15LLMDomainRouterC7serviceAA18LLMServiceProtocol_pvp"></a>
                     <a name="//apple_ref/swift/Property/service" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9AuroraLLM23LLMDomainRouterProtocolP7serviceAA010LLMServiceE0_pvp">service</a>
+                    <a class="token" href="#/s:9AuroraLLM15LLMDomainRouterC7serviceAA18LLMServiceProtocol_pvp">service</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -373,7 +399,8 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>Undocumented</p>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
@@ -502,9 +529,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9AuroraLLM15LLMDomainRouterC15determineDomain3forSSAA10LLMRequestV_tYaKF"></a>
+                    <a name="/s:9AuroraLLM15LLMDomainRouterC15determineDomain3forSSSgAA10LLMRequestV_tYaKF"></a>
                     <a name="//apple_ref/swift/Method/determineDomain(for:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9AuroraLLM15LLMDomainRouterC15determineDomain3forSSAA10LLMRequestV_tYaKF">determineDomain(for:<wbr>)</a>
+                    <a class="token" href="#/s:9AuroraLLM15LLMDomainRouterC15determineDomain3forSSSgAA10LLMRequestV_tYaKF">determineDomain(for:<wbr>)</a>
                     </code>
                       <span class="declaration-note">
                         Asynchronous
@@ -531,7 +558,7 @@ If the domain is not in the list of supported domains, a fallback (&ldquo;genera
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">determineDomain</span><span class="p">(</span><span class="k">for</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Structs/LLMRequest.html">LLMRequest</a></span><span class="p">)</span> <span class="k">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">determineDomain</span><span class="p">(</span><span class="k">for</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Structs/LLMRequest.html">LLMRequest</a></span><span class="p">)</span> <span class="k">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
@@ -566,8 +593,8 @@ If the domain is not in the list of supported domains, a fallback (&ldquo;genera
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2025 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2025-04-04)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+          <p>&copy; 2025 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2025-04-24)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>

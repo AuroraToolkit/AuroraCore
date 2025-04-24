@@ -149,6 +149,15 @@
                 <a href="AuroraLLM/Structs/Bookmark.html">Bookmark</a>
               </li>
               <li class="nav-group-task">
+                <a href="AuroraLLM/Protocols/ConfidentDomainRouter.html">ConfidentDomainRouter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Protocols/ConflictLoggingStrategy.html">ConflictLoggingStrategy</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Classes/ConsoleConflictLogger.html">ConsoleConflictLogger</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="AuroraLLM/Structs/Context.html">Context</a>
               </li>
               <li class="nav-group-task">
@@ -161,7 +170,19 @@
                 <a href="AuroraLLM/Classes/ContextManager.html">ContextManager</a>
               </li>
               <li class="nav-group-task">
+                <a href="AuroraLLM/Classes/CoreMLDomainRouter.html">CoreMLDomainRouter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Structs/DualDomainPrediction.html">DualDomainPrediction</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Structs/DualDomainRouter.html">DualDomainRouter</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="AuroraLLM/Structs/FetchContextsTask.html">FetchContextsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Classes/FileConflictLogger.html">FileConflictLogger</a>
               </li>
               <li class="nav-group-task">
                 <a href="AuroraLLM/Classes/GoogleService.html">GoogleService</a>
@@ -354,6 +375,39 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:9AuroraLLM21ConfidentDomainRouterP"></a>
+                    <a name="//apple_ref/swift/Protocol/ConfidentDomainRouter" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM21ConfidentDomainRouterP">ConfidentDomainRouter</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Protocol defining the behavior of a domain router that can provide confidence scores for domain determination.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    This protocol extends <code><a href="AuroraLLM/Protocols/LLMDomainRouterProtocol.html">LLMDomainRouterProtocol</a></code> to include a method for determining the domain with a confidence score.
+
+</div>
+
+                        <a href="AuroraLLM/Protocols/ConfidentDomainRouter.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">ConfidentDomainRouter</span> <span class="p">:</span> <span class="kt"><a href="AuroraLLM/Protocols/LLMDomainRouterProtocol.html">LLMDomainRouterProtocol</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:9AuroraLLM15LLMDomainRouterC"></a>
                     <a name="//apple_ref/swift/Class/LLMDomainRouter" class="dashAnchor"></a>
                     <a class="token" href="#/s:9AuroraLLM15LLMDomainRouterC">LLMDomainRouter</a>
@@ -366,7 +420,12 @@
                       <div class="abstract">
                         <p>The <code>LLMDomainRouter</code> class is responsible for determining the domain of a request using an LLM service.</p>
 
-<p>The router uses the service to process the request and identify the domain. If the domain is not in the list of supported domains, a fallback (&ldquo;general&rdquo;) is returned.</p>
+<p>The router uses the service to process the request and identify the domain. If the domain is not in the list of supported domains, a fallback (&ldquo;unresolved&rdquo;) is returned.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    The router is initialized with a list of supported domains and a system prompt that guides the LLM in determining the domain. The LLM is instructed to return &ldquo;unresolved&rdquo; if the domain is not supported, which will return &ldquo;unresolved&rdquo; if included in the supported domains, or <code>nil</code> if not.
+
+</div>
 
                         <a href="AuroraLLM/Classes/LLMDomainRouter.html" class="slightly-smaller">See more</a>
                       </div>
@@ -1035,6 +1094,197 @@ It also tracks usage statistics such as prompt and completion tokens.</p>
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:9AuroraLLM18CoreMLDomainRouterC"></a>
+                    <a name="//apple_ref/swift/Class/CoreMLDomainRouter" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM18CoreMLDomainRouterC">CoreMLDomainRouter</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A domain router that uses a Core ML–based natural language classifier to predict the domain of a request.</p>
+
+<p>The router loads a compiled <code>.mlmodelc</code> file into an <code>NLModel</code> and uses it to classify incoming request content.
+If the predicted label is not found in the list of supported domains, the router returns &ldquo;general&rdquo; by default.</p>
+
+                        <a href="AuroraLLM/Classes/CoreMLDomainRouter.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">CoreMLDomainRouter</span> <span class="p">:</span> <span class="kt"><a href="AuroraLLM/Protocols/ConfidentDomainRouter.html">ConfidentDomainRouter</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM20DualDomainPredictionV"></a>
+                    <a name="//apple_ref/swift/Struct/DualDomainPrediction" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM20DualDomainPredictionV">DualDomainPrediction</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A struct representing a domain prediction with a label and confidence score.</p>
+
+                        <a href="AuroraLLM/Structs/DualDomainPrediction.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DualDomainPrediction</span> <span class="p">:</span> <span class="kt">Equatable</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM16DualDomainRouterV"></a>
+                    <a name="//apple_ref/swift/Struct/DualDomainRouter" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM16DualDomainRouterV">DualDomainRouter</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A domain router that combines two classifiers:</p>
+
+<ul>
+<li>A <strong>primary</strong> router (default authority)</li>
+<li>A <strong>secondary</strong> contrastive router (used to validate, challenge, or help resolve uncertain predictions)</li>
+</ul>
+
+<p>The router uses confidence thresholds and an optional fallback domain to resolve disagreements.</p>
+
+                        <a href="AuroraLLM/Structs/DualDomainRouter.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DualDomainRouter</span> <span class="p">:</span> <span class="kt"><a href="AuroraLLM/Protocols/LLMDomainRouterProtocol.html">LLMDomainRouterProtocol</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Conflict%20Logging"></a>
+                <a name="//apple_ref/swift/Section/Conflict Logging" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Conflict%20Logging"></a>
+                  <h3 class="section-name"><span>Conflict Logging</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM23ConflictLoggingStrategyP"></a>
+                    <a name="//apple_ref/swift/Protocol/ConflictLoggingStrategy" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM23ConflictLoggingStrategyP">ConflictLoggingStrategy</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>This protocol defines a method for logging conflicts between primary and secondary predictions.</p>
+
+                        <a href="AuroraLLM/Protocols/ConflictLoggingStrategy.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">ConflictLoggingStrategy</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM18FileConflictLoggerC"></a>
+                    <a name="//apple_ref/swift/Class/FileConflictLogger" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM18FileConflictLoggerC">FileConflictLogger</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A file-based conflict logger that appends conflict details to a CSV file.</p>
+
+                        <a href="AuroraLLM/Classes/FileConflictLogger.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">FileConflictLogger</span> <span class="p">:</span> <span class="kt"><a href="AuroraLLM/Protocols/ConflictLoggingStrategy.html">ConflictLoggingStrategy</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM21ConsoleConflictLoggerC"></a>
+                    <a name="//apple_ref/swift/Class/ConsoleConflictLogger" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM21ConsoleConflictLoggerC">ConsoleConflictLogger</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A console-based conflict logger that prints conflict details to the console.</p>
+
+                        <a href="AuroraLLM/Classes/ConsoleConflictLogger.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">ConsoleConflictLogger</span> <span class="p">:</span> <span class="kt"><a href="AuroraLLM/Protocols/ConflictLoggingStrategy.html">ConflictLoggingStrategy</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:9AuroraLLM16AnthropicServiceC"></a>
                     <a name="//apple_ref/swift/Class/AnthropicService" class="dashAnchor"></a>
                     <a class="token" href="#/s:9AuroraLLM16AnthropicServiceC">AnthropicService</a>
@@ -1432,8 +1682,8 @@ This struct encapsulates parameters that influence how the summary is generated.
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2025 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2025-04-04)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+          <p>&copy; 2025 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2025-04-24)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>

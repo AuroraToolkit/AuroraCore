@@ -146,6 +146,15 @@
                 <a href="AuroraLLM/Structs/Bookmark.html">Bookmark</a>
               </li>
               <li class="nav-group-task">
+                <a href="AuroraLLM/Protocols/ConfidentDomainRouter.html">ConfidentDomainRouter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Protocols/ConflictLoggingStrategy.html">ConflictLoggingStrategy</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Classes/ConsoleConflictLogger.html">ConsoleConflictLogger</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="AuroraLLM/Structs/Context.html">Context</a>
               </li>
               <li class="nav-group-task">
@@ -158,7 +167,19 @@
                 <a href="AuroraLLM/Classes/ContextManager.html">ContextManager</a>
               </li>
               <li class="nav-group-task">
+                <a href="AuroraLLM/Classes/CoreMLDomainRouter.html">CoreMLDomainRouter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Structs/DualDomainPrediction.html">DualDomainPrediction</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Structs/DualDomainRouter.html">DualDomainRouter</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="AuroraLLM/Structs/FetchContextsTask.html">FetchContextsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Classes/FileConflictLogger.html">FileConflictLogger</a>
               </li>
               <li class="nav-group-task">
                 <a href="AuroraLLM/Classes/GoogleService.html">GoogleService</a>
@@ -316,13 +337,13 @@
             
             <h1 id='auroracore' class='heading'>AuroraCore</h1>
 
-<p>AuroraCore is the foundational library within the <strong>AuroraToolkit</strong>—a suite of tools designed to simplify the integration of AI capabilities into your projects. This package offers robust support for AI-driven workflows, including task orchestration, workflow management, and seamless integration with large language models (LLMs) like OpenAI, Anthropic, and Ollama. Its modular architecture empowers developers to customize, extend, and integrate with external services effortlessly.</p>
+<p>AuroraCore is the foundational library within the <strong>AuroraToolkit</strong>—a suite of tools designed to simplify the integration of AI capabilities into your projects. This package offers robust support for AI-driven workflows, including task orchestration, workflow management, and seamless integration with large language models (LLMs) like Anthropic Claude, Google Gemini, OpenAI ChatGPT, and open-source Ollama models. Its modular architecture empowers developers to customize, extend, and integrate with external services effortlessly.</p>
 
 <p>The AuroraToolkit core package is organized into several modules to enhance flexibility and maintainability:</p>
 
 <ul>
 <li><strong>AuroraCore</strong>: The foundational library for workflow orchestration, utilities, and declarative task management.</li>
-<li><strong>AuroraLLM</strong>: A dedicated package for integrating large language models (LLMs) such as OpenAI, Anthropic, and Ollama.</li>
+<li><strong>AuroraLLM</strong>: A dedicated package for integrating large language models (LLMs) such as Anthropic, Google, OpenAI, and Ollama.</li>
 <li><strong>AuroraTaskLibrary</strong>: A growing collection of prebuilt, reusable tasks designed to accelerate development.</li>
 <li><strong>AuroraExamples</strong>: Practical examples demonstrating how to leverage the toolkit for real-world scenarios.</li>
 </ul>
@@ -335,11 +356,13 @@
 <li><strong>Declarative Workflows</strong>: Define workflows and subflows declaratively, similar to SwiftUI, enabling clear and concise task orchestration.</li>
 <li><strong>Dynamic Workflows</strong>: Use logic and triggers to create dynamic workflows that adapt to changing conditions, scheduled intervals, or user input.</li>
 <li><strong>Reusable Tasks</strong>: A library of prebuilt tasks for common development needs, from URL fetching to context summarization, accelerates your workflow setup.</li>
-<li><strong>LLM Integration</strong>: Effortless integration with major LLM providers like OpenAI, Anthropic, and Ollama, with support for token management, domain-specific routing, and fallback strategies.</li>
+<li><strong>LLM Integration</strong>: Effortless integration with major LLM providers like Anthropic, Google, OpenAI, and Ollama, with support for token management, domain-specific routing, and fallback strategies.</li>
 <li><strong>Domain-Specific Routing</strong>: Automatically route requests to the most appropriate LLM service based on predefined domains, optimizing task execution and resource allocation.</li>
 <li><strong>Customizable and Extendable</strong>: Easily add custom tasks, workflows, or LLM integrations to suit your project needs.</li>
 <li><strong>Practical Examples</strong>: Includes real-world examples to help developers get started quickly with common use cases and advanced patterns.</li>
 <li><strong>Asynchronous Execution</strong>: Built-in support for asynchronous task execution, handling complex and long-running tasks seamlessly.</li>
+<li><strong>On-device Domain Routing</strong>: Use CoreML models to perform domain classification directly on-device with <code><a href="AuroraLLM/Classes/CoreMLDomainRouter.html">CoreMLDomainRouter</a></code>.</li>
+<li><strong>Hybrid Routing Logic</strong>: Combine predictions from two domain routers with <code><a href="AuroraLLM/Structs/DualDomainRouter.html">DualDomainRouter</a></code> to resolve ambiguous or conflicting cases using confidence thresholds or custom resolution logic.</li>
 </ul>
 <h2 id='modules' class='heading'>Modules</h2>
 <h3 id='strong-1-auroracore-strong' class='heading'><strong>1. AuroraCore</strong></h3>
@@ -353,7 +376,10 @@
 </ul>
 <h3 id='strong-2-aurorallm-strong' class='heading'><strong>2. AuroraLLM</strong></h3>
 
-<p>A dedicated package for managing large language models (LLMs) and facilitating AI-driven workflows. It includes multi-model management, domain routing, and token handling.</p>
+<p>A dedicated package for managing large language models (LLMs) and facilitating AI-driven workflows. It includes multi-model management, domain routing, and token handling. Provides support for various LLM vendors, including Anthropic, Google, OpenAI, and Ollama.
+    Includes native support for:
+    - <code><a href="AuroraLLM/Classes/CoreMLDomainRouter.html">CoreMLDomainRouter</a></code>: On-device domain classification using compiled Core ML models (<code>.mlmodelc</code>).
+    - <code><a href="AuroraLLM/Structs/DualDomainRouter.html">DualDomainRouter</a></code>: Combines a primary and contrastive router with customizable resolution strategies for maximum accuracy.</p>
 <h4 id='key-features' class='heading'>Key Features:</h4>
 
 <ul>
@@ -378,7 +404,15 @@
 </ul>
 <h3 id='strong-4-auroraexamples-strong' class='heading'><strong>4. AuroraExamples</strong></h3>
 
-<p>A separate package showcasing real-world implementations of workflows, LLM integrations, and tasks. Examples serve as a reference for best practices and quick-start guides.</p>
+<p>A separate package showcasing real-world implementations of workflows, LLM integrations, and tasks. Examples demonstrate:</p>
+
+<ul>
+<li>How to use the LLMManager for multi-model management</li>
+<li>How to set up declarative workflows</li>
+<li>How to use tasks to perform common operations</li>
+<li>How to use domain-specific and contrastive routing</li>
+<li>How to run Core ML-based classification locally on-device</li>
+</ul>
 <h2 id='installation' class='heading'>Installation</h2>
 <h3 id='swift-package-manager' class='heading'>Swift Package Manager</h3>
 
@@ -432,7 +466,35 @@
     <span class="nf">print</span><span class="p">(</span><span class="n">response</span><span class="p">?</span><span class="o">.</span><span class="n">text</span> <span class="p">??</span> <span class="s">"No response"</span><span class="p">)</span>
 <span class="p">}</span>
 </code></pre>
-<h3 id='domain-specific-routing-with-llmmanager' class='heading'>Domain-specific Routing with LLMManager</h3>
+<h3 id='domain-routing-examples' class='heading'>Domain Routing Examples</h3>
+<h4 id='siri-style-on-device-routing-coremldomainrouter' class='heading'>Siri-Style On-Device Routing (CoreMLDomainRouter)</h4>
+
+<p>Use a <code>.mlmodelc</code> classifier to predict whether a prompt should be handled on-device, off-device, or marked as &ldquo;unsure.&rdquo; Perfect for Siri-style domain separation.</p>
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">router</span> <span class="o">=</span> <span class="kt">CoreMLDomainRouter</span><span class="p">(</span>
+    <span class="nv">name</span><span class="p">:</span> <span class="s">"PrimaryRouter"</span><span class="p">,</span>
+    <span class="nv">modelURL</span><span class="p">:</span> <span class="nf">modelPath</span><span class="p">(</span><span class="nv">for</span><span class="p">:</span> <span class="s">"SiriStyleTextClassifier.mlmodelc"</span><span class="p">),</span>
+    <span class="nv">supportedDomains</span><span class="p">:</span> <span class="p">[</span><span class="s">"private"</span><span class="p">,</span> <span class="s">"public"</span><span class="p">,</span> <span class="s">"unsure"</span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre>
+<h4 id='contrastive-domain-resolution-dualdomainrouter' class='heading'>Contrastive Domain Resolution (DualDomainRouter)</h4>
+
+<p>Use both a primary and secondary router, with optional thresholds and fallback logic:</p>
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">router</span> <span class="o">=</span> <span class="kt">DualDomainRouter</span><span class="p">(</span>
+    <span class="nv">name</span><span class="p">:</span> <span class="s">"SiriStyleRouter"</span><span class="p">,</span>
+    <span class="nv">primary</span><span class="p">:</span> <span class="n">router1</span><span class="p">,</span>
+    <span class="nv">secondary</span><span class="p">:</span> <span class="n">router2</span><span class="p">,</span>
+    <span class="nv">supportedDomains</span><span class="p">:</span> <span class="p">[</span><span class="s">"private"</span><span class="p">,</span> <span class="s">"public"</span><span class="p">,</span> <span class="s">"unsure"</span><span class="p">],</span>
+    <span class="nv">confidenceThreshold</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>
+    <span class="nv">fallbackDomain</span><span class="p">:</span> <span class="s">"unsure"</span><span class="p">,</span>
+    <span class="nv">fallbackConfidenceThreshold</span><span class="p">:</span> <span class="mf">0.30</span><span class="p">,</span>
+    <span class="nv">resolveConflict</span><span class="p">:</span> <span class="p">{</span> <span class="n">primary</span><span class="p">,</span> <span class="n">secondary</span> <span class="k">in</span>
+        <span class="k">if</span> <span class="k">let</span> <span class="nv">p</span> <span class="o">=</span> <span class="n">primary</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">confidence</span> <span class="o">&gt;=</span> <span class="mf">0.90</span> <span class="p">{</span> <span class="k">return</span> <span class="n">p</span><span class="o">.</span><span class="n">label</span> <span class="p">}</span>
+        <span class="k">if</span> <span class="k">let</span> <span class="nv">s</span> <span class="o">=</span> <span class="n">secondary</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">confidence</span> <span class="o">&gt;=</span> <span class="mf">0.90</span> <span class="p">{</span> <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">label</span> <span class="p">}</span>
+        <span class="k">return</span> <span class="s">"unsure"</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</code></pre>
+<h4 id='llm-based-routing-llmdomainrouter' class='heading'>LLM-Based Routing (LLMDomainRouter)</h4>
 <pre class="highlight swift"><code><span class="kd">import</span> <span class="kt">AuroraLLM</span>
 
 <span class="k">let</span> <span class="nv">manager</span> <span class="o">=</span> <span class="kt">LLMManager</span><span class="p">()</span>
@@ -512,20 +574,21 @@ You are a helpful assistant. Answer any general questions accurately and concise
 </code></pre>
 <h2 id='running-tests' class='heading'>Running Tests</h2>
 
-<p>AuroraCore includes tests for multiple language model services. The Ollama tests will always run, as they do not require any API keys. For testing OpenAI or Anthropic services, you will need to manually provide your API keys.</p>
-<h3 id='adding-api-keys-for-openai-and-anthropic' class='heading'>Adding API Keys for OpenAI and Anthropic:</h3>
+<p>AuroraCore includes tests for multiple language model services. The Ollama tests will always run, as they do not require any API keys. For testing Anthropic, Google, or OpenAI services, you will need to manually provide your API keys.</p>
+<h3 id='adding-api-keys-for-anthropic-google-and-openai' class='heading'>Adding API Keys for Anthropic, Google, and OpenAI:</h3>
 
 <p>Some test and example files use OpenAI or Anthropic services and need API keys to function correctly. To use these services, add the following keys to the <code>AuroraToolkit-Package</code> and <code>AuroraExamples</code> schemes. Make sure these schemes are not shared, and take extra precaution to avoid committing API keys into the repository.</p>
 
 <ul>
 <li>For Anthropic, add the environment variable <code>ANTHROPIC_API_KEY</code> with a valid test API key.</li>
+<li>For Google, add the environment variable <code>GOOGLE_API_KEY</code> with a valid test API key.</li>
 <li>For OpenAI, add the environment variable <code>OPENAI_API_KEY</code> with a valid test API key.</li>
 <li>Ollama does not require API keys, but does require the Ollama service to be running at the default service URL, <code>http://localhost:11434</code>.</li>
 </ul>
 <h3 id='important' class='heading'>Important:</h3>
 
 <ul>
-<li><strong>Never commit your API keys to the repository</strong>. The tests are designed to run with Ollama by default, and you can enable additional tests for OpenAI and Anthropic by manually adding your keys for local testing.</li>
+<li><strong>Never commit your API keys to the repository</strong>. The tests are designed to run with Ollama by default, and you can enable additional tests for Anthropic, Google, and OpenAI by manually adding your keys for local testing.</li>
 <li>Be sure to remove or replace your keys with empty strings before committing any changes.</li>
 </ul>
 
@@ -534,7 +597,6 @@ You are a helpful assistant. Answer any general questions accurately and concise
 
 <ul>
 <li><strong>On-device LLM support</strong>: Integrate with on-device language models to enable fast, private, and offline AI capabilities.</li>
-<li><strong>Google LLM support</strong>: Support Gemini and future Google-built language models.</li>
 <li><strong>Multimodal LLM support</strong>: Enable multimodal LLMs for use cases beyond plain text.</li>
 <li><strong>Advanced Workflow features</strong>: Include prebuilt workflow templates for common AI tasks (e.g., summarization, Q&amp;A, data extraction) to jumpstart development.</li>
 </ul>
@@ -554,8 +616,8 @@ You are a helpful assistant. Answer any general questions accurately and concise
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2025 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2025-04-04)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+          <p>&copy; 2025 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2025-04-24)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>

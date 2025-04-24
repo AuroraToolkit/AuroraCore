@@ -151,6 +151,15 @@
                 <a href="../../AuroraLLM/Structs/Bookmark.html">Bookmark</a>
               </li>
               <li class="nav-group-task">
+                <a href="../../AuroraLLM/Protocols/ConfidentDomainRouter.html">ConfidentDomainRouter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Protocols/ConflictLoggingStrategy.html">ConflictLoggingStrategy</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/ConsoleConflictLogger.html">ConsoleConflictLogger</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../../AuroraLLM/Structs/Context.html">Context</a>
               </li>
               <li class="nav-group-task">
@@ -163,7 +172,19 @@
                 <a href="../../AuroraLLM/Classes/ContextManager.html">ContextManager</a>
               </li>
               <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/CoreMLDomainRouter.html">CoreMLDomainRouter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/DualDomainPrediction.html">DualDomainPrediction</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/DualDomainRouter.html">DualDomainRouter</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../../AuroraLLM/Structs/FetchContextsTask.html">FetchContextsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/FileConflictLogger.html">FileConflictLogger</a>
               </li>
               <li class="nav-group-task">
                 <a href="../../AuroraLLM/Classes/GoogleService.html">GoogleService</a>
@@ -362,34 +383,6 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9AuroraLLM23LLMDomainRouterProtocolP7serviceAA010LLMServiceE0_pvp"></a>
-                    <a name="//apple_ref/swift/Property/service" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9AuroraLLM23LLMDomainRouterProtocolP7serviceAA010LLMServiceE0_pvp">service</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>The associated LLM service used to determine the domain.
-The service is responsible for processing the request and identifying the domain.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">service</span><span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Protocols/LLMServiceProtocol.html">LLMServiceProtocol</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
                     <a name="/s:9AuroraLLM23LLMDomainRouterProtocolP16supportedDomainsSaySSGvp"></a>
                     <a name="//apple_ref/swift/Property/supportedDomains" class="dashAnchor"></a>
                     <a class="token" href="#/s:9AuroraLLM23LLMDomainRouterProtocolP16supportedDomainsSaySSGvp">supportedDomains</a>
@@ -417,9 +410,9 @@ The service is responsible for processing the request and identifying the domain
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9AuroraLLM23LLMDomainRouterProtocolP15determineDomain3forSSAA10LLMRequestV_tYaKF"></a>
+                    <a name="/s:9AuroraLLM23LLMDomainRouterProtocolP15determineDomain3forSSSgAA10LLMRequestV_tYaKF"></a>
                     <a name="//apple_ref/swift/Method/determineDomain(for:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9AuroraLLM23LLMDomainRouterProtocolP15determineDomain3forSSAA10LLMRequestV_tYaKF">determineDomain(for:<wbr>)</a>
+                    <a class="token" href="#/s:9AuroraLLM23LLMDomainRouterProtocolP15determineDomain3forSSSgAA10LLMRequestV_tYaKF">determineDomain(for:<wbr>)</a>
                     </code>
                       <span class="declaration-note">
                         Asynchronous
@@ -437,7 +430,7 @@ The service is responsible for processing the request and identifying the domain
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">determineDomain</span><span class="p">(</span><span class="k">for</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Structs/LLMRequest.html">LLMRequest</a></span><span class="p">)</span> <span class="k">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">determineDomain</span><span class="p">(</span><span class="k">for</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Structs/LLMRequest.html">LLMRequest</a></span><span class="p">)</span> <span class="k">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
@@ -462,7 +455,7 @@ The service is responsible for processing the request and identifying the domain
                       </div>
                       <div>
                         <h4>Return Value</h4>
-                        <p>A string representing the determined domain.</p>
+                        <p>A string representing the determined domain, or <code>nil</code> if not posslbe.</p>
                       </div>
                     </section>
                   </div>
@@ -472,8 +465,8 @@ The service is responsible for processing the request and identifying the domain
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2025 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2025-04-04)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+          <p>&copy; 2025 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2025-04-24)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>
