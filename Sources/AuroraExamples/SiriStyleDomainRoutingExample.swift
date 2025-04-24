@@ -9,7 +9,19 @@ import Foundation
 import AuroraCore
 import AuroraLLM
 
-/// An example demonstrating a Siri-style domain routing scenario.
+/**
+ An example demonstrating a Siri-style, privacy-focused domain routing scenario.
+
+    This example uses a CoreML model to classify user prompts into three domains:
+    - Private: Prompts that should be handled locally on the device.
+    - Public: Prompts that can be sent to a server for processing.
+    - Unsure: Prompts that are ambiguous and should be handled locally.
+
+    The example includes a set of test cases to evaluate the model's performance.
+    The model is expected to classify prompts correctly based on their context.
+
+    This example aims for 100% accuracy in domain classification, for user safety.
+ */
 struct SiriStyleDomainRoutingExample {
     private func modelPath(for filename: String) -> URL {
         URL(fileURLWithPath: #file)
@@ -97,17 +109,30 @@ struct SiriStyleDomainRoutingExample {
         }
 
         var correct = 0
+        var adjustmentCount = 0
+
         for (text, expected) in testCases {
             let request = LLMRequest(messages: [.init(role: .user, content: text)])
             let result = (try? await router.determineDomainWithConfidence(for: request)) ?? nil
             let domain = result?.0 ?? "unknown"
             let confidence = result?.1 ?? 0.0
 
-            let match = domain == expected
-            print("\(match ? "✅" : "❌") Prompt: \(text)\nExpected: \(expected), Got: \(domain)\n, Confidence: \(confidence)\n")
+            // Treat "unsure" as if private
+            var adjustedDomain = domain
+            var adjustmentNote = ""
+
+            if domain == "unsure", expected == "private", confidence >= 0.50 {
+                adjustedDomain = "private"
+                adjustmentNote = " (adjusted from 'unsure' to 'private')"
+                adjustmentCount += 1
+            }
+            let match = adjustedDomain == expected
+
+            print("\(match ? "✅" : "❌") Prompt: \(text)\nExpected: \(expected), Got: \(adjustedDomain)\(adjustmentNote)\n, Confidence: \(confidence)\n")
             if match { correct += 1 }
         }
 
-        print("🎯 Accuracy: \(correct)/\(testCases.count) = \(Double(correct) / Double(testCases.count) * 100)%")
+        let adjustmentNotes = adjustmentCount > 0 ? " (adjusted \(adjustmentCount) from 'unsure' to 'private')" : ""
+        print("🎯 Accuracy: \(correct)/\(testCases.count) = \(Double(correct) / Double(testCases.count) * 100)%\(adjustmentNotes)")
     }
 }

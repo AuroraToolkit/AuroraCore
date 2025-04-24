@@ -23,6 +23,8 @@ Whether you're building sophisticated AI-powered applications or integrating mod
 - **Customizable and Extendable**: Easily add custom tasks, workflows, or LLM integrations to suit your project needs.
 - **Practical Examples**: Includes real-world examples to help developers get started quickly with common use cases and advanced patterns.
 - **Asynchronous Execution**: Built-in support for asynchronous task execution, handling complex and long-running tasks seamlessly.
+- **On-device Domain Routing**: Use CoreML models to perform domain classification directly on-device with `CoreMLDomainRouter`.
+- **Hybrid Routing Logic**: Combine predictions from two domain routers with `DualDomainRouter` to resolve ambiguous or conflicting cases using confidence thresholds or custom resolution logic.
 
 
 ## Modules
@@ -36,6 +38,10 @@ The foundational library providing the core framework for workflows, task orches
 
 ### **2. AuroraLLM**
 A dedicated package for managing large language models (LLMs) and facilitating AI-driven workflows. It includes multi-model management, domain routing, and token handling. Provides support for various LLM vendors, including Anthropic, Google, OpenAI, and Ollama.
+    Includes native support for:
+    - `CoreMLDomainRouter`: On-device domain classification using compiled Core ML models (`.mlmodelc`).
+    - `DualDomainRouter`: Combines a primary and contrastive router with customizable resolution strategies for maximum accuracy.
+
 
 #### Key Features:
 - **LLMManager**: Centralized management of multiple LLMs, with support for routing requests to appropriate models based on predefined rules.
@@ -56,7 +62,13 @@ A collection of prebuilt tasks designed to jumpstart development and integrate s
 - **SummarizeContextTask** (LLM): Summarizes text or contextual data using registered LLMs.
 
 ### **4. AuroraExamples**
-A separate package showcasing real-world implementations of workflows, LLM integrations, and tasks. Examples serve as a reference for best practices and quick-start guides.
+A separate package showcasing real-world implementations of workflows, LLM integrations, and tasks. Examples demonstrate:
+- How to use the LLMManager for multi-model management
+- How to set up declarative workflows
+- How to use tasks to perform common operations
+- How to use domain-specific and contrastive routing
+- How to run Core ML-based classification locally on-device
+
 
 
 ## Installation
@@ -129,7 +141,40 @@ llmManager.sendRequest(request) { response in
 }
 ```
 
-### Domain-specific Routing with LLMManager
+### Domain Routing Examples
+
+#### Siri-Style On-Device Routing (CoreMLDomainRouter)
+Use a `.mlmodelc` classifier to predict whether a prompt should be handled on-device, off-device, or marked as "unsure." Perfect for Siri-style domain separation.
+
+```swift
+let router = CoreMLDomainRouter(
+    name: "PrimaryRouter",
+    modelURL: modelPath(for: "SiriStyleTextClassifier.mlmodelc"),
+    supportedDomains: ["private", "public", "unsure"]
+)
+```
+
+#### Contrastive Domain Resolution (DualDomainRouter)
+Use both a primary and secondary router, with optional thresholds and fallback logic:
+
+```swift
+let router = DualDomainRouter(
+    name: "SiriStyleRouter",
+    primary: router1,
+    secondary: router2,
+    supportedDomains: ["private", "public", "unsure"],
+    confidenceThreshold: 0.25,
+    fallbackDomain: "unsure",
+    fallbackConfidenceThreshold: 0.30,
+    resolveConflict: { primary, secondary in
+        if let p = primary, p.confidence >= 0.90 { return p.label }
+        if let s = secondary, s.confidence >= 0.90 { return s.label }
+        return "unsure"
+    }
+)
+```
+
+#### LLM-Based Routing (LLMDomainRouter)
 
 ```swift
 import AuroraLLM

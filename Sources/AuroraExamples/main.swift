@@ -16,6 +16,7 @@ import AuroraCore
     ```
     export OPENAI_API_KEY="your-openai-api-key"
     export ANTHROPIC_API_KEY="your-anthropic-api-key"
+    export GOOGLE_API_KEY="your-google-api-key"
     ```
 
     Additionally, you must have the Ollama service running locally on port 11434.
@@ -57,6 +58,16 @@ print("--------------------\n")
 
 print("Domain Routing Example:\n")
 await DomainRoutingExample().execute()
+
+print("--------------------\n")
+
+print("Dual Domain Routing Example:\n")
+await DualDomainRoutingExample().execute()
+
+print("--------------------\n")
+
+print("Siri Style Domain Routing Example:\n")
+await SiriStyleDomainRoutingExample().execute()
 
 print("--------------------\n")
 

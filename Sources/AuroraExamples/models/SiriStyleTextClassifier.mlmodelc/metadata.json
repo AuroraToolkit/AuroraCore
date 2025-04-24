@@ -1,7 +1,7 @@
 [
   {
     "metadataOutputVersion" : "3.0",
-    "shortDescription" : "A series of example prompts used to train a model to recognize which must be evaluated on-device, and which can be evaluated in the cloud. Ambiguous prompts where the model is unsure will be evaluated as if they must remain private.\n\nClassified domains:\n• “private”\n• “public”\n• “unsure”\n",
+    "shortDescription" : "This dataset trains a Siri-style, privacy-focused model, useful for analyzing prompts and predicting which should be evaluated privately, and which can be evaluated publicly using cloud-based LLMs.\n\nPrompts where the model is unsure should also be evaluated privately, for maximum safety.\n\nDomains are:\n• private - must be evaluated using private resources, such as local on-device\n• public - can be evaluated publicly, e.g. ChatGPT, Claude, Gemini\n• unsure - domain can’t be reliably determined, so should be evaluated privately\n",
     "outputSchema" : [
       {
         "isOptional" : "0",
@@ -46,14 +46,14 @@
       "public",
       "unsure"
     ],
-    "generatedClassName" : "SiriPrimaryTextClassifier",
+    "generatedClassName" : "SiriStyleTextClassifier",
     "userDefinedMetadata" : {
+      "com.apple.createml.training.finished" : "2025-04-24T15:16:16Z",
       "com.apple.createml.app.tag" : "151.2",
-      "com.apple.createml.training.finished" : "2025-04-24T12:19:44Z",
-      "com.apple.createml.model.created" : "2025-04-24T12:19:44Z",
-      "com.apple.coreml.model.preview.type" : "textClassifier",
+      "com.apple.createml.model.created" : "2025-04-24T15:16:16Z",
       "com.apple.createml.app.version" : "6.2",
-      "com.apple.createml.training.started" : "2025-04-24T12:19:44Z"
+      "com.apple.coreml.model.preview.type" : "textClassifier",
+      "com.apple.createml.training.started" : "2025-04-24T15:16:16Z"
     },
     "method" : "predict"
   }
