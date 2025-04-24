@@ -1,0 +1,60 @@
+[
+  {
+    "metadataOutputVersion" : "3.0",
+    "shortDescription" : "A series of example prompts used to train a model to recognize which must be evaluated on-device, and which can be evaluated in the cloud. Ambiguous prompts where the model is unsure will be evaluated as if they must remain private.\n\nClassified domains:\n• “private”\n• “public”\n• “unsure”\n",
+    "outputSchema" : [
+      {
+        "isOptional" : "0",
+        "formattedType" : "String",
+        "type" : "String",
+        "name" : "label",
+        "shortDescription" : "Text label"
+      }
+    ],
+    "modelParameters" : [
+
+    ],
+    "author" : "Dan Murrell Jr",
+    "specificationVersion" : 3,
+    "license" : "MIT",
+    "stateSchema" : [
+
+    ],
+    "isUpdatable" : "0",
+    "availability" : {
+      "macOS" : "10.14",
+      "tvOS" : "12.0",
+      "visionOS" : "1.0",
+      "watchOS" : "5.0",
+      "iOS" : "12.0",
+      "macCatalyst" : "12.0"
+    },
+    "modelType" : {
+      "name" : "MLModelType_textClassifier"
+    },
+    "inputSchema" : [
+      {
+        "isOptional" : "0",
+        "formattedType" : "String",
+        "type" : "String",
+        "name" : "text",
+        "shortDescription" : "Input text"
+      }
+    ],
+    "classLabels" : [
+      "private",
+      "public",
+      "unsure"
+    ],
+    "generatedClassName" : "SiriPrimaryTextClassifier",
+    "userDefinedMetadata" : {
+      "com.apple.createml.app.tag" : "151.2",
+      "com.apple.createml.training.finished" : "2025-04-24T12:19:44Z",
+      "com.apple.createml.model.created" : "2025-04-24T12:19:44Z",
+      "com.apple.coreml.model.preview.type" : "textClassifier",
+      "com.apple.createml.app.version" : "6.2",
+      "com.apple.createml.training.started" : "2025-04-24T12:19:44Z"
+    },
+    "method" : "predict"
+  }
+]
