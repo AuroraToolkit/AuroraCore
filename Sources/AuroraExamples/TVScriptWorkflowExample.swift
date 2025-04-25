@@ -38,10 +38,10 @@ struct TVScriptWorkflowExample {
         }
 
         // Initialize LLM service, e.g., Anthropic, OpenAI, or Ollama
-//        let anthropicService = AnthropicService(apiKey: anthropicAIKey)
-//        let ollamaService = OllamaService()
-//        let openAIService = OpenAIService(apiKey: openAIKey)
-        let googleService = GoogleService(apiKey: googleKey)
+//        let anthropicService = AnthropicService(apiKey: anthropicAIKey, logger: CustomLogger.shared)
+//        let ollamaService = OllamaService(logger: CustomLogger.shared)
+//        let openAIService = OpenAIService(apiKey: openAIKey, logger: CustomLogger.shared)
+        let googleService = GoogleService(apiKey: googleKey, logger: CustomLogger.shared)
 
         // Choose which service to use for generating the TV script
         let aiService = googleService
@@ -49,7 +49,8 @@ struct TVScriptWorkflowExample {
         // Workflow initialization
         var workflow = Workflow(
             name: "AP Tech News Script Workflow",
-            description: "Fetch and summarize AP Tech News articles for a TV news broadcast."
+            description: "Fetch and summarize AP Tech News articles for a TV news broadcast.",
+            logger: CustomLogger.shared
         ) {
 
             // Step 1: Fetch the RSS Feed

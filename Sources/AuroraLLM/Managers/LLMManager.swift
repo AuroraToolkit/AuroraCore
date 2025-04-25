@@ -31,8 +31,8 @@ public class LLMManager {
         }
     }
 
-    /// A logger for recording information and errors within the `LLMManager`.
-    private let logger = CustomLogger.shared
+    /// An optional logger for recording information and errors within the `LLMManager`.
+    private let logger: CustomLogger?
 
     /// A dictionary mapping service names to their respective `LLMServiceProtocol` instances with `Routing` options.
     private(set) var services: [String: (service: LLMServiceProtocol, routings: [Routing])] = [:]
@@ -46,7 +46,16 @@ public class LLMManager {
     /// The domain routing service used to determine the appropriate domain for a request.
     private(set) var domainRouter: LLMDomainRouterProtocol?
 
-    public init() {}
+    /**
+        Initializes the `LLMManager` with an optional logger.
+
+        - Parameter logger: An optional `CustomLogger` instance for logging purposes.
+     */
+    public init(
+        logger: CustomLogger? = nil
+    ) {
+        self.logger = logger
+    }
 
     // MARK: - Registering Services
 
@@ -57,9 +66,9 @@ public class LLMManager {
      */
     public func registerDomainRouter(_ router: LLMDomainRouterProtocol) {
         if domainRouter != nil {
-            logger.debug("Replacing existing domain router with '\(router.name)'", category: "LLMManager")
+            logger?.debug("Replacing existing domain router with '\(router.name)'", category: "LLMManager")
         } else {
-            logger.debug("Registering new domain router with '\(router.name)'", category: "LLMManager")
+            logger?.debug("Registering new domain router with '\(router.name)'", category: "LLMManager")
         }
         domainRouter = router
     }
@@ -71,9 +80,9 @@ public class LLMManager {
      */
     public func registerFallbackService(_ service: LLMServiceProtocol) {
         if fallbackService != nil {
-            logger.debug("Replacing existing fallback service with name '\(service.name)'", category: "LLMManager")
+            logger?.debug("Replacing existing fallback service with name '\(service.name)'", category: "LLMManager")
         } else {
-            logger.debug("Registering new fallback service with name '\(service.name)'", category: "LLMManager")
+            logger?.debug("Registering new fallback service with name '\(service.name)'", category: "LLMManager")
         }
 
         fallbackService = service
@@ -92,16 +101,16 @@ public class LLMManager {
         let serviceName = service.name.lowercased()
 
         if services[serviceName] != nil {
-            logger.debug("Replacing existing service with name '\(serviceName)'", category: "LLMManager")
+            logger?.debug("Replacing existing service with name '\(serviceName)'", category: "LLMManager")
         } else {
-            logger.debug("Registering new service with name '\(serviceName)'", category: "LLMManager")
+            logger?.debug("Registering new service with name '\(serviceName)'", category: "LLMManager")
         }
 
         services[serviceName] = (service, routing)
 
         if activeServiceName == nil {
             activeServiceName = serviceName
-            logger.debug("Active service set to: \(self.activeServiceName ?? "nil")", category: "LLMManager")
+            logger?.debug("Active service set to: \(self.activeServiceName ?? "nil")", category: "LLMManager")
         }
     }
 
@@ -114,13 +123,13 @@ public class LLMManager {
      */
     public func unregisterService(withName name: String) {
         let serviceName = name.lowercased()
-        logger.debug("Unregistering service: \(serviceName)", category: "LLMManager")
+        logger?.debug("Unregistering service: \(serviceName)", category: "LLMManager")
 
         services[serviceName] = nil
 
         if activeServiceName == serviceName {
             activeServiceName = services.keys.first
-            logger.debug("Active service set to: \(self.activeServiceName ?? "nil")", category: "LLMManager")
+            logger?.debug("Active service set to: \(self.activeServiceName ?? "nil")", category: "LLMManager")
         }
     }
 
@@ -135,11 +144,11 @@ public class LLMManager {
      */
     public func setActiveService(byName name: String) {
         guard services[name.lowercased()] != nil else {
-            logger.error("Attempted to set active service to unknown service: \(name)", category: "LLMManager")
+            logger?.error("Attempted to set active service to unknown service: \(name)", category: "LLMManager")
             return
         }
         activeServiceName = name
-        logger.debug("Active service switched to: \(self.activeServiceName ?? "nil")", category: "LLMManager")
+        logger?.debug("Active service switched to: \(self.activeServiceName ?? "nil")", category: "LLMManager")
     }
 
     // MARK: - Route Request
@@ -181,23 +190,23 @@ public class LLMManager {
         // Determine routings based on the presence of a domain routing service
         let routings: [Routing]
         if let domainRouter {
-            logger.debug("Engaging domain router \(domainRouter.name) to determine appropriate domain...", category: "LLMManager")
+            logger?.debug("Engaging domain router \(domainRouter.name) to determine appropriate domain...", category: "LLMManager")
 
             do {
                 // Send the request to the domain router
                 if let domain = try await domainRouter.determineDomain(for: request), !domain.isEmpty {
-                    logger.debug("Domain routing service identified domain: \(domain)", category: "LLMManager")
+                    logger?.debug("Domain routing service identified domain: \(domain)", category: "LLMManager")
                     routings = [.domain([domain])]
                 } else {
-                    logger.debug("Domain routing service returned an empty domain. Defaulting to fallback.", category: "LLMManager")
+                    logger?.debug("Domain routing service returned an empty domain. Defaulting to fallback.", category: "LLMManager")
                     routings = []
                 }
             } catch {
-                logger.error("Domain routing service failed: \(error.localizedDescription)", category: "LLMManager")
+                logger?.error("Domain routing service failed: \(error.localizedDescription)", category: "LLMManager")
                 routings = [] // Default to no routings in case of error
             }
         } else {
-            logger.debug("No domain routing service available. Defaulting to no routings.", category: "LLMManager")
+            logger?.debug("No domain routing service available. Defaulting to no routings.", category: "LLMManager")
             routings = [] // Default to no routings
         }
 
@@ -287,17 +296,17 @@ public class LLMManager {
         buffer: Double = 0.05,
         trimming: String.TrimmingStrategy = .end
     ) async -> LLMResponseProtocol? {
-        logger.debug("Selecting service based on request...", category: "LLMManager")
+        logger?.debug("Selecting service based on request...", category: "LLMManager")
 
         guard let selectedService = selectService(basedOn: routings, for: request, trimming: trimming) else {
-            logger.error("No service available for the specified routing strategy.", category: "LLMManager")
+            logger?.error("No service available for the specified routing strategy.", category: "LLMManager")
             return nil
         }
 
-        logger.debug("Sending request to service: \(selectedService.name), model: \(request.model ?? "Not specified")", category: "LLMManager")
+        logger?.debug("Sending request to service: \(selectedService.name), model: \(request.model ?? "Not specified")", category: "LLMManager")
 
         // Optimize request for the selected service
-        logger.debug("Optimizing request for service...", category: "LLMManager")
+        logger?.debug("Optimizing request for service...", category: "LLMManager")
         let optimizedRequest = optimizeRequest(request, for: selectedService, trimming: trimming, buffer: buffer)
 
         return await sendRequestToService(selectedService, withRequest: optimizedRequest, onPartialResponse: onPartialResponse)
@@ -327,7 +336,7 @@ public class LLMManager {
         trimming: String.TrimmingStrategy,
         buffer: Double = 0.05
     ) -> LLMRequest {
-        logger.debug("Optimizing request for service \(service.name) with trimming strategy: \(trimming)", category: "LLMManager")
+        logger?.debug("Optimizing request for service \(service.name) with trimming strategy: \(trimming)", category: "LLMManager")
 
         // Adjust service-specific constraints with the buffer applied
         let adjustedContextWindow = Int(Double(service.contextWindowSize) * (1 - buffer))
@@ -345,7 +354,7 @@ public class LLMManager {
             adjustedMaxOutputTokens = min(request.maxTokens, adjustedMaxOutputTokens)
         case .strictRequestLimits:
             guard request.maxTokens <= adjustedMaxOutputTokens else {
-                logger.debug("Strict output token limit enforced: \(request.maxTokens) exceeds \(adjustedMaxOutputTokens).", category: "LLMManager")
+                logger?.debug("Strict output token limit enforced: \(request.maxTokens) exceeds \(adjustedMaxOutputTokens).", category: "LLMManager")
                 return request
             }
         }
@@ -362,7 +371,7 @@ public class LLMManager {
             )
         case .strictRequestLimits:
             guard request.estimatedTokenCount() <= maxInputTokens else {
-                logger.debug("Strict input token limit enforced: \(request.estimatedTokenCount()) exceeds \(maxInputTokens).", category: "LLMManager")
+                logger?.debug("Strict input token limit enforced: \(request.estimatedTokenCount()) exceeds \(maxInputTokens).", category: "LLMManager")
                 return request
             }
             trimmedMessages = request.messages
@@ -370,7 +379,7 @@ public class LLMManager {
 
         // Construct the final request by appending the system prompt if it exists
         if let systemPrompt = service.systemPrompt {
-            logger.debug("Inserting system prompt for service \(service.name): \(systemPrompt.prefix(50))...", category: "LLMManager")
+            logger?.debug("Inserting system prompt for service \(service.name): \(systemPrompt.prefix(50))...", category: "LLMManager")
             trimmedMessages.insert(LLMMessage(role: .system, content: systemPrompt), at: 0)
         }
 
@@ -448,25 +457,25 @@ public class LLMManager {
             // Attempt sending request with the active or selected service
             if let onPartialResponse = onPartialResponse {
                 let response = try await service.sendStreamingRequest(request, onPartialResponse: onPartialResponse)
-                logger.debug("Service succeeded with streaming response.", category: "LLMManager")
+                logger?.debug("Service succeeded with streaming response.", category: "LLMManager")
                 return response
             } else {
                 let response = try await service.sendRequest(request)
-                logger.debug("Service succeeded with response.", category: "LLMManager")
+                logger?.debug("Service succeeded with response.", category: "LLMManager")
                 return response
             }
         } catch {
             // Log the failure
-            logger.error("Service \(service.name) failed with error: \(error.localizedDescription)", category: "LLMManager")
+            logger?.error("Service \(service.name) failed with error: \(error.localizedDescription)", category: "LLMManager")
 
             // Attempt to retry with a fallback service if available
             if let fallbackService, !isRetryingWithFallback {
-                logger.debug("Retrying request with fallback service: \(fallbackService.name)", category: "LLMManager")
+                logger?.debug("Retrying request with fallback service: \(fallbackService.name)", category: "LLMManager")
                 return await sendRequestToService(fallbackService, withRequest: request, onPartialResponse: onPartialResponse, isRetryingWithFallback: true)
             }
 
             // If no fallback service is available or both fail, return nil
-            logger.error("No fallback service succeeded or available after failure of \(service.name).", category: "LLMManager")
+            logger?.error("No fallback service succeeded or available after failure of \(service.name).", category: "LLMManager")
             return nil
         }
     }
@@ -486,7 +495,7 @@ public class LLMManager {
         for request: LLMRequest,
         trimming: String.TrimmingStrategy = .none
     ) -> LLMServiceProtocol? {
-        logger.debug("Selecting service based on multiple routing strategies: \(routings)", category: "LLMManager")
+        logger?.debug("Selecting service based on multiple routing strategies: \(routings)", category: "LLMManager")
 
         // Sort services by routing specificity or priority
         let sortedServices = services.values.sorted { lhs, rhs in
@@ -497,7 +506,7 @@ public class LLMManager {
         if let activeServiceName = activeServiceName,
            let activeService = services[activeServiceName]?.service,
            serviceMeetsCriteria(activeService, routings: routings, for: request, trimming: trimming) {
-            logger.debug("Routing to active service: \(activeService.name)", category: "LLMManager")
+            logger?.debug("Routing to active service: \(activeService.name)", category: "LLMManager")
             return activeService
         }
 
@@ -506,18 +515,18 @@ public class LLMManager {
             $0.service.name.lowercased() != activeServiceName?.lowercased() &&
             serviceMeetsCriteria($0.service, routings: routings, for: request, trimming: trimming)
         })?.service {
-            logger.debug("Routing to service matching strategies \(routings): \(matchingService.name)", category: "LLMManager")
+            logger?.debug("Routing to service matching strategies \(routings): \(matchingService.name)", category: "LLMManager")
             return matchingService
         }
 
         // Step 3: Attempt fallback routing if available
         if let fallbackService {
-            logger.debug("Routing to fallback service: \(fallbackService.name)", category: "LLMManager")
+            logger?.debug("Routing to fallback service: \(fallbackService.name)", category: "LLMManager")
             return fallbackService
         }
 
         // Step 4: No suitable service found
-        logger.debug("No suitable service found for routing strategies \(routings), and no fallback available.", category: "LLMManager")
+        logger?.debug("No suitable service found for routing strategies \(routings), and no fallback available.", category: "LLMManager")
         return nil
     }
 
@@ -545,7 +554,7 @@ public class LLMManager {
         for request: LLMRequest,
         trimming: String.TrimmingStrategy = .none
     ) -> Bool {
-        logger.debug("Evaluating service \(service.name) for multiple routing strategies: \(routings)", category: "LLMManager")
+        logger?.debug("Evaluating service \(service.name) for multiple routing strategies: \(routings)", category: "LLMManager")
 
         for routing in routings {
             switch routing {
@@ -594,12 +603,12 @@ public class LLMManager {
         switch service.outputTokenPolicy {
         case .adjustToServiceLimits:
             if adjustedOutputTokens > service.maxOutputTokens {
-                logger.debug("Warning: Adjusting output tokens to match service's limit (\(service.maxOutputTokens)).", category: "LLMManager")
+                logger?.debug("Warning: Adjusting output tokens to match service's limit (\(service.maxOutputTokens)).", category: "LLMManager")
                 adjustedOutputTokens = service.maxOutputTokens
             }
         case .strictRequestLimits:
             if adjustedOutputTokens > service.maxOutputTokens {
-                logger.debug("Strict limit enforced: Requested output tokens exceed service's limit.", category: "LLMManager")
+                logger?.debug("Strict limit enforced: Requested output tokens exceed service's limit.", category: "LLMManager")
                 return false
             }
         }
@@ -621,9 +630,9 @@ public class LLMManager {
         let outputTokenRequirementMet = adjustedOutputTokens <= service.maxOutputTokens
         let contextWindowRequirementMet = totalOriginalTokens <= service.contextWindowSize
 
-        logger.debug("Service \(service.name) - Effective input token limit: \(effectiveInputTokenLimit), Effective output token limit: \(service.maxOutputTokens), Context window: \(service.contextWindowSize)", category: "LLMManager")
-        logger.debug("Input tokens: \(originalInputTokens), Adjusted output tokens: \(adjustedOutputTokens), Total tokens required: \(totalOriginalTokens)", category: "LLMManager")
-        logger.debug("Input token requirement met: \(inputTokenRequirementMet), Output token requirement met: \(outputTokenRequirementMet), Context window requirement met: \(contextWindowRequirementMet)", category: "LLMManager")
+        logger?.debug("Service \(service.name) - Effective input token limit: \(effectiveInputTokenLimit), Effective output token limit: \(service.maxOutputTokens), Context window: \(service.contextWindowSize)", category: "LLMManager")
+        logger?.debug("Input tokens: \(originalInputTokens), Adjusted output tokens: \(adjustedOutputTokens), Total tokens required: \(totalOriginalTokens)", category: "LLMManager")
+        logger?.debug("Input token requirement met: \(inputTokenRequirementMet), Output token requirement met: \(outputTokenRequirementMet), Context window requirement met: \(contextWindowRequirementMet)", category: "LLMManager")
 
         return inputTokenRequirementMet && outputTokenRequirementMet && contextWindowRequirementMet
     }
@@ -657,7 +666,7 @@ public class LLMManager {
 
         let serviceDomainsRequirementMet = lowercasePreferredDomains.isSubset(of: Set(serviceDomains))
 
-        logger.debug("Service \(service.name) - Preferred domains: \(lowercasePreferredDomains), Service domains met: \(serviceDomainsRequirementMet)", category: "LLMManager")
+        logger?.debug("Service \(service.name) - Preferred domains: \(lowercasePreferredDomains), Service domains met: \(serviceDomainsRequirementMet)", category: "LLMManager")
 
         return serviceDomainsRequirementMet
     }

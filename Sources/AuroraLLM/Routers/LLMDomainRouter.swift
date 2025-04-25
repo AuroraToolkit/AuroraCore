@@ -20,7 +20,7 @@ public class LLMDomainRouter: LLMDomainRouterProtocol {
     public let name: String
     public var service: LLMServiceProtocol
     public let supportedDomains: [String]
-    private let logger = CustomLogger.shared
+    private let logger: CustomLogger?
     private let DEFAULT_INSTRUCTIONS = """
 Evaluate the following request and determine the domain it belongs to. Domains we support are: %@.
 
@@ -37,13 +37,21 @@ information.
         - service: The `LLMServiceProtocol` used to determine the domain.
         - supportedDomains: A list of domains that the router supports.
         - instructions: Instructions to include in the system prompt. If not provided, a default set of instructions is used.
+        - logger: An optional logger for debugging and error reporting.
 
      - Note: The instructions *must* include a `%@` placeholder for the list of supported domains.
      */
-    public init(name: String, service: LLMServiceProtocol, supportedDomains: [String], instructions: String? = nil) {
+    public init(
+        name: String,
+        service: LLMServiceProtocol,
+        supportedDomains: [String],
+        instructions: String? = nil,
+        logger: CustomLogger? = nil
+    ) {
         self.name = name
         self.service = service
         self.supportedDomains = supportedDomains.map { $0.lowercased() }
+        self.logger = logger
         configureSystemPrompt(instructions ?? DEFAULT_INSTRUCTIONS)
     }
 
@@ -95,17 +103,17 @@ information.
             let response = try await service.sendRequest(routedRequest)
             let domain = response.text.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
 
-            logger.debug("Domain resolved by service: \(domain)", category: "LLMDomainRouter")
+            logger?.debug("Domain resolved by service: \(domain)", category: "LLMDomainRouter")
 
             // Validate the domain against supported domains
             if supportedDomains.contains(domain) {
                 return domain
             } else {
-                logger.debug("Domain '\(domain)' not in supported domains. Returning 'nil'.", category: "LLMDomainRouter")
+                logger?.debug("Domain '\(domain)' not in supported domains. Returning 'nil'.", category: "LLMDomainRouter")
                 return nil
             }
         } catch {
-            logger.error("Failed to determine domain: \(error.localizedDescription)", category: "LLMDomainRouter")
+            logger?.error("Failed to determine domain: \(error.localizedDescription)", category: "LLMDomainRouter")
             throw error
         }
     }

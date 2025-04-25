@@ -111,7 +111,8 @@ struct TemperatureMonitorWorkflow {
         // Workflow initialization
         var workflow = Workflow(
             name: "Temperature Monitor Workflow",
-            description: "Monitors temperature and triggers alerts if it exceeds a safe threshold."
+            description: "Monitors temperature and triggers alerts if it exceeds a safe threshold.",
+            logger: CustomLogger.shared
         ) {
             // Step 1: Read the current temperature.
             Workflow.Task(name: "ReadTemperature", description: "Simulate reading temperature") { _ in

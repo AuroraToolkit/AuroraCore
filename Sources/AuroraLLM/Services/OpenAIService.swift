@@ -17,7 +17,7 @@ import AuroraCore
 public class OpenAIService: LLMServiceProtocol {
 
     /// A logger for recording information and errors within the `AnthropicService`.
-    private let logger = CustomLogger.shared
+    private let logger: CustomLogger?
 
     /// The name of the service vendor, required by the protocol.
     public let vendor = "OpenAI"
@@ -59,8 +59,9 @@ public class OpenAIService: LLMServiceProtocol {
         - outputTokenPolicy: The policy to handle output tokens exceeding the service's limit. Defaults to `.adjustToServiceLimits`.
         - systemPrompt: The default system prompt for this service, used to set the behavior or persona of the model.
         - urlSession: The `URLSession` instance used for network requests. Defaults to a `.default` configuration.
+        - logger: An optional `CustomLogger` instance for logging. Defaults to `nil`.
      */
-    public init(name: String = "OpenAI", baseURL: String = "https://api.openai.com", apiKey: String?, contextWindowSize: Int = 128_000, maxOutputTokens: Int = 16384, inputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, outputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, systemPrompt: String? = nil, urlSession: URLSession = URLSession(configuration: .default)) {
+    public init(name: String = "OpenAI", baseURL: String = "https://api.openai.com", apiKey: String?, contextWindowSize: Int = 128_000, maxOutputTokens: Int = 16384, inputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, outputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, systemPrompt: String? = nil, urlSession: URLSession = URLSession(configuration: .default), logger: CustomLogger? = nil) {
         self.name = name
         self.baseURL = baseURL
         self.contextWindowSize = contextWindowSize
@@ -69,6 +70,7 @@ public class OpenAIService: LLMServiceProtocol {
         self.outputTokenPolicy = outputTokenPolicy
         self.systemPrompt = systemPrompt
         self.urlSession = urlSession
+        self.logger = logger
 
         if let apiKey {
             SecureStorage.saveAPIKey(apiKey, for: name)
@@ -124,7 +126,7 @@ public class OpenAIService: LLMServiceProtocol {
         urlRequest.httpBody = jsonData
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        logger.debug("OpenAIService [sendRequest] Sending request with keys: \(body.keys)", category: "OpenAIService")
+        logger?.debug("OpenAIService [sendRequest] Sending request with keys: \(body.keys)", category: "OpenAIService")
 
         // Minimize the risk of API key exposure
         guard let apiKey = SecureStorage.getAPIKey(for: name) else {
@@ -139,7 +141,7 @@ public class OpenAIService: LLMServiceProtocol {
             throw LLMServiceError.invalidResponse(statusCode: (response as? HTTPURLResponse)?.statusCode ?? -1)
         }
 
-        logger.debug("OpenAIService [sendRequest] Response received from OpenAI.", category: "OpenAIService")
+        logger?.debug("OpenAIService [sendRequest] Response received from OpenAI.", category: "OpenAIService")
 
         let decodedResponse = try JSONDecoder().decode(OpenAILLMResponse.self, from: data)
         let finalResponse = decodedResponse.changingVendor(to: vendor)
@@ -195,7 +197,7 @@ public class OpenAIService: LLMServiceProtocol {
         urlRequest.httpBody = jsonData
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        logger.debug("OpenAIService [sendStreamingRequest] Sending streaming request with keys: \(body.keys).", category: "OpenAIService")
+        logger?.debug("OpenAIService [sendStreamingRequest] Sending streaming request with keys: \(body.keys).", category: "OpenAIService")
 
         // Minimize the risk of API key exposure
         guard let apiKey = SecureStorage.getAPIKey(for: name) else {
@@ -207,6 +209,7 @@ public class OpenAIService: LLMServiceProtocol {
             let streamingDelegate = StreamingDelegate(
                 vendor: vendor,
                 model: request.model ?? "gpt-4o",
+                logger: logger,
                 onPartialResponse: onPartialResponse ?? { _ in },
                 continuation: continuation
             )
@@ -223,14 +226,16 @@ public class OpenAIService: LLMServiceProtocol {
         private let continuation: CheckedContinuation<LLMResponseProtocol, Error>
         private var accumulatedContent = ""
         private var finalResponse: LLMResponseProtocol?
-        private let logger = CustomLogger.shared
+        private let logger: CustomLogger?
 
         init(vendor: String,
              model: String,
+             logger: CustomLogger? = nil,
              onPartialResponse: @escaping (String) -> Void,
              continuation: CheckedContinuation<LLMResponseProtocol, Error>) {
             self.vendor = vendor
             self.model = model
+            self.logger = logger
             self.onPartialResponse = onPartialResponse
             self.continuation = continuation
         }
@@ -238,7 +243,7 @@ public class OpenAIService: LLMServiceProtocol {
         func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
             guard let responseText = String(data: data, encoding: .utf8) else { return }
 
-            logger.debug("Streaming response received. Processing...", category: "OpenAIService.StreamingDelegate")
+            logger?.debug("Streaming response received. Processing...", category: "OpenAIService.StreamingDelegate")
 
             for line in responseText.split(separator: "\n") {
                 if line == "data: [DONE]" {
@@ -272,7 +277,7 @@ public class OpenAIService: LLMServiceProtocol {
                                 onPartialResponse(partialContent)
                             }
                         } catch {
-                            logger.error("OpenAIService Failed to decode partial response: \(error)", category: "OpenAIService.StreamingDelegate")
+                            logger?.error("OpenAIService Failed to decode partial response: \(error)", category: "OpenAIService.StreamingDelegate")
                         }
                     }
                 }

@@ -18,7 +18,7 @@ import AuroraCore
 public class GoogleService: LLMServiceProtocol {
 
     /// A logger for recording information and errors within the `GoogleService`.
-    private let logger = CustomLogger.shared
+    private let logger: CustomLogger?
 
     /// The name of the service vendor, required by the protocol.
     public let vendor = "Google"
@@ -62,6 +62,7 @@ public class GoogleService: LLMServiceProtocol {
         - outputTokenPolicy: The policy for handling requests exceeding the maximum output token limit. Defaults to `.adjustToServiceLimits`.
         - systemPrompt: An optional default system prompt to guide the model's behavior for this service instance.
         - urlSession: The `URLSession` instance for network requests. Defaults to a standard configuration.
+        - logger: An optional logger for recording information and errors. Defaults to `nil`.
      */
     public init(
         name: String = "Google",
@@ -72,7 +73,8 @@ public class GoogleService: LLMServiceProtocol {
         inputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits,
         outputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits,
         systemPrompt: String? = nil,
-        urlSession: URLSession = URLSession(configuration: .default)
+        urlSession: URLSession = URLSession(configuration: .default),
+        logger: CustomLogger? = nil
     ) {
         self.name = name
         self.baseURL = baseURL
@@ -82,13 +84,14 @@ public class GoogleService: LLMServiceProtocol {
         self.outputTokenPolicy = outputTokenPolicy
         self.systemPrompt = systemPrompt
         self.urlSession = urlSession
+        self.logger = logger
 
         // Save the API key securely, associated with this service's name
         if let apiKey = apiKey {
             SecureStorage.saveAPIKey(apiKey, for: self.name) // Use the instance name
         } else {
              // Use .info instead of .warning
-             logger.info("GoogleService initialized without an API key for instance '\(name)'. Key must exist in SecureStorage.", category: "GoogleService")
+             logger?.info("GoogleService initialized without an API key for instance '\(name)'. Key must exist in SecureStorage.", category: "GoogleService")
         }
     }
 
@@ -108,7 +111,7 @@ public class GoogleService: LLMServiceProtocol {
 
         // Retrieve API Key securely before making the request
         guard let apiKey = SecureStorage.getAPIKey(for: self.name) else { // Use instance name
-            logger.error("GoogleService [sendRequest] Missing API Key for service name: \(self.name)", category: "GoogleService")
+            logger?.error("GoogleService [sendRequest] Missing API Key for service name: \(self.name)", category: "GoogleService")
             throw LLMServiceError.missingAPIKey
         }
 
@@ -118,12 +121,12 @@ public class GoogleService: LLMServiceProtocol {
         do {
             googleRequest = try mapToGoogleRequest(request, serviceSystemPrompt: self.systemPrompt)
         } catch {
-            logger.error("GoogleService [sendRequest] Failed to map request: \(error)", category: "GoogleService")
+            logger?.error("GoogleService [sendRequest] Failed to map request: \(error)", category: "GoogleService")
             throw LLMServiceError.custom(message: "Failed to create Google request structure: \(error.localizedDescription)")
         }
 
         guard let url = URL(string: "\(baseURL)/v1beta/models/\(modelName):generateContent") else {
-            logger.error("GoogleService [sendRequest] Invalid URL generated.", category: "GoogleService")
+            logger?.error("GoogleService [sendRequest] Invalid URL generated.", category: "GoogleService")
             throw LLMServiceError.invalidURL
         }
 
@@ -134,7 +137,7 @@ public class GoogleService: LLMServiceProtocol {
 
         do {
             urlRequest.httpBody = try JSONEncoder().encode(googleRequest)
-            logger.debug("GoogleService [sendRequest] Sending request to \(url.absoluteString)", category: "GoogleService")
+            logger?.debug("GoogleService [sendRequest] Sending request to \(url.absoluteString)", category: "GoogleService")
 
             let (data, response) = try await urlSession.data(for: urlRequest)
 
@@ -142,11 +145,11 @@ public class GoogleService: LLMServiceProtocol {
                 throw LLMServiceError.invalidResponse(statusCode: -1) // Indicate non-HTTP response
             }
 
-            logger.debug("GoogleService [sendRequest] Response status: \(httpResponse.statusCode)", category: "GoogleService")
+            logger?.debug("GoogleService [sendRequest] Response status: \(httpResponse.statusCode)", category: "GoogleService")
 
             guard (200...299).contains(httpResponse.statusCode) else {
                  let errorBody = String(data: data, encoding: .utf8) ?? "Non-UTF8 error body"
-                 logger.error("GoogleService [sendRequest] Error response (\(httpResponse.statusCode)): \(errorBody)", category: "GoogleService")
+                 logger?.error("GoogleService [sendRequest] Error response (\(httpResponse.statusCode)): \(errorBody)", category: "GoogleService")
                  // Consider decoding Google's specific error JSON structure if available
                 throw LLMServiceError.invalidResponse(statusCode: httpResponse.statusCode)
             }
@@ -158,21 +161,21 @@ public class GoogleService: LLMServiceProtocol {
                 .changingVendor(to: self.vendor) // Use the extension method
                 .changingModel(to: modelName)   // Use the helper method defined in GoogleLLMResponse.swift
 
-            logger.debug("GoogleService [sendRequest] Response decoded successfully.", category: "GoogleService")
+            logger?.debug("GoogleService [sendRequest] Response decoded successfully.", category: "GoogleService")
             return finalResponse
 
         } catch let error as EncodingError {
-             logger.error("GoogleService [sendRequest] Encoding Error: \(error)", category: "GoogleService")
+             logger?.error("GoogleService [sendRequest] Encoding Error: \(error)", category: "GoogleService")
              throw LLMServiceError.custom(message: "Failed to encode request: \(error.localizedDescription)")
         } catch let error as DecodingError {
              // Attempt to get body data again for logging, might fail if network error occurred before response
              let bodyText = String(data: (try? await urlSession.data(for: urlRequest).0) ?? Data(), encoding: .utf8) ?? "N/A"
-             logger.error("GoogleService [sendRequest] Decoding Error: \(error). Body: \(bodyText)", category: "GoogleService")
+             logger?.error("GoogleService [sendRequest] Decoding Error: \(error). Body: \(bodyText)", category: "GoogleService")
              throw LLMServiceError.decodingError
         } catch let error as LLMServiceError {
             throw error // Rethrow known service errors
         } catch {
-             logger.error("GoogleService [sendRequest] Network or other error: \(error)", category: "GoogleService")
+             logger?.error("GoogleService [sendRequest] Network or other error: \(error)", category: "GoogleService")
             throw LLMServiceError.custom(message: "Network or unexpected error: \(error.localizedDescription)") // Wrap unexpected errors
         }
     }
@@ -192,7 +195,7 @@ public class GoogleService: LLMServiceProtocol {
         }
 
         guard let apiKey = SecureStorage.getAPIKey(for: self.name) else { // Use instance name
-            logger.error("GoogleService [sendStreamingRequest] Missing API Key for service name: \(self.name)", category: "GoogleService")
+            logger?.error("GoogleService [sendStreamingRequest] Missing API Key for service name: \(self.name)", category: "GoogleService")
             throw LLMServiceError.missingAPIKey
         }
 
@@ -202,12 +205,12 @@ public class GoogleService: LLMServiceProtocol {
         do {
             googleRequest = try mapToGoogleRequest(request, serviceSystemPrompt: self.systemPrompt)
         } catch {
-            logger.error("GoogleService [sendStreamingRequest] Failed to map request: \(error)", category: "GoogleService")
+            logger?.error("GoogleService [sendStreamingRequest] Failed to map request: \(error)", category: "GoogleService")
             throw LLMServiceError.custom(message: "Failed to create Google request structure: \(error.localizedDescription)")
         }
 
         guard let url = URL(string: "\(baseURL)/v1beta/models/\(modelName):streamGenerateContent") else {
-             logger.error("GoogleService [sendStreamingRequest] Invalid URL generated.", category: "GoogleService")
+             logger?.error("GoogleService [sendStreamingRequest] Invalid URL generated.", category: "GoogleService")
             throw LLMServiceError.invalidURL
         }
 
@@ -218,13 +221,14 @@ public class GoogleService: LLMServiceProtocol {
 
         do {
             urlRequest.httpBody = try JSONEncoder().encode(googleRequest)
-            logger.debug("GoogleService [sendStreamingRequest] Sending request to \(url.absoluteString)", category: "GoogleService")
+            logger?.debug("GoogleService [sendStreamingRequest] Sending request to \(url.absoluteString)", category: "GoogleService")
 
             // Use withCheckedThrowingContinuation with a custom delegate
             return try await withCheckedThrowingContinuation { continuation in
                 let streamingDelegate = StreamingDelegate(
                     model: modelName,
                     vendor: self.vendor,
+                    logger: logger,
                     onPartialResponse: onPartialResponse ?? { _ in }, // Provide default empty closure
                     continuation: continuation
                 )
@@ -234,10 +238,10 @@ public class GoogleService: LLMServiceProtocol {
                 task.resume()
             }
         } catch let error as EncodingError {
-            logger.error("GoogleService [sendStreamingRequest] Encoding Error: \(error)", category: "GoogleService")
+            logger?.error("GoogleService [sendStreamingRequest] Encoding Error: \(error)", category: "GoogleService")
             throw LLMServiceError.custom(message: "Failed to encode streaming request: \(error.localizedDescription)")
         } catch {
-            logger.error("GoogleService [sendStreamingRequest] Error initiating stream: \(error)", category: "GoogleService")
+            logger?.error("GoogleService [sendStreamingRequest] Error initiating stream: \(error)", category: "GoogleService")
             throw error // Rethrow other potential errors
         }
     }
@@ -260,12 +264,12 @@ public class GoogleService: LLMServiceProtocol {
                       currentSystemPrompt = message.content
                  } else {
                       // Use .info instead of .warning
-                      logger.info("GoogleService: Multiple system messages found in request; only the first will be used as systemInstruction.", category: "GoogleService")
+                      logger?.info("GoogleService: Multiple system messages found in request; only the first will be used as systemInstruction.", category: "GoogleService")
                  }
                  continue // Don't add system messages to the main 'contents' array
              case .custom(let customRole):
                   // Use .info instead of .warning
-                  logger.info("GoogleService: Mapping custom role '\(customRole)' to 'user'. Adjust if needed.", category: "GoogleService")
+                  logger?.info("GoogleService: Mapping custom role '\(customRole)' to 'user'. Adjust if needed.", category: "GoogleService")
                  role = "user" // Default mapping for custom roles, adjust as needed
              }
              // Ensure role is populated for contents, handle potential nil from systemInstruction mapping logic if adapted poorly
@@ -288,7 +292,7 @@ public class GoogleService: LLMServiceProtocol {
                  effectiveMaxOutput = min(request.maxTokens, self.maxOutputTokens) // Cap at service limit
              case .strictRequestLimits:
                  guard request.maxTokens <= self.maxOutputTokens else {
-                     logger.error("GoogleService: Strict output token limit failed. Request maxTokens (\(request.maxTokens)) > Service maxOutputTokens (\(self.maxOutputTokens))", category: "GoogleService")
+                     logger?.error("GoogleService: Strict output token limit failed. Request maxTokens (\(request.maxTokens)) > Service maxOutputTokens (\(self.maxOutputTokens))", category: "GoogleService")
                      throw LLMServiceError.custom(message: "Requested maxTokens (\(request.maxTokens)) exceeds service limit (\(self.maxOutputTokens)) with strict policy.")
                  }
                  // Use request.maxTokens as it's within limits
@@ -325,18 +329,19 @@ public class GoogleService: LLMServiceProtocol {
         private var finalPromptFeedback: GooglePromptFeedback?
         private var isFinished = false // Track if continuation has been resumed
         private var receivedDataBuffer = Data() // Buffer for incomplete JSON objects
-
-        private let logger = CustomLogger.shared // Use the same logger
+        private let logger: CustomLogger?
 
         init(model: String,
              vendor: String,
+             logger: CustomLogger? = nil,
              onPartialResponse: @escaping (String) -> Void,
              continuation: CheckedContinuation<LLMResponseProtocol, Error>) {
             self.model = model
             self.vendor = vendor
+            self.logger = logger
             self.onPartialResponse = onPartialResponse
             self.continuation = continuation
-            logger.debug("GoogleService [StreamingDelegate] Initialized.", category: "GoogleService.StreamingDelegate")
+            logger?.debug("GoogleService [StreamingDelegate] Initialized.", category: "GoogleService.StreamingDelegate")
         }
 
         // Handles the initial response headers and status code.
@@ -344,17 +349,17 @@ public class GoogleService: LLMServiceProtocol {
             guard !isFinished else { completionHandler(.cancel); return } // Don't process if already finished
 
             guard let httpResponse = response as? HTTPURLResponse else {
-                logger.error("GoogleService [StreamingDelegate] Received non-HTTP response.", category: "GoogleService.StreamingDelegate")
+                logger?.error("GoogleService [StreamingDelegate] Received non-HTTP response.", category: "GoogleService.StreamingDelegate")
                 safeResume(throwing: LLMServiceError.invalidResponse(statusCode: -1))
                 completionHandler(.cancel)
                 return
             }
 
-            logger.debug("GoogleService [StreamingDelegate] Received response status: \(httpResponse.statusCode)", category: "GoogleService.StreamingDelegate")
+            logger?.debug("GoogleService [StreamingDelegate] Received response status: \(httpResponse.statusCode)", category: "GoogleService.StreamingDelegate")
 
             guard (200...299).contains(httpResponse.statusCode) else {
                  // Allow receiving data for error body, error handled in didComplete or didReceive data
-                logger.info("GoogleService [StreamingDelegate] Received non-2xx status: \(httpResponse.statusCode). Allowing data for error body.", category: "GoogleService.StreamingDelegate")
+                logger?.info("GoogleService [StreamingDelegate] Received non-2xx status: \(httpResponse.statusCode). Allowing data for error body.", category: "GoogleService.StreamingDelegate")
                 completionHandler(.allow)
                 return
             }
@@ -378,13 +383,13 @@ public class GoogleService: LLMServiceProtocol {
                  guard let firstBrace = receivedDataBuffer.firstIndex(of: UInt8(ascii: "{")),
                        let lastBrace = receivedDataBuffer.lastIndex(of: UInt8(ascii: "}")) else {
                      // No complete object structure found in buffer yet, wait for more data
-                     logger.debug("GoogleService [StreamingDelegate] Buffer does not contain complete {} structure yet.", category: "GoogleService.StreamingDelegate")
+                     logger?.debug("GoogleService [StreamingDelegate] Buffer does not contain complete {} structure yet.", category: "GoogleService.StreamingDelegate")
                      break
                  }
 
                  // Check if the last brace comes after the first brace
                   guard lastBrace >= firstBrace else {
-                       logger.debug("GoogleService [StreamingDelegate] Found braces out of order, waiting for more data.", category: "GoogleService.StreamingDelegate")
+                       logger?.debug("GoogleService [StreamingDelegate] Found braces out of order, waiting for more data.", category: "GoogleService.StreamingDelegate")
                        break // Wait for more data if braces seem out of order
                   }
 
@@ -402,28 +407,28 @@ public class GoogleService: LLMServiceProtocol {
 
                  do {
                      let chunk = try JSONDecoder().decode(GoogleStreamedGenerateContentResponse.self, from: trimmedData)
-                     // logger.debug("GoogleService [StreamingDelegate] Successfully decoded JSON chunk.", category: "GoogleService.StreamingDelegate") // Can be verbose
+                     // logger?.debug("GoogleService [StreamingDelegate] Successfully decoded JSON chunk.", category: "GoogleService.StreamingDelegate") // Can be verbose
 
                      // --- Process the valid chunk ---
                      if let textDelta = chunk.candidates?.first?.content.parts.first?.text {
                          if !textDelta.isEmpty { // Avoid calling back with empty strings if possible
                             accumulatedText += textDelta
                             onPartialResponse(textDelta)
-                            // logger.debug("GoogleService [StreamingDelegate] Received delta: \(textDelta.prefix(50))...", category: "GoogleService.StreamingDelegate")
+                            // logger?.debug("GoogleService [StreamingDelegate] Received delta: \(textDelta.prefix(50))...", category: "GoogleService.StreamingDelegate")
                          }
                      }
                      if let metadata = chunk.usageMetadata {
                          finalUsageMetadata = metadata
-                         logger.debug("GoogleService [StreamingDelegate] Received usage metadata.", category: "GoogleService.StreamingDelegate")
+                         logger?.debug("GoogleService [StreamingDelegate] Received usage metadata.", category: "GoogleService.StreamingDelegate")
                      }
                      if let feedback = chunk.promptFeedback {
                          finalPromptFeedback = feedback
                           if let reason = feedback.blockReason {
-                               logger.info("GoogleService [StreamingDelegate] Prompt blocked. Reason: \(reason)", category: "GoogleService.StreamingDelegate")
+                               logger?.info("GoogleService [StreamingDelegate] Prompt blocked. Reason: \(reason)", category: "GoogleService.StreamingDelegate")
                           }
                      }
                      if chunk.candidates?.first?.finishReason != nil {
-                          logger.debug("GoogleService [StreamingDelegate] Finish reason received: \(chunk.candidates?.first?.finishReason ?? "N/A")", category: "GoogleService.StreamingDelegate")
+                          logger?.debug("GoogleService [StreamingDelegate] Finish reason received: \(chunk.candidates?.first?.finishReason ?? "N/A")", category: "GoogleService.StreamingDelegate")
                      }
                      // --- End Processing ---
 
@@ -438,7 +443,7 @@ public class GoogleService: LLMServiceProtocol {
                  } catch {
                      // Decoding failed. If buffer seems to only contain this failed chunk, maybe discard it? Risky.
                      // Let's assume incomplete and wait for more data / finalization.
-                     logger.debug("GoogleService [StreamingDelegate] Failed to decode potential JSON chunk. Error: \(error). Waiting for more data or task completion.", category: "GoogleService.StreamingDelegate")
+                     logger?.debug("GoogleService [StreamingDelegate] Failed to decode potential JSON chunk. Error: \(error). Waiting for more data or task completion.", category: "GoogleService.StreamingDelegate")
                      break // Break loop and wait for more data or task completion
                  }
              } // End while loop
@@ -449,7 +454,7 @@ public class GoogleService: LLMServiceProtocol {
              guard !isFinished else { return } // Prevent double resumption
 
              if let error = error {
-                 logger.error("GoogleService [StreamingDelegate] Task completed with error: \(error.localizedDescription)", category: "GoogleService.StreamingDelegate")
+                 logger?.error("GoogleService [StreamingDelegate] Task completed with error: \(error.localizedDescription)", category: "GoogleService.StreamingDelegate")
                  safeResume(throwing: LLMServiceError.custom(message: "URLSession task failed: \(error.localizedDescription)"))
                  return
              }
@@ -457,27 +462,27 @@ public class GoogleService: LLMServiceProtocol {
              // Process any remaining data in the buffer one last time
              processBuffer()
              if !receivedDataBuffer.isEmpty {
-                 logger.info("GoogleService [StreamingDelegate] Task completed, but data buffer still contains unprocessed data: \(String(data: receivedDataBuffer, encoding: .utf8) ?? "Non-UTF8 data")", category: "GoogleService.StreamingDelegate")
+                 logger?.info("GoogleService [StreamingDelegate] Task completed, but data buffer still contains unprocessed data: \(String(data: receivedDataBuffer, encoding: .utf8) ?? "Non-UTF8 data")", category: "GoogleService.StreamingDelegate")
                  // This might indicate an incomplete final chunk or non-JSON error message
              }
 
              // Check HTTP status code on completion
              guard let httpResponse = task.response as? HTTPURLResponse else {
-                  logger.error("GoogleService [StreamingDelegate] Task completed without a valid HTTP response.", category: "GoogleService.StreamingDelegate")
+                  logger?.error("GoogleService [StreamingDelegate] Task completed without a valid HTTP response.", category: "GoogleService.StreamingDelegate")
                   safeResume(throwing: LLMServiceError.invalidResponse(statusCode: -1))
                   return
              }
 
              guard (200...299).contains(httpResponse.statusCode) else {
-                 logger.error("GoogleService [StreamingDelegate] Task completed with non-2xx status: \(httpResponse.statusCode).", category: "GoogleService.StreamingDelegate")
+                 logger?.error("GoogleService [StreamingDelegate] Task completed with non-2xx status: \(httpResponse.statusCode).", category: "GoogleService.StreamingDelegate")
                   let errorBody = String(data: receivedDataBuffer, encoding: .utf8) ?? "Unknown error body" // Try reading error from buffer
-                  logger.error("GoogleService [StreamingDelegate] Error body on completion: \(errorBody)", category: "GoogleService.StreamingDelegate")
+                  logger?.error("GoogleService [StreamingDelegate] Error body on completion: \(errorBody)", category: "GoogleService.StreamingDelegate")
                  safeResume(throwing: LLMServiceError.invalidResponse(statusCode: httpResponse.statusCode))
                  return
              }
 
              // If task completed successfully without error and status was 2xx, finalize the response
-             logger.debug("GoogleService [StreamingDelegate] Task completed successfully. Finalizing response.", category: "GoogleService.StreamingDelegate")
+             logger?.debug("GoogleService [StreamingDelegate] Task completed successfully. Finalizing response.", category: "GoogleService.StreamingDelegate")
 
              // Construct the final response object
              let finalCandidate = GoogleCandidate(
@@ -502,7 +507,7 @@ public class GoogleService: LLMServiceProtocol {
         // Safely resumes the continuation, ensuring it only happens once.
         private func safeResume(returning response: LLMResponseProtocol) {
             guard !isFinished else {
-                 // logger.debug("GoogleService [StreamingDelegate] Attempted to resume continuation after already finished (returning).", category: "GoogleService.StreamingDelegate")
+                 // logger?.debug("GoogleService [StreamingDelegate] Attempted to resume continuation after already finished (returning).", category: "GoogleService.StreamingDelegate")
                  return
             }
             isFinished = true
@@ -512,7 +517,7 @@ public class GoogleService: LLMServiceProtocol {
         // Safely resumes the continuation with an error, ensuring it only happens once.
         private func safeResume(throwing error: Error) {
             guard !isFinished else {
-                 // logger.debug("GoogleService [StreamingDelegate] Attempted to resume continuation after already finished (throwing).", category: "GoogleService.StreamingDelegate")
+                 // logger?.debug("GoogleService [StreamingDelegate] Attempted to resume continuation after already finished (throwing).", category: "GoogleService.StreamingDelegate")
                  return
             }
             isFinished = true

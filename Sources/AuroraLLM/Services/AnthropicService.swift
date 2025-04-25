@@ -17,7 +17,7 @@ import AuroraCore
 public class AnthropicService: LLMServiceProtocol {
 
     /// A logger for recording information and errors within the `AnthropicService`.
-    private let logger = CustomLogger.shared
+    private let logger: CustomLogger?
 
     /// The name of the service vendor, required by the protocol.
     public let vendor = "Anthropic"
@@ -59,8 +59,9 @@ public class AnthropicService: LLMServiceProtocol {
         - outputTokenPolicy: The policy to handle output tokens exceeding the service's limit. Defaults to `.adjustToServiceLimits`.
         - systemPrompt: The default system prompt for this service, used to set the behavior or persona of the model.
         - urlSession: The `URLSession` instance used for network requests. Defaults to a `.default` configuration.
+        - logger: An optional logger for recording information and errors within the service.
      */
-    public init(name: String = "Anthropic", baseURL: String = "https://api.anthropic.com", apiKey: String?, contextWindowSize: Int = 200_000, maxOutputTokens: Int = 4096, inputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, outputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, systemPrompt: String? = nil, urlSession: URLSession = URLSession(configuration: .default)) {
+    public init(name: String = "Anthropic", baseURL: String = "https://api.anthropic.com", apiKey: String?, contextWindowSize: Int = 200_000, maxOutputTokens: Int = 4096, inputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, outputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, systemPrompt: String? = nil, urlSession: URLSession = URLSession(configuration: .default), logger: CustomLogger? = nil) {
         self.name = name
         self.baseURL = baseURL
         self.contextWindowSize = contextWindowSize
@@ -69,6 +70,7 @@ public class AnthropicService: LLMServiceProtocol {
         self.outputTokenPolicy = outputTokenPolicy
         self.systemPrompt = systemPrompt
         self.urlSession = urlSession
+        self.logger = logger
 
         if let apiKey {
             SecureStorage.saveAPIKey(apiKey, for: name)
@@ -136,7 +138,7 @@ public class AnthropicService: LLMServiceProtocol {
             body["system"] = systemMessage
         }
 
-        logger.debug("AnthropicService [sendRequest] Sending request with keys: \(body.keys)", category: "AnthropicService")
+        logger?.debug("AnthropicService [sendRequest] Sending request with keys: \(body.keys)", category: "AnthropicService")
 
         let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
 
@@ -162,7 +164,7 @@ public class AnthropicService: LLMServiceProtocol {
             throw LLMServiceError.invalidResponse(statusCode: (response as? HTTPURLResponse)?.statusCode ?? -1)
         }
 
-        logger.debug("AnthropicService [sendRequest] Response received from Anthropic", category: "AnthropicService")
+        logger?.debug("AnthropicService [sendRequest] Response received from Anthropic", category: "AnthropicService")
 
         let decodedResponse = try JSONDecoder().decode(AnthropicLLMResponse.self, from: data)
         let finalResponse = decodedResponse.changingVendor(to: vendor)
@@ -213,7 +215,7 @@ public class AnthropicService: LLMServiceProtocol {
         let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
 
         guard let url = URL(string: "\(baseURL)/v1/messages") else {
-            logger.debug("Invalid URL: \(self.baseURL)/v1/messages")
+            logger?.debug("Invalid URL: \(self.baseURL)/v1/messages")
             throw LLMServiceError.invalidURL
         }
 
@@ -223,7 +225,7 @@ public class AnthropicService: LLMServiceProtocol {
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")  // Required Anthropic version header
 
-        logger.debug("AnthropicService [sendStreamingRequest] Sending streaming request with keys: \(body.keys)", category: "AnthropicService")
+        logger?.debug("AnthropicService [sendStreamingRequest] Sending streaming request with keys: \(body.keys)", category: "AnthropicService")
 
         // Minimize the risk of API key exposure
         guard let apiKey = SecureStorage.getAPIKey(for: name) else {
@@ -235,6 +237,7 @@ public class AnthropicService: LLMServiceProtocol {
             let streamingDelegate = StreamingDelegate(
                 vendor: vendor,
                 model: request.model ?? "claude-3-5-sonnet-20240620",
+                logger: logger,
                 onPartialResponse: onPartialResponse ?? { _ in },
                 continuation: continuation
             )
@@ -253,33 +256,35 @@ public class AnthropicService: LLMServiceProtocol {
         private var inputTokens: Int = 0
         private var outputTokens: Int = 0
         private var isComplete = false
-        private let logger = CustomLogger.shared
+        private let logger: CustomLogger?
 
         init(vendor: String,
              model: String,
+             logger: CustomLogger? = nil,
              onPartialResponse: @escaping (String) -> Void,
              continuation: CheckedContinuation<LLMResponseProtocol, Error>) {
             self.vendor = vendor
             self.model = model
+            self.logger = logger
             self.onPartialResponse = onPartialResponse
             self.continuation = continuation
-            logger.debug("AnthropicService [StreamingDelegate] initialized for model: \(model)", category: "AnthropicService.StreamingDelegate")
+            logger?.debug("AnthropicService [StreamingDelegate] initialized for model: \(model)", category: "AnthropicService.StreamingDelegate")
         }
 
         func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
             guard let eventText = String(data: data, encoding: .utf8) else {
-                logger.debug("AnthropicService Failed to decode data as UTF-8", category: "AnthropicService.StreamingDelegate")
+                logger?.debug("AnthropicService Failed to decode data as UTF-8", category: "AnthropicService.StreamingDelegate")
                 return
             }
 
-            logger.debug("AnthropicService [StreamingDelegate] streaming event received", category: "AnthropicService.StreamingDelegate")
+            logger?.debug("AnthropicService [StreamingDelegate] streaming event received", category: "AnthropicService.StreamingDelegate")
 
             let events = eventText.components(separatedBy: "\n\n")
             for event in events {
                 guard !event.isEmpty else { continue }
 
                 if event.contains("event: message_stop") {
-                    logger.debug("AnthropicService [StreamingDelegate] Received message_stop event.", category: "AnthropicService.StreamingDelegate")
+                    logger?.debug("AnthropicService [StreamingDelegate] Received message_stop event.", category: "AnthropicService.StreamingDelegate")
                     isComplete = true
                     break
                 } else if let dataRange = event.range(of: "data: ") {
@@ -293,7 +298,7 @@ public class AnthropicService: LLMServiceProtocol {
                                 accumulatedContent.append(content)
                                 onPartialResponse(text)
 
-                                logger.debug("AnthropicService Partial response: \(text)", category: "AnthropicService.StreamingDelegate")
+                                logger?.debug("AnthropicService Partial response: \(text)", category: "AnthropicService.StreamingDelegate")
                             }
 
                             if let usage = streamingResponse.usage {
@@ -301,11 +306,11 @@ public class AnthropicService: LLMServiceProtocol {
                                 outputTokens = usage.outputTokens ?? 0
                             }
                         } catch {
-                            logger.error("AnthropicService Failed to decode partial response: \(error.localizedDescription)", category: "AnthropicService.StreamingDelegate")
+                            logger?.error("AnthropicService Failed to decode partial response: \(error.localizedDescription)", category: "AnthropicService.StreamingDelegate")
                         }
                     }
                 } else {
-                    logger.debug("AnthropicService [StreamingDelegate] Unhandled event type: \(event)", category: "AnthropicService.StreamingDelegate")
+                    logger?.debug("AnthropicService [StreamingDelegate] Unhandled event type: \(event)", category: "AnthropicService.StreamingDelegate")
                 }
             }
 
@@ -326,10 +331,10 @@ public class AnthropicService: LLMServiceProtocol {
 
         func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
             if let error = error {
-                logger.error("AnthropicService [StreamingDelegate] Task completed with error: \(error.localizedDescription)", category: "AnthropicService.StreamingDelegate")
+                logger?.error("AnthropicService [StreamingDelegate] Task completed with error: \(error.localizedDescription)", category: "AnthropicService.StreamingDelegate")
                 continuation.resume(throwing: error)
             } else if !isComplete {
-                logger.debug("AnthropicService [StreamingDelegate] Task completed without receiving a message_stop event.", category: "AnthropicService.StreamingDelegate")
+                logger?.debug("AnthropicService [StreamingDelegate] Task completed without receiving a message_stop event.", category: "AnthropicService.StreamingDelegate")
                 continuation.resume(throwing: LLMServiceError.custom(message: "Streaming response ended prematurely."))
             }
         }

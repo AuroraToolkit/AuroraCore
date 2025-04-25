@@ -20,7 +20,7 @@ struct LLMRoutingExample {
         }
 
         // Initialize the LLMManager
-        let manager = LLMManager()
+        let manager = LLMManager(logger: CustomLogger.shared)
 
         // Register Ollama service with a low context size and token limit
         let ollamaService = OllamaService(
@@ -28,7 +28,8 @@ struct LLMRoutingExample {
             contextWindowSize: 1024,
             maxOutputTokens: 256,
             inputTokenPolicy: .strictRequestLimits,
-            outputTokenPolicy: .strictRequestLimits
+            outputTokenPolicy: .strictRequestLimits,
+            logger: CustomLogger.shared
         )
         manager.registerService(ollamaService)
 
@@ -36,7 +37,8 @@ struct LLMRoutingExample {
         let openAIService = OpenAIService(
             apiKey: openAIKey,
             inputTokenPolicy: .adjustToServiceLimits,
-            outputTokenPolicy: .adjustToServiceLimits
+            outputTokenPolicy: .adjustToServiceLimits,
+            logger: CustomLogger.shared
         )
         manager.registerService(openAIService)
 

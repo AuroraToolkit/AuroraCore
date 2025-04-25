@@ -27,7 +27,8 @@ struct DomainRoutingExample {
         let router = LLMDomainRouter(
             name: "Domain Router",
             service: OllamaService(),
-            supportedDomains: sports + movies + books
+            supportedDomains: sports + movies + books,
+            logger: CustomLogger.shared
         )
         manager.registerDomainRouter(router)
 
@@ -57,7 +58,9 @@ struct DomainRoutingExample {
             name: "General Service",
             baseURL: "http://localhost:11434",
             contextWindowSize: 8192,
-            maxOutputTokens: 1024)
+            maxOutputTokens: 1024,
+            logger: CustomLogger.shared
+        )
         manager.registerFallbackService(generalService)
 
         print("Registered Services Details:")

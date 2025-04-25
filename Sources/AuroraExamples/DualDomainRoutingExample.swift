@@ -77,12 +77,14 @@ struct DualDomainRoutingExample {
             let router1 = CoreMLDomainRouter(
                 name: "PrimaryRouter",
                 modelURL: modelPath(for: "DualDomainRoutingExamplePrimaryTextClassifier.mlmodelc"),
-                supportedDomains: supportedDomains
+                supportedDomains: supportedDomains,
+                logger: CustomLogger.shared
             ),
             let router2 = CoreMLDomainRouter(
                 name: "SecondaryRouter",
                 modelURL: modelPath(for: "DualDomainRoutingExampleSecondaryTextClassifier.mlmodelc"),
-                supportedDomains: supportedDomains
+                supportedDomains: supportedDomains,
+                logger: CustomLogger.shared
             )
         else {
             print("❌ Failed to load one or more models.")
@@ -100,6 +102,7 @@ struct DualDomainRoutingExample {
             fallbackDomain: "general",
             fallbackConfidenceThreshold: 0.35,
             allowSyntheticFallbacks: false,
+            logger: CustomLogger.shared,
             conflictLogger: conflictLogger
         ) { primary, secondary in
             if let p = primary, p.confidence > 0.35 {

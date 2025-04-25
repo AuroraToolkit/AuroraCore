@@ -75,7 +75,8 @@ public struct Workflow {
     /// A state manager instance for tracking the workflow state.
     private let stateManager = StateManager()
 
-    private let logger = CustomLogger.shared
+    /// A logger instance for logging workflow events.
+    private let logger: CustomLogger?
 
 
     /**
@@ -85,11 +86,13 @@ public struct Workflow {
         - name: The name of the workflow.
         - description: A brief description of the workflow.
         - content: A closure that declares the tasks and task groups for the workflow.
+        - logger: An optional logger for logging workflow events.
      */
-    public init(name: String, description: String, @WorkflowBuilder _ content: () -> [Component]) {
+    public init(name: String, description: String, logger: CustomLogger? = nil, @WorkflowBuilder _ content: () -> [Component]) {
         self.id = UUID()
         self.name = name
         self.description = description
+        self.logger = logger
         self.componentsManager = ComponentsManager(initialComponents: content())
     }
 
@@ -104,7 +107,7 @@ public struct Workflow {
         let currentState = await stateManager.getState()
 
         guard currentState == .notStarted else {
-            logger.debug("Workflow \(name) already started or completed.", category: "Workflow")
+            logger?.debug("Workflow \(name) already started or completed.", category: "Workflow")
             return
         }
 
@@ -125,7 +128,7 @@ public struct Workflow {
                 executionTime: timer.duration ?? 0,
                 outputs: outputs
             )
-            logger.debug("Workflow \(name) ended with state \(currentState) in \(String(format: "%.2f", timer.duration ?? 0)) seconds.", category: "Workflow")
+            logger?.debug("Workflow \(name) ended with state \(currentState) in \(String(format: "%.2f", timer.duration ?? 0)) seconds.", category: "Workflow")
         } catch {
             await stateManager.updateState(to: .failed)
             detailsHolder.details = ExecutionDetails(
@@ -136,7 +139,7 @@ public struct Workflow {
                 outputs: outputs,
                 error: error
             )
-            logger.error("Workflow \(name) failed: \(error.localizedDescription)", category: "Workflow")
+            logger?.error("Workflow \(name) failed: \(error.localizedDescription)", category: "Workflow")
         }
     }
 
@@ -152,7 +155,7 @@ public struct Workflow {
                 executionTime: 0,
                 outputs: outputs
             )
-        logger.debug("Workflow \(name) canceled.", category: "Workflow")
+        logger?.debug("Workflow \(name) canceled.", category: "Workflow")
     }
 
     /**
@@ -160,12 +163,12 @@ public struct Workflow {
      */
     public func pause() async {
         guard await stateManager.getState() == .inProgress else {
-            logger.debug("Cannot pause workflow \(name) because it is not in progress.", category: "Workflow")
+            logger?.debug("Cannot pause workflow \(name) because it is not in progress.", category: "Workflow")
             return
         }
 
         await stateManager.updateState(to: .paused)
-        logger.debug("Workflow \(name) paused.", category: "Workflow")
+        logger?.debug("Workflow \(name) paused.", category: "Workflow")
     }
 
     /**
@@ -173,12 +176,12 @@ public struct Workflow {
      */
     public mutating func resume() async {
         guard await stateManager.getState() == .paused else {
-            logger.debug("Cannot resume workflow \(name) because it is not paused.", category: "Workflow")
+            logger?.debug("Cannot resume workflow \(name) because it is not paused.", category: "Workflow")
             return
         }
 
         await stateManager.updateState(to: .inProgress)
-        logger.debug("Workflow \(name) resumed.", category: "Workflow")
+        logger?.debug("Workflow \(name) resumed.", category: "Workflow")
 
         /// Continue executing workflow where it left off
         await continueExecution()
@@ -201,7 +204,7 @@ public struct Workflow {
                 outputs: outputs
             )
             detailsHolder.details = details
-            logger.debug("Workflow \(name) ended with state \(currentState) after resuming.", category: "Workflow")
+            logger?.debug("Workflow \(name) ended with state \(currentState) after resuming.", category: "Workflow")
         } catch {
             await stateManager.updateState(to: .failed)
             timer.stop()
@@ -214,7 +217,7 @@ public struct Workflow {
                 error: error
             )
             detailsHolder.details = details
-            logger.error("Workflow \(name) failed after resuming: \(error.localizedDescription)", category: "Workflow")
+            logger?.error("Workflow \(name) failed after resuming: \(error.localizedDescription)", category: "Workflow")
         }
     }
 
@@ -231,7 +234,7 @@ public struct Workflow {
         while !componentsManager.isEmpty, let component = componentsManager.removeFirst() {
 
             step += 1
-            logger.debug("\(name) Step \(step)")
+            logger?.debug("\(name) Step \(step)")
 
             // Check state before executing each component
             let currentState = await stateManager.getState()
@@ -240,13 +243,13 @@ public struct Workflow {
             case .inProgress:
                 break
             case .canceled:
-                logger.debug("Workflow \(name) execution canceled.", category: "Workflow")
+                logger?.debug("Workflow \(name) execution canceled.", category: "Workflow")
                 return
             case .paused:
-                logger.debug("Workflow \(name) execution paused.", category: "Workflow")
+                logger?.debug("Workflow \(name) execution paused.", category: "Workflow")
                 await waitUntilResumed() // Wait until the state changes
             default:
-                logger.debug("Workflow \(name) in unexpected state: \(currentState)", category: "Workflow")
+                logger?.debug("Workflow \(name) in unexpected state: \(currentState)", category: "Workflow")
                 throw NSError(
                     domain: "Workflow",
                     code: 2,
@@ -279,7 +282,7 @@ public struct Workflow {
                     let newComponents = try await triggerComponent.waitForTrigger()
                     componentsManager.insert(newComponents)
                 } catch {
-                    logger.error("Trigger \(triggerComponent.name) failed: \(error.localizedDescription)", category: "Workflow")
+                    logger?.error("Trigger \(triggerComponent.name) failed: \(error.localizedDescription)", category: "Workflow")
                 }
             }
 
@@ -288,11 +291,11 @@ public struct Workflow {
 
         let finalState = await stateManager.getState()
         if finalState == .canceled {
-            logger.debug("Workflow \(name) canceled during execution.", category: "Workflow")
+            logger?.debug("Workflow \(name) canceled during execution.", category: "Workflow")
         } else {
             // If we finish all components without interruption, mark as completed
             await stateManager.updateState(to: .completed)
-            logger.debug("Workflow \(name) completed successfully.", category: "Workflow")
+            logger?.debug("Workflow \(name) completed successfully.", category: "Workflow")
         }
     }
 
@@ -330,7 +333,7 @@ public struct Workflow {
         - Returns: A dictionary of outputs produced by the task.
      */
     private func executeTask(_ task: Task, workflowOutputs: [String: Any]) async throws -> [String: Any] {
-        logger.debug("Executing task: \(task.name)", category: "Workflow")
+        logger?.debug("Executing task: \(task.name)", category: "Workflow")
 
         let timer = ExecutionTimer().start()
 
@@ -339,7 +342,7 @@ public struct Workflow {
 
         // Check for cancelation before starting the task
         if await stateManager.getState() == .canceled {
-            logger.debug("Task \(task.name) canceled before execution.", category: "Workflow")
+            logger?.debug("Task \(task.name) canceled before execution.", category: "Workflow")
             throw NSError(domain: "Workflow", code: 3, userInfo: [NSLocalizedDescriptionKey: "Workflow was canceled."])
         }
 
@@ -358,7 +361,7 @@ public struct Workflow {
             outputs: outputs)
         task.updateExecutionDetails(executionDetails)
 
-        logger.debug("Task \(task.name) completed in \(String(format: "%.2f", duration)) seconds.", category: "Workflow")
+        logger?.debug("Task \(task.name) completed in \(String(format: "%.2f", duration)) seconds.", category: "Workflow")
 
         return outputs
     }
@@ -374,7 +377,7 @@ public struct Workflow {
         Task groups can execute tasks sequentially or in parallel based on the `mode` property.
      */
     private func executeTaskGroup(_ group: TaskGroup, workflowOutputs: [String: Any]) async throws -> [String: Any]  {
-        logger.debug("Executing task group: \(group.name)", category: "Workflow")
+        logger?.debug("Executing task group: \(group.name)", category: "Workflow")
 
         let timer = ExecutionTimer().start()
 
@@ -420,7 +423,7 @@ public struct Workflow {
             outputs: groupOutputs)
         group.updateExecutionDetails(executionDetails)
 
-        logger.debug("Task group \(group.name) completed in \(String(format: "%.2f", duration)) seconds.", category: "Workflow")
+        logger?.debug("Task group \(group.name) completed in \(String(format: "%.2f", duration)) seconds.", category: "Workflow")
 
         return groupOutputs
     }

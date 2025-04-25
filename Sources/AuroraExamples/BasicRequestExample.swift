@@ -23,7 +23,7 @@ struct BasicRequestExample {
         let manager = LLMManager()
 
         // Create and register a service
-        let realService = AnthropicService(apiKey: apiKey)
+        let realService = AnthropicService(apiKey: apiKey, logger: CustomLogger.shared)
         manager.registerService(realService)
 
         // Create a basic request

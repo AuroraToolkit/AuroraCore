@@ -101,7 +101,8 @@ struct SiriStyleDomainRoutingExample {
             let router = CoreMLDomainRouter(
                 name: "PrimaryRouter",
                 modelURL: modelPath(for: "SiriStyleTextClassifier.mlmodelc"),
-                supportedDomains: supportedDomains
+                supportedDomains: supportedDomains,
+                logger: CustomLogger.shared
             )
         else {
             print("❌ Failed to load one or more models.")

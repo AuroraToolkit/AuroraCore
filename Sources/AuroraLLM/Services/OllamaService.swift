@@ -16,7 +16,7 @@ import AuroraCore
 public class OllamaService: LLMServiceProtocol {
 
     /// A logger for recording information and errors within the `AnthropicService`.
-    private let logger = CustomLogger.shared
+    private let logger: CustomLogger?
 
     /// The name of the service vendor, required by the protocol.
     public var vendor: String
@@ -59,8 +59,9 @@ public class OllamaService: LLMServiceProtocol {
         - outputTokenPolicy: The policy to handle output tokens exceeding the service's limit. Defaults to `.adjustToServiceLimits`.
         - systemPrompt: The default system prompt for this service, used to set the behavior or persona of the model.
         - urlSession: The `URLSession` instance used for network requests. Defaults to a `.default` configuration.
+        - logger: An optional logger for recording information and errors. Defaults to `nil`.
      */
-    public init(vendor: String = "Ollama", name: String = "Ollama", baseURL: String = "http://localhost:11434", contextWindowSize: Int = 4096, maxOutputTokens: Int = 4096, inputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, outputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, systemPrompt: String? = nil, urlSession: URLSession = URLSession(configuration: .default)) {
+    public init(vendor: String = "Ollama", name: String = "Ollama", baseURL: String = "http://localhost:11434", contextWindowSize: Int = 4096, maxOutputTokens: Int = 4096, inputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, outputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, systemPrompt: String? = nil, urlSession: URLSession = URLSession(configuration: .default), logger: CustomLogger? = nil) {
         self.vendor = vendor
         self.name = name
         self.baseURL = baseURL
@@ -70,6 +71,7 @@ public class OllamaService: LLMServiceProtocol {
         self.outputTokenPolicy = outputTokenPolicy
         self.systemPrompt = systemPrompt
         self.urlSession = urlSession
+        self.logger = logger
     }
 
     // MARK: - Actor for Streaming State
@@ -138,7 +140,7 @@ public class OllamaService: LLMServiceProtocol {
         urlRequest.httpBody = jsonData
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        logger.debug("OllamaService [sendRequest] Sending request with keys: \(body.keys)", category: "OllamaService")
+        logger?.debug("OllamaService [sendRequest] Sending request with keys: \(body.keys)", category: "OllamaService")
 
         // Non-streaming response handling
         let (data, response) = try await urlSession.data(for: urlRequest)
@@ -147,7 +149,7 @@ public class OllamaService: LLMServiceProtocol {
             throw LLMServiceError.invalidResponse(statusCode: (response as? HTTPURLResponse)?.statusCode ?? -1)
         }
 
-        logger.debug("OllamaService [sendRequest] Response received from Ollama.", category: "OllamaService")
+        logger?.debug("OllamaService [sendRequest] Response received from Ollama.", category: "OllamaService")
 
         // Attempt to decode the response from the Ollama API
         do {
@@ -209,12 +211,13 @@ public class OllamaService: LLMServiceProtocol {
         urlRequest.httpBody = jsonData
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        logger.debug("OllamaService [sendRequest] Sending streaming request with keys: \(body.keys).", category: "OllamaService")
+        logger?.debug("OllamaService [sendRequest] Sending streaming request with keys: \(body.keys).", category: "OllamaService")
 
         return try await withCheckedThrowingContinuation { continuation in
             let streamingDelegate = StreamingDelegate(
                 vendor: vendor,
                 model: request.model ?? "llama3.2",
+                logger: logger,
                 onPartialResponse: onPartialResponse ?? { _ in },
                 continuation: continuation
             )
@@ -229,22 +232,24 @@ public class OllamaService: LLMServiceProtocol {
         private let model: String
         private let onPartialResponse: (String) -> Void
         private let continuation: CheckedContinuation<LLMResponseProtocol, Error>
+        private let logger: CustomLogger?
         private var accumulatedContent = ""
         private var finalResponse: LLMResponseProtocol?
-        private let logger = CustomLogger.shared
 
         init(vendor: String,
              model: String,
+             logger: CustomLogger? = nil,
              onPartialResponse: @escaping (String) -> Void,
              continuation: CheckedContinuation<LLMResponseProtocol, Error>) {
             self.vendor = vendor
             self.model = model
+            self.logger = logger
             self.onPartialResponse = onPartialResponse
             self.continuation = continuation
         }
 
         func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-            logger.debug("Streaming response received. Processing...", category: "OllamaService.StreamingDelegate")
+            logger?.debug("Streaming response received. Processing...", category: "OllamaService.StreamingDelegate")
 
             do {
                 let partialResponse = try JSONDecoder().decode(OllamaLLMResponse.self, from: data)
@@ -266,7 +271,7 @@ public class OllamaService: LLMServiceProtocol {
                     return
                 }
             } catch {
-                logger.error("Decoding error: \(error.localizedDescription)", category: "OllamaService.StreamingDelegate")
+                logger?.error("Decoding error: \(error.localizedDescription)", category: "OllamaService.StreamingDelegate")
             }
         }
 

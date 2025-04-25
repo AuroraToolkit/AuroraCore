@@ -83,7 +83,7 @@ public struct DualDomainRouter: LLMDomainRouterProtocol {
     private let resolve: (_ primary: DualDomainPrediction?, _ secondary: DualDomainPrediction?) -> String?
 
     /// Shared logger instance.
-    private let logger = CustomLogger.shared
+    private let logger: CustomLogger?
 
     /// A logger for capturing conflicts between primary and secondary predictions in DualDomainRouter.
     private let conflictLogger: ConflictLoggingStrategy?
@@ -99,6 +99,7 @@ public struct DualDomainRouter: LLMDomainRouterProtocol {
         - fallbackDomain: An optional fallback domain if both routers are uncertain.
         - fallbackConfidenceThreshold: An optional confidence threshold under which both predictions are considered uncertain.
         - allowSyntheticFallbacks: If true, fallback predictions will be synthesized instead of returning nil.
+        - logger: A custom logger for logging domain predictions and conflicts.
         - conflictLogger: A logging strategy for capturing conflicts between primary and secondary predictions.
         - resolveConflict: A closure that resolves conflicts between the two predictions when confidence thresholds don’t resolve it.
      */
@@ -111,6 +112,7 @@ public struct DualDomainRouter: LLMDomainRouterProtocol {
         fallbackDomain: String? = nil,
         fallbackConfidenceThreshold: Double? = nil,
         allowSyntheticFallbacks: Bool = false,
+        logger: CustomLogger? = nil,
         conflictLogger: ConflictLoggingStrategy? = nil,
         resolveConflict: @escaping (_ primary: DualDomainPrediction?, _ secondary: DualDomainPrediction?) -> String?
     ) {
@@ -122,6 +124,7 @@ public struct DualDomainRouter: LLMDomainRouterProtocol {
         self.fallbackDomain = fallbackDomain?.lowercased()
         self.fallbackConfidenceThreshold = fallbackConfidenceThreshold
         self.allowSyntheticFallbacks = allowSyntheticFallbacks
+        self.logger = logger
         self.conflictLogger = conflictLogger
         self.resolve = resolveConflict
     }
@@ -142,16 +145,16 @@ public struct DualDomainRouter: LLMDomainRouterProtocol {
         switch (primaryPrediction, secondaryPrediction) {
         case let (p?, s?):
             // Both predictions are valid — proceed with full conflict logic below
-            logger.debug("Both predictions available. Primary: '\(p.label)', Secondary: '\(s.label)'", category: "DualDomainRouter")
+            logger?.debug("Both predictions available. Primary: '\(p.label)', Secondary: '\(s.label)'", category: "DualDomainRouter")
             break
         case let (p?, nil):
-            logger.debug("Only primary prediction available. Using '\(p.label)'", category: "DualDomainRouter")
+            logger?.debug("Only primary prediction available. Using '\(p.label)'", category: "DualDomainRouter")
             return p.label
         case let (nil, s?):
-            logger.debug("Only secondary prediction available. Using '\(s.label)'", category: "DualDomainRouter")
+            logger?.debug("Only secondary prediction available. Using '\(s.label)'", category: "DualDomainRouter")
             return s.label
         default:
-            logger.debug("Both predictions are nil. Returning fallback or nil.", category: "DualDomainRouter")
+            logger?.debug("Both predictions are nil. Returning fallback or nil.", category: "DualDomainRouter")
             return fallbackDomain
         }
 
@@ -160,15 +163,15 @@ public struct DualDomainRouter: LLMDomainRouterProtocol {
             return primaryPrediction?.label
         }
 
-        // Log the conflict details using the shared logger.
-        logger.debug("""
+        // Log the conflict details using the shared logger?.
+        logger?.debug("""
         Conflict Detected:
         Prompt: \(request.messages.map(\.content).joined(separator: " "))
         Primary: \(primaryPrediction?.label ?? "nil") (\(primaryPrediction?.confidence ?? 0))
         Secondary: \(secondaryPrediction?.label ?? "nil") (\(secondaryPrediction?.confidence ?? 0))
         """, category: "DualDomainRouter")
 
-        // Optionally, log conflicts to CSV via ConflictLogger.
+        // Optionally, log conflicts to CSV via Conflictlogger?.
         conflictLogger?.logConflict(
             prompt: request.messages.map(\.content).joined(separator: " "),
             primary: primaryPrediction?.label ?? "nil",
@@ -179,18 +182,18 @@ public struct DualDomainRouter: LLMDomainRouterProtocol {
 
         if shouldFallback(primaryPrediction, secondaryPrediction),
            let fallback = fallbackDomain {
-            logger.debug("Both predictions are below fallback threshold. Returning fallback domain '\(fallback)'.", category: "DualDomainRouter")
+            logger?.debug("Both predictions are below fallback threshold. Returning fallback domain '\(fallback)'.", category: "DualDomainRouter")
             return fallback
         }
 
         if confidenceExceedsThreshold(primaryPrediction, secondaryPrediction) {
             let winner = moreConfident(primaryPrediction, secondaryPrediction)
-            logger.debug("Confidence difference exceeds threshold. Using '\(winner?.label ?? "nil")'.", category: "DualDomainRouter")
+            logger?.debug("Confidence difference exceeds threshold. Using '\(winner?.label ?? "nil")'.", category: "DualDomainRouter")
             return winner?.label
         }
 
         // If we reach here, we need to resolve the conflict using the provided closure.
-        logger.debug("Confidence difference does not exceed threshold. Using custom resolution logic.", category: "DualDomainRouter")
+        logger?.debug("Confidence difference does not exceed threshold. Using custom resolution logic.", category: "DualDomainRouter")
         return resolve(primaryPrediction, secondaryPrediction)
     }
 
@@ -261,7 +264,7 @@ public final class FileConflictLogger: ConflictLoggingStrategy {
 
     private var fileHandle: FileHandle?
     private let dateFormatter: DateFormatter
-    private let logger = CustomLogger.shared
+    private let logger: CustomLogger?
 
     /**
         Public initializer that sets up CSV logging using a specified file name.
@@ -272,13 +275,15 @@ public final class FileConflictLogger: ConflictLoggingStrategy {
 
         - Note: The file will be created if it doesn't exist, and a CSV header will be added.
      */
-    public init(fileName: String, directory: URL? = nil) {
+    public init(fileName: String, directory: URL? = nil, logger: CustomLogger? = nil) {
         self.dateFormatter = DateFormatter()
         self.dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
 
+        self.logger = logger
+
         let baseURL = directory ?? FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
         guard let logDirectory = baseURL else {
-            logger.error("Unable to resolve log directory", category: "FileConflictLogger")
+            logger?.error("Unable to resolve log directory", category: "FileConflictLogger")
             return
         }
 
@@ -293,9 +298,9 @@ public final class FileConflictLogger: ConflictLoggingStrategy {
 
             self.fileHandle = try FileHandle(forWritingTo: fileURL)
             self.fileHandle?.seekToEndOfFile()
-            logger.debug("CSV log file created at \(fileURL)", category: "FileConflictLogger")
+            logger?.debug("CSV log file created at \(fileURL)", category: "FileConflictLogger")
         } catch {
-            logger.error("Failed to initialize file logger: \(error)", category: "FileConflictLogger")
+            logger?.error("Failed to initialize file logger: \(error)", category: "FileConflictLogger")
         }
     }
 
@@ -333,10 +338,18 @@ public final class FileConflictLogger: ConflictLoggingStrategy {
     A console-based conflict logger that prints conflict details to the console.
  */
 public final class ConsoleConflictLogger: ConflictLoggingStrategy {
-    private let logger = CustomLogger.shared
+    private let logger: CustomLogger?
 
-    public init() {}
-    
+    /**
+        Public initializer that sets up console logging.
+
+        - Parameters:
+            - logger: An optional custom logger for logging conflict details.
+     */
+    public init(logger: CustomLogger? = nil) {
+        self.logger = logger
+    }
+
     /**
      Logs a conflict with the provided details.
 
@@ -354,6 +367,6 @@ public final class ConsoleConflictLogger: ConflictLoggingStrategy {
         secondary: String,
         secondaryConfidence: Double
     ) {
-        logger.debug("[\(Date())] Conflict: \(prompt) | Primary: \(primary) (\(primaryConfidence)) | Secondary: \(secondary) (\(secondaryConfidence))", category: "ConsoleConflictLogger")
+        logger?.debug("[\(Date())] Conflict: \(prompt) | Primary: \(primary) (\(primaryConfidence)) | Secondary: \(secondary) (\(secondaryConfidence))", category: "ConsoleConflictLogger")
     }
 }

@@ -26,13 +26,14 @@ struct LeMondeTranslationWorkflow {
         }
 
         // Initialize the LLM service
-        let llmService = OpenAIService(apiKey: openAIKey)
+        let llmService = OpenAIService(apiKey: openAIKey, logger: CustomLogger.shared)
         let summarizer = Summarizer(llmService: llmService)
 
         // Workflow initialization
         var workflow = Workflow(
             name: "Le Monde Translation Workflow",
-            description: "Fetch, translate, and summarize articles from Le Monde."
+            description: "Fetch, translate, and summarize articles from Le Monde.",
+            logger: CustomLogger.shared
         ) {
 
             // Step 1: Fetch the Le Monde RSS Feed

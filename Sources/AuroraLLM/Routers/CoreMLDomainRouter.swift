@@ -26,7 +26,7 @@ public class CoreMLDomainRouter: ConfidentDomainRouter {
     private let model: NLModel
 
     /// Shared logger instance.
-    private let logger = CustomLogger.shared
+    private let logger: CustomLogger?
 
     /**
      Initializes a Core ML–based domain router using a compiled Core ML model.
@@ -35,18 +35,20 @@ public class CoreMLDomainRouter: ConfidentDomainRouter {
         - name: A human-readable identifier for this router.
         - modelURL: The file URL to the compiled `.mlmodelc` Core ML classifier.
         - supportedDomains: A list of supported domain strings. The model must return one of these values to be considered valid.
-     
+        - logger: An optional logger instance for logging messages.
+
      - Returns: An instance of `CoreMLDomainRouter` or `nil` if model loading fails.
      */
-    public init?(name: String, modelURL: URL, supportedDomains: [String]) {
+    public init?(name: String, modelURL: URL, supportedDomains: [String], logger: CustomLogger? = nil) {
         guard let nlModel = try? NLModel(contentsOf: modelURL) else {
-            logger.error("Failed to load Core ML model at \(modelURL)", category: "CoreMLDomainRouter")
+            logger?.error("Failed to load Core ML model at \(modelURL)", category: "CoreMLDomainRouter")
             return nil
         }
 
         self.name = name
         self.model = nlModel
         self.supportedDomains = supportedDomains.map { $0.lowercased() }
+        self.logger = logger
     }
 
     /**
@@ -65,12 +67,12 @@ public class CoreMLDomainRouter: ConfidentDomainRouter {
 
         // Run prediction using the loaded NLModel
         guard let prediction = model.predictedLabel(for: prompt)?.lowercased() else {
-            logger.debug("Model failed to predict. Returning 'nil'", category: "CoreMLDomainRouter")
+            logger?.debug("Model failed to predict. Returning 'nil'", category: "CoreMLDomainRouter")
             return nil
         }
 
         if prediction.isEmpty {
-            logger.error("Model returned an empty string as prediction for prompt: \(prompt)", category: "CoreMLDomainRouter")
+            logger?.error("Model returned an empty string as prediction for prompt: \(prompt)", category: "CoreMLDomainRouter")
             return nil
         }
 
@@ -78,7 +80,7 @@ public class CoreMLDomainRouter: ConfidentDomainRouter {
         if supportedDomains.contains(prediction) {
             return prediction
         } else {
-            logger.debug("Unsupported domain '\(prediction)' returned. Returning 'nil'", category: "CoreMLDomainRouter")
+            logger?.debug("Unsupported domain '\(prediction)' returned. Returning 'nil'", category: "CoreMLDomainRouter")
             return nil
         }
     }
@@ -101,7 +103,7 @@ public class CoreMLDomainRouter: ConfidentDomainRouter {
 
         // Grab the most probable one
         guard let (label, confidence) = hypotheses.first else {
-            logger.debug("No predictions. Returning 'nil'", category: "CoreMLDomainRouter")
+            logger?.debug("No predictions. Returning 'nil'", category: "CoreMLDomainRouter")
             return nil
         }
 
@@ -109,7 +111,7 @@ public class CoreMLDomainRouter: ConfidentDomainRouter {
         if supportedDomains.contains(domain) {
             return (domain, confidence)
         } else {
-            logger.debug("Unsupported domain '\(domain)' with confidence \(confidence). Returning 'nil'", category: "CoreMLDomainRouter")
+            logger?.debug("Unsupported domain '\(domain)' with confidence \(confidence). Returning 'nil'", category: "CoreMLDomainRouter")
             return nil
         }
     }

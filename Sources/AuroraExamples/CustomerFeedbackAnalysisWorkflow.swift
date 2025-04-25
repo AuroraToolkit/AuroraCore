@@ -26,7 +26,7 @@ struct CustomerFeedbackAnalysisWorkflow {
         }
 
         // Initialize the LLM service
-        let llmService = OpenAIService(apiKey: openAIKey)
+        let llmService = OpenAIService(apiKey: openAIKey, logger: CustomLogger.shared)
         let summarizer = Summarizer(llmService: llmService)
 
         // URL to retrieve app store reviews
@@ -37,7 +37,8 @@ struct CustomerFeedbackAnalysisWorkflow {
         // Workflow initialization
         var workflow = Workflow(
             name: "Customer Feedback Analysis Workflow",
-            description: "Fetch, analyze, and generate insights from app store reviews."
+            description: "Fetch, analyze, and generate insights from app store reviews.",
+            logger: CustomLogger.shared
         ) {
 
             // Step 1: Fetch App Store Reviews
