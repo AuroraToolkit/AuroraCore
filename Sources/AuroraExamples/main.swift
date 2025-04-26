@@ -71,6 +71,11 @@ await SiriStyleDomainRoutingExample().execute()
 
 print("--------------------\n")
 
+print("Logic Domain Routing Example:\n")
+await LogicDomainRouterExample().execute()
+
+print("--------------------\n")
+
 print("TV Script Workflow Example:\n")
 await TVScriptWorkflowExample().execute()
 

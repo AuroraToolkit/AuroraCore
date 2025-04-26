@@ -57,7 +57,10 @@ public enum EvaluationStrategy {
     case highestPriority
     case topKThenResolve(k: Int,
                          resolver: (_ matches: [LogicRule]) -> String?)
-    case probabilisticWeights((_ matches: [LogicRule]) -> [(domain: String, weight: Double)])
+    case probabilisticWeights(
+            selector: (_ matches: [LogicRule]) -> [(domain: String, weight: Double)],
+            rng: RandomNumberGenerator = SystemRandomNumberGenerator()
+      )
     case custom((_ matches: [LogicRule]) -> String?)
 }
 
@@ -162,11 +165,12 @@ public final class LogicDomainRouter: LLMDomainRouterProtocol {
                 return result.lowercased()
             }
 
-        case .probabilisticWeights(let selector):
+        case .probabilisticWeights(let selector, var rng):
             let matches = rules.filter { $0.predicate(request) }
             let weighted = selector(matches)
-            if let choice = Self.weightedRandom(weighted) {
-                logger?.debug("[\(name)] probabilistic picked '\(choice)'", category: "LogicDomainRouter")
+            if let choice = Self.weightedRandom(weighted, using: &rng) {
+                logger?.debug("[\(name)] probabilistic picked '\(choice)'",
+                              category: "LogicDomainRouter")
                 return choice
             }
 
@@ -184,11 +188,14 @@ public final class LogicDomainRouter: LLMDomainRouterProtocol {
     }
 
     /// Helper for weighted random draw.
-    private static func weightedRandom(_ items: [(domain: String, weight: Double)]) -> String? {
-        guard !items.isEmpty else { return nil }
+    private static func weightedRandom(
+        _ items: [(domain: String, weight: Double)],
+        using rng: inout RandomNumberGenerator
+    ) -> String? {
         let total = items.reduce(0) { $0 + max($1.weight, 0) }
         guard total > 0 else { return nil }
-        let r = Double.random(in: 0..<total)
+
+        let r = Double.random(in: 0..<total, using: &rng)
         var running = 0.0
         for item in items {
             running += max(item.weight, 0)
@@ -231,10 +238,10 @@ public extension LogicRule {
     static func hours(name: String,
                       hours: ClosedRange<Int>,
                       domain: String,
-                      priority: Int = 0) -> LogicRule {
+                      priority: Int = 0,
+                      clock: @escaping () -> Date = { Date() }) -> LogicRule {
         LogicRule(name: name, domain: domain, priority: priority) { _ in
-            let h = Calendar.current.component(.hour, from: Date())
-            return hours.contains(h)
+            hours.contains(Calendar.current.component(.hour, from: clock()))
         }
     }
 }
