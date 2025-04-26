@@ -181,6 +181,9 @@
                 <a href="../../AuroraLLM/Structs/DualDomainRouter.html">DualDomainRouter</a>
               </li>
               <li class="nav-group-task">
+                <a href="../../AuroraLLM/Enums/EvaluationStrategy.html">EvaluationStrategy</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../../AuroraLLM/Structs/FetchContextsTask.html">FetchContextsTask</a>
               </li>
               <li class="nav-group-task">
@@ -230,6 +233,12 @@
               </li>
               <li class="nav-group-task">
                 <a href="../../AuroraLLM/Classes/LoadContextTask.html">LoadContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/LogicDomainRouter.html">LogicDomainRouter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/LogicRule.html">LogicRule</a>
               </li>
               <li class="nav-group-task">
                 <a href="../../AuroraLLM/Structs/OllamaLLMResponse.html">OllamaLLMResponse</a>
@@ -526,9 +535,9 @@ If the difference in confidence exceeds this value, the higher-confidence result
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9AuroraLLM16DualDomainRouterV4name7primary9secondary16supportedDomains19confidenceThreshold08fallbackD00m10ConfidenceL023allowSyntheticFallbacks14conflictLogger15resolveConflictACSS_AA09LLMDomainE8Protocol_pAaN_pSaySSGSdSgSSSgAPSbAA0U15LoggingStrategy_pSgAqA0cD10PredictionVSg_AVtctcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(name:primary:secondary:supportedDomains:confidenceThreshold:fallbackDomain:fallbackConfidenceThreshold:allowSyntheticFallbacks:conflictLogger:resolveConflict:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9AuroraLLM16DualDomainRouterV4name7primary9secondary16supportedDomains19confidenceThreshold08fallbackD00m10ConfidenceL023allowSyntheticFallbacks14conflictLogger15resolveConflictACSS_AA09LLMDomainE8Protocol_pAaN_pSaySSGSdSgSSSgAPSbAA0U15LoggingStrategy_pSgAqA0cD10PredictionVSg_AVtctcfc">init(name:<wbr>primary:<wbr>secondary:<wbr>supportedDomains:<wbr>confidenceThreshold:<wbr>fallbackDomain:<wbr>fallbackConfidenceThreshold:<wbr>allowSyntheticFallbacks:<wbr>conflictLogger:<wbr>resolveConflict:<wbr>)</a>
+                    <a name="/s:9AuroraLLM16DualDomainRouterV4name7primary9secondary16supportedDomains19confidenceThreshold08fallbackD00m10ConfidenceL023allowSyntheticFallbacks6logger14conflictLogger15resolveConflictACSS_AA09LLMDomainE8Protocol_pAaO_pSaySSGSdSgSSSgAQSb0A4Core06CustomT0CSgAA0V15LoggingStrategy_pSgArA0cD10PredictionVSg_A_tctcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(name:primary:secondary:supportedDomains:confidenceThreshold:fallbackDomain:fallbackConfidenceThreshold:allowSyntheticFallbacks:logger:conflictLogger:resolveConflict:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM16DualDomainRouterV4name7primary9secondary16supportedDomains19confidenceThreshold08fallbackD00m10ConfidenceL023allowSyntheticFallbacks6logger14conflictLogger15resolveConflictACSS_AA09LLMDomainE8Protocol_pAaO_pSaySSGSdSgSSSgAQSb0A4Core06CustomT0CSgAA0V15LoggingStrategy_pSgArA0cD10PredictionVSg_A_tctcfc">init(name:<wbr>primary:<wbr>secondary:<wbr>supportedDomains:<wbr>confidenceThreshold:<wbr>fallbackDomain:<wbr>fallbackConfidenceThreshold:<wbr>allowSyntheticFallbacks:<wbr>logger:<wbr>conflictLogger:<wbr>resolveConflict:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -552,6 +561,7 @@ If the difference in confidence exceeds this value, the higher-confidence result
     <span class="nv">fallbackDomain</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="nv">fallbackConfidenceThreshold</span><span class="p">:</span> <span class="kt">Double</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="nv">allowSyntheticFallbacks</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nv">logger</span><span class="p">:</span> <span class="kt"><a href="../../AuroraCore/Classes/CustomLogger.html">CustomLogger</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="nv">conflictLogger</span><span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Protocols/ConflictLoggingStrategy.html">ConflictLoggingStrategy</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="nv">resolveConflict</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="n">_</span> <span class="nv">primary</span><span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Structs/DualDomainPrediction.html">DualDomainPrediction</a></span><span class="p">?,</span> <span class="n">_</span> <span class="nv">secondary</span><span class="p">:</span> <span class="kt"><a href="../../AuroraLLM/Structs/DualDomainPrediction.html">DualDomainPrediction</a></span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">?</span>
 <span class="p">)</span></code></pre>
@@ -661,6 +671,18 @@ If the difference in confidence exceeds this value, the higher-confidence result
                             <tr>
                               <td>
                                 <code>
+                                <em>logger</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A custom logger for logging domain predictions and conflicts.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
                                 <em>conflictLogger</em>
                                 </code>
                               </td>
@@ -751,8 +773,8 @@ If the difference in confidence exceeds this value, the higher-confidence result
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2025 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2025-04-24)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+          <p>&copy; 2025 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2025-04-26)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>

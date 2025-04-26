@@ -181,6 +181,9 @@
                 <a href="../../AuroraLLM/Structs/DualDomainRouter.html">DualDomainRouter</a>
               </li>
               <li class="nav-group-task">
+                <a href="../../AuroraLLM/Enums/EvaluationStrategy.html">EvaluationStrategy</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../../AuroraLLM/Structs/FetchContextsTask.html">FetchContextsTask</a>
               </li>
               <li class="nav-group-task">
@@ -230,6 +233,12 @@
               </li>
               <li class="nav-group-task">
                 <a href="../../AuroraLLM/Classes/LoadContextTask.html">LoadContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Classes/LogicDomainRouter.html">LogicDomainRouter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../AuroraLLM/Structs/LogicRule.html">LogicRule</a>
               </li>
               <li class="nav-group-task">
                 <a href="../../AuroraLLM/Structs/OllamaLLMResponse.html">OllamaLLMResponse</a>
@@ -413,9 +422,9 @@ If the predicted label is not found in the list of supported domains, the router
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9AuroraLLM18CoreMLDomainRouterC4name8modelURL16supportedDomainsACSgSS_10Foundation0H0VSaySSGtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(name:modelURL:supportedDomains:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9AuroraLLM18CoreMLDomainRouterC4name8modelURL16supportedDomainsACSgSS_10Foundation0H0VSaySSGtcfc">init(name:<wbr>modelURL:<wbr>supportedDomains:<wbr>)</a>
+                    <a name="/s:9AuroraLLM18CoreMLDomainRouterC4name8modelURL16supportedDomains6loggerACSgSS_10Foundation0H0VSaySSG0aC012CustomLoggerCSgtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(name:modelURL:supportedDomains:logger:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM18CoreMLDomainRouterC4name8modelURL16supportedDomains6loggerACSgSS_10Foundation0H0VSaySSG0aC012CustomLoggerCSgtcfc">init(name:<wbr>modelURL:<wbr>supportedDomains:<wbr>logger:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -430,7 +439,7 @@ If the predicted label is not found in the list of supported domains, the router
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">?(</span><span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">modelURL</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span> <span class="nv">supportedDomains</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">])</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">?(</span><span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">modelURL</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span> <span class="nv">supportedDomains</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">],</span> <span class="nv">logger</span><span class="p">:</span> <span class="kt"><a href="../../AuroraCore/Classes/CustomLogger.html">CustomLogger</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -471,6 +480,18 @@ If the predicted label is not found in the list of supported domains, the router
                               <td>
                                 <div>
                                   <p>A list of supported domain strings. The model must return one of these values to be considered valid.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>logger</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>An optional logger instance for logging messages.</p>
                                 </div>
                               </td>
                             </tr>
@@ -609,8 +630,8 @@ If the predicted label is not found in the list of supported domains, the router
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2025 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2025-04-24)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+          <p>&copy; 2025 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2025-04-26)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>

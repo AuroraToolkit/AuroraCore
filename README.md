@@ -25,6 +25,7 @@ Whether you're building sophisticated AI-powered applications or integrating mod
 - **Asynchronous Execution**: Built-in support for asynchronous task execution, handling complex and long-running tasks seamlessly.
 - **On-device Domain Routing**: Use CoreML models to perform domain classification directly on-device with `CoreMLDomainRouter`.
 - **Hybrid Routing Logic**: Combine predictions from two domain routers with `DualDomainRouter` to resolve ambiguous or conflicting cases using confidence thresholds or custom resolution logic.
+- **Logic-Based Domain Routing**: Use `LogicDomainRouter` for custom domain routing based on user-defined logic, allowing for flexible and dynamic routing strategies.
 
 
 ## Modules
@@ -38,9 +39,10 @@ The foundational library providing the core framework for workflows, task orches
 
 ### **2. AuroraLLM**
 A dedicated package for managing large language models (LLMs) and facilitating AI-driven workflows. It includes multi-model management, domain routing, and token handling. Provides support for various LLM vendors, including Anthropic, Google, OpenAI, and Ollama.
-    Includes native support for:
-    - `CoreMLDomainRouter`: On-device domain classification using compiled Core ML models (`.mlmodelc`).
-    - `DualDomainRouter`: Combines a primary and contrastive router with customizable resolution strategies for maximum accuracy.
+
+Includes native support for:
+- `CoreMLDomainRouter`: On-device domain classification using compiled Core ML models (`.mlmodelc`).
+- `DualDomainRouter`: Combines a primary and contrastive router with customizable resolution strategies for maximum accuracy.
 
 
 #### Key Features:
@@ -173,6 +175,35 @@ let router = DualDomainRouter(
     }
 )
 ```
+
+#### Logic-Based Domain Routing (LogicDomainRouter)
+Use a custom logic-based router to determine the domain based on privacy rules:
+
+```swift
+    let privacyRouter = LogicDomainRouter(
+        name: "Privacy Gate",
+        supportedDomains: ["private","public"],
+        rules: [
+            .regex(name:"Credit Card",
+                   pattern:#"\b(?:\d[ -]*?){13,16}\b"#,
+                   domain:"private", priority:100),
+            .regex(name:"US Phone",
+                   pattern:#"\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b"#,
+                   domain:"private", priority:100),
+            .regex(name: "Email",
+                   pattern: #"[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}"#,
+                   domain: "private",
+                   priority: 100),
+            .regex(name: "SSN",
+                   pattern: #"\b\d{3}-\d{2}-\d{4}\b"#,
+                   domain: "private",
+                   priority: 100)
+        ],
+        defaultDomain: "public",
+        evaluationStrategy: .highestPriority
+    )
+```
+
 
 #### LLM-Based Routing (LLMDomainRouter)
 

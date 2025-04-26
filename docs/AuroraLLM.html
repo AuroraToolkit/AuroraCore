@@ -179,6 +179,9 @@
                 <a href="AuroraLLM/Structs/DualDomainRouter.html">DualDomainRouter</a>
               </li>
               <li class="nav-group-task">
+                <a href="AuroraLLM/Enums/EvaluationStrategy.html">EvaluationStrategy</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="AuroraLLM/Structs/FetchContextsTask.html">FetchContextsTask</a>
               </li>
               <li class="nav-group-task">
@@ -228,6 +231,12 @@
               </li>
               <li class="nav-group-task">
                 <a href="AuroraLLM/Classes/LoadContextTask.html">LoadContextTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Classes/LogicDomainRouter.html">LogicDomainRouter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraLLM/Structs/LogicRule.html">LogicRule</a>
               </li>
               <li class="nav-group-task">
                 <a href="AuroraLLM/Structs/OllamaLLMResponse.html">OllamaLLMResponse</a>
@@ -399,41 +408,6 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">ConfidentDomainRouter</span> <span class="p">:</span> <span class="kt"><a href="AuroraLLM/Protocols/LLMDomainRouterProtocol.html">LLMDomainRouterProtocol</a></span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9AuroraLLM15LLMDomainRouterC"></a>
-                    <a name="//apple_ref/swift/Class/LLMDomainRouter" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9AuroraLLM15LLMDomainRouterC">LLMDomainRouter</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>The <code>LLMDomainRouter</code> class is responsible for determining the domain of a request using an LLM service.</p>
-
-<p>The router uses the service to process the request and identify the domain. If the domain is not in the list of supported domains, a fallback (&ldquo;unresolved&rdquo;) is returned.</p>
-<div class="aside aside-note">
-    <p class="aside-title">Note</p>
-    The router is initialized with a list of supported domains and a system prompt that guides the LLM in determining the domain. The LLM is instructed to return &ldquo;unresolved&rdquo; if the domain is not supported, which will return &ldquo;unresolved&rdquo; if included in the supported domains, or <code>nil</code> if not.
-
-</div>
-
-                        <a href="AuroraLLM/Classes/LLMDomainRouter.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">LLMDomainRouter</span> <span class="p">:</span> <span class="kt"><a href="AuroraLLM/Protocols/LLMDomainRouterProtocol.html">LLMDomainRouterProtocol</a></span></code></pre>
 
                         </div>
                       </div>
@@ -1285,6 +1259,197 @@ If the predicted label is not found in the list of supported domains, the router
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:9AuroraLLM15LLMDomainRouterC"></a>
+                    <a name="//apple_ref/swift/Class/LLMDomainRouter" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM15LLMDomainRouterC">LLMDomainRouter</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The <code>LLMDomainRouter</code> class is responsible for determining the domain of a request using an LLM service.</p>
+
+<p>The router uses the service to process the request and identify the domain. If the domain is not in the list of supported domains, a fallback (&ldquo;unresolved&rdquo;) is returned.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    The router is initialized with a list of supported domains and a system prompt that guides the LLM in determining the domain. The LLM is instructed to return &ldquo;unresolved&rdquo; if the domain is not supported, which will return &ldquo;unresolved&rdquo; if included in the supported domains, or <code>nil</code> if not.
+
+</div>
+
+                        <a href="AuroraLLM/Classes/LLMDomainRouter.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">LLMDomainRouter</span> <span class="p">:</span> <span class="kt"><a href="AuroraLLM/Protocols/LLMDomainRouterProtocol.html">LLMDomainRouterProtocol</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Routing%20Logic%20Rule"></a>
+                <a name="//apple_ref/swift/Section/Routing Logic Rule" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Routing%20Logic%20Rule"></a>
+                  <h3 class="section-name"><span>Routing Logic Rule</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM9LogicRuleV"></a>
+                    <a name="//apple_ref/swift/Struct/LogicRule" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM9LogicRuleV">LogicRule</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A single deterministic rule that can claim an <code><a href="AuroraLLM/Structs/LLMRequest.html">LLMRequest</a></code>
+and map it to a domain.</p>
+
+                        <a href="AuroraLLM/Structs/LogicRule.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">LogicRule</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Evaluation%20Strategy"></a>
+                <a name="//apple_ref/swift/Section/Evaluation Strategy" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Evaluation%20Strategy"></a>
+                  <h3 class="section-name"><span>Evaluation Strategy</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM18EvaluationStrategyO"></a>
+                    <a name="//apple_ref/swift/Enum/EvaluationStrategy" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM18EvaluationStrategyO">EvaluationStrategy</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Determines how the router chooses a domain when evaluating rules.</p>
+
+<ul>
+<li><code>.firstMatch</code> – stop at the first rule that matches (fast).</li>
+<li><code>.highestPriority</code> – evaluate all rules, pick the highest <code>priority</code>.</li>
+<li><code>.topKThenResolve</code> – gather the first <em>k</em> matches, pass them to a resolver.</li>
+<li><code>.probabilisticWeights</code> – resolver returns <code>(domain, weight)</code> pairs,
+a weighted random draw selects the domain.</li>
+<li><code>.custom</code> – caller receives every match array and decides.</li>
+</ul>
+
+                        <a href="AuroraLLM/Enums/EvaluationStrategy.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">EvaluationStrategy</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Logic-Based%20Router"></a>
+                <a name="//apple_ref/swift/Section/Logic-Based Router" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Logic-Based%20Router"></a>
+                  <h3 class="section-name"><span>Logic-Based Router</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9AuroraLLM17LogicDomainRouterC"></a>
+                    <a name="//apple_ref/swift/Class/LogicDomainRouter" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9AuroraLLM17LogicDomainRouterC">LogicDomainRouter</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A purely deterministic router that applies an ordered set
+of <code><a href="AuroraLLM/Structs/LogicRule.html">LogicRule</a></code>s to an <code><a href="AuroraLLM/Structs/LLMRequest.html">LLMRequest</a></code>.</p>
+
+<p>Example usage:</p>
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">router</span> <span class="o">=</span> <span class="kt">LogicDomainRouter</span><span class="p">(</span>
+    <span class="nv">name</span><span class="p">:</span> <span class="s">"Deterministic"</span><span class="p">,</span>
+    <span class="nv">supportedDomains</span><span class="p">:</span> <span class="p">[</span><span class="s">"sports"</span><span class="p">,</span><span class="s">"finance"</span><span class="p">,</span><span class="s">"private"</span><span class="p">,</span><span class="s">"general"</span><span class="p">],</span>
+    <span class="nv">rules</span><span class="p">:</span> <span class="p">[</span>
+        <span class="o">.</span><span class="nf">regex</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Sports"</span><span class="p">,</span>
+               <span class="nv">pattern</span><span class="p">:</span> <span class="err">#</span><span class="s">"</span><span class="err">\</span><span class="s">b(score|match|nba|nfl)</span><span class="err">\</span><span class="s">b"</span><span class="err">#</span><span class="p">,</span>
+               <span class="nv">domain</span><span class="p">:</span> <span class="s">"sports"</span><span class="p">),</span>
+        <span class="o">.</span><span class="nf">regex</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Finance"</span><span class="p">,</span>
+               <span class="nv">pattern</span><span class="p">:</span> <span class="err">#</span><span class="s">"</span><span class="err">\</span><span class="s">b(loan|apr|mortgage)</span><span class="err">\</span><span class="s">b"</span><span class="err">#</span><span class="p">,</span>
+               <span class="nv">domain</span><span class="p">:</span> <span class="s">"finance"</span><span class="p">),</span>
+        <span class="o">.</span><span class="nf">regex</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"PII (email)"</span><span class="p">,</span>
+               <span class="nv">pattern</span><span class="p">:</span> <span class="err">#</span><span class="s">"[A-Z0-9._%+-]+@[A-Z0-9.-]+</span><span class="err">\</span><span class="s">.[A-Z]{2,}"</span><span class="err">#</span><span class="p">,</span>
+               <span class="nv">domain</span><span class="p">:</span> <span class="s">"private"</span><span class="p">,</span>
+               <span class="nv">priority</span><span class="p">:</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="p">],</span>
+    <span class="n">defaultDomain</span><span class="p">:</span> <span class="s">"general"</span><span class="p">,</span>
+    <span class="nv">evaluationStrategy</span><span class="p">:</span> <span class="o">.</span><span class="n">highestPriority</span>
+<span class="p">)</span>
+<span class="n">llmManager</span><span class="o">.</span><span class="nf">registerDomainRouter</span><span class="p">(</span><span class="n">router</span><span class="p">)</span>
+</code></pre>
+
+                        <a href="AuroraLLM/Classes/LogicDomainRouter.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">LogicDomainRouter</span> <span class="p">:</span> <span class="kt"><a href="AuroraLLM/Protocols/LLMDomainRouterProtocol.html">LLMDomainRouterProtocol</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:9AuroraLLM16AnthropicServiceC"></a>
                     <a name="//apple_ref/swift/Class/AnthropicService" class="dashAnchor"></a>
                     <a class="token" href="#/s:9AuroraLLM16AnthropicServiceC">AnthropicService</a>
@@ -1682,8 +1847,8 @@ This struct encapsulates parameters that influence how the summary is generated.
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2025 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2025-04-24)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+          <p>&copy; 2025 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2025-04-26)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>
