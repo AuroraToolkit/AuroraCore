@@ -69,7 +69,7 @@ public class LLMTask: WorkflowComponent {
         }
     }
 
-    /// Converts this `FetchURLTask` to a `Workflow.Component`.
+    /// Converts this `LLMTask` to a `Workflow.Component`.
     public func toComponent() -> Workflow.Component {
         .task(task)
     }
