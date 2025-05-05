@@ -19,6 +19,11 @@ let package = Package(
             name: "AuroraLLM",
             targets: ["AuroraLLM"]
         ),
+        // ML management
+        .library(
+            name: "AuroraML",
+            targets: ["AuroraML"]
+        ),
         // Task library
         .library(
             name: "AuroraTaskLibrary",
@@ -44,6 +49,12 @@ let package = Package(
             dependencies: ["AuroraCore"],
             path: "Sources/AuroraLLM"
         ),
+        // ML management
+        .target(
+            name: "AuroraML",
+            dependencies: ["AuroraCore"],
+            path: "Sources/AuroraML"
+        ),
         // Task library
         .target(
             name: "AuroraTaskLibrary",
@@ -53,7 +64,7 @@ let package = Package(
         // Examples
         .executableTarget(
             name: "AuroraExamples",
-            dependencies: ["AuroraCore", "AuroraLLM", "AuroraTaskLibrary"],
+            dependencies: ["AuroraCore", "AuroraLLM", "AuroraML", "AuroraTaskLibrary"],
             path: "Sources/AuroraExamples"
         ),
         // Test targets
@@ -66,6 +77,11 @@ let package = Package(
             name: "AuroraLLMTests",
             dependencies: ["AuroraLLM"],
             path: "Tests/AuroraLLMTests"
+        ),
+        .testTarget(
+            name: "AuroraMLTests",
+            dependencies: ["AuroraML"],
+            path: "Tests/AuroraMLTests"
         ),
         .testTarget(
             name: "AuroraTaskLibraryTests",
