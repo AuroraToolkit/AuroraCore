@@ -58,7 +58,7 @@ let package = Package(
         // Task library
         .target(
             name: "AuroraTaskLibrary",
-            dependencies: ["AuroraCore", "AuroraLLM"],
+            dependencies: ["AuroraCore", "AuroraLLM", "AuroraML"],
             path: "Sources/AuroraTaskLibrary"
         ),
         // Examples
