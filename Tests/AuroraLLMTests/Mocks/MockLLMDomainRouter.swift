@@ -25,7 +25,7 @@ class MockLLMDomainRouter: LLMDomainRouterProtocol {
         self.shouldThrowError = shouldThrowError
     }
 
-    func determineDomain(for request: LLMRequest) async throws -> String {
+    func determineDomain(for request: LLMRequest) async throws -> String? {
         if shouldThrowError {
             throw NSError(domain: "MockLLMDomainRouterError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Mock error determining domain"])
         }
