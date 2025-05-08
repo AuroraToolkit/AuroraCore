@@ -12,7 +12,7 @@ import AuroraCore
 /**
  A generic NLTagger-backed service for tagging text.
 
- Uses Apple’s Natural Language `NLTagger` under the hood to produce token-level `Tag` objects.
+ Uses Apple’s Natural Language `NLTagger` under the hood to produce token-level `Tag` objects for one or more schemes.
 
  - **Inputs**
     - `strings`: `[String]` of texts to tag.
@@ -20,10 +20,8 @@ import AuroraCore
     - `tags`: `[[Tag]]` — an array (per input string) of `Tag` arrays.
 
  ### Notes
- - Currently this service applies only the *first* scheme in `schemes`. To support multiple schemes,
-   you can iterate them and namespace or merge results as needed.
- - For `.sentimentScore` scheme, `Tag.confidence` will be populated with the numeric score (-1.0…1.0).
-   For other schemes, `confidence` remains `nil`.
+ - This service supports multiple `NLTagScheme`s. It will enumerate each configured scheme and append all resulting `Tag` objects.
+ - For the `.sentimentScore` scheme, `Tag.confidence` will be populated with the numeric score (-1.0…1.0). For other schemes, `confidence` remains `nil`.
  */
 public final class TaggingService: MLServiceProtocol {
     public var name: String
@@ -33,8 +31,10 @@ public final class TaggingService: MLServiceProtocol {
     private let logger: CustomLogger?
 
     /**
+     Initializes a new `TaggingService`.
+
      - Parameters:
-       - name: Identifier for this service (default: "tagging").
+       - name: Identifier for this service (default: `"TaggingService"`).
        - schemes: One or more `NLTagScheme` values (e.g. `[.nameType]`, `[.sentimentScore]`).
        - unit: Tokenization granularity (`.word`, `.sentence`, `.paragraph`).
        - options: `NLTagger.Options` (e.g. `.omitWhitespace`, `.omitPunctuation`).
@@ -67,44 +67,42 @@ public final class TaggingService: MLServiceProtocol {
         var allTags: [[Tag]] = []
         let tagger = NLTagger(tagSchemes: schemes)
 
-        // We only enumerate the first scheme here; adjust as needed.
-        let scheme = schemes[0]
-
         for text in texts {
             tagger.string = text
             var tagsForText: [Tag] = []
+            let fullRange = text.startIndex..<text.endIndex
 
-            tagger.enumerateTags(
-                in: text.startIndex..<text.endIndex,
-                unit: unit,
-                scheme: scheme,
-                options: options
-            ) { tag, tokenRange in
-                guard let raw = tag?.rawValue else { return true }
+            for scheme in schemes {
+                tagger.enumerateTags(
+                    in: fullRange,
+                    unit: unit,
+                    scheme: scheme,
+                    options: options
+                ) { tag, tokenRange in
+                    guard let raw = tag?.rawValue else { return true }
 
-                // Extract token substring and compute integer offsets
-                let token = String(text[tokenRange])
-                let start = text.distance(from: text.startIndex, to: tokenRange.lowerBound)
-                let length = text.distance(from: tokenRange.lowerBound, to: tokenRange.upperBound)
+                    let token = String(text[tokenRange])
+                    let start = text.distance(from: text.startIndex, to: tokenRange.lowerBound)
+                    let length = text.distance(from: tokenRange.lowerBound, to: tokenRange.upperBound)
 
-                // Compute confidence for sentimentScore; else nil
-                let confidence: Double?
-                if scheme == .sentimentScore, let score = Double(raw) {
-                    confidence = score
-                } else {
-                    confidence = nil
+                    let confidence: Double?
+                    if scheme == .sentimentScore, let score = Double(raw) {
+                        confidence = score
+                    } else {
+                        confidence = nil
+                    }
+
+                    let tagObj = Tag(
+                        token: token,
+                        label: raw,
+                        scheme: scheme.rawValue,
+                        confidence: confidence,
+                        start: start,
+                        length: length
+                    )
+                    tagsForText.append(tagObj)
+                    return true
                 }
-
-                let tagObj = Tag(
-                    token: token,
-                    label: raw,
-                    scheme: scheme.rawValue,
-                    confidence: confidence,
-                    start: start,
-                    length: length
-                )
-                tagsForText.append(tagObj)
-                return true
             }
 
             allTags.append(tagsForText)
