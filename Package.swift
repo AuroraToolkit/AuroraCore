@@ -33,6 +33,11 @@ let package = Package(
         .executable(
             name: "AuroraExamples",
             targets: ["AuroraExamples"]
+        ),
+        // Tools
+        .executable(
+            name: "ModelTrainer",
+            targets: ["ModelTrainer"]
         )
     ],
     dependencies: [],
@@ -66,6 +71,12 @@ let package = Package(
             name: "AuroraExamples",
             dependencies: ["AuroraCore", "AuroraLLM", "AuroraML", "AuroraTaskLibrary"],
             path: "Sources/AuroraExamples"
+        ),
+        // Tools
+        .executableTarget(
+            name: "ModelTrainer",
+            dependencies: ["AuroraML"],
+            path: "Sources/Tools/ModelTrainer"
         ),
         // Test targets
         .testTarget(

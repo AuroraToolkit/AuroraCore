@@ -6,11 +6,23 @@
 //
 
 import XCTest
+import CoreML
+import NaturalLanguage
+@testable import AuroraCore
 @testable import AuroraML
 
 final class MLManagerTests: XCTestCase {
+    var manager: MLManager!
+
+    override func setUpWithError() throws {
+        manager = MLManager()
+    }
+
+    override func tearDown() {
+        manager = nil
+    }
+
     func testRegisteredServiceNames() async {
-        let manager = MLManager()
         let mock1 = MockMLService(name: "first")
         let mock2 = MockMLService(name: "second")
         await manager.register(mock1)
@@ -23,7 +35,6 @@ final class MLManagerTests: XCTestCase {
     }
 
     func testRegisterAndRunInference() async throws {
-        let manager = MLManager()
         let mock = MockMLService(name: "sentiment-test",
                                  response: MLResponse(outputs: ["sentiment": "Positive"], info: nil))
         await manager.register(mock)
@@ -35,7 +46,6 @@ final class MLManagerTests: XCTestCase {
     }
 
     func testServiceLookupError() async {
-        let manager = MLManager()
         do {
             _ = try await manager.run("unknown-service", request: MLRequest(inputs: [:]))
             XCTFail("Expected an error for unknown service")
@@ -46,7 +56,6 @@ final class MLManagerTests: XCTestCase {
     }
 
     func testUnregisterService() async {
-        let manager = MLManager()
         let mock = MockMLService(name: "temp-service")
         await manager.register(mock)
         await manager.unregisterService(withName: "temp-service")
@@ -60,8 +69,6 @@ final class MLManagerTests: XCTestCase {
     }
 
     func testReplaceService() async throws {
-        let manager = MLManager()
-
         // Register first service
         let firstMock = MockMLService(name: "sentiment-test",
                                       response: MLResponse(outputs: ["sentiment": "Positive"], info: nil))
@@ -82,7 +89,6 @@ final class MLManagerTests: XCTestCase {
     }
 
     func testActiveServiceDefaultAndRun() async throws {
-        let manager = MLManager()
         let mock = MockMLService(
             name: "sentiment-default",
             response: MLResponse(outputs: ["sentiment": "Default"], info: nil)
@@ -100,7 +106,6 @@ final class MLManagerTests: XCTestCase {
     }
 
     func testSetActiveService() async throws {
-        let manager = MLManager()
         let first = MockMLService(
             name: "first",
             response: MLResponse(outputs: ["res": "1"], info: nil)
@@ -127,7 +132,6 @@ final class MLManagerTests: XCTestCase {
     }
 
     func testInferenceErrorPropagates() async {
-        let manager = MLManager()
         let mock = MockMLService(name: "bad-service",
                                  response: MLResponse(outputs: [:]),
                                  shouldThrow: true)
@@ -142,7 +146,6 @@ final class MLManagerTests: XCTestCase {
     }
 
     func testFallbackServiceUsedOnPrimaryFailure() async throws {
-        let manager = MLManager()
         let primary = MockMLService(
             name: "primary",
             response: MLResponse(outputs: ["result": "A"], info: nil),
@@ -163,7 +166,6 @@ final class MLManagerTests: XCTestCase {
     }
 
     func testFallbackNotCalledWhenPrimarySucceeds() async throws {
-        let manager = MLManager()
         let primary = MockMLService(
             name: "primary",
             response: MLResponse(outputs: ["result": "A"], info: nil)
@@ -183,7 +185,6 @@ final class MLManagerTests: XCTestCase {
     }
 
     func testErrorWhenPrimaryFailsAndNoFallback() async {
-        let manager = MLManager()
         let primary = MockMLService(
             name: "primary",
             shouldThrow: true
@@ -201,7 +202,6 @@ final class MLManagerTests: XCTestCase {
     }
 
     func testUnregisterFallbackService() async throws {
-        let manager = MLManager()
         let primary = MockMLService(
             name: "primary",
             shouldThrow: true
@@ -220,5 +220,76 @@ final class MLManagerTests: XCTestCase {
             XCTAssertEqual((error as NSError).domain, "MockMLService",
                            "Expected error from primary service after fallback removal")
         }
+    }
+
+    func testWithTaggingService() async throws {
+        // Given
+        let service = TaggingService(
+            name: "testtagger",
+            schemes: [.lemma],
+            unit: .word
+        )
+        await manager.register(service)
+
+        // When
+        let req = MLRequest(inputs: ["strings": ["Running dogs"]])
+        let resp = try await manager.run("testtagger", request: req)
+
+        // Then
+        guard let groups = resp.outputs["tags"] as? [[Tag]],
+              let tags = groups.first else {
+            XCTFail("Expected 'tags' output from TaggingService"); return
+        }
+        XCTAssertTrue(
+            tags.contains { $0.token.lowercased() == "running" && $0.label == "run" },
+            "Expected lemma 'run' for 'running'"
+        )
+        XCTAssertTrue(
+            tags.contains { $0.token.lowercased() == "dogs" && $0.label == "dog" },
+            "Expected lemma 'dog' for 'dogs'"
+        )
+    }
+
+    func testWithCoreMLTaggingService() async throws {
+        // Given
+        let url = modelPath(for: "TrivialTextClassifier.mlmodelc")
+        guard let model = try? NLModel(contentsOf: url) else {
+            XCTFail("Failed to load model from \(url)")
+            return
+        }
+        let service = NLModelTaggingService(
+            name: "trivial",
+            model: model,
+            scheme: "trivial",
+            unit: .word,
+            logger: CustomLogger.shared
+        )
+        await manager.register(service)
+
+        // When
+        let req = MLRequest(inputs: ["strings": ["foo", "bar"]])
+        let resp = try await manager.run("trivial", request: req)
+
+        // Then
+        guard let groups = resp.outputs["tags"] as? [[Tag]] else {
+            XCTFail("Expected 'tags' output from CoreMLTaggingService"); return
+        }
+        let flat = groups.flatMap { $0 }
+        print("Flat tags: \(flat)")
+        XCTAssertTrue(
+            flat.contains { $0.token == "foo" && $0.label == "foo" },
+            "Expected model to classify 'foo' ➔ 'foo'"
+        )
+        XCTAssertTrue(
+            flat.contains { $0.token == "bar" && $0.label == "bar" },
+            "Expected model to classify 'bar' ➔ 'bar'"
+        )
+    }
+
+    private func modelPath(for filename: String) -> URL {
+        URL(fileURLWithPath: #file)
+            .deletingLastPathComponent()
+            .appendingPathComponent("models")
+            .appendingPathComponent(filename)
     }
 }

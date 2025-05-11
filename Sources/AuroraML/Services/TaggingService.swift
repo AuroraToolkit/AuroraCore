@@ -10,7 +10,7 @@ import NaturalLanguage
 import AuroraCore
 
 /**
- A generic NLTagger-backed service for tagging text.
+ `TaggingService` implements `MLServiceProtocol`  for tagging text.
 
  Uses Apple’s Natural Language `NLTagger` under the hood to produce token-level `Tag` objects for one or more schemes.
 
