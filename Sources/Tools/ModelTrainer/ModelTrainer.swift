@@ -28,68 +28,97 @@ import CoreML
  */
 @main
 struct ModelTrainerCLI {
-  static func main() {
-    let args = CommandLine.arguments
-    guard args.count == 5 else {
-      fputs("""
-      Usage:
-        ModelTrainer <csvPath> <textColumn> <labelColumn> <outputModelPath>
-      """, stderr)
-      exit(1)
-    }
+    static func main() {
+        let rawArgs = CommandLine.arguments.dropFirst()  // skip executable name
 
-    let csvURL      = URL(fileURLWithPath: args[1])
-    let textColumn  = args[2]
-    let labelColumn = args[3]
-    let outputURL   = URL(fileURLWithPath: args[4])
+        // Check for compile-only flag
+        let compileOnly = rawArgs.contains("--compile-only") || rawArgs.contains("-c")
 
-    do {
-      try ModelTrainer.train(
-        csvURL: csvURL,
-        textColumn: textColumn,
-        labelColumn: labelColumn,
-        outputURL: outputURL
-      )
-    } catch {
-      fputs("❌ Training failed: \(error)\n", stderr)
-      exit(2)
+        // Remove the flag from the list so positional args line up
+        let args = rawArgs.filter { $0 != "--compile-only" && $0 != "-c" }
+
+        guard args.count == 4 else {
+            fputs("""
+            Usage:
+              ModelTrainer [--compile-only|-c] <csvPath> <textColumn> <labelColumn> <outputModelPath>
+            """, stderr)
+            exit(1)
+        }
+
+        let csvURL      = URL(fileURLWithPath: args[0])
+        let textColumn  = args[1]
+        let labelColumn = args[2]
+        let outputURL   = URL(fileURLWithPath: args[3])
+
+        do {
+            try ModelTrainer.train(
+                csvURL: csvURL,
+                textColumn: textColumn,
+                labelColumn: labelColumn,
+                outputURL: outputURL,
+                compileOnly: compileOnly
+            )
+        } catch {
+            fputs("❌ Training failed: \(error)\n", stderr)
+            exit(2)
+        }
     }
-  }
 }
 
+
 struct ModelTrainer {
-  static func train(
-    csvURL: URL,
-    textColumn: String,
-    labelColumn: String,
-    outputURL: URL
-  ) throws {
-    let data = try MLDataTable(contentsOf: csvURL)
-    let classifier = try MLTextClassifier(
-      trainingData: data,
-      textColumn: textColumn,
-      labelColumn: labelColumn
-    )
-    // Write the .mlmodel file
-    try classifier.write(to: outputURL)
-    print("✅ Trained model written to \(outputURL.path)")
+    /// Trains a text classifier and optionally only writes out the compiled .mlmodelc.
+    static func train(
+        csvURL: URL,
+        textColumn: String,
+        labelColumn: String,
+        outputURL: URL,
+        compileOnly: Bool = false
+    ) throws {
+        let data = try MLDataTable(contentsOf: csvURL)
+        let classifier = try MLTextClassifier(
+            trainingData: data,
+            textColumn: textColumn,
+            labelColumn: labelColumn
+        )
 
-    // Compile into a .mlmodelc bundle (this lives in a temp dir)
-    let tempCompiledURL = try MLModel.compileModel(at: outputURL)
+        // Decide where to write the raw .mlmodel
+        let sourceModelURL: URL
+        if compileOnly {
+            // Write to a temp directory
+            let tempDir = FileManager.default.temporaryDirectory
+                .appendingPathComponent(UUID().uuidString, isDirectory: true)
+            try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
+            sourceModelURL = tempDir.appendingPathComponent(outputURL.lastPathComponent)
+        } else {
+            sourceModelURL = outputURL
+        }
 
-    // Now move it next to the .mlmodel as .mlmodelc
-    let compiledDest = outputURL
-      .deletingPathExtension()
-      .appendingPathExtension("mlmodelc")
+        // Always write the uncompiled model to sourceModelURL
+        try classifier.write(to: sourceModelURL)
+        if !compileOnly {
+            print("✅ Trained model written to \(sourceModelURL.path)")
+        }
 
-    // If there's an old bundle, remove it
-    if FileManager.default.fileExists(atPath: compiledDest.path) {
-      try FileManager.default.removeItem(at: compiledDest)
+        // Compile into a .mlmodelc
+        let tempCompiledURL = try MLModel.compileModel(at: sourceModelURL)
+        let compiledDest = outputURL
+            .deletingPathExtension()
+            .appendingPathExtension("mlmodelc")
+
+        // Remove any existing compiled bundle
+        if FileManager.default.fileExists(atPath: compiledDest.path) {
+            try FileManager.default.removeItem(at: compiledDest)
+        }
+
+        try FileManager.default.copyItem(at: tempCompiledURL, to: compiledDest)
+        print("✅ Compiled model written to \(compiledDest.path)")
+
+        // Clean up temp if needed
+        if compileOnly {
+            try FileManager.default.removeItem(at: sourceModelURL.deletingLastPathComponent())
+        }
     }
-
-    try FileManager.default.copyItem(at: tempCompiledURL, to: compiledDest)
-    print("✅ Compiled model written to \(compiledDest.path)")
-  }
 }
 #else
 
