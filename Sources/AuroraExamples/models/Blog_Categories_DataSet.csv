@@ -1,0 +1,111 @@
+text,label
+text,label
+"Implementing Dark Mode in Your iOS App",iOS Development
+"Using Core Data for Offline Storage on iOS",iOS Development
+"Optimizing Table View Performance in iOS",iOS Development
+"Building Custom UIControls in SwiftUI",iOS Development
+"Integrating In-App Purchases in iOS Apps",iOS Development
+"Handling Push Notifications in iOS",iOS Development
+"Migrating Objective-C Networking Code to Swift",iOS Development
+"Converting Legacy Objective-C View Controllers to SwiftUI",iOS Development
+"Bridging Objective-C Libraries into Swift Projects",iOS Development
+"Transitioning Objective-C Error Handling to Swift",iOS Development
+
+"Understanding Protocol Extensions in Swift",Swift Programming
+"A Deep Dive into Swift Concurrency",Swift Programming
+"Generics in Swift: Best Practices",Swift Programming
+"Error Handling Patterns in Swift",Swift Programming
+"Writing Unit Tests in Swift with XCTest",Swift Programming
+"Advanced SwiftUI Animations",Swift Programming
+"Mastering Swift’s Codable Protocol",Swift Programming
+"Using Combine for Reactive Programming in Swift",Swift Programming
+"Swift Package Manager: A Complete Guide",Swift Programming
+"Debugging Swift Code like a Pro",Swift Programming
+
+"Image Classification on iOS with Core ML",Machine Learning
+"Natural Language Processing with Create ML",Machine Learning
+"Deploying TensorFlow Models on Mobile Devices",Machine Learning
+"Transfer Learning for Custom Vision Tasks",Machine Learning
+"Building a Chatbot with Core ML and Natural Language",Machine Learning
+"Real-Time Object Detection with Vision Framework",Machine Learning
+"Training Recommendation Engines with Create ML",Machine Learning
+"Time Series Forecasting on iOS",Machine Learning
+"Clustering User Data for Personalized Experiences",Machine Learning
+"Anomaly Detection with Core ML",Machine Learning
+
+"Building RESTful APIs with Vapor",Web Development
+"Getting Started with Tailwind CSS",Web Development
+"Integrating GraphQL with Swift on the Server",Web Development
+"Server-Side Swift with Kitura",Web Development
+"Deploying Swift Servers to Heroku",Web Development
+"Implementing OAuth2 in Swift-based APIs",Web Development
+"WebSocket Communication with Swift",Web Development
+"Rendering Dynamic Templates with Mustache",Web Development
+"Building a CMS with Swift and Fluent",Web Development
+"Secure Your API with JWT in Swift",Web Development
+
+"Automating iOS Builds with Fastlane",DevOps
+"Setting Up Continuous Integration with Jenkins",DevOps
+"Containerizing Swift Servers with Docker",DevOps
+"Monitoring Application Performance with Prometheus",DevOps
+"Infrastructure as Code with Terraform",DevOps
+"Configuring Kubernetes for Swift Services",DevOps
+"Automated Testing Pipelines for Mobile Apps",DevOps
+"Managing Secrets Securely in CI/CD",DevOps
+"Blue-Green Deployments with AWS",DevOps
+"Ensuring Zero-Downtime Deployments in Swift Apps",DevOps
+
+"Designing Intuitive Onboarding Experiences",Design
+"Creating Accessible Color Palettes",Design
+"Microinteractions that Delight Users",Design
+"Implementing Responsive Layouts for Mobile",Design
+"Best Practices for Iconography in UI",Design
+"Typography Tips for Readable Interfaces",Design
+"Using Motion Design to Guide Users",Design
+"Design Systems: Components and Tokens",Design
+"Dark Mode Design Principles",Design
+"Designing for User Engagement",Design
+
+"Analyzing Tech Industry Trends in 2025",Tech Industry
+"Impact of 5G on Mobile Development",Tech Industry
+"Tech Layoffs: What It Means for Developers",Tech Industry
+"The Rise of Remote Work in Tech",Tech Industry
+"How AI Is Shaping the Future of Tech Companies",Tech Industry
+"Quantum Computing Breakthroughs Explained",Tech Industry
+"Sustainability in the Tech Industry",Tech Industry
+"Tech Mergers and Acquisitions to Watch",Tech Industry
+"Blockchain Beyond Cryptocurrency",Tech Industry
+"Open Source’s Role in Tech Innovation",Tech Industry
+
+"Implementing SSL Pinning on iOS",Security
+"Securing REST APIs with OAuth2",Security
+"Protecting User Data with Encryption",Security
+"Detecting and Preventing SQL Injection",Security
+"Best Practices for Secure Authentication",Security
+"Handling Security Vulnerabilities in Dependencies",Security
+"Using JWT Safely in Mobile Apps",Security
+"Threat Modeling for Mobile Applications",Security
+"Implementing Biometric Authentication on iOS",Security
+"Understanding OWASP Top Ten for Web Apps",Security
+
+"Building Scalable SaaS Architectures",SaaS
+"Subscription Billing Models Explained",SaaS
+"Designing a Multi-Tenant Database",SaaS
+"Optimizing SaaS Onboarding Flows",SaaS
+"Measuring SaaS Metrics: MRR, ARR, Churn",SaaS
+"Automating Customer Engagement in SaaS",SaaS
+"Building a SaaS Dashboard with SwiftUI",SaaS
+"Scaling Your SaaS with Microservices",SaaS
+"Implementing Webhooks in SaaS Apps",SaaS
+"Localization Strategies for SaaS Products",SaaS
+
+"Introduction to Generative AI Techniques",Artificial Intelligence
+"Ethical Considerations in AI Development",Artificial Intelligence
+"Building Chatbots with AI",Artificial Intelligence
+"Explainable AI: Why It Matters",Artificial Intelligence
+"AI-Driven Personalization Strategies",Artificial Intelligence
+"Reinforcement Learning Fundamentals",Artificial Intelligence
+"AI in Healthcare: Opportunities and Risks",Artificial Intelligence
+"Natural Language Understanding vs. Generation",Artificial Intelligence
+"Edge AI: Running Models on Devices",Artificial Intelligence
+"AI Governance and Compliance",Artificial Intelligence

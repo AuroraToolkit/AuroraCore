@@ -261,7 +261,6 @@ final class MLManagerTests: XCTestCase {
             name: "trivial",
             model: model,
             scheme: "trivial",
-            unit: .word,
             logger: CustomLogger.shared
         )
         await manager.register(service)
@@ -271,10 +270,10 @@ final class MLManagerTests: XCTestCase {
         let resp = try await manager.run("trivial", request: req)
 
         // Then
-        guard let groups = resp.outputs["tags"] as? [[Tag]] else {
+        guard let groups = resp.outputs["tags"] as? [Tag] else {
             XCTFail("Expected 'tags' output from CoreMLTaggingService"); return
         }
-        let flat = groups.flatMap { $0 }
+        let flat = groups.compactMap { $0 }
         print("Flat tags: \(flat)")
         XCTAssertTrue(
             flat.contains { $0.token == "foo" && $0.label == "foo" },

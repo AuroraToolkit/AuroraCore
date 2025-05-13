@@ -93,3 +93,8 @@ print("--------------------\n")
 
 print("Temperature Monitor Workflow Example:\n")
 await TemperatureMonitorWorkflow().execute()
+
+print("--------------------\n")
+
+print("Blog Post categorization Workflow Example:\n")
+await BlogCategoryWorkflowExample().execute()
