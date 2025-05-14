@@ -1,5 +1,5 @@
 //
-//  NLModelClassificationService.swift
+//  ClassificationService.swift
 //  AuroraToolkit
 //
 //  Created by Dan Murrell Jr on 5/9/25.
@@ -10,7 +10,7 @@ import NaturalLanguage
 import AuroraCore
 
 /**
- `NLModelClassificationService` implements `MLServiceProtocol` using Apple's `NLModel` text classifiers.
+ `ClassificationService` implements `MLServiceProtocol` using Apple's `NLModel` text classifiers.
 
  It classifies each input string using the provided `NLModel` to predict a label and optional confidence, and returns an array of `Tag` objects, where each  tag corresponds to an input string.
 
@@ -25,7 +25,7 @@ import AuroraCore
  ```swift
  // Load a compiled Core ML text classifier:
  let model = try! NLModel(contentsOf: URL(fileURLWithPath: "TextClassifier.mlmodelc"))
- let service = NLModelClassificationService(
+ let service = ClassificationService(
     name: "TextClassifier",
     model: model,
     scheme: "TextClassifier",
@@ -44,7 +44,7 @@ import AuroraCore
  }
  ```
  */
-public final class NLModelClassificationService: MLServiceProtocol {
+public final class ClassificationService: MLServiceProtocol {
     public var name: String
     private let model: NLModel
     private let scheme: String
@@ -89,8 +89,10 @@ public final class NLModelClassificationService: MLServiceProtocol {
             )
 
             for (label, score) in hypos {
-                let loggedText = text.count > 15 ? "\(text.prefix(15))..." : text
-                logger?.debug("[\(name)] \(loggedText)) → \(label) @\(score)", category: name)
+                if let logger {
+                    let loggedText = text.count > 15 ? "\(text.prefix(15))..." : text
+                    logger.debug("[\(name)] \(loggedText)) → \(label) @\(score)", category: name)
+                }
                 let tag = Tag(
                     token: text,
                     label: label,

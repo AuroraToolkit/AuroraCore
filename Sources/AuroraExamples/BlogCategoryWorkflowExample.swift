@@ -38,7 +38,7 @@ struct BlogCategoryWorkflowExample {
             return
         }
 
-        let service = NLModelClassificationService(
+        let service = ClassificationService(
             name: "BlogCategories",
             model: model,
             scheme: "category",

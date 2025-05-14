@@ -257,7 +257,7 @@ final class MLManagerTests: XCTestCase {
             XCTFail("Failed to load model from \(url)")
             return
         }
-        let service = NLModelClassificationService(
+        let service = ClassificationService(
             name: "trivial",
             model: model,
             scheme: "trivial",
