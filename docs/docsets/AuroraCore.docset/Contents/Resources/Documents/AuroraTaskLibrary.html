@@ -283,6 +283,9 @@
             <a href="AuroraTaskLibrary.html">AuroraTaskLibrary</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/AnalyzeSentimentMLTask.html">AnalyzeSentimentMLTask</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="AuroraTaskLibrary/Classes/AnalyzeSentimentTask.html">AnalyzeSentimentTask</a>
               </li>
               <li class="nav-group-task">
@@ -292,10 +295,16 @@
                 <a href="AuroraTaskLibrary/Classes/CategorizeStringsTask.html">CategorizeStringsTask</a>
               </li>
               <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/ClassificationMLTask.html">ClassificationMLTask</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="AuroraTaskLibrary/Classes/ClusterStringsTask.html">ClusterStringsTask</a>
               </li>
               <li class="nav-group-task">
                 <a href="AuroraTaskLibrary/Classes/DetectLanguagesTask.html">DetectLanguagesTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/EmbeddingMLTask.html">EmbeddingMLTask</a>
               </li>
               <li class="nav-group-task">
                 <a href="AuroraTaskLibrary/Classes/ExtractEntitiesTask.html">ExtractEntitiesTask</a>
@@ -313,6 +322,9 @@
                 <a href="AuroraTaskLibrary/Classes/GenerateTitlesTask.html">GenerateTitlesTask</a>
               </li>
               <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/IntentExtractionMLTask.html">IntentExtractionMLTask</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="AuroraTaskLibrary/Enums/JSONElement.html">JSONElement</a>
               </li>
               <li class="nav-group-task">
@@ -322,16 +334,25 @@
                 <a href="AuroraTaskLibrary/Classes/LLMTask.html">LLMTask</a>
               </li>
               <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/MLTask.html">MLTask</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="AuroraTaskLibrary/Structs/RSSArticle.html">RSSArticle</a>
               </li>
               <li class="nav-group-task">
                 <a href="AuroraTaskLibrary/Classes/RSSParsingTask.html">RSSParsingTask</a>
               </li>
               <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/SemanticSearchMLTask.html">SemanticSearchMLTask</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="AuroraTaskLibrary/Classes/SummarizeContextTask.html">SummarizeContextTask</a>
               </li>
               <li class="nav-group-task">
                 <a href="AuroraTaskLibrary/Classes/SummarizeStringsTask.html">SummarizeStringsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/TaggingMLTask.html">TaggingMLTask</a>
               </li>
               <li class="nav-group-task">
                 <a href="AuroraTaskLibrary/Classes/TranslateStringsTask.html">TranslateStringsTask</a>
@@ -353,6 +374,46 @@
           <section class="section task-group-section">
             <div class="task-group">
               <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:17AuroraTaskLibrary08TrimmingB0C"></a>
+                    <a name="//apple_ref/swift/Class/TrimmingTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:17AuroraTaskLibrary08TrimmingB0C">TrimmingTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>TrimmingTask</code> is responsible for trimming strings to fit within a specified token limit.</p>
+
+<ul>
+<li><strong>Inputs</strong></li>
+<li><code>strings</code>: An array of strings to be trimmed. Can contain one or multiple items.</li>
+<li><code>tokenLimit</code>: The maximum allowed token count (default is 1,024).</li>
+<li><code>buffer</code>: A buffer percentage to apply when calculating the token limit (default is 5%).</li>
+<li><code>strategy</code>: The trimming strategy to apply (default is <code>.middle</code>).</li>
+<li><strong>Outputs</strong></li>
+<li><code>trimmedStrings</code>: An array of trimmed strings.</li>
+</ul>
+
+<p>This task can be integrated in a workflow where string trimming is required to fit within a token limit.</p>
+
+                        <a href="AuroraTaskLibrary/Classes/TrimmingTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">TrimmingTask</span> <span class="p">:</span> <span class="kt"><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -1140,9 +1201,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:17AuroraTaskLibrary08TrimmingB0C"></a>
-                    <a name="//apple_ref/swift/Class/TrimmingTask" class="dashAnchor"></a>
-                    <a class="token" href="#/s:17AuroraTaskLibrary08TrimmingB0C">TrimmingTask</a>
+                    <a name="/s:17AuroraTaskLibrary22AnalyzeSentimentMLTaskC"></a>
+                    <a name="//apple_ref/swift/Class/AnalyzeSentimentMLTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:17AuroraTaskLibrary22AnalyzeSentimentMLTaskC">AnalyzeSentimentMLTask</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1150,27 +1211,444 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p><code>TrimmingTask</code> is responsible for trimming strings to fit within a specified token limit.</p>
+                        <p><code>AnalyzeSentimentMLTask</code> performs sentiment analysis on an array of strings using any <code>MLServiceProtocol</code> implementation.</p>
 
 <ul>
-<li><strong>Inputs</strong></li>
-<li><code>strings</code>: An array of strings to be trimmed. Can contain one or multiple items.</li>
-<li><code>tokenLimit</code>: The maximum allowed token count (default is 1,024).</li>
-<li><code>buffer</code>: A buffer percentage to apply when calculating the token limit (default is 5%).</li>
-<li><code>strategy</code>: The trimming strategy to apply (default is <code>.middle</code>).</li>
-<li><strong>Outputs</strong></li>
-<li><code>trimmedStrings</code>: An array of trimmed strings.</li>
+<li><strong>Inputs</strong>
+
+<ul>
+<li><code>strings</code>: The list of texts to analyze.</li>
+<li><code>detailed</code>: Whether to include confidence percentages (defaults to <code>false</code>).</li>
+<li><code>positiveThreshold</code>: Scores above this are “positive” (defaults to <code>0.1</code>).</li>
+<li><code>negativeThreshold</code>: Scores below this are “negative” (defaults to <code>-0.1</code>).</li>
+</ul></li>
+<li><strong>Outputs</strong>
+
+<ul>
+<li><code>sentiments</code>: A mapping each input string to either:</li>
+<li>A <code>String</code> label (<code>&quot;positive&quot;|&quot;neutral&quot;|&quot;negative&quot;</code>) when <code>detailed == false</code></li>
+<li>A <code>[String: Any]</code> with keys:</li>
+<li><code>&quot;sentiment&quot;</code>: the label</li>
+<li><code>&quot;confidence&quot;</code>: <code>Int</code> percent (0–100)</li>
+</ul></li>
 </ul>
+<h3 id='example' class='heading'>Example</h3>
+<pre class="highlight swift"><code>    <span class="k">let</span> <span class="nv">service</span> <span class="o">=</span> <span class="kt">TaggingService</span><span class="p">(</span>
+       <span class="nv">name</span><span class="p">:</span> <span class="s">"SentimentTagger"</span><span class="p">,</span>
+       <span class="nv">schemes</span><span class="p">:</span> <span class="p">[</span><span class="o">.</span><span class="n">sentimentScore</span><span class="p">],</span>
+       <span class="nv">unit</span><span class="p">:</span> <span class="o">.</span><span class="n">paragraph</span>
+    <span class="p">)</span>
+    <span class="k">let</span> <span class="nv">task</span> <span class="o">=</span> <span class="kt">AnalyzeSentimentMLTask</span><span class="p">(</span>
+       <span class="nv">mlService</span><span class="p">:</span> <span class="n">service</span><span class="p">,</span>
+       <span class="nv">strings</span><span class="p">:</span> <span class="p">[</span><span class="s">"I love this!"</span><span class="p">,</span> <span class="s">"I hate that."</span><span class="p">],</span>
+       <span class="nv">detailed</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+       <span class="nv">positiveThreshold</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
+       <span class="nv">negativeThreshold</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.2</span>
+    <span class="p">)</span>
 
-<p>This task can be integrated in a workflow where string trimming is required to fit within a token limit.</p>
+<span class="k">guard</span> <span class="k">case</span> <span class="kd">let</span> <span class="o">.</span><span class="nf">task</span><span class="p">(</span><span class="n">wrapped</span><span class="p">)</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="nf">toComponent</span><span class="p">()</span> <span class="k">else</span> <span class="p">{</span> <span class="nf">fatalError</span><span class="p">()</span> <span class="p">}</span>
+<span class="k">let</span> <span class="nv">outputs</span> <span class="o">=</span> <span class="k">try</span> <span class="k">await</span> <span class="n">wrapped</span><span class="o">.</span><span class="nf">execute</span><span class="p">()</span>
+<span class="c1">// e.g. outputs["sentiments"] == [</span>
+<span class="c1">//   "I love this!": ["sentiment":"positive", "confidence":90],</span>
+<span class="c1">//   "I hate that.":  ["sentiment":"negative", "confidence":75]</span>
+<span class="c1">// ]</span>
+</code></pre>
 
-                        <a href="AuroraTaskLibrary/Classes/TrimmingTask.html" class="slightly-smaller">See more</a>
+                        <a href="AuroraTaskLibrary/Classes/AnalyzeSentimentMLTask.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">TrimmingTask</span> <span class="p">:</span> <span class="kt"><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">AnalyzeSentimentMLTask</span> <span class="p">:</span> <span class="kt"><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:17AuroraTaskLibrary20ClassificationMLTaskC"></a>
+                    <a name="//apple_ref/swift/Class/ClassificationMLTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:17AuroraTaskLibrary20ClassificationMLTaskC">ClassificationMLTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>ClassificationMLTask</code> wraps any <code>MLServiceProtocol</code> (e.g. <code>ClassificationService</code>)
+ into a <code><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></code>.</p>
+
+<ul>
+<li><strong>Inputs</strong>
+
+<ul>
+<li><code>strings</code>: <code>[String]</code> — an array of texts to classify.</li>
+</ul></li>
+<li><strong>Outputs</strong>
+
+<ul>
+<li><code>tags</code>: <code>[Tag]</code> — a flat array of <code>Tag</code> objects, one per predicted label. Each <code>Tag</code> includes:
+
+<ul>
+<li><code>token</code>: the substring that was tagged</li>
+<li><code>label</code>: the tag or category</li>
+<li><code>scheme</code>: the tagging scheme identifier</li>
+<li><code>confidence</code>: optional confidence score</li>
+<li><code>start</code>: starting index of the tagged token in the source string</li>
+<li><code>length</code>: length of the tagged token in the source string</li>
+</ul></li>
+</ul></li>
+</ul>
+
+<p>### Example</p>
+<pre class="highlight swift"><code> <span class="k">let</span> <span class="nv">model</span> <span class="o">=</span> <span class="k">try</span> <span class="kt">NLModel</span><span class="p">(</span><span class="nv">contentsOf</span><span class="p">:</span> <span class="n">myModelURL</span><span class="p">)</span>
+ <span class="k">let</span> <span class="nv">service</span> <span class="o">=</span> <span class="kt">ClassificationService</span><span class="p">(</span>
+    <span class="nv">name</span><span class="p">:</span> <span class="s">"SentimentClassifier"</span><span class="p">,</span>
+    <span class="nv">model</span><span class="p">:</span> <span class="n">model</span><span class="p">,</span>
+    <span class="nv">scheme</span><span class="p">:</span> <span class="s">"sentiment"</span><span class="p">,</span>
+    <span class="nv">maxResults</span><span class="p">:</span> <span class="mi">2</span>
+ <span class="p">)</span>
+ <span class="k">let</span> <span class="nv">task</span> <span class="o">=</span> <span class="kt">ClassificationMLTask</span><span class="p">(</span>
+    <span class="nv">service</span><span class="p">:</span> <span class="n">service</span><span class="p">,</span>
+    <span class="nv">strings</span><span class="p">:</span> <span class="p">[</span><span class="s">"I love Swift!"</span><span class="p">,</span> <span class="s">"This is so-so."</span><span class="p">]</span>
+ <span class="p">)</span>
+ <span class="k">guard</span> <span class="k">case</span> <span class="kd">let</span> <span class="o">.</span><span class="nf">task</span><span class="p">(</span><span class="n">wrapped</span><span class="p">)</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="nf">toComponent</span><span class="p">()</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="p">}</span>
+ <span class="k">let</span> <span class="nv">outputs</span> <span class="o">=</span> <span class="k">try</span> <span class="k">await</span> <span class="n">wrapped</span><span class="o">.</span><span class="nf">execute</span><span class="p">()</span>
+ <span class="k">let</span> <span class="nv">tags</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[</span><span class="s">"tags"</span><span class="p">]</span> <span class="k">as?</span> <span class="p">[</span><span class="kt">Tag</span><span class="p">]</span>
+ <span class="nf">print</span><span class="p">(</span><span class="n">tags</span><span class="p">)</span>
+</code></pre>
+
+                        <a href="AuroraTaskLibrary/Classes/ClassificationMLTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">ClassificationMLTask</span> <span class="p">:</span> <span class="kt"><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:17AuroraTaskLibrary15EmbeddingMLTaskC"></a>
+                    <a name="//apple_ref/swift/Class/EmbeddingMLTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:17AuroraTaskLibrary15EmbeddingMLTaskC">EmbeddingMLTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>EmbeddingMLTask</code> wraps  wraps any <code>MLServiceProtocol</code> that produces embeddings into a <code><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></code>.</p>
+
+<ul>
+<li><strong>Inputs</strong>
+
+<ul>
+<li><code>strings</code>: <code>[String]</code> of texts to embed.</li>
+</ul></li>
+<li><strong>Outputs</strong>
+
+<ul>
+<li><code>embeddings</code>: <code>[[Double]]</code> — an array (one per input string) of floating-point vectors.</li>
+</ul></li>
+</ul>
+<h3 id='example' class='heading'>Example</h3>
+<pre class="highlight swift"><code><span class="c1">// load the built-in sentence embedding for English</span>
+<span class="k">guard</span> <span class="k">let</span> <span class="nv">sentenceEmbedder</span> <span class="o">=</span> <span class="kt">NLEmbedding</span><span class="o">.</span><span class="nf">sentenceEmbedding</span><span class="p">(</span><span class="nv">for</span><span class="p">:</span> <span class="o">.</span><span class="n">english</span><span class="p">)</span> <span class="k">else</span> <span class="p">{</span>
+   <span class="nf">fatalError</span><span class="p">(</span><span class="s">"Embedding model unavailable"</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="k">let</span> <span class="nv">embedSvc</span> <span class="o">=</span> <span class="kt">EmbeddingService</span><span class="p">(</span>
+   <span class="nv">name</span><span class="p">:</span> <span class="s">"EnglishSentenceEmbedding"</span><span class="p">,</span>
+   <span class="nv">embedding</span><span class="p">:</span> <span class="n">sentenceEmbedder</span>
+<span class="p">)</span>
+<span class="k">let</span> <span class="nv">task</span> <span class="o">=</span> <span class="kt">EmbeddingMLTask</span><span class="p">(</span>
+   <span class="nv">name</span><span class="p">:</span> <span class="s">"EmbedSentences"</span><span class="p">,</span>
+   <span class="nv">embeddingService</span><span class="p">:</span> <span class="n">embedSvc</span><span class="p">,</span>
+   <span class="nv">strings</span><span class="p">:</span> <span class="p">[</span><span class="s">"Hello world"</span><span class="p">,</span> <span class="s">"How are you?"</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="k">guard</span> <span class="k">case</span> <span class="kd">let</span> <span class="o">.</span><span class="nf">task</span><span class="p">(</span><span class="n">wrapped</span><span class="p">)</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="nf">toComponent</span><span class="p">()</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="p">}</span>
+<span class="k">let</span> <span class="nv">outputs</span> <span class="o">=</span> <span class="k">try</span> <span class="k">await</span> <span class="n">wrapped</span><span class="o">.</span><span class="nf">execute</span><span class="p">()</span>
+<span class="k">let</span> <span class="nv">vectors</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[</span><span class="s">"embeddings"</span><span class="p">]</span> <span class="k">as!</span> <span class="p">[[</span><span class="kt">Double</span><span class="p">]]</span>
+<span class="c1">// vectors[0].count == sentenceEmbedder.dimension</span>
+</code></pre>
+
+                        <a href="AuroraTaskLibrary/Classes/EmbeddingMLTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">EmbeddingMLTask</span> <span class="p">:</span> <span class="kt"><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:17AuroraTaskLibrary22IntentExtractionMLTaskC"></a>
+                    <a name="//apple_ref/swift/Class/IntentExtractionMLTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:17AuroraTaskLibrary22IntentExtractionMLTaskC">IntentExtractionMLTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>IntentExtractionMLTask</code> wraps any <code>MLServiceProtocol</code> that extracts user intents (and optional parameters) from text into a WorkflowComponent.</p>
+
+<ul>
+<li><strong>Inputs</strong>
+
+<ul>
+<li><code>strings</code>: <code>[String]</code> of texts to extract intents from.</li>
+</ul></li>
+<li><strong>Outputs</strong>
+
+<ul>
+<li><code>intents</code>: <code>[[String: Any]]</code> — an array (per input string) of intent dictionaries.</li>
+</ul></li>
+</ul>
+
+<p>Each intent dictionary should include at minimum:</p>
+
+<ul>
+<li><code>&quot;name&quot;</code>: the intent identifier (e.g. <code>&quot;setReminder&quot;</code>)</li>
+<li><code>&quot;confidence&quot;</code>: <code>Double?</code> (optional)</li>
+<li><code>&quot;parameters&quot;</code>: <code>[String: Any]?</code> (optional map of slot names to values)</li>
+</ul>
+<h3 id='example' class='heading'>Example</h3>
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">mockIntents</span><span class="p">:</span> <span class="p">[[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+   <span class="p">[</span><span class="s">"name"</span><span class="p">:</span><span class="s">"setReminder"</span><span class="p">,</span><span class="s">"confidence"</span><span class="p">:</span><span class="mf">0.98</span><span class="p">,</span><span class="s">"parameters"</span><span class="p">:[</span><span class="s">"time"</span><span class="p">:</span><span class="s">"5pm"</span><span class="p">,</span><span class="s">"task"</span><span class="p">:</span><span class="s">"walk dog"</span><span class="p">]],</span>
+   <span class="p">[</span><span class="s">"name"</span><span class="p">:</span><span class="s">"getWeather"</span><span class="p">,</span><span class="s">"confidence"</span><span class="p">:</span><span class="mf">0.85</span><span class="p">,</span><span class="s">"parameters"</span><span class="p">:[</span><span class="s">"city"</span><span class="p">:</span><span class="s">"San Francisco"</span><span class="p">]]</span>
+<span class="p">]</span>
+<span class="k">let</span> <span class="nv">service</span> <span class="o">=</span> <span class="kt">MockMLService</span><span class="p">(</span>
+   <span class="nv">name</span><span class="p">:</span> <span class="s">"intent-mock"</span><span class="p">,</span>
+   <span class="nv">response</span><span class="p">:</span> <span class="kt">MLResponse</span><span class="p">(</span><span class="nv">outputs</span><span class="p">:</span> <span class="p">[</span><span class="s">"intents"</span><span class="p">:</span> <span class="n">mockIntents</span><span class="p">],</span> <span class="nv">info</span><span class="p">:</span> <span class="kc">nil</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="k">let</span> <span class="nv">task</span> <span class="o">=</span> <span class="kt">IntentExtractionMLTask</span><span class="p">(</span>
+   <span class="nv">service</span><span class="p">:</span> <span class="n">service</span><span class="p">,</span>
+   <span class="nv">strings</span><span class="p">:</span> <span class="p">[</span><span class="s">"Remind me at 5pm to walk the dog"</span><span class="p">,</span><span class="s">"What's the weather in San Francisco?"</span><span class="p">],</span>
+   <span class="nv">model</span><span class="p">:</span> <span class="n">model</span>
+<span class="p">)</span>
+
+<span class="k">guard</span> <span class="k">case</span> <span class="kd">let</span> <span class="o">.</span><span class="nf">task</span><span class="p">(</span><span class="n">wrapped</span><span class="p">)</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="nf">toComponent</span><span class="p">()</span> <span class="k">else</span> <span class="p">{</span> <span class="nf">fatalError</span><span class="p">()</span> <span class="p">}</span>
+<span class="k">let</span> <span class="nv">outputs</span> <span class="o">=</span> <span class="k">try</span> <span class="k">await</span> <span class="n">wrapped</span><span class="o">.</span><span class="nf">execute</span><span class="p">()</span>
+<span class="k">let</span> <span class="nv">extracted</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[</span><span class="s">"intents"</span><span class="p">]</span> <span class="k">as!</span> <span class="p">[[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">Any</span><span class="p">]]</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">extracted</span><span class="p">)</span>
+</code></pre>
+
+                        <a href="AuroraTaskLibrary/Classes/IntentExtractionMLTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">IntentExtractionMLTask</span> <span class="p">:</span> <span class="kt"><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:17AuroraTaskLibrary6MLTaskC"></a>
+                    <a name="//apple_ref/swift/Class/MLTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:17AuroraTaskLibrary6MLTaskC">MLTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                        <a href="AuroraTaskLibrary/Classes/MLTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">MLTask</span> <span class="p">:</span> <span class="kt"><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:17AuroraTaskLibrary20SemanticSearchMLTaskC"></a>
+                    <a name="//apple_ref/swift/Class/SemanticSearchMLTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:17AuroraTaskLibrary20SemanticSearchMLTaskC">SemanticSearchMLTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>SemanticSearchMLTask</code> wraps any <code>MLServiceProtocol</code> that performs
+ semantic search (emitting <code>[[String: Any]]</code> under the <code>&quot;results&quot;</code> key)
+ into a <code><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></code>.</p>
+
+<ul>
+<li><strong>Inputs</strong>
+
+<ul>
+<li><code>query</code>: <code>String</code> to search for.</li>
+<li><code>vector</code>: <code>[Double]</code> raw embedding to search with.</li>
+</ul></li>
+<li><strong>Outputs</strong>
+
+<ul>
+<li><code>results</code>: <code>[[String: Any]]</code> — an array of
+
+<ul>
+<li><code>&quot;document&quot;</code>: <code>String</code></li>
+<li><code>&quot;score&quot;</code>: <code>Double</code></li>
+</ul></li>
+</ul></li>
+</ul>
+
+<p>### Example</p>
+<pre class="highlight swift"><code> <span class="k">let</span> <span class="nv">docs</span> <span class="o">=</span> <span class="p">[</span><span class="s">"The cat sat"</span><span class="p">,</span> <span class="s">"A quick brown fox"</span><span class="p">]</span>
+ <span class="k">let</span> <span class="nv">embeddingService</span> <span class="o">=</span> <span class="kt">EmbeddingService</span><span class="p">(</span>
+    <span class="nv">name</span><span class="p">:</span> <span class="s">"SentenceEmbedding"</span><span class="p">,</span>
+    <span class="nv">embedding</span><span class="p">:</span> <span class="kt">NLEmbedding</span><span class="o">.</span><span class="nf">sentenceEmbedding</span><span class="p">(</span><span class="nv">for</span><span class="p">:</span> <span class="o">.</span><span class="n">english</span><span class="p">)</span><span class="o">!</span>
+ <span class="p">)</span>
+ <span class="k">let</span> <span class="nv">searchService</span> <span class="o">=</span> <span class="k">try</span> <span class="kt">SemanticSearchService</span><span class="p">(</span>
+    <span class="nv">name</span><span class="p">:</span> <span class="s">"DemoSearch"</span><span class="p">,</span>
+    <span class="nv">embeddingService</span><span class="p">:</span> <span class="n">embeddingService</span><span class="p">,</span>
+    <span class="nv">documents</span><span class="p">:</span> <span class="n">docs</span><span class="p">,</span>
+    <span class="nv">topK</span><span class="p">:</span> <span class="mi">1</span>
+ <span class="p">)</span>
+ <span class="k">let</span> <span class="nv">task</span> <span class="o">=</span> <span class="kt">SemanticSearchMLTask</span><span class="p">(</span>
+    <span class="nv">service</span><span class="p">:</span> <span class="n">searchService</span><span class="p">,</span>
+    <span class="nv">query</span><span class="p">:</span> <span class="s">"fast fox"</span>
+ <span class="p">)</span>
+ <span class="k">guard</span> <span class="k">case</span> <span class="kd">let</span> <span class="o">.</span><span class="nf">task</span><span class="p">(</span><span class="n">wrapped</span><span class="p">)</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="nf">toComponent</span><span class="p">()</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="p">}</span>
+ <span class="k">let</span> <span class="nv">outputs</span> <span class="o">=</span> <span class="k">try</span> <span class="k">await</span> <span class="n">wrapped</span><span class="o">.</span><span class="nf">execute</span><span class="p">()</span>
+ <span class="k">let</span> <span class="nv">hits</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[</span><span class="s">"results"</span><span class="p">]</span> <span class="k">as?</span> <span class="p">[[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">Any</span><span class="p">]]</span>
+ <span class="nf">print</span><span class="p">(</span><span class="n">hits</span><span class="p">)</span>
+</code></pre>
+
+                        <a href="AuroraTaskLibrary/Classes/SemanticSearchMLTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">SemanticSearchMLTask</span> <span class="p">:</span> <span class="kt"><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:17AuroraTaskLibrary13TaggingMLTaskC"></a>
+                    <a name="//apple_ref/swift/Class/TaggingMLTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:17AuroraTaskLibrary13TaggingMLTaskC">TaggingMLTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>TaggingMLTask</code> wraps any <code>MLServiceProtocol</code> (e.g. <code>TaggingService</code>) into a WorkflowComponent.</p>
+
+<ul>
+<li><strong>Inputs</strong>
+
+<ul>
+<li><code>strings</code>: <code>[String]</code> of texts to tag.
+### Outputs</li>
+</ul></li>
+<li><code>tags</code>: <code>[[Tag]]</code> — an array (per input) of <code>Tag</code> objects. Each <code>Tag</code> includes:
+
+<ul>
+<li><code>token</code>: the substring that was tagged</li>
+<li><code>label</code>: the tag or category</li>
+<li><code>scheme</code>: the tagging scheme identifier</li>
+<li><code>confidence</code>: optional confidence score</li>
+<li><code>start</code>: starting index of the tagged token in the source string</li>
+<li><code>length</code>: length of the tagged token in the source string</li>
+</ul></li>
+</ul>
+
+<p>### Use Cases</p>
+
+<ul>
+<li>Tagging tokens in text for named entity recognition.</li>
+<li>Annotating text for downstream NLP tasks.</li>
+<li>Enriching text data with additional metadata.</li>
+<li>Creating structured data from unstructured text.</li>
+</ul>
+
+<p>### Example:
+   <strong>Input Strings:</strong></p>
+
+<ul>
+<li>&ldquo;The cat sat on the mat.&rdquo;</li>
+<li>&ldquo;The dog barked at the mailman.&rdquo;</li>
+</ul>
+
+<p><strong>Output JSON:</strong></p>
+<pre class="highlight json"><code><span class="w">    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">[</span><span class="w">
+          </span><span class="p">{</span><span class="nl">"token"</span><span class="p">:</span><span class="s2">"cat"</span><span class="p">,</span><span class="nl">"label"</span><span class="p">:</span><span class="s2">"animal"</span><span class="p">,</span><span class="nl">"scheme"</span><span class="p">:</span><span class="s2">"nameType"</span><span class="p">,</span><span class="nl">"confidence"</span><span class="p">:</span><span class="mf">0.98</span><span class="p">,</span><span class="nl">"start"</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span><span class="nl">"length"</span><span class="p">:</span><span class="mi">3</span><span class="p">},</span><span class="w">
+          </span><span class="p">{</span><span class="nl">"token"</span><span class="p">:</span><span class="s2">"sat"</span><span class="p">,</span><span class="nl">"label"</span><span class="p">:</span><span class="s2">"action"</span><span class="p">,</span><span class="nl">"scheme"</span><span class="p">:</span><span class="s2">"nameType"</span><span class="p">,</span><span class="nl">"confidence"</span><span class="p">:</span><span class="mf">0.75</span><span class="p">,</span><span class="nl">"start"</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span><span class="nl">"length"</span><span class="p">:</span><span class="mi">3</span><span class="p">},</span><span class="w">
+          </span><span class="p">{</span><span class="nl">"token"</span><span class="p">:</span><span class="s2">"mat"</span><span class="p">,</span><span class="nl">"label"</span><span class="p">:</span><span class="s2">"object"</span><span class="p">,</span><span class="nl">"scheme"</span><span class="p">:</span><span class="s2">"nameType"</span><span class="p">,</span><span class="nl">"confidence"</span><span class="p">:</span><span class="mf">0.82</span><span class="p">,</span><span class="nl">"start"</span><span class="p">:</span><span class="mi">16</span><span class="p">,</span><span class="nl">"length"</span><span class="p">:</span><span class="mi">3</span><span class="p">}</span><span class="w">
+        </span><span class="p">],</span><span class="w">
+        </span><span class="p">[</span><span class="w">
+          </span><span class="p">{</span><span class="nl">"token"</span><span class="p">:</span><span class="s2">"dog"</span><span class="p">,</span><span class="nl">"label"</span><span class="p">:</span><span class="s2">"animal"</span><span class="p">,</span><span class="nl">"scheme"</span><span class="p">:</span><span class="s2">"nameType"</span><span class="p">,</span><span class="nl">"confidence"</span><span class="p">:</span><span class="mf">0.96</span><span class="p">,</span><span class="nl">"start"</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span><span class="nl">"length"</span><span class="p">:</span><span class="mi">3</span><span class="p">},</span><span class="w">
+          </span><span class="p">{</span><span class="nl">"token"</span><span class="p">:</span><span class="s2">"barked"</span><span class="p">,</span><span class="nl">"label"</span><span class="p">:</span><span class="s2">"action"</span><span class="p">,</span><span class="nl">"scheme"</span><span class="p">:</span><span class="s2">"nameType"</span><span class="p">,</span><span class="nl">"confidence"</span><span class="p">:</span><span class="mf">0.88</span><span class="p">,</span><span class="nl">"start"</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span><span class="nl">"length"</span><span class="p">:</span><span class="mi">3</span><span class="p">},</span><span class="w">
+          </span><span class="p">{</span><span class="nl">"token"</span><span class="p">:</span><span class="s2">"mailman"</span><span class="p">,</span><span class="nl">"label"</span><span class="p">:</span><span class="s2">"person"</span><span class="p">,</span><span class="nl">"scheme"</span><span class="p">:</span><span class="s2">"nameType"</span><span class="p">,</span><span class="nl">"confidence"</span><span class="p">:</span><span class="mf">0.93</span><span class="p">,</span><span class="nl">"start"</span><span class="p">:</span><span class="mi">18</span><span class="p">,</span><span class="nl">"length"</span><span class="p">:</span><span class="mi">7</span><span class="p">}</span><span class="w">
+        </span><span class="p">]</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>### Notes</p>
+
+<ul>
+<li>Ensure that the <code>MLServiceProtocol</code> used supports tagging tasks.</li>
+<li>The <code>strings</code> input is mandatory; an error will be thrown if it&rsquo;s empty.</li>
+<li>The output <code>tags</code> will be an an array (per input) of <code>Tag</code> objects.</li>
+<li>The order of tags corresponds to the order of tokens in the input strings.</li>
+<li>The task is designed to be used within a workflow, and it will throw an error if the input strings are empty or if the <code>tags</code> output is missing from the ML response.</li>
+</ul>
+
+                        <a href="AuroraTaskLibrary/Classes/TaggingMLTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">TaggingMLTask</span> <span class="p">:</span> <span class="kt"><a href="AuroraCore/Protocols/WorkflowComponent.html">WorkflowComponent</a></span></code></pre>
 
                         </div>
                       </div>
@@ -1371,7 +1849,7 @@ fetching JSON, or reading RSS feeds.</p>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2025 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2025-04-26)</p>
+          <p>&copy; 2025 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2025-05-18)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>

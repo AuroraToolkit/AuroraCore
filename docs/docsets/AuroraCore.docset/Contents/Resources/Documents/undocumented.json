@@ -79,42 +79,42 @@
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/Workflow.swift",
-      "line": 548,
+      "line": 551,
       "symbol": "Workflow.ExecutionDetails.init(state:startedAt:endedAt:executionTime:outputs:error:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/Workflow.swift",
-      "line": 562,
+      "line": 565,
       "symbol": "Workflow.ExecutionDetailsHolder.details",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/Workflow.swift",
-      "line": 564,
+      "line": 567,
       "symbol": "Workflow.ExecutionDetailsHolder.init(details:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/Workflow.swift",
-      "line": 683,
+      "line": 686,
       "symbol": "Workflow.TaskGroup.ExecutionMode.sequential",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/Workflow.swift",
-      "line": 684,
+      "line": 687,
       "symbol": "Workflow.TaskGroup.ExecutionMode.parallel",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraCore/Workflows/Workflow.swift",
-      "line": 745,
+      "line": 748,
       "symbol": "Workflow.Subflow.init(name:description:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
@@ -344,13 +344,6 @@
       "warning": "undocumented"
     },
     {
-      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraLLM/Managers/LLMManager.swift",
-      "line": 49,
-      "symbol": "LLMManager.init()",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
       "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraLLM/Responses/OpenAILLMResponse.swift",
       "line": 17,
       "symbol": "OpenAILLMResponse.Choice",
@@ -362,6 +355,55 @@
       "line": 18,
       "symbol": "OpenAILLMResponse.Choice.Message",
       "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraLLM/Routers/LLMDomainRouter.swift",
+      "line": 21,
+      "symbol": "LLMDomainRouter.service",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraLLM/Routers/LogicDomainRouter.swift",
+      "line": 32,
+      "symbol": "LogicRule.init(name:domain:priority:predicate:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraLLM/Routers/LogicDomainRouter.swift",
+      "line": 56,
+      "symbol": "EvaluationStrategy.firstMatch",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraLLM/Routers/LogicDomainRouter.swift",
+      "line": 57,
+      "symbol": "EvaluationStrategy.highestPriority",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraLLM/Routers/LogicDomainRouter.swift",
+      "line": 58,
+      "symbol": "EvaluationStrategy.topKThenResolve(k:resolver:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraLLM/Routers/LogicDomainRouter.swift",
+      "line": 60,
+      "symbol": "EvaluationStrategy.probabilisticWeights(selector:rng:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/danmurrelljr/Dev/mutantsoup/AuroraCore/Sources/AuroraLLM/Routers/LogicDomainRouter.swift",
+      "line": 64,
+      "symbol": "EvaluationStrategy.custom(_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {

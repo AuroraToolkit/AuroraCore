@@ -280,6 +280,9 @@
             <a href="AuroraTaskLibrary.html">AuroraTaskLibrary</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/AnalyzeSentimentMLTask.html">AnalyzeSentimentMLTask</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="AuroraTaskLibrary/Classes/AnalyzeSentimentTask.html">AnalyzeSentimentTask</a>
               </li>
               <li class="nav-group-task">
@@ -289,10 +292,16 @@
                 <a href="AuroraTaskLibrary/Classes/CategorizeStringsTask.html">CategorizeStringsTask</a>
               </li>
               <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/ClassificationMLTask.html">ClassificationMLTask</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="AuroraTaskLibrary/Classes/ClusterStringsTask.html">ClusterStringsTask</a>
               </li>
               <li class="nav-group-task">
                 <a href="AuroraTaskLibrary/Classes/DetectLanguagesTask.html">DetectLanguagesTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/EmbeddingMLTask.html">EmbeddingMLTask</a>
               </li>
               <li class="nav-group-task">
                 <a href="AuroraTaskLibrary/Classes/ExtractEntitiesTask.html">ExtractEntitiesTask</a>
@@ -310,6 +319,9 @@
                 <a href="AuroraTaskLibrary/Classes/GenerateTitlesTask.html">GenerateTitlesTask</a>
               </li>
               <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/IntentExtractionMLTask.html">IntentExtractionMLTask</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="AuroraTaskLibrary/Enums/JSONElement.html">JSONElement</a>
               </li>
               <li class="nav-group-task">
@@ -319,16 +331,25 @@
                 <a href="AuroraTaskLibrary/Classes/LLMTask.html">LLMTask</a>
               </li>
               <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/MLTask.html">MLTask</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="AuroraTaskLibrary/Structs/RSSArticle.html">RSSArticle</a>
               </li>
               <li class="nav-group-task">
                 <a href="AuroraTaskLibrary/Classes/RSSParsingTask.html">RSSParsingTask</a>
               </li>
               <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/SemanticSearchMLTask.html">SemanticSearchMLTask</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="AuroraTaskLibrary/Classes/SummarizeContextTask.html">SummarizeContextTask</a>
               </li>
               <li class="nav-group-task">
                 <a href="AuroraTaskLibrary/Classes/SummarizeStringsTask.html">SummarizeStringsTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="AuroraTaskLibrary/Classes/TaggingMLTask.html">TaggingMLTask</a>
               </li>
               <li class="nav-group-task">
                 <a href="AuroraTaskLibrary/Classes/TranslateStringsTask.html">TranslateStringsTask</a>
@@ -372,6 +393,7 @@
 <li><strong>Asynchronous Execution</strong>: Built-in support for asynchronous task execution, handling complex and long-running tasks seamlessly.</li>
 <li><strong>On-device Domain Routing</strong>: Use CoreML models to perform domain classification directly on-device with <code><a href="AuroraLLM/Classes/CoreMLDomainRouter.html">CoreMLDomainRouter</a></code>.</li>
 <li><strong>Hybrid Routing Logic</strong>: Combine predictions from two domain routers with <code><a href="AuroraLLM/Structs/DualDomainRouter.html">DualDomainRouter</a></code> to resolve ambiguous or conflicting cases using confidence thresholds or custom resolution logic.</li>
+<li><strong>Logic-Based Domain Routing</strong>: Use <code><a href="AuroraLLM/Classes/LogicDomainRouter.html">LogicDomainRouter</a></code> for custom domain routing based on user-defined logic, allowing for flexible and dynamic routing strategies.</li>
 </ul>
 <h2 id='modules' class='heading'>Modules</h2>
 <h3 id='strong-1-auroracore-strong' class='heading'><strong>1. AuroraCore</strong></h3>
@@ -385,10 +407,14 @@
 </ul>
 <h3 id='strong-2-aurorallm-strong' class='heading'><strong>2. AuroraLLM</strong></h3>
 
-<p>A dedicated package for managing large language models (LLMs) and facilitating AI-driven workflows. It includes multi-model management, domain routing, and token handling. Provides support for various LLM vendors, including Anthropic, Google, OpenAI, and Ollama.
-    Includes native support for:
-    - <code><a href="AuroraLLM/Classes/CoreMLDomainRouter.html">CoreMLDomainRouter</a></code>: On-device domain classification using compiled Core ML models (<code>.mlmodelc</code>).
-    - <code><a href="AuroraLLM/Structs/DualDomainRouter.html">DualDomainRouter</a></code>: Combines a primary and contrastive router with customizable resolution strategies for maximum accuracy.</p>
+<p>A dedicated package for managing large language models (LLMs) and facilitating AI-driven workflows. It includes multi-model management, domain routing, and token handling. Provides support for various LLM vendors, including Anthropic, Google, OpenAI, and Ollama.</p>
+
+<p>Includes native support for:</p>
+
+<ul>
+<li><code><a href="AuroraLLM/Classes/CoreMLDomainRouter.html">CoreMLDomainRouter</a></code>: On-device domain classification using compiled Core ML models (<code>.mlmodelc</code>).</li>
+<li><code><a href="AuroraLLM/Structs/DualDomainRouter.html">DualDomainRouter</a></code>: Combines a primary and contrastive router with customizable resolution strategies for maximum accuracy.</li>
+</ul>
 <h4 id='key-features' class='heading'>Key Features:</h4>
 
 <ul>
@@ -502,6 +528,32 @@
         <span class="k">return</span> <span class="s">"unsure"</span>
     <span class="p">}</span>
 <span class="p">)</span>
+</code></pre>
+<h4 id='logic-based-domain-routing-logicdomainrouter' class='heading'>Logic-Based Domain Routing (LogicDomainRouter)</h4>
+
+<p>Use a custom logic-based router to determine the domain based on privacy rules:</p>
+<pre class="highlight swift"><code>    <span class="k">let</span> <span class="nv">privacyRouter</span> <span class="o">=</span> <span class="kt">LogicDomainRouter</span><span class="p">(</span>
+        <span class="nv">name</span><span class="p">:</span> <span class="s">"Privacy Gate"</span><span class="p">,</span>
+        <span class="nv">supportedDomains</span><span class="p">:</span> <span class="p">[</span><span class="s">"private"</span><span class="p">,</span><span class="s">"public"</span><span class="p">],</span>
+        <span class="nv">rules</span><span class="p">:</span> <span class="p">[</span>
+            <span class="o">.</span><span class="nf">regex</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span><span class="s">"Credit Card"</span><span class="p">,</span>
+                   <span class="nv">pattern</span><span class="p">:</span><span class="err">#</span><span class="s">"</span><span class="err">\</span><span class="s">b(?:</span><span class="err">\</span><span class="s">d[ -]*?){13,16}</span><span class="err">\</span><span class="s">b"</span><span class="err">#</span><span class="p">,</span>
+                   <span class="nv">domain</span><span class="p">:</span><span class="s">"private"</span><span class="p">,</span> <span class="nv">priority</span><span class="p">:</span><span class="mi">100</span><span class="p">),</span>
+            <span class="o">.</span><span class="nf">regex</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span><span class="s">"US Phone"</span><span class="p">,</span>
+                   <span class="nv">pattern</span><span class="p">:</span><span class="err">#</span><span class="s">"</span><span class="err">\</span><span class="s">b</span><span class="err">\</span><span class="s">d{3}[-.</span><span class="err">\</span><span class="s">s]?</span><span class="err">\</span><span class="s">d{3}[-.</span><span class="err">\</span><span class="s">s]?</span><span class="err">\</span><span class="s">d{4}</span><span class="err">\</span><span class="s">b"</span><span class="err">#</span><span class="p">,</span>
+                   <span class="nv">domain</span><span class="p">:</span><span class="s">"private"</span><span class="p">,</span> <span class="nv">priority</span><span class="p">:</span><span class="mi">100</span><span class="p">),</span>
+            <span class="o">.</span><span class="nf">regex</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Email"</span><span class="p">,</span>
+                   <span class="nv">pattern</span><span class="p">:</span> <span class="err">#</span><span class="s">"[A-Z0-9._%+-]+@[A-Z0-9.-]+</span><span class="err">\</span><span class="s">.[A-Z]{2,}"</span><span class="err">#</span><span class="p">,</span>
+                   <span class="nv">domain</span><span class="p">:</span> <span class="s">"private"</span><span class="p">,</span>
+                   <span class="nv">priority</span><span class="p">:</span> <span class="mi">100</span><span class="p">),</span>
+            <span class="o">.</span><span class="nf">regex</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"SSN"</span><span class="p">,</span>
+                   <span class="nv">pattern</span><span class="p">:</span> <span class="err">#</span><span class="s">"</span><span class="err">\</span><span class="s">b</span><span class="err">\</span><span class="s">d{3}-</span><span class="err">\</span><span class="s">d{2}-</span><span class="err">\</span><span class="s">d{4}</span><span class="err">\</span><span class="s">b"</span><span class="err">#</span><span class="p">,</span>
+                   <span class="nv">domain</span><span class="p">:</span> <span class="s">"private"</span><span class="p">,</span>
+                   <span class="nv">priority</span><span class="p">:</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="p">],</span>
+        <span class="n">defaultDomain</span><span class="p">:</span> <span class="s">"public"</span><span class="p">,</span>
+        <span class="nv">evaluationStrategy</span><span class="p">:</span> <span class="o">.</span><span class="n">highestPriority</span>
+    <span class="p">)</span>
 </code></pre>
 <h4 id='llm-based-routing-llmdomainrouter' class='heading'>LLM-Based Routing (LLMDomainRouter)</h4>
 <pre class="highlight swift"><code><span class="kd">import</span> <span class="kt">AuroraLLM</span>
@@ -625,7 +677,7 @@ You are a helpful assistant. Answer any general questions accurately and concise
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2025 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2025-04-26)</p>
+          <p>&copy; 2025 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2025-05-18)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
