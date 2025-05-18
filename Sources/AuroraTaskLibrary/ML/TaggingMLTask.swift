@@ -1,5 +1,5 @@
 //
-//  TaggingTask.swift
+//  TaggingMLTask.swift
 //  AuroraToolkit
 //
 //  Created by Dan Murrell Jr on 5/6/25.
@@ -10,7 +10,7 @@ import AuroraCore
 import AuroraML
 
 /**
- `TaggingTask` wraps any `MLServiceProtocol` (e.g. `TaggingService`) into a WorkflowComponent.
+ `TaggingMLTask` wraps any `MLServiceProtocol` (e.g. `TaggingService`) into a WorkflowComponent.
 
  - **Inputs**
     - `strings`: `[String]` of texts to tag.
@@ -59,7 +59,7 @@ import AuroraML
     - The order of tags corresponds to the order of tokens in the input strings.
     - The task is designed to be used within a workflow, and it will throw an error if the input strings are empty or if the `tags` output is missing from the ML response.
  */
-public class TaggingTask: WorkflowComponent {
+public class TaggingMLTask: WorkflowComponent {
     /// The wrapped task.
     private let task: Workflow.Task
 
@@ -88,12 +88,12 @@ public class TaggingTask: WorkflowComponent {
         ) { inputs in
             let texts = inputs.resolve(key: "strings", fallback: strings) ?? []
             guard !texts.isEmpty else {
-                throw NSError(domain: "TaggingTask", code: 1,
+                throw NSError(domain: "TaggingMLTask", code: 1,
                               userInfo: [NSLocalizedDescriptionKey: "No strings provided"])
             }
             let response = try await service.run(request: MLRequest(inputs: ["strings": texts]))
             guard let tags = response.outputs["tags"] as? [[Tag]] else {
-                throw NSError(domain: "TaggingTask", code: 2,
+                throw NSError(domain: "TaggingMLTask", code: 2,
                               userInfo: [NSLocalizedDescriptionKey: "Missing 'tags' in ML response"])
             }
             return ["tags": tags]

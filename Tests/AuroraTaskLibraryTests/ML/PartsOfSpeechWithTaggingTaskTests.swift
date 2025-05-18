@@ -32,7 +32,7 @@ final class PartsOfSpeechWithTaggingTaskTests: XCTestCase {
             name: "MockPOS",
             response: MLResponse(outputs: ["tags": tags], info: nil)
         )
-        let task = TaggingTask(service: mock, strings: [sentence])
+        let task = TaggingMLTask(service: mock, strings: [sentence])
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
@@ -55,7 +55,7 @@ final class PartsOfSpeechWithTaggingTaskTests: XCTestCase {
             schemes: [.lexicalClass],
             unit: .word
         )
-        let task = TaggingTask(service: service, strings: [sentence])
+        let task = TaggingMLTask(service: service, strings: [sentence])
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {

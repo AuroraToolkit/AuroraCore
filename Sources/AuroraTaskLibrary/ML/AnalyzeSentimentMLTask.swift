@@ -27,17 +27,17 @@ import AuroraML
  ### Example
  ```swift
      let service = TaggingService(
-     name: "SentimentTagger",
-     schemes: [.sentimentScore],
-     unit: .paragraph
+        name: "SentimentTagger",
+        schemes: [.sentimentScore],
+        unit: .paragraph
      )
      let task = AnalyzeSentimentMLTask(
-     mlService: service,
-     strings: ["I love this!", "I hate that."],
-     detailed: true,
-     positiveThreshold: 0.2,
-     negativeThreshold: -0.2
- )
+        mlService: service,
+        strings: ["I love this!", "I hate that."],
+        detailed: true,
+        positiveThreshold: 0.2,
+        negativeThreshold: -0.2
+     )
 
  guard case let .task(wrapped) = task.toComponent() else { fatalError() }
  let outputs = try await wrapped.execute()
@@ -50,6 +50,16 @@ import AuroraML
 public class AnalyzeSentimentMLTask: WorkflowComponent {
     private let task: Workflow.Task
 
+    /**
+     - Parameters:
+        - name: The name of the task.
+        - mlService: The ML service to use for the task.
+        - strings: The list of texts to analyze.
+        - detailed: Whether to include confidence percentages (defaults to `false`).
+        - positiveThreshold: Scores above this are “positive” (defaults to `0.1`).
+        - negativeThreshold: Scores below this are “negative” (defaults to `-0.1`).
+        - inputs: Additional inputs for the task. Defaults to an empty dictionary.
+     */
     public init(
         name: String? = nil,
         mlService: MLServiceProtocol,

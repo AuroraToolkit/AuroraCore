@@ -1,5 +1,5 @@
 //
-//  TaggingTaskTests.swift
+//  TaggingMLTaskTests.swift
 //  AuroraToolkit
 //
 //  Created by Dan Murrell Jr on 5/6/25.
@@ -11,7 +11,7 @@ import XCTest
 @testable import AuroraTaskLibrary
 import NaturalLanguage
 
-final class TaggingTaskTests: XCTestCase {
+final class TaggingMLTaskTests: XCTestCase {
 
     func testTaggingTaskSuccess() async throws {
         // Given
@@ -38,7 +38,7 @@ final class TaggingTaskTests: XCTestCase {
             name: "MockTaggerService",
             response: MLResponse(outputs: ["tags": tags], info: nil)
         )
-        let task = TaggingTask(service: service, strings: ["\(text1) \(text2)"])
+        let task = TaggingMLTask(service: service, strings: ["\(text1) \(text2)"])
 
         // When
         guard case let .task(unwrapped) = task.toComponent() else {
@@ -61,7 +61,7 @@ final class TaggingTaskTests: XCTestCase {
             name: "MockTaggerService",
             response: MLResponse(outputs: ["tags": [[Tag]]()], info: nil)
         )
-        let task = TaggingTask(service: service)
+        let task = TaggingMLTask(service: service)
 
         // When
         guard case let .task(unwrapped) = task.toComponent() else {
@@ -74,7 +74,7 @@ final class TaggingTaskTests: XCTestCase {
           XCTFail("Expected error for empty input")
         } catch {
           let ns = error as NSError
-          XCTAssertEqual(ns.domain, "TaggingTask")
+          XCTAssertEqual(ns.domain, "TaggingMLTask")
           XCTAssertEqual(ns.code, 1)
         }
     }
@@ -106,7 +106,7 @@ final class TaggingTaskTests: XCTestCase {
             name: "MockTaggerService",
             response: MLResponse(outputs: ["tags": tags], info: nil)
         )
-        let task = TaggingTask(service: service, strings: initial)
+        let task = TaggingMLTask(service: service, strings: initial)
 
         // When
         guard case let .task(unwrapped) = task.toComponent() else {
@@ -131,7 +131,7 @@ final class TaggingTaskTests: XCTestCase {
             options: [.omitWhitespace, .omitPunctuation]
         )
         let input = "Alice went to Paris"
-        let task = TaggingTask(service: service, strings: [input])
+        let task = TaggingMLTask(service: service, strings: [input])
 
         // When
         guard case let .task(unwrapped) = task.toComponent() else {
@@ -182,7 +182,7 @@ final class TaggingTaskTests: XCTestCase {
             response: MLResponse(outputs: ["tags": [[Tag]]()], info: nil),
             shouldThrow: true
         )
-        let task = TaggingTask(service: service, strings: ["Anything"])
+        let task = TaggingMLTask(service: service, strings: ["Anything"])
 
         // When
         guard case let .task(unwrapped) = task.toComponent() else {
@@ -206,7 +206,7 @@ final class TaggingTaskTests: XCTestCase {
             name: "MockMissing",
             response: MLResponse(outputs: ["foo":"bar"], info: nil)
         )
-        let task = TaggingTask(service: service, strings: ["Hello"])
+        let task = TaggingMLTask(service: service, strings: ["Hello"])
 
         // When
         guard case let .task(unwrapped) = task.toComponent() else {
@@ -219,7 +219,7 @@ final class TaggingTaskTests: XCTestCase {
             XCTFail("Expected missing‐tags error")
         } catch {
             let ns = error as NSError
-            XCTAssertEqual(ns.domain, "TaggingTask")
+            XCTAssertEqual(ns.domain, "TaggingMLTask")
             XCTAssertEqual(ns.code, 2)
         }
     }
@@ -233,7 +233,7 @@ final class TaggingTaskTests: XCTestCase {
             schemes: [.sentimentScore],
             unit: .paragraph
         )
-        let task = TaggingTask(service: service, strings: [positive, negative])
+        let task = TaggingMLTask(service: service, strings: [positive, negative])
 
         // When
         guard case let .task(unwrapped) = task.toComponent() else {
@@ -274,7 +274,7 @@ final class TaggingTaskTests: XCTestCase {
             schemes: [.lemma],
             unit: .word
         )
-        let task = TaggingTask(service: service, strings: inputs)
+        let task = TaggingMLTask(service: service, strings: inputs)
 
         // When
         guard case let .task(unwrapped) = task.toComponent() else {

@@ -32,7 +32,7 @@ final class EntityExtractionWithTaggingTaskTests: XCTestCase {
             name: "MockNER",
             response: MLResponse(outputs: ["tags": tags], info: nil)
         )
-        let task = TaggingTask(service: mock, strings: texts)
+        let task = TaggingMLTask(service: mock, strings: texts)
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
@@ -55,7 +55,7 @@ final class EntityExtractionWithTaggingTaskTests: XCTestCase {
             schemes: [.nameType],
             unit: .word
         )
-        let task = TaggingTask(service: service, strings: texts)
+        let task = TaggingMLTask(service: service, strings: texts)
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {

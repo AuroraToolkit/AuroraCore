@@ -32,7 +32,7 @@ final class LemmaExtractionWithTaggingTaskTests: XCTestCase {
             name: "MockLemmaService",
             response: MLResponse(outputs: ["tags": tags], info: nil)
         )
-        let task = TaggingTask(service: mock, strings: texts)
+        let task = TaggingMLTask(service: mock, strings: texts)
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
@@ -57,7 +57,7 @@ final class LemmaExtractionWithTaggingTaskTests: XCTestCase {
             schemes: [.lemma],
             unit: .word
         )
-        let task = TaggingTask(service: service, strings: texts)
+        let task = TaggingMLTask(service: service, strings: texts)
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {

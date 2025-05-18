@@ -20,7 +20,7 @@ final class LanguageIdentificationWithTaggingTaskTests: XCTestCase {
             schemes: [.language],
             unit: .paragraph
         )
-        let task = TaggingTask(service: service, strings: [text])
+        let task = TaggingMLTask(service: service, strings: [text])
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
@@ -45,7 +45,7 @@ final class LanguageIdentificationWithTaggingTaskTests: XCTestCase {
             schemes: [.language],
             unit: .paragraph
         )
-        let task = TaggingTask(service: service, strings: [text])
+        let task = TaggingMLTask(service: service, strings: [text])
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
@@ -71,7 +71,7 @@ final class LanguageIdentificationWithTaggingTaskTests: XCTestCase {
             schemes: [.language],
             unit: .paragraph
         )
-        let task = TaggingTask(service: service, strings: [text])
+        let task = TaggingMLTask(service: service, strings: [text])
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
@@ -96,7 +96,7 @@ final class LanguageIdentificationWithTaggingTaskTests: XCTestCase {
             schemes: [.language],
             unit: .paragraph
         )
-        let task = TaggingTask(service: service, strings: [text])
+        let task = TaggingMLTask(service: service, strings: [text])
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
@@ -122,7 +122,7 @@ final class LanguageIdentificationWithTaggingTaskTests: XCTestCase {
             schemes: [.language],
             unit: .paragraph
         )
-        let task = TaggingTask(service: service, strings: [text])
+        let task = TaggingMLTask(service: service, strings: [text])
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
@@ -147,7 +147,7 @@ final class LanguageIdentificationWithTaggingTaskTests: XCTestCase {
             schemes: [.language],
             unit: .paragraph
         )
-        let task = TaggingTask(service: service, strings: [text])
+        let task = TaggingMLTask(service: service, strings: [text])
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
@@ -172,7 +172,7 @@ final class LanguageIdentificationWithTaggingTaskTests: XCTestCase {
             schemes: [.language],
             unit: .paragraph
         )
-        let task = TaggingTask(service: service, strings: [text])
+        let task = TaggingMLTask(service: service, strings: [text])
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
@@ -197,7 +197,7 @@ final class LanguageIdentificationWithTaggingTaskTests: XCTestCase {
             schemes: [.language],
             unit: .paragraph
         )
-        let task = TaggingTask(service: service, strings: [text])
+        let task = TaggingMLTask(service: service, strings: [text])
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
@@ -222,7 +222,7 @@ final class LanguageIdentificationWithTaggingTaskTests: XCTestCase {
             schemes: [.language],
             unit: .paragraph
         )
-        let task = TaggingTask(service: service, strings: [text])
+        let task = TaggingMLTask(service: service, strings: [text])
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {

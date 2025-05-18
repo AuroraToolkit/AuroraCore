@@ -28,10 +28,10 @@ public final class IntentExtractionService: MLServiceProtocol {
 
     /**
      - Parameters:
-     - name: Optionally pass the name of the service, defaults to "IntentExtractionService".
-     - model: A compiled `NLModel` trained to predict intents (e.g. “playMusic”, “setTimer”).
-     - maxResults: How many top intents to return.
-     - logger: Optional logger for debug.
+        - name: Optionally pass the name of the service, defaults to "IntentExtractionService".
+        - model: A compiled `NLModel` trained to predict intents (e.g. “playMusic”, “setTimer”).
+        - maxResults: How many top intents to return.
+        - logger: Optional logger for debug.
      */
     public init(
         name: String = "IntentExtractionService",
