@@ -1,11 +1,12 @@
 # AuroraCore
 
-AuroraCore is the foundational library within the **AuroraToolkit**—a suite of tools designed to simplify the integration of AI capabilities into your projects. This package offers robust support for AI-driven workflows, including task orchestration, workflow management, and seamless integration with large language models (LLMs) like Anthropic Claude, Google Gemini, OpenAI ChatGPT, and open-source Ollama models. Its modular architecture empowers developers to customize, extend, and integrate with external services effortlessly.
+AuroraCore is the foundational library within the **AuroraToolkit**—a suite of tools designed to simplify the integration of AI capabilities into your projects. This package offers robust support for AI-driven workflows, including task orchestration, workflow management, on-device ML services, and seamless integration with large language models (LLMs) like Anthropic Claude, Google Gemini, OpenAI ChatGPT, and open-source Ollama models. Its modular architecture empowers developers to customize, extend, and integrate with external services effortlessly.
 
 The AuroraToolkit core package is organized into several modules to enhance flexibility and maintainability:
 
 - **AuroraCore**: The foundational library for workflow orchestration, utilities, and declarative task management.
 - **AuroraLLM**: A dedicated package for integrating large language models (LLMs) such as Anthropic, Google, OpenAI, and Ollama.
+- **AuroraML**: On-device ML services (classification, intent extraction, tagging, embedding, semantic search) and corresponding Workflow tasks.  
 - **AuroraTaskLibrary**: A growing collection of prebuilt, reusable tasks designed to accelerate development.
 - **AuroraExamples**: Practical examples demonstrating how to leverage the toolkit for real-world scenarios.
 
@@ -19,6 +20,9 @@ Whether you're building sophisticated AI-powered applications or integrating mod
 - **Dynamic Workflows**: Use logic and triggers to create dynamic workflows that adapt to changing conditions, scheduled intervals, or user input.
 - **Reusable Tasks**: A library of prebuilt tasks for common development needs, from URL fetching to context summarization, accelerates your workflow setup.
 - **LLM Integration**: Effortless integration with major LLM providers like Anthropic, Google, OpenAI, and Ollama, with support for token management, domain-specific routing, and fallback strategies.
+- **On-device ML Tasks**: Integrate on-device ML-based tasks for classification, intent extraction, tagging, embedding, and semantic search, enhancing privacy and performance.
+- **Hybrid LLM + On-Device Pipelines**  
+  Combine on-device ML tasks with cloud or local LLMs for advanced end-to-end pipelines.
 - **Domain-Specific Routing**: Automatically route requests to the most appropriate LLM service based on predefined domains, optimizing task execution and resource allocation.
 - **Customizable and Extendable**: Easily add custom tasks, workflows, or LLM integrations to suit your project needs.
 - **Practical Examples**: Includes real-world examples to help developers get started quickly with common use cases and advanced patterns.
@@ -50,7 +54,10 @@ Includes native support for:
 - **Domain Routing**: Automatically routes prompts to the best-suited LLM for a specific domain (e.g., sports, movies, books).
 - **Summarization Support**: Built-in summarizers for extracting key information from text, tailored to work with LLM outputs.
 
-### **3. AuroraTaskLibrary**
+### **3. AuroraML**
+On-device ML services and Workflow tasks, powered by Apple’s Natural Language & Create ML frameworks.
+
+### **4. AuroraTaskLibrary**
 A collection of prebuilt tasks designed to jumpstart development and integrate seamlessly with workflows. These tasks cover common AI and utility-based operations.
 
 #### Notable Tasks:
@@ -63,7 +70,7 @@ A collection of prebuilt tasks designed to jumpstart development and integrate s
 - **GenerateKeywordsTask** (LLM): Extracts keywords from the input text.
 - **SummarizeContextTask** (LLM): Summarizes text or contextual data using registered LLMs.
 
-### **4. AuroraExamples**
+### **5. AuroraExamples**
 A separate package showcasing real-world implementations of workflows, LLM integrations, and tasks. Examples demonstrate:
 - How to use the LLMManager for multi-model management
 - How to set up declarative workflows
@@ -80,7 +87,7 @@ A separate package showcasing real-world implementations of workflows, LLM integ
 To integrate AuroraCore into your project using Swift Package Manager, add the following line to your `Package.swift` file:
 
 ```swift
-.package(url: "https://github.com/AuroraToolkit/AuroraCore.git", from: "0.1.0")
+.package(url: "https://github.com/AuroraToolkit/AuroraCore.git", from: "0.9.2")
 ```
 
 Then add the desired modules as dependencies to your target. For example:
@@ -89,9 +96,10 @@ Then add the desired modules as dependencies to your target. For example:
 .target(
     name: "YourTarget",
     dependencies: [
-        .product(name: "AuroraCore", package: "AuroraCore"),
-        .product(name: "AuroraLLM", package: "AuroraCore"),
-        .product(name: "AuroraTaskLibrary", package: "AuroraCore")
+        .product(name: "AuroraCore", package: "AuroraToolkit"),
+        .product(name: "AuroraLLM", package: "AuroraToolkit"),
+        .product(name: "AuroraML", package: "AuroraToolkit"),
+        .product(name: "AuroraTaskLibrary", package: "AuroraToolkit")
     ]
 ),
 ```
