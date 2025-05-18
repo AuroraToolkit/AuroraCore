@@ -96,5 +96,15 @@ await TemperatureMonitorWorkflow().execute()
 
 print("--------------------\n")
 
-print("Blog Post categorization Workflow Example:\n")
+print("Blog Post Categorization Workflow Example:\n")
 await BlogCategoryWorkflowExample().execute()
+
+print("--------------------\n")
+
+print("Support Ticket Analysis Workflow Example:\n")
+await SupportTicketWorkflowExample().execute(on: "My account is locked after too many login attempts.")
+
+print("--------------------\n")
+
+print("Triage Github Issues Workflow Example:\n")
+await IssueTriageWorkflowExample().execute(on: "App crashes with error E401 when I press Save")
