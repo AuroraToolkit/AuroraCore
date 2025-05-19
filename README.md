@@ -21,8 +21,7 @@ Whether you're building sophisticated AI-powered applications or integrating mod
 - **Reusable Tasks**: A library of prebuilt tasks for common development needs, from URL fetching to context summarization, accelerates your workflow setup.
 - **LLM Integration**: Effortless integration with major LLM providers like Anthropic, Google, OpenAI, and Ollama, with support for token management, domain-specific routing, and fallback strategies.
 - **On-device ML Tasks**: Integrate on-device ML-based tasks for classification, intent extraction, tagging, embedding, and semantic search, enhancing privacy and performance.
-- **Hybrid LLM + On-Device Pipelines**  
-  Combine on-device ML tasks with cloud or local LLMs for advanced end-to-end pipelines.
+- **Hybrid LLM + On-Device Pipelines**: Combine on-device ML tasks with cloud or local LLMs for advanced end-to-end pipelines.
 - **Domain-Specific Routing**: Automatically route requests to the most appropriate LLM service based on predefined domains, optimizing task execution and resource allocation.
 - **Customizable and Extendable**: Easily add custom tasks, workflows, or LLM integrations to suit your project needs.
 - **Practical Examples**: Includes real-world examples to help developers get started quickly with common use cases and advanced patterns.
@@ -298,6 +297,16 @@ for question in questions {
 ## Running Tests
 
 AuroraCore includes tests for multiple language model services. The Ollama tests will always run, as they do not require any API keys. For testing Anthropic, Google, or OpenAI services, you will need to manually provide your API keys.
+
+### .env example
+
+To simplify adding environment variables for API keys, copy the `.env.example` file to `.env` and fill in your keys:
+
+```bash
+cp .env.example .env
+```
+
+Then edit `.env` with your API keys.
 
 ### Adding API Keys for Anthropic, Google, and OpenAI:
 
