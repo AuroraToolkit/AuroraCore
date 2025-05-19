@@ -10,7 +10,7 @@ import AuroraML
 
 public class MockMLService: MLServiceProtocol {
     public var name: String
-    
+
     let response: MLResponse
     let shouldThrow: Bool
 

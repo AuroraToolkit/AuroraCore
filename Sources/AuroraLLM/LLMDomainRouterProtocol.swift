@@ -5,7 +5,6 @@
 //  Created by Dan Murrell Jr on 12/11/24.
 //
 
-
 import Foundation
 
 /// Protocol defining the behavior of a domain router in the LLMManager system.
@@ -27,7 +26,6 @@ public protocol LLMDomainRouterProtocol {
      */
     func determineDomain(for request: LLMRequest) async throws -> String?
 }
-
 
 /**
     Protocol defining the behavior of a domain router that can provide confidence scores for domain determination.

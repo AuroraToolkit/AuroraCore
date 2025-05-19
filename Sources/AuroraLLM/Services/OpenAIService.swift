@@ -248,12 +248,12 @@ public class OpenAIService: LLMServiceProtocol {
             for line in responseText.split(separator: "\n") {
                 if line == "data: [DONE]" {
                     // Finalize the response
-                    let usage = OpenAILLMResponse.Usage(prompt_tokens: 0, completion_tokens: 0, total_tokens: 0)
+                    let usage = OpenAILLMResponse.Usage(promptTokens: 0, completionTokens: 0, totalTokens: 0)
                     let finalResponse = OpenAILLMResponse(
                         choices: [OpenAILLMResponse.Choice(
                             delta: nil,
                             message: OpenAILLMResponse.Choice.Message(role: "assistant", content: accumulatedContent),
-                            finish_reason: "stop"
+                            finishReason: "stop"
                         )],
                         usage: usage,
                         vendor: vendor,

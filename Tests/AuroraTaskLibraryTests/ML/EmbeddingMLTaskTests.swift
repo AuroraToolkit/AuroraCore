@@ -50,7 +50,8 @@ final class EmbeddingMLTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task"); return
+            XCTFail("Failed to unwrap Workflow.Task")
+            return
         }
         let outputs = try await wrapped.execute()
 
@@ -67,7 +68,8 @@ final class EmbeddingMLTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task"); return
+            XCTFail("Failed to unwrap Workflow.Task")
+            return
         }
 
         // Then
@@ -83,7 +85,7 @@ final class EmbeddingMLTaskTests: XCTestCase {
     func testEmbeddingMLTaskInputOverride() async throws {
         // Given
         let initial = ["x"]
-        let override = ["y","z"]
+        let override = ["y", "z"]
         let fakeVectors: [[Double]] = [
             [0.1, 0.2, 0.3],
             [0.4, 0.5, 0.6]

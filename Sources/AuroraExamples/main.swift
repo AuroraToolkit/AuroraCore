@@ -4,6 +4,8 @@
 import Foundation
 import AuroraCore
 
+// swiftlint:disable orphaned_doc_comment
+
 /**
  These examples use a mix of Anthropic, OpenAI, Google, and Ollama models.
 
@@ -36,7 +38,7 @@ import AuroraCore
  */
 
 // Uncomment the following line to disable debug logs
-//CustomLogger.shared.toggleDebugLogs(false)
+// CustomLogger.shared.toggleDebugLogs(false)
 
 print("Aurora Core Examples\n")
 print("--------------------\n")
@@ -108,3 +110,5 @@ print("--------------------\n")
 
 print("Triage Github Issues Workflow Example:\n")
 await IssueTriageWorkflowExample().execute(on: "App crashes with error E401 when I press Save")
+
+// swiftlint:enable orphaned_doc_comment

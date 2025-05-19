@@ -146,7 +146,6 @@ public struct DualDomainRouter: LLMDomainRouterProtocol {
         case let (p?, s?):
             // Both predictions are valid — proceed with full conflict logic below
             logger?.debug("Both predictions available. Primary: '\(p.label)', Secondary: '\(s.label)'", category: "DualDomainRouter")
-            break
         case let (p?, nil):
             logger?.debug("Only primary prediction available. Using '\(p.label)'", category: "DualDomainRouter")
             return p.label
@@ -197,7 +196,7 @@ public struct DualDomainRouter: LLMDomainRouterProtocol {
         return resolve(primaryPrediction, secondaryPrediction)
     }
 
-    //MARK: - Helper functions
+    // MARK: - Helper functions
 
     /**
         Retrieves the prediction and confidence from the specified router.

@@ -5,7 +5,6 @@
 //  Created by Dan Murrell Jr on 1/13/25.
 //
 
-
 import XCTest
 @testable import AuroraCore
 @testable import AuroraTaskLibrary
@@ -22,7 +21,7 @@ final class JSONParsingTaskTests: XCTestCase {
         }
         """
         let jsonData = jsonString.data(using: .utf8)!
-        
+
         let task = JSONParsingTask(jsonData: jsonData)
 
         // When
@@ -76,7 +75,7 @@ final class JSONParsingTaskTests: XCTestCase {
             XCTFail("Failed to parse JSON.")
             return
         }
-        
+
         // Expected structure
         let expectedJSON = JSONElement.object([
             "person": .object([
@@ -173,7 +172,7 @@ final class JSONParsingTaskTests: XCTestCase {
     func testParseEmptyJSON() async throws {
         // Arrange: Empty JSON
         let jsonData = Data()
-        
+
         let task = JSONParsingTask(jsonData: jsonData)
 
         // When

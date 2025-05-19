@@ -109,7 +109,7 @@ public class CategorizeStringsTask: WorkflowComponent {
                 "Technology": ["A new AI tool is revolutionizing how developers write code."]
               }
             }
-            
+
             Important Instructions:
             1. Ensure each string is categorized into one or more categories.
             2. Do not include any additional text, explanations, code, or examples in the output.
@@ -120,7 +120,7 @@ public class CategorizeStringsTask: WorkflowComponent {
 
             \(resolvedStrings.joined(separator: "\n"))
             """
-            
+
             let request = LLMRequest(
                 messages: [
                     LLMMessage(role: .system, content: "You are a text categorization expert."),

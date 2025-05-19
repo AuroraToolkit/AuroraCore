@@ -5,13 +5,12 @@
 //  Created by Dan Murrell Jr on 10/25/24.
 //
 
-
 import XCTest
 @testable import AuroraCore
 @testable import AuroraLLM
 
 final class SaveContextTaskTests: XCTestCase {
-    
+
     override func setUp() {
         super.setUp()
         do {
@@ -44,7 +43,7 @@ final class SaveContextTaskTests: XCTestCase {
         let documentDirectory = try FileManager.default.createContextsDirectory()
         let fileURL = documentDirectory.appendingPathComponent(filename)
         XCTAssertTrue(FileManager.default.fileExists(atPath: fileURL.path), "Expected file to be saved at \(fileURL.path)")
-        
+
         // Verify the contents
         let data = try Data(contentsOf: fileURL)
         let loadedContext = try JSONDecoder().decode(Context.self, from: data)

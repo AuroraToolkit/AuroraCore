@@ -18,6 +18,6 @@ public class MockLLMServiceFactory: LLMServiceFactory {
     }
 
     public override func createService(for context: Context) -> LLMServiceProtocol? {
-        return mockServices[context.llmServiceVendor] ?? nil
+        return mockServices[context.llmServiceVendor]
     }
 }

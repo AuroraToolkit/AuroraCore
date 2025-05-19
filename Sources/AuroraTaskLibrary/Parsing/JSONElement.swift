@@ -307,4 +307,3 @@ public enum JSONElement: Equatable {
         }
     }
 }
-

@@ -55,8 +55,13 @@ public struct AnthropicLLMResponse: LLMResponseProtocol, Codable {
 
     /// Nested structure to represent token usage data (if available).
     public struct Usage: Codable {
-        let input_tokens: Int
-        let output_tokens: Int
+        let inputTokens: Int
+        let outputTokens: Int
+
+        enum CodingKeys: String, CodingKey {
+            case inputTokens = "input_tokens"
+            case outputTokens = "output_tokens"
+        }
     }
 
     // MARK: - LLMResponseProtocol Conformance
@@ -69,7 +74,7 @@ public struct AnthropicLLMResponse: LLMResponseProtocol, Codable {
     /// Returns token usage statistics as an `LLMTokenUsage` object.
     public var tokenUsage: LLMTokenUsage? {
         guard let usage = usage else { return nil }
-        return LLMTokenUsage(promptTokens: usage.input_tokens, completionTokens: usage.output_tokens, totalTokens: usage.input_tokens + usage.output_tokens)
+        return LLMTokenUsage(promptTokens: usage.inputTokens, completionTokens: usage.outputTokens, totalTokens: usage.inputTokens + usage.outputTokens)
     }
 
     // MARK: - Coding Keys

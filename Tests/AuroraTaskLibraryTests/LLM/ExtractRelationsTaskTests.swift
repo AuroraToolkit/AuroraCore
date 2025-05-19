@@ -112,7 +112,7 @@ final class ExtractRelationsTaskTests: XCTestCase {
 
         XCTAssertNotNil(relations["co_founded"], "Expected co_founded relations to be extracted.")
         XCTAssertNotNil(relations["located_in"], "Expected located_in relations to be extracted.")
-        XCTAssertTrue(relations["co_founded"]!.count > 0, "Expected co-founded relations.")
-        XCTAssertTrue(relations["located_in"]!.count > 0, "Expected located_in relation.")
+        XCTAssertTrue(!relations["co_founded"]!.isEmpty, "Expected co-founded relations.")
+        XCTAssertTrue(!relations["located_in"]!.isEmpty, "Expected located_in relation.")
     }
 }

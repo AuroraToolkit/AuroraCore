@@ -11,19 +11,19 @@ import XCTest
 import NaturalLanguage
 
 final class TaggingServiceTests: XCTestCase {
-  
+
   func testLexicalClassTagging() async throws {
     // Given
     let service = TaggingService(schemes: [.lexicalClass])
     let texts = ["The quick brown fox"]
-    
+
     // When
     let resp = try await service.run(
       request: MLRequest(inputs: ["strings": texts])
     )
     let groups = resp.outputs["tags"] as? [[Tag]]
     let tags = groups?.first
-    
+
     // Then
     XCTAssertNotNil(tags)
     XCTAssertTrue(
@@ -31,11 +31,11 @@ final class TaggingServiceTests: XCTestCase {
       "Expected 'fox' tagged as Noun"
     )
   }
-  
+
   func testEmptyInput() async {
     // Given
     let service = TaggingService(schemes: [.lexicalClass])
-    
+
     // When / Then
     await XCTAssertThrowsErrorAsync(try await service.run(request: MLRequest(inputs: [:]))) { error in
       let ns = error as NSError

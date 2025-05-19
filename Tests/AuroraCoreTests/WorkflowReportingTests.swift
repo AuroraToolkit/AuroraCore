@@ -15,9 +15,9 @@ final class WorkflowReportingTests: XCTestCase {
         let task = Workflow.Task(name: "Test Task", description: "A simple test task", inputs: [:]) { _ in
             return ["output": "Test"]
         }
-        
+
         let report = task.generateReport()
-        
+
         XCTAssertEqual(report.id, task.id)
         XCTAssertEqual(report.name, "Test Task")
         XCTAssertEqual(report.description, "A simple test task")
@@ -27,7 +27,7 @@ final class WorkflowReportingTests: XCTestCase {
         XCTAssertNil(report.outputs)
         XCTAssertNil(report.error)
     }
-    
+
     // Test the report generated from a TaskGroup.
     func testTaskGroupReport() {
         let task1 = Workflow.Task(name: "Task 1", description: "First task") { _ in
@@ -44,7 +44,7 @@ final class WorkflowReportingTests: XCTestCase {
         }
 
         let report = taskGroup.generateReport()
-        
+
         XCTAssertEqual(report.id, taskGroup.id)
         XCTAssertEqual(report.name, "Group Test")
         XCTAssertEqual(report.description, "A test task group")
@@ -53,17 +53,17 @@ final class WorkflowReportingTests: XCTestCase {
         XCTAssertNil(report.outputs)
         XCTAssertNil(report.error)
     }
-    
+
     // Test the overall Workflow report generation.
     func testWorkflowReportGeneration() async {
         let task1 = Workflow.Task(name: "Task 1", description: "First task") { _ in
             return ["result": "Done"]
         }
-        
+
         let taskGroup = Workflow.TaskGroup(name: "Group Test", description: "A test task group", mode: .sequential) {
             task1.toComponent()
         }
-        
+
         var workflow = Workflow(name: "Reporting Workflow", description: "Workflow to test reporting") {
             task1
             taskGroup
@@ -72,7 +72,7 @@ final class WorkflowReportingTests: XCTestCase {
         await workflow.start()
 
         let report = await workflow.generateReport()
-        
+
         XCTAssertEqual(report.id, workflow.id)
         XCTAssertEqual(report.name, "Reporting Workflow")
         XCTAssertEqual(report.description, "Workflow to test reporting")

@@ -117,7 +117,7 @@ extension Workflow.Component {
             return task.detailsHolder.details?.error
         case .taskGroup(let group):
             return group.detailsHolder.details?.error
-        case .subflow(_):
+        case .subflow:
             return nil
         case .logic(let logic):
             return logic.detailsHolder.details?.error

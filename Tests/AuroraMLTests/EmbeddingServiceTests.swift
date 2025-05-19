@@ -28,7 +28,8 @@ final class EmbeddingServiceTests: XCTestCase {
         let response = try await service.run(request: request)
 
         guard let vectors = response.outputs["embeddings"] as? [[Double]] else {
-            XCTFail("Missing or invalid 'embeddings' output"); return
+            XCTFail("Missing or invalid 'embeddings' output")
+            return
         }
 
         // Should get one vector per input

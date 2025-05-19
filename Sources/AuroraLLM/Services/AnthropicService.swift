@@ -92,10 +92,9 @@ public class AnthropicService: LLMServiceProtocol {
         }
 
         func getUsage() -> AnthropicLLMResponse.Usage {
-            return AnthropicLLMResponse.Usage(input_tokens: inputTokens, output_tokens: outputTokens)
+            return AnthropicLLMResponse.Usage(inputTokens: inputTokens, outputTokens: outputTokens)
         }
     }
-
 
     // MARK: - Non-streaming Request
 
@@ -114,7 +113,7 @@ public class AnthropicService: LLMServiceProtocol {
         }
 
         // Map LLMMessage instances to the format expected by the API
-        var systemMessage: String? = nil
+        var systemMessage: String?
         let userMessages = request.messages.compactMap { message -> [String: String]? in
             if message.role == .system {
                 systemMessage = message.content
@@ -187,7 +186,7 @@ public class AnthropicService: LLMServiceProtocol {
         }
 
         // Map LLMMessage instances to the format expected by the API
-        var systemMessage: String? = nil
+        var systemMessage: String?
         let userMessages = request.messages.compactMap { message -> [String: String]? in
             if message.role == .system {
                 systemMessage = message.content
@@ -323,7 +322,7 @@ public class AnthropicService: LLMServiceProtocol {
                     model: model,
                     content: accumulatedContent,
                     stopReason: "end_turn",  // Replace with actual stop reason if available
-                    usage: AnthropicLLMResponse.Usage(input_tokens: inputTokens, output_tokens: outputTokens)
+                    usage: AnthropicLLMResponse.Usage(inputTokens: inputTokens, outputTokens: outputTokens)
                 )
                 continuation.resume(returning: finalResponse)
             }

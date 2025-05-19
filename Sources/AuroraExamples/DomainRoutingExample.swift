@@ -105,7 +105,7 @@ struct DomainRoutingExample {
     }
 }
 
-fileprivate class MockLLMService: LLMServiceProtocol {
+private class MockLLMService: LLMServiceProtocol {
     var name: String
     var vendor: String
     var apiKey: String?
@@ -172,7 +172,7 @@ fileprivate class MockLLMService: LLMServiceProtocol {
     }
 }
 
-fileprivate struct MockLLMResponse: LLMResponseProtocol {
+private struct MockLLMResponse: LLMResponseProtocol {
 
     /// The mock text content returned by the mock LLM.
     public var text: String

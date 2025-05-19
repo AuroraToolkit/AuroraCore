@@ -107,7 +107,7 @@ final class SummarizeContextTaskTests: XCTestCase {
             XCTAssertEqual((error as NSError).code, -1)
         }
     }
-    
+
     func testSummarizeTaskMultipleItemsWithBoundaryCondition() async throws {
         // Given
         let content = String(repeating: "A", count: 4095) // One token short of the limit

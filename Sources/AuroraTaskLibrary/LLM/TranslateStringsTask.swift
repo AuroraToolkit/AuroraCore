@@ -90,7 +90,7 @@ public class TranslateStringsTask: WorkflowComponent {
            Translate the following text\(resolvedSourceLanguage != nil ? " from \(resolvedSourceLanguage!)" : "") into \(resolvedTargetLanguage).
 
            Return the result as a JSON object with the key "translations". The translations object is a JSON array of Strings that you have translated.
-           
+
            Example (for format illustration purposes only):
            Input Strings:
            - "Hello, how are you?"
@@ -114,7 +114,7 @@ public class TranslateStringsTask: WorkflowComponent {
            4. Escape all special characters in the translations as required for valid JSON, especially double quotes (e.g., use `\"` for `"`).
            5. Ensure the JSON object is properly terminated and complete. Do not cut off or truncate the response.
            6. Ensure the JSON is properly formatted and valid.
-           7. Do not include anything else, like markdown notation around it or any extraneous characters. The ONLY thing you should return is properly formatted, valid JSON and absolutely nothing else. 
+           7. Do not include anything else, like markdown notation around it or any extraneous characters. The ONLY thing you should return is properly formatted, valid JSON and absolutely nothing else.
            8. Only process the following texts:
 
            \(resolvedStrings.joined(separator: "\n"))
@@ -133,7 +133,7 @@ public class TranslateStringsTask: WorkflowComponent {
 
                // Strip json markdown if necessary
                let rawResponse = response.text.stripMarkdownJSON()
-               
+
                guard let data = rawResponse.data(using: .utf8),
                    let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
                    let translations = jsonObject["translations"] as? [String]

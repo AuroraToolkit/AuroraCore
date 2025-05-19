@@ -238,7 +238,8 @@ final class MLManagerTests: XCTestCase {
         // Then
         guard let groups = resp.outputs["tags"] as? [[Tag]],
               let tags = groups.first else {
-            XCTFail("Expected 'tags' output from TaggingService"); return
+            XCTFail("Expected 'tags' output from TaggingService")
+            return
         }
         XCTAssertTrue(
             tags.contains { $0.token.lowercased() == "running" && $0.label == "run" },
@@ -271,7 +272,8 @@ final class MLManagerTests: XCTestCase {
 
         // Then
         guard let groups = resp.outputs["tags"] as? [Tag] else {
-            XCTFail("Expected 'tags' output from CoreMLTaggingService"); return
+            XCTFail("Expected 'tags' output from CoreMLTaggingService")
+            return
         }
         let flat = groups.compactMap { $0 }
         print("Flat tags: \(flat)")

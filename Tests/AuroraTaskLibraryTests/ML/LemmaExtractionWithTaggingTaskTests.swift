@@ -66,10 +66,10 @@ final class LemmaExtractionWithTaggingTaskTests: XCTestCase {
         }
         let outputs = try await wrapped.execute()
 
-
         // Then
         guard let tagArrays = outputs["tags"] as? [[Tag]] else {
-          XCTFail("Missing or invalid 'tags'"); return
+          XCTFail("Missing or invalid 'tags'")
+            return
         }
 
         // Flatten across all input strings

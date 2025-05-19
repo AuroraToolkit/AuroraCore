@@ -38,7 +38,8 @@ final class IntentExtractionMLTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await wrapped.execute()
 
@@ -91,7 +92,7 @@ final class IntentExtractionMLTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail()
+            XCTFail("Failed to unwrap Workflow.Task.")
             return
         }
         let outputs = try await wrapped.execute(inputs: ["strings": override])

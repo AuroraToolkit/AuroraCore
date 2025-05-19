@@ -26,7 +26,8 @@ final class ScriptIdentificationWithTaggingTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await wrapped.execute()
 
@@ -34,7 +35,8 @@ final class ScriptIdentificationWithTaggingTaskTests: XCTestCase {
         guard let result = outputs["tags"] as? [[Tag]],
               let tags = result.first,
               let script = tags.first?.label else {
-            XCTFail("Missing or invalid script tag"); return
+            XCTFail("Missing or invalid script tag")
+            return
         }
         XCTAssertEqual(script, "Latn", "Expected 'Latn' for ASCII text")
     }
@@ -51,7 +53,8 @@ final class ScriptIdentificationWithTaggingTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await wrapped.execute()
 
@@ -59,7 +62,8 @@ final class ScriptIdentificationWithTaggingTaskTests: XCTestCase {
         guard let result = outputs["tags"] as? [[Tag]],
               let tags = result.first,
               let script = tags.first?.label else {
-            XCTFail("Missing or invalid script tag"); return
+            XCTFail("Missing or invalid script tag")
+            return
         }
         XCTAssertTrue(script.contains("Han"), "Expected a 'Han' script tag for Chinese text, got: \(script)")
     }
@@ -76,7 +80,8 @@ final class ScriptIdentificationWithTaggingTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await wrapped.execute()
 
@@ -84,7 +89,8 @@ final class ScriptIdentificationWithTaggingTaskTests: XCTestCase {
         guard let result = outputs["tags"] as? [[Tag]],
               let tags = result.first,
               let script = tags.first?.label else {
-            XCTFail("Missing or invalid script tag"); return
+            XCTFail("Missing or invalid script tag")
+            return
         }
         XCTAssertEqual(script, "Cyrl", "Expected 'Cyrl' for Russian text")
     }
@@ -101,7 +107,8 @@ final class ScriptIdentificationWithTaggingTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await wrapped.execute()
 
@@ -109,7 +116,8 @@ final class ScriptIdentificationWithTaggingTaskTests: XCTestCase {
         guard let result = outputs["tags"] as? [[Tag]],
               let tags = result.first,
               let script = tags.first?.label else {
-            XCTFail("Missing or invalid script tag"); return
+            XCTFail("Missing or invalid script tag")
+            return
         }
         XCTAssertEqual(script, "Arab", "Expected 'Arab' for Arabic text")
     }

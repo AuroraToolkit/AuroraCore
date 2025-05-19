@@ -58,7 +58,8 @@ final class ClassificationMLTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await wrapped.execute()
 
@@ -77,7 +78,8 @@ final class ClassificationMLTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
 
         // Then
@@ -107,7 +109,8 @@ final class ClassificationMLTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task"); return
+            XCTFail("Failed to unwrap Workflow.Task")
+            return
         }
         let outputs = try await wrapped.execute(inputs: ["strings": override])
 
@@ -130,7 +133,8 @@ final class ClassificationMLTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task"); return
+            XCTFail("Failed to unwrap Workflow.Task")
+            return
         }
 
         // Then
@@ -153,7 +157,8 @@ final class ClassificationMLTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task"); return
+            XCTFail("Failed to unwrap Workflow.Task")
+            return
         }
 
         // Then
@@ -186,7 +191,8 @@ final class ClassificationMLTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task"); return
+            XCTFail("Failed to unwrap Workflow.Task")
+            return
         }
         let outputs = try await wrapped.execute()
 
@@ -201,7 +207,8 @@ final class ClassificationMLTaskTests: XCTestCase {
         // Given
         let url = modelPath(for: "TrivialTextClassifier.mlmodelc")
         guard let nlModel = try? NLModel(contentsOf: url) else {
-            XCTFail("Failed to load TrivialTextClassifier model"); return
+            XCTFail("Failed to load TrivialTextClassifier model")
+            return
         }
         let service = ClassificationService(
             name: "trivial",
@@ -214,7 +221,8 @@ final class ClassificationMLTaskTests: XCTestCase {
 
         // When / Then
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task"); return
+            XCTFail("Failed to unwrap Workflow.Task")
+            return
         }
         await XCTAssertThrowsErrorAsync(try await wrapped.execute()) { error in
             let ns = error as NSError

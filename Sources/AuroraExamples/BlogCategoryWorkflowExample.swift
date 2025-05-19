@@ -54,7 +54,7 @@ struct BlogCategoryWorkflowExample {
 
         let newPost = """
         Migrating Legacy Objective-C Codebases to Swift: Tips and Pitfalls.
-        
+
         Migrating a large Objective-C codebase to Swift can feel like traversing uncharted territory—but with the right strategy, you can smooth the transition and minimize risk. First, establish clear boundaries for your migration. Rather than attempting a “big bang” rewrite, identify self-contained modules or features that can be converted one at a time. For example, you might start with your networking layer or a utility component that has well-defined inputs and outputs. This incremental approach lets you validate each Swift module in isolation, writing new unit tests in Swift while ensuring your existing Objective-C tests continue to pass.
 
         As you begin translating code, pay close attention to language interoperability. Swift’s optionals and strong type system can expose latent bugs in your old Objective-C APIs—variables that once tolerated nil may now cause runtime exceptions. Where possible, annotate your Objective-C headers with nullability (nullable/nonnull) and use Swift’s bridging imports to generate safer, more expressive interfaces. You’ll also encounter differences in memory management: ARC is consistent across both languages, but Swift’s value types (structs and enums) behave differently from Objective-C’s reference semantics—so plan to refactor performance-sensitive types into Swift structs carefully, and keep your use of pointers and unsafe operations to a minimum.
@@ -104,7 +104,7 @@ struct BlogCategoryWorkflowExample {
                     "summary": "<one-sentence summary>",
                     "new_categories": ["Cat1","Cat2"]
                 }
-                
+
                 Please do not include any other text or formatting, like markdown notation.
                 """
                 let request = LLMRequest(messages: [

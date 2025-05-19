@@ -5,13 +5,12 @@
 //  Created by Dan Murrell Jr on 12/10/24.
 //
 
-
 import XCTest
 @testable import AuroraCore
 @testable import AuroraTaskLibrary
 
 final class RSSParsingTaskTests: XCTestCase {
-    
+
     func testRSSParsingTaskValidFeed() async throws {
         // Given
         let validRSSData = """
@@ -32,9 +31,9 @@ final class RSSParsingTaskTests: XCTestCase {
             </channel>
         </rss>
         """.data(using: .utf8)!
-        
+
         let task = RSSParsingTask(feedData: validRSSData)
-        
+
         // When
         guard case let .task(unwrappedTask) = task.toComponent() else {
             XCTFail("Failed to unwrap the Workflow.Task from the component.")
@@ -53,12 +52,12 @@ final class RSSParsingTaskTests: XCTestCase {
         XCTAssertEqual(articles[1].title, "Test Article 2", "Second article title should match.")
         XCTAssertEqual(articles[1].link, "https://example.com/article2", "Second article link should match.")
     }
-    
+
     func testRSSParsingTaskInvalidFeed() async {
         // Given
         let invalidRSSData = "Invalid RSS Feed".data(using: .utf8)!
         let task = RSSParsingTask(feedData: invalidRSSData)
-        
+
         // When/Then
         do {
             guard case let .task(unwrappedTask) = task.toComponent() else {
@@ -72,11 +71,11 @@ final class RSSParsingTaskTests: XCTestCase {
             XCTAssertEqual((error as NSError).code, 2, "Error code should match.")
         }
     }
-    
+
     func testRSSParsingTaskMissingFeedData() async {
         // Given
         let task = RSSParsingTask(feedData: Data())
-        
+
         // When/Then
         do {
             guard case let .task(unwrappedTask) = task.toComponent() else {

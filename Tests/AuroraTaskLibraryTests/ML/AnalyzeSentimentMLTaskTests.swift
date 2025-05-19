@@ -21,7 +21,7 @@ final class AnalyzeSentimentMLTaskTests: XCTestCase {
         let tag1 = Tag(token: "Happy",
                        label: "positive",
                        scheme: "mock",
-                       confidence:  1.0,
+                       confidence: 1.0,
                        start: 0,
                        length: 5)
         let tag2 = Tag(token: "Sad",
@@ -42,16 +42,18 @@ final class AnalyzeSentimentMLTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await wrapped.execute()
 
         // Then
         guard let sentiments = outputs["sentiments"] as? [String: String] else {
-            XCTFail("Output 'sentiments' missing or wrong type"); return
+            XCTFail("Output 'sentiments' missing or wrong type")
+            return
         }
         XCTAssertEqual(sentiments["Happy"], "positive")
-        XCTAssertEqual(sentiments["Sad"],   "negative")
+        XCTAssertEqual(sentiments["Sad"], "negative")
     }
 
     func testAnalyzeSentimentMLTaskEmptyInput() async {
@@ -64,7 +66,8 @@ final class AnalyzeSentimentMLTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
 
         // Then
@@ -90,7 +93,7 @@ final class AnalyzeSentimentMLTaskTests: XCTestCase {
                        length: 1)
         let service = MockMLService(
             name: "MockSentimentService",
-            response: MLResponse(outputs: ["tags":[[tagX]]], info: nil)
+            response: MLResponse(outputs: ["tags": [[tagX]]], info: nil)
         )
         let task = AnalyzeSentimentMLTask(
             mlService: service,
@@ -99,15 +102,17 @@ final class AnalyzeSentimentMLTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await wrapped.execute(inputs: ["strings": override])
 
         // Then
         guard let sentiments = outputs["sentiments"] as? [String: String] else {
-            XCTFail("Output 'sentiments' missing or wrong type"); return
+            XCTFail("Output 'sentiments' missing or wrong type")
+            return
         }
-        XCTAssertEqual(sentiments, ["X":"neutral"])
+        XCTAssertEqual(sentiments, ["X": "neutral"])
     }
 
     // MARK: – Integration with real TaggingService
@@ -127,13 +132,15 @@ final class AnalyzeSentimentMLTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await wrapped.execute()
 
         // Then
         guard let sentiments = outputs["sentiments"] as? [String: String] else {
-            XCTFail("Output 'sentiments' missing or wrong type"); return
+            XCTFail("Output 'sentiments' missing or wrong type")
+            return
         }
         XCTAssertEqual(sentiments[positiveText], "positive")
     }
@@ -161,13 +168,15 @@ final class AnalyzeSentimentMLTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await wrapped.execute()
 
         // Then
         guard let sentiments = outputs["sentiments"] as? [String: String] else {
-            XCTFail("Output 'sentiments' missing or wrong type"); return
+            XCTFail("Output 'sentiments' missing or wrong type")
+            return
         }
         XCTAssertEqual(sentiments[texts[0]], "positive")
         XCTAssertEqual(sentiments[texts[1]], "neutral")
@@ -197,13 +206,15 @@ final class AnalyzeSentimentMLTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await wrapped.execute()
 
         // Then
         guard let detailedMap = outputs["sentiments"] as? [String: [String: Any]] else {
-            XCTFail("Expected detailed sentiments map"); return
+            XCTFail("Expected detailed sentiments map")
+            return
         }
 
         // "I love it!" → positive, ~100%

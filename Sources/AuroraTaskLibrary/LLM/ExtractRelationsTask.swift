@@ -89,7 +89,7 @@ public class ExtractRelationsTask: WorkflowComponent {
                extractionPrompt += " Only extract the following types of relationships: \(types.joined(separator: ", "))."
            }
            extractionPrompt += """
-           
+
            Example (for format illustration purposes only):
            Input Strings:
            - "Steve Jobs was the co-founder of Apple, headquartered in Cupertino, California."

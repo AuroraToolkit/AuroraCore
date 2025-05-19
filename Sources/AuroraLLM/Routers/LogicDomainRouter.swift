@@ -214,11 +214,11 @@ public extension LogicRule {
                       pattern: String,
                       domain: String,
                       priority: Int = 0) -> LogicRule {
-        let rx = try! NSRegularExpression(pattern: pattern,
+        let rx = try? NSRegularExpression(pattern: pattern,
                                           options: [.caseInsensitive])
         return LogicRule(name: name, domain: domain, priority: priority) { req in
             let text = req.messages.map(\.content).joined(separator: " ")
-            return rx.firstMatch(in: text,
+            return rx?.firstMatch(in: text,
                                  options: [],
                                  range: NSRange(text.startIndex..., in: text)) != nil
         }

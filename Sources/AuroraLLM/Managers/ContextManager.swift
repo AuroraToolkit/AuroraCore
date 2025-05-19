@@ -18,7 +18,7 @@ public class ContextManager {
 
     /// The ID of the currently active context.
     internal var activeContextID: UUID?
-    
+
     private let llmServiceFactory: LLMServiceFactory
 
     init(llmServiceFactory: LLMServiceFactory = LLMServiceFactory()) {

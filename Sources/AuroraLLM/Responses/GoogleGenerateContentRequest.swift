@@ -68,7 +68,7 @@ struct GoogleGenerateContentResponse: LLMResponseProtocol, Codable {
             totalTokens: metadata.totalTokenCount ?? 0
         )
     }
-    
+
     // Helper to create a mutable copy for setting model/vendor after decoding
      func changingModel(to newModel: String?) -> GoogleGenerateContentResponse {
          var copy = self

@@ -57,8 +57,8 @@ final class KeywordExtractionWithTaggingTaskTests: XCTestCase {
         // Mock service returns both lemma+POS tags
         let tags: [[Tag]] = [[
             tagAlphaLemma, tagAlphaPOS,
-            tagBetaLemma,  tagBetaPOS,
-            tagSkipLemma,  tagSkipPOS
+            tagBetaLemma, tagBetaPOS,
+            tagSkipLemma, tagSkipPOS
         ]]
         let mock = MockMLService(
             name: "MockKeywordService",
@@ -68,28 +68,30 @@ final class KeywordExtractionWithTaggingTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await wrapped.execute()
 
         // Then
         guard let result = outputs["tags"] as? [[Tag]],
               let flat = result.first else {
-            XCTFail("Missing or invalid 'tags'"); return
+            XCTFail("Missing or invalid 'tags'")
+            return
         }
 
         // Build a map from token → lemma
-        var lemmaMap = [String:String]()
+        var lemmaMap = [String: String]()
         for tag in flat where tag.scheme == "mockLemma" {
             lemmaMap[tag.token] = tag.label
         }
 
         // Keep only ProperNoun/Noun tokens and map to their lemma
         let keywords = flat
-            .filter { $0.scheme == "mockPOS" && ["ProperNoun","Noun"].contains($0.label) }
+            .filter { $0.scheme == "mockPOS" && ["ProperNoun", "Noun"].contains($0.label) }
             .compactMap { lemmaMap[$0.token]?.lowercased() }
 
-        XCTAssertEqual(Set(keywords), Set(["alpha","beta"]))
+        XCTAssertEqual(Set(keywords), Set(["alpha", "beta"]))
         XCTAssertFalse(keywords.contains("skip"))
     }
 
@@ -108,28 +110,30 @@ final class KeywordExtractionWithTaggingTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await wrapped.execute()
 
         // Then
         guard let resultGroups = outputs["tags"] as? [[Tag]], resultGroups.count == 2 else {
-            XCTFail("Missing or invalid 'tags' for both sentences"); return
+            XCTFail("Missing or invalid 'tags' for both sentences")
+            return
         }
 
         // First sentence keywords
         let keywords1 = extractKeywords(from: resultGroups[0])
-        XCTAssertEqual(Set(keywords1), Set(["openai","update","release"]))
+        XCTAssertEqual(Set(keywords1), Set(["openai", "update", "release"]))
 
         // Second sentence keywords
         let keywords2 = extractKeywords(from: resultGroups[1])
-        XCTAssertEqual(Set(keywords2), Set(["simplify","development"]))
+        XCTAssertEqual(Set(keywords2), Set(["simplify", "development"]))
     }
 
     // Helper to extract keywords from a flat Tag array
     private func extractKeywords(from flat: [Tag]) -> [String] {
         // build lemma map
-        var lemmaMap = [String:String]()
+        var lemmaMap = [String: String]()
         for tag in flat where tag.scheme.lowercased() == "lemma" {
             lemmaMap[tag.token] = tag.label.lowercased()
         }
@@ -137,7 +141,7 @@ final class KeywordExtractionWithTaggingTaskTests: XCTestCase {
         return flat
             .filter {
                 $0.scheme.lowercased() == "lexicalclass" &&
-                ["Noun","ProperNoun"].contains($0.label)
+                ["Noun", "ProperNoun"].contains($0.label)
             }
             .compactMap { lemmaMap[$0.token] }
     }

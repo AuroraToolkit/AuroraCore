@@ -139,7 +139,7 @@ final class ContextManagerTests: XCTestCase {
         let contextID2 = contextManager.addNewContext(llmService: mockService)
 
         guard let contextController1 = contextManager.getContextController(for: contextID1),
-              let contextController2 = contextManager.getContextController(for: contextID2) else {
+            let contextController2 = contextManager.getContextController(for: contextID2) else {
             XCTFail("Context controllers should exist")
             return
         }
@@ -165,7 +165,7 @@ final class ContextManagerTests: XCTestCase {
         let contextID2 = contextManager.addNewContext(llmService: mockService2)
 
         guard let contextController1 = contextManager.getContextController(for: contextID1),
-              let contextController2 = contextManager.getContextController(for: contextID2) else {
+            let contextController2 = contextManager.getContextController(for: contextID2) else {
             XCTFail("Context controllers should exist")
             return
         }
@@ -237,7 +237,7 @@ final class ContextManagerTests: XCTestCase {
         let contextID2 = contextManager.addNewContext(llmService: mockService2)
 
         guard let contextController1 = contextManager.getContextController(for: contextID1),
-              let contextController2 = contextManager.getContextController(for: contextID2) else {
+            let contextController2 = contextManager.getContextController(for: contextID2) else {
             XCTFail("Context controllers should exist")
             return
         }
@@ -262,7 +262,7 @@ final class ContextManagerTests: XCTestCase {
         let contextID2 = contextManager.addNewContext(llmService: mockService2)
 
         guard let contextController1 = contextManager.getContextController(for: contextID1),
-              let contextController2 = contextManager.getContextController(for: contextID2) else {
+            let contextController2 = contextManager.getContextController(for: contextID2) else {
             XCTFail("Context controllers should exist")
             return
         }

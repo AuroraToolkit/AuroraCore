@@ -90,7 +90,7 @@ public class GenerateKeywordsTask: WorkflowComponent {
             Input Strings:
             - "The stock market experienced a significant downturn yesterday."
             - "A new AI tool is revolutionizing how developers write code."
-            
+
             Output JSON:
             {
               "keywords": {

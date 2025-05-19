@@ -24,7 +24,8 @@ final class SentimentTaggingWithTaggingTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await wrapped.execute()
 
@@ -33,7 +34,8 @@ final class SentimentTaggingWithTaggingTaskTests: XCTestCase {
               let tags = result.first,
               let scoreString = tags.first?.label,
               let score = Double(scoreString) else {
-            XCTFail("Missing or invalid sentiment score tag"); return
+            XCTFail("Missing or invalid sentiment score tag")
+            return
         }
         XCTAssertGreaterThan(score, 0, "Expected positive sentiment (> 0) for: \(text)")
     }
@@ -50,7 +52,8 @@ final class SentimentTaggingWithTaggingTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await wrapped.execute()
 
@@ -59,7 +62,8 @@ final class SentimentTaggingWithTaggingTaskTests: XCTestCase {
               let tags = result.first,
               let scoreString = tags.first?.label,
               let score = Double(scoreString) else {
-            XCTFail("Missing or invalid sentiment score tag"); return
+            XCTFail("Missing or invalid sentiment score tag")
+            return
         }
         XCTAssertLessThan(score, 0, "Expected negative sentiment (< 0) for: \(text)")
     }

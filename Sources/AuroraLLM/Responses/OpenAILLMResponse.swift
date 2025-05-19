@@ -24,7 +24,13 @@ public struct OpenAILLMResponse: LLMResponseProtocol, Codable {
         /// Complete response for non-streaming.
         let message: Message?
         /// Reason for completion.
-        let finish_reason: String?
+        let finishReason: String?
+
+        enum CodingKeys: String, CodingKey {
+            case delta
+            case message
+            case finishReason = "finish_reason"
+        }
     }
 
     /// Array of choices.
@@ -41,9 +47,15 @@ public struct OpenAILLMResponse: LLMResponseProtocol, Codable {
 
     /// Token usage structure.
     public struct Usage: Codable {
-        let prompt_tokens: Int
-        let completion_tokens: Int
-        let total_tokens: Int
+        let promptTokens: Int
+        let completionTokens: Int
+        let totalTokens: Int
+
+        enum CodingKeys: String, CodingKey {
+            case promptTokens = "prompt_tokens"
+            case completionTokens = "completion_tokens"
+            case totalTokens = "total_tokens"
+        }
     }
 
     // MARK: - LLMResponseProtocol Conformance
@@ -60,6 +72,6 @@ public struct OpenAILLMResponse: LLMResponseProtocol, Codable {
     /// Returns token usage.
     public var tokenUsage: LLMTokenUsage? {
         guard let usage = usage else { return nil }
-        return LLMTokenUsage(promptTokens: usage.prompt_tokens, completionTokens: usage.completion_tokens, totalTokens: usage.total_tokens)
+        return LLMTokenUsage(promptTokens: usage.promptTokens, completionTokens: usage.completionTokens, totalTokens: usage.totalTokens)
     }
 }

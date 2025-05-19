@@ -42,7 +42,6 @@ public class ContextController {
         self.summarizer = summarizer ?? Summarizer(llmService: llmService)
     }
 
-
     /**
      Updates the LLM service used by the `ContextController`.
 

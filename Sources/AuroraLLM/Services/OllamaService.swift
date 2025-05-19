@@ -262,10 +262,10 @@ public class OllamaService: LLMServiceProtocol {
                     let finalResponse = OllamaLLMResponse(
                         vendor: vendor,
                         model: model,
-                        created_at: partialResponse.created_at,
+                        createdAt: partialResponse.createdAt,
                         response: accumulatedContent,
                         done: true,
-                        eval_count: partialResponse.eval_count
+                        evalCount: partialResponse.evalCount
                     )
                     continuation.resume(returning: finalResponse)
                     return

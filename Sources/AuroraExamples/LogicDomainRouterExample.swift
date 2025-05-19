@@ -27,14 +27,14 @@ struct LogicDomainRouterExample {
 
     let privacyRouter = LogicDomainRouter(
         name: "Privacy Gate",
-        supportedDomains: ["private","public"],
+        supportedDomains: ["private", "public"],
         rules: [
-            .regex(name:"Credit Card",
-                   pattern:#"\b(?:\d[ -]*?){13,16}\b"#,
-                   domain:"private", priority:100),
-            .regex(name:"US Phone",
-                   pattern:#"\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b"#,
-                   domain:"private", priority:100),
+            .regex(name: "Credit Card",
+                   pattern: #"\b(?:\d[ -]*?){13,16}\b"#,
+                   domain: "private", priority: 100),
+            .regex(name: "US Phone",
+                   pattern: #"\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b"#,
+                   domain: "private", priority: 100),
             .regex(name: "Email",
                    pattern: #"[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}"#,
                    domain: "private",
@@ -50,7 +50,7 @@ struct LogicDomainRouterExample {
 
     let costRouter = LogicDomainRouter(
         name: "Cost Tier",
-        supportedDomains: ["economy","premium"],
+        supportedDomains: ["economy", "premium"],
         rules: [
             .tokens(name: "Cheap for short (<40 tokens)",
                     domain: "economy") { $0 < 40 }
@@ -61,7 +61,7 @@ struct LogicDomainRouterExample {
 
     let latencyRouter = LogicDomainRouter(
         name: "Latency Optimiser (route to a fast QnA model)",
-        supportedDomains: ["fastQA","default"],
+        supportedDomains: ["fastQA", "default"],
         rules: [
             .regex(name: "Ends with question mark",
                    pattern: #"\?$"#,
@@ -72,18 +72,18 @@ struct LogicDomainRouterExample {
 
     let langRouter = LogicDomainRouter(
         name: "Language Splitter",
-        supportedDomains: ["foreign","english"],
+        supportedDomains: ["foreign", "english"],
         rules: [
-            .regex(name:"Non-ASCII letter",
-                   pattern:#"(?i)[^\p{ASCII}\P{L}]"#,   // any Unicode letter outside ASCII range
-                   domain:"foreign")
+            .regex(name: "Non-ASCII letter",
+                   pattern: #"(?i)[^\p{ASCII}\P{L}]"#,   // any Unicode letter outside ASCII range
+                   domain: "foreign")
         ],
         defaultDomain: "english"
     )
 
     let abRouterRandom = LogicDomainRouter(
         name: "A/B Experiment",
-        supportedDomains: ["baseline","experiment"],
+        supportedDomains: ["baseline", "experiment"],
         rules: [.regex(name: "Match all", pattern: #".+"#, domain: "baseline")],
         defaultDomain: "baseline",
         evaluationStrategy: .probabilisticWeights(
@@ -94,7 +94,7 @@ struct LogicDomainRouterExample {
 
     let abRouterSeeded = LogicDomainRouter(
         name: "A/B Experiment",
-        supportedDomains: ["baseline","experiment"],
+        supportedDomains: ["baseline", "experiment"],
         rules: [.regex(name: "Match all", pattern: #".+"#, domain: "baseline")],
         defaultDomain: "baseline",
         evaluationStrategy: .probabilisticWeights(
@@ -161,7 +161,7 @@ struct LogicDomainRouterExample {
 
         let afterHoursRouter = LogicDomainRouter(
             name: "After-Hours",
-            supportedDomains: ["offPeak","daytime"],
+            supportedDomains: ["offPeak", "daytime"],
             rules: [
                 .hours(name: "Midnight-5 AM",
                        hours: 0...5,
@@ -209,7 +209,6 @@ struct LogicDomainRouterExample {
         await run(  router: abRouterSeeded,
                     prompts: abPrompts)
     }
-
 
     private func run(router: LogicDomainRouter, prompts: [String]) async {
         for p in prompts {

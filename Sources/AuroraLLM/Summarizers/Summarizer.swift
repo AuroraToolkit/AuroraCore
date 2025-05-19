@@ -102,7 +102,7 @@ public class Summarizer: SummarizerProtocol {
             return "Summarize the following text:\n"
         case .multiple:
             return """
-        You are an assistant that summarizes text. I will provide a JSON object containing a list of texts under the key "texts". 
+        You are an assistant that summarizes text. I will provide a JSON object containing a list of texts under the key "texts".
         For each text, provide a concise summary in the same JSON format under the key "summaries".
 
         For example:

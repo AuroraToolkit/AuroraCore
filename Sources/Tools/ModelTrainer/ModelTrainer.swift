@@ -65,7 +65,6 @@ struct ModelTrainerCLI {
     }
 }
 
-
 struct ModelTrainer {
     /// Trains a text classifier and optionally only writes out the compiled .mlmodelc.
     static func train(

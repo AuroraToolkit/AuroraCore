@@ -21,7 +21,7 @@ public struct OllamaLLMResponse: LLMResponseProtocol, Codable {
     public var model: String?
 
     ///  The timestamp when the response was created.
-    public var created_at: String
+    public var createdAt: String
 
     /// The generated text returned by the Ollama API.
     public let response: String
@@ -30,7 +30,7 @@ public struct OllamaLLMResponse: LLMResponseProtocol, Codable {
     public let done: Bool
 
     /// The number of tokens in the generated response.
-    public let eval_count: Int?
+    public let evalCount: Int?
 
     /// Token usage is not provided in the Ollama API, so it's `nil`.
     public var tokenUsage: LLMTokenUsage? {
@@ -42,5 +42,12 @@ public struct OllamaLLMResponse: LLMResponseProtocol, Codable {
     /// Returns the generated text content from the Ollama response.
     public var text: String {
         return response
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case createdAt = "created_at"
+        case response
+        case done
+        case evalCount = "eval_count"
     }
 }

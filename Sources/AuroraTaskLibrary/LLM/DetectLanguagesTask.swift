@@ -97,8 +97,8 @@ public class DetectLanguagesTask: WorkflowComponent {
            4. Ensure the JSON object is properly terminated and complete. Do not cut off or truncate the response.
            5. Ensure the JSON object is formatted correctly.
            6. Do not infer or guess the meaning of strings—only analyze the languages explicitly present.
-           7. Do not include anything else, like markdown notation around it or any extraneous characters. 
-           8. The *ONLY* thing you should return is properly formatted, valid JSON and absolutely nothing else. 
+           7. Do not include anything else, like markdown notation around it or any extraneous characters.
+           8. The *ONLY* thing you should return is properly formatted, valid JSON and absolutely nothing else.
            9. Only analyze the following texts:
 
            \(resolvedStrings.joined(separator: "\n"))

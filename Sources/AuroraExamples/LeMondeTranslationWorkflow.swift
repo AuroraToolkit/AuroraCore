@@ -105,7 +105,6 @@ struct LeMondeTranslationWorkflow {
             print("No summaries generated.")
         }
 
-
         print("\n-------\n")
 
         let report = await workflow.generateReport()

@@ -89,7 +89,7 @@ public class ExtractEntitiesTask: WorkflowComponent {
                extractionPrompt += " Only extract the following types: \(types.joined(separator: ", "))."
            }
            extractionPrompt += """
-           
+
            Example (for format illustration purposes only):
            Input Strings:
            - "Sam Altman is the CEO of OpenAI."

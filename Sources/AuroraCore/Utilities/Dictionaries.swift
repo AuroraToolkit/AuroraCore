@@ -17,7 +17,7 @@ extension Dictionary {
      - Note:This is used for example, to prefix task group names to keys in task output.
      */
     public func mapKeys<NewKey: Hashable>(_ transform: (Key) -> NewKey) -> [NewKey: Value] {
-        return Dictionary<NewKey, Value>(uniqueKeysWithValues: map { (transform($0.key), $0.value) })
+        return [NewKey: Value](uniqueKeysWithValues: map { (transform($0.key), $0.value) })
     }
 }
 
@@ -58,17 +58,17 @@ extension Dictionary where Key == String {
         switch unwrappedType {
         case is [String].Type:
             return asArray(optionalValue, of: String.self) as? T ?? fallback
-            case is [Int].Type:
+        case is [Int].Type:
             return asArray(optionalValue, of: Int.self) as? T ?? fallback
-            case is [Double].Type:
+        case is [Double].Type:
             return asArray(optionalValue, of: Double.self) as? T ?? fallback
-            case is [Float].Type:
+        case is [Float].Type:
             return asArray(optionalValue, of: Float.self) as? T ?? fallback
-            case is [Bool].Type:
+        case is [Bool].Type:
             return asArray(optionalValue, of: Bool.self) as? T ?? fallback
-            case is [Date].Type:
+        case is [Date].Type:
             return asArray(optionalValue, of: Date.self) as? T ?? fallback
-            case is [Data].Type:
+        case is [Data].Type:
             return asArray(optionalValue, of: Data.self) as? T ?? fallback
         default:
             // Handle direct casting

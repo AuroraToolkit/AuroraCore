@@ -93,4 +93,3 @@ public class ClassificationMLTask: WorkflowComponent {
     }
 
 }
-

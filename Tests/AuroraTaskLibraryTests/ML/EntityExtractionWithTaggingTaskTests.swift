@@ -36,13 +36,15 @@ final class EntityExtractionWithTaggingTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await wrapped.execute()
 
         // Then
         guard let result = outputs["tags"] as? [[Tag]] else {
-            XCTFail("Missing or invalid 'tags'"); return
+            XCTFail("Missing or invalid 'tags'")
+            return
         }
         XCTAssertEqual(result, tags)
     }
@@ -59,13 +61,15 @@ final class EntityExtractionWithTaggingTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await wrapped.execute()
 
         // Then
         guard let result = outputs["tags"] as? [[Tag]] else {
-            XCTFail("Missing or invalid 'tags'"); return
+            XCTFail("Missing or invalid 'tags'")
+            return
         }
         // first sentence should tag "Alice" and "Paris"
         XCTAssertTrue(result[0].contains { $0.token == "Alice" && $0.label.contains("Name") })

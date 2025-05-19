@@ -96,7 +96,7 @@ public struct RSSArticle {
 /**
     The `RSSParserDelegate` class is responsible for parsing the RSS feed XML data.
  */
-fileprivate class RSSParserDelegate: NSObject, XMLParserDelegate {
+private class RSSParserDelegate: NSObject, XMLParserDelegate {
 
     var articles: [RSSArticle] = []
     private var currentElement: String = ""
@@ -123,7 +123,7 @@ fileprivate class RSSParserDelegate: NSObject, XMLParserDelegate {
 
         let trimmedString = string.trimmingCharacters(in: .whitespacesAndNewlines)
         switch currentElement {
-            case "title":
+        case "title":
             currentTitle += trimmedString
         case "link":
             currentLink += trimmedString

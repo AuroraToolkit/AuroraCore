@@ -185,7 +185,7 @@ final class ExtractEntitiesTaskTests: XCTestCase {
 
         for (entityType, _) in expectedEntities {
             let actualValues = Set(entities[entityType] ?? [])
-            XCTAssertTrue(actualValues.count > 0, "No \(entityType) entities found.")
+            XCTAssertTrue(!actualValues.isEmpty, "No \(entityType) entities found.")
         }
     }
 

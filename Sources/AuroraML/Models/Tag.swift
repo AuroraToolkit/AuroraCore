@@ -77,4 +77,3 @@ public struct Tag: Equatable {
         self.length = length
     }
 }
-

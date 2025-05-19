@@ -210,7 +210,6 @@ struct CustomerFeedbackAnalysisWorkflow {
             print("No suggestions generated.")
         }
 
-
         print("\n-------\n")
 
         let report = await workflow.generateReport()

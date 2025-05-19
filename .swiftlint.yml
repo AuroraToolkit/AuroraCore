@@ -1,0 +1,43 @@
+# SwiftLint configuration for Aurora Toolkit
+
+# Include source and test files
+included:
+  - Sources
+  - Tests
+
+# Exclude build artifacts and generated docs
+excluded:
+  - .build
+  - Packages
+  - docs
+
+opt_in_rules:
+  - trailing_whitespace
+  - colon
+  - redundant_self
+  - empty_count
+  - explicit_init
+  - redundant_nil_coalescing
+
+line_length:
+  warning: 120
+  error: 200
+
+identifier_name:
+  min_length:
+    warning: 3
+    error: 1
+  excluded: ["_", "a", "b", "c", "d", "i", "j", "k", "p", "q", "r", "s", "t", "v", "x", "y", "c1", "c2", "id", "ns", "p1", "p2", "rx", "rng"]
+
+indentation_width:
+  indentation_width: 4     # or "tab" if you prefer tabs
+  ignores_comments: true   # <-- don’t flag indentation inside /** */ or //
+
+# Disable rules as needed
+disabled_rules:
+  - todo
+  - file_length
+  - type_body_length
+  - function_body_length
+  - line_length
+  - indentation_width

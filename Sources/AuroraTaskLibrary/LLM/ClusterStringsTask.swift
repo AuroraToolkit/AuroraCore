@@ -89,7 +89,7 @@ public class ClusterStringsTask: WorkflowComponent {
             }
 
             clusteringPrompt += """
-            
+
             Example (for format illustration purposes only):
             Input Strings:
             - "The stock market dropped today."
@@ -108,12 +108,12 @@ public class ClusterStringsTask: WorkflowComponent {
             3. Ensure that the clusters are meaningful and relevant.
             4. Cluster the strings based on **semantic meaning and context**. Strings that describe similar topics, themes, or ideas should belong to the same cluster. For example:
                 - Group strings about technology or artificial intelligence together.
-                - Group strings about finance, economy, or stock markets together. 
+                - Group strings about finance, economy, or stock markets together.
             5. Ensure the JSON object is properly formatted and valid.
             6. Ensure the JSON object is properly terminated and complete. Do not cut off or truncate the response.
             7. Do not include anything else, like markdown notation around it or any extraneous characters. The ONLY thing you should return is properly formatted, valid JSON and absolutely nothing else.
             8. Only process the following texts:
-            
+
             \(resolvedStrings.joined(separator: "\n"))
             """
 

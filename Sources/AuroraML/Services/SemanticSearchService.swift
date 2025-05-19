@@ -51,6 +51,11 @@ public final class SemanticSearchService: MLServiceProtocol {
     private let topK: Int
     private let logger: CustomLogger?
 
+    private struct ScoredDocument {
+      let document: String
+      let score: Double
+    }
+
     /**
      - Parameters:
         - name: Identifier for this service.
@@ -124,17 +129,12 @@ public final class SemanticSearchService: MLServiceProtocol {
 
         /// Compute cosine similarity between the query vector and each document vector.
         let scored = zip(documents, docVectors)
-            .map { doc, vec in
-                ["document": doc,
-                 "score": cosine(qVec, vec)]
-            }
-            .sorted {
-                ($0["score"] as! Double) > ($1["score"] as! Double)
-            }
+          .map { document, vector in ScoredDocument(document: document, score: cosine(qVec, vector)) }
+          .sorted { $0.score > $1.score }
+          .map { ["document": $0.document, "score": $0.score] }
 
         /// Return the top K results.
         let topResults = Array(scored.prefix(topK))
         return MLResponse(outputs: ["results": topResults], info: nil)
     }
 }
-

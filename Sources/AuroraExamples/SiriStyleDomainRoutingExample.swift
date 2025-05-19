@@ -114,7 +114,7 @@ struct SiriStyleDomainRoutingExample {
 
         for (text, expected) in testCases {
             let request = LLMRequest(messages: [.init(role: .user, content: text)])
-            let result = (try? await router.determineDomainWithConfidence(for: request)) ?? nil
+            let result = (try? await router.determineDomainWithConfidence(for: request))
             let domain = result?.0 ?? "unknown"
             let confidence = result?.1 ?? 0.0
 

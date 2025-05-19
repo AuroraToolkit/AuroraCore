@@ -9,32 +9,32 @@ import XCTest
 @testable import AuroraCore
 
 final class DictionariesTests: XCTestCase {
-    
+
     func testMapKeys() {
         let original = ["one": 1, "two": 2, "three": 3]
         let transformed = original.mapKeys { $0.uppercased() }
-        
+
         XCTAssertEqual(transformed, ["ONE": 1, "TWO": 2, "THREE": 3])
     }
-    
+
     func testResolveWithString() {
         let dictionary: [String: Any] = ["key1": "value1", "key2": "value2"]
-        
+
         XCTAssertEqual(dictionary.resolve(key: "key1", fallback: "default"), "value1")
         XCTAssertEqual(dictionary.resolve(key: "key3", fallback: "default"), "default")
     }
-    
+
     func testResolveWithArray() {
         let dictionary: [String: Any] = ["key1": ["one", "two"], "key2": [1, 2, 3]]
-        
+
         XCTAssertEqual(dictionary.resolve(key: "key1", fallback: []), ["one", "two"])
         XCTAssertEqual(dictionary.resolve(key: "key2", fallback: []), [1, 2, 3])
         XCTAssertEqual(dictionary.resolve(key: "key3", fallback: ["default"]), ["default"])
     }
-    
+
     func testResolveWithInt() {
         let dictionary: [String: Any] = ["key1": 123, "key2": 456]
-        
+
         XCTAssertEqual(dictionary.resolve(key: "key1", fallback: 0), 123)
         XCTAssertEqual(dictionary.resolve(key: "key2", fallback: 0), 456)
         XCTAssertEqual(dictionary.resolve(key: "key3", fallback: 789), 789)
@@ -56,7 +56,7 @@ final class DictionariesTests: XCTestCase {
 
     func testResolveWithBool() {
         let dictionary: [String: Any] = ["key1": true, "key2": false]
-        
+
         XCTAssertTrue(dictionary.resolve(key: "key1", fallback: false))
         XCTAssertFalse(dictionary.resolve(key: "key2", fallback: true))
     }
@@ -77,14 +77,14 @@ final class DictionariesTests: XCTestCase {
 
     func testResolveWithNilFallback() {
         let dictionary: [String: Any] = ["key1": "value1", "key2": 123]
-        
+
         XCTAssertEqual(dictionary.resolve(key: "key1", fallback: nil), "value1")
         XCTAssertNil(dictionary.resolve(key: "key3", fallback: nil))
     }
-    
+
     func testResolveWithEmptyArrays() {
         let dictionary: [String: Any] = ["key1": [], "key2": ArraySlice<Int>()]
-        
+
         XCTAssertEqual(dictionary.resolve(key: "key1", fallback: ["default"]), [])
         XCTAssertEqual(dictionary.resolve(key: "key2", fallback: [0]), [])
         XCTAssertEqual(dictionary.resolve(key: "key3", fallback: ["fallback"]), ["fallback"])

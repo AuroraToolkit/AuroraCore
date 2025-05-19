@@ -24,7 +24,8 @@ final class LanguageIdentificationWithTaggingTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await wrapped.execute()
 
@@ -32,7 +33,8 @@ final class LanguageIdentificationWithTaggingTaskTests: XCTestCase {
         guard let result = outputs["tags"] as? [[Tag]],
               let tags = result.first,
               let lang = tags.first?.label.lowercased() else {
-            XCTFail("Missing or invalid language tag"); return
+            XCTFail("Missing or invalid language tag")
+            return
         }
         XCTAssertEqual(lang, "en", "Expected 'en' for English text")
     }
@@ -49,7 +51,8 @@ final class LanguageIdentificationWithTaggingTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await wrapped.execute()
 
@@ -75,7 +78,8 @@ final class LanguageIdentificationWithTaggingTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await wrapped.execute()
 
@@ -83,7 +87,8 @@ final class LanguageIdentificationWithTaggingTaskTests: XCTestCase {
         guard let result = outputs["tags"] as? [[Tag]],
               let tags = result.first,
               let lang = tags.first?.label.lowercased() else {
-            XCTFail("Missing or invalid language tag"); return
+            XCTFail("Missing or invalid language tag")
+            return
         }
         XCTAssertEqual(lang, "fr", "Expected 'fr' for French text")
     }
@@ -100,7 +105,8 @@ final class LanguageIdentificationWithTaggingTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await wrapped.execute()
 
@@ -108,7 +114,8 @@ final class LanguageIdentificationWithTaggingTaskTests: XCTestCase {
         guard let result = outputs["tags"] as? [[Tag]],
               let tags = result.first,
               let lang = tags.first?.label else {
-            XCTFail("Missing or invalid language tag"); return
+            XCTFail("Missing or invalid language tag")
+            return
         }
         // NLTagger may return "zh-Hans" or simply "zh"
         XCTAssertTrue(lang.lowercased().hasPrefix("zh"), "Expected 'zh' prefix for Chinese text, got: \(lang)")
@@ -126,7 +133,8 @@ final class LanguageIdentificationWithTaggingTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await wrapped.execute()
 
@@ -134,7 +142,8 @@ final class LanguageIdentificationWithTaggingTaskTests: XCTestCase {
         guard let result = outputs["tags"] as? [[Tag]],
               let tags = result.first,
               let lang = tags.first?.label.lowercased() else {
-            XCTFail("Missing or invalid language tag"); return
+            XCTFail("Missing or invalid language tag")
+            return
         }
         XCTAssertEqual(lang, "de", "Expected 'de' for German text")
     }
@@ -151,7 +160,8 @@ final class LanguageIdentificationWithTaggingTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await wrapped.execute()
 
@@ -159,7 +169,8 @@ final class LanguageIdentificationWithTaggingTaskTests: XCTestCase {
         guard let result = outputs["tags"] as? [[Tag]],
               let tags = result.first,
               let lang = tags.first?.label.lowercased() else {
-            XCTFail("Missing or invalid language tag"); return
+            XCTFail("Missing or invalid language tag")
+            return
         }
         XCTAssertEqual(lang, "it", "Expected 'it' for Italian text")
     }
@@ -176,7 +187,8 @@ final class LanguageIdentificationWithTaggingTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await wrapped.execute()
 
@@ -184,7 +196,8 @@ final class LanguageIdentificationWithTaggingTaskTests: XCTestCase {
         guard let result = outputs["tags"] as? [[Tag]],
               let tags = result.first,
               let lang = tags.first?.label.lowercased() else {
-            XCTFail("Missing or invalid language tag"); return
+            XCTFail("Missing or invalid language tag")
+            return
         }
         XCTAssertEqual(lang, "ja", "Expected 'ja' for Japanese text")
     }
@@ -201,7 +214,8 @@ final class LanguageIdentificationWithTaggingTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await wrapped.execute()
 
@@ -209,7 +223,8 @@ final class LanguageIdentificationWithTaggingTaskTests: XCTestCase {
         guard let result = outputs["tags"] as? [[Tag]],
               let tags = result.first,
               let lang = tags.first?.label.lowercased() else {
-            XCTFail("Missing or invalid language tag"); return
+            XCTFail("Missing or invalid language tag")
+            return
         }
         XCTAssertEqual(lang, "ar", "Expected 'ar' for Arabic text")
     }
@@ -226,7 +241,8 @@ final class LanguageIdentificationWithTaggingTaskTests: XCTestCase {
 
         // When
         guard case let .task(wrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await wrapped.execute()
 
@@ -234,7 +250,8 @@ final class LanguageIdentificationWithTaggingTaskTests: XCTestCase {
         guard let result = outputs["tags"] as? [[Tag]],
               let tags = result.first,
               let lang = tags.first?.label.lowercased() else {
-            XCTFail("Missing or invalid language tag"); return
+            XCTFail("Missing or invalid language tag")
+            return
         }
         XCTAssertEqual(lang, "ko", "Expected 'ko' for Korean text")
     }

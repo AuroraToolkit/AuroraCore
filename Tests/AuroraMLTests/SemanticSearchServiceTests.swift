@@ -53,7 +53,8 @@ final class SemanticSearchServiceTests: XCTestCase {
 
         // Then
         guard let results = response.outputs["results"] as? [[String: Any]] else {
-            XCTFail("Missing 'results'"); return
+            XCTFail("Missing 'results'")
+            return
         }
         XCTAssertEqual(results.count, 2)
 
@@ -91,7 +92,8 @@ final class SemanticSearchServiceTests: XCTestCase {
 
         // Then
         guard let results = response.outputs["results"] as? [[String: Any]] else {
-            XCTFail("Missing 'results'"); return
+            XCTFail("Missing 'results'")
+            return
         }
         XCTAssertEqual(results.count, 1)
         XCTAssertEqual(results[0]["document"] as? String, "B")

@@ -5,7 +5,6 @@
 //  Created by Dan Murrell Jr on 4/3/25.
 //
 
-
 import Foundation
 import os.log
 import AuroraCore
@@ -250,70 +249,70 @@ public class GoogleService: LLMServiceProtocol {
 
     // Maps the internal LLMRequest to the Google API specific request structure.
     private func mapToGoogleRequest(_ request: LLMRequest, serviceSystemPrompt: String?) throws -> GoogleGenerateContentRequest {
-         var googleContents: [GoogleContent] = []
-         var currentSystemPrompt: String? = nil
+        var googleContents: [GoogleContent] = []
+        var currentSystemPrompt: String?
 
-         for message in request.messages {
-             let role: String
-             switch message.role {
-             case .user: role = "user"
-             case .assistant: role = "model" // Google uses "model" for assistant role
-             case .system:
-                 // Use the first system message found as the system instruction
-                 if currentSystemPrompt == nil {
-                      currentSystemPrompt = message.content
-                 } else {
-                      // Use .info instead of .warning
-                      logger?.info("GoogleService: Multiple system messages found in request; only the first will be used as systemInstruction.", category: "GoogleService")
-                 }
-                 continue // Don't add system messages to the main 'contents' array
-             case .custom(let customRole):
-                  // Use .info instead of .warning
-                  logger?.info("GoogleService: Mapping custom role '\(customRole)' to 'user'. Adjust if needed.", category: "GoogleService")
-                 role = "user" // Default mapping for custom roles, adjust as needed
-             }
-             // Ensure role is populated for contents, handle potential nil from systemInstruction mapping logic if adapted poorly
-             guard !role.isEmpty else { continue } // Should not happen with current logic, but safe guard
-             googleContents.append(GoogleContent(role: role, parts: [GooglePart(text: message.content)]))
-         }
+        for message in request.messages {
+            let role: String
+            switch message.role {
+            case .user: role = "user"
+            case .assistant: role = "model" // Google uses "model" for assistant role
+            case .system:
+                // Use the first system message found as the system instruction
+                if currentSystemPrompt == nil {
+                    currentSystemPrompt = message.content
+                } else {
+                    // Use .info instead of .warning
+                    logger?.info("GoogleService: Multiple system messages found in request; only the first will be used as systemInstruction.", category: "GoogleService")
+                }
+                continue // Don't add system messages to the main 'contents' array
+            case .custom(let customRole):
+                // Use .info instead of .warning
+                logger?.info("GoogleService: Mapping custom role '\(customRole)' to 'user'. Adjust if needed.", category: "GoogleService")
+                role = "user" // Default mapping for custom roles, adjust as needed
+            }
+            // Ensure role is populated for contents, handle potential nil from systemInstruction mapping logic if adapted poorly
+            guard !role.isEmpty else { continue } // Should not happen with current logic, but safe guard
+            googleContents.append(GoogleContent(role: role, parts: [GooglePart(text: message.content)]))
+        }
 
-         // Prioritize system message from request, fall back to service default
-         let finalSystemPrompt = currentSystemPrompt ?? serviceSystemPrompt
-         var googleSystemInstruction: GoogleContent? = nil
-         if let promptText = finalSystemPrompt, !promptText.isEmpty {
-              // System instruction has 'parts' but no 'role' according to docs examples
-              googleSystemInstruction = GoogleContent(role: nil, parts: [GooglePart(text: promptText)])
-         }
+        // Prioritize system message from request, fall back to service default
+        let finalSystemPrompt = currentSystemPrompt ?? serviceSystemPrompt
+        var googleSystemInstruction: GoogleContent?
+        if let promptText = finalSystemPrompt, !promptText.isEmpty {
+            // System instruction has 'parts' but no 'role' according to docs examples
+            googleSystemInstruction = GoogleContent(role: nil, parts: [GooglePart(text: promptText)])
+        }
 
-         // Apply output token policy here before setting maxOutputTokens in config
-         var effectiveMaxOutput = request.maxTokens
-         switch outputTokenPolicy {
-             case .adjustToServiceLimits:
-                 effectiveMaxOutput = min(request.maxTokens, self.maxOutputTokens) // Cap at service limit
-             case .strictRequestLimits:
-                 guard request.maxTokens <= self.maxOutputTokens else {
-                     logger?.error("GoogleService: Strict output token limit failed. Request maxTokens (\(request.maxTokens)) > Service maxOutputTokens (\(self.maxOutputTokens))", category: "GoogleService")
-                     throw LLMServiceError.custom(message: "Requested maxTokens (\(request.maxTokens)) exceeds service limit (\(self.maxOutputTokens)) with strict policy.")
-                 }
-                 // Use request.maxTokens as it's within limits
-         }
+        // Apply output token policy here before setting maxOutputTokens in config
+        var effectiveMaxOutput = request.maxTokens
+        switch outputTokenPolicy {
+        case .adjustToServiceLimits:
+            effectiveMaxOutput = min(request.maxTokens, self.maxOutputTokens) // Cap at service limit
+        case .strictRequestLimits:
+            guard request.maxTokens <= self.maxOutputTokens else {
+                logger?.error("GoogleService: Strict output token limit failed. Request maxTokens (\(request.maxTokens)) > Service maxOutputTokens (\(self.maxOutputTokens))", category: "GoogleService")
+                throw LLMServiceError.custom(message: "Requested maxTokens (\(request.maxTokens)) exceeds service limit (\(self.maxOutputTokens)) with strict policy.")
+            }
+            // Use request.maxTokens as it's within limits
+        }
 
-         let generationConfig = GoogleGenerationConfig(
-             temperature: request.temperature,
-             topP: request.options?.topP,
-             maxOutputTokens: effectiveMaxOutput, // Use adjusted value
-             stopSequences: request.options?.stopSequences
-         )
+        let generationConfig = GoogleGenerationConfig(
+            temperature: request.temperature,
+            topP: request.options?.topP,
+            maxOutputTokens: effectiveMaxOutput, // Use adjusted value
+            stopSequences: request.options?.stopSequences
+        )
 
-         // Note: Input token policy (trimming) should be handled by LLMManager *before* calling sendRequest
-         // This service assumes the input request fits within the allowed input limits based on the policy.
+        // Note: Input token policy (trimming) should be handled by LLMManager *before* calling sendRequest
+        // This service assumes the input request fits within the allowed input limits based on the policy.
 
-         return GoogleGenerateContentRequest(
-             contents: googleContents,
-             systemInstruction: googleSystemInstruction,
-             generationConfig: generationConfig,
-             safetySettings: nil
-         )
+        return GoogleGenerateContentRequest(
+            contents: googleContents,
+            systemInstruction: googleSystemInstruction,
+            generationConfig: generationConfig,
+            safetySettings: nil
+        )
     }
 
     // MARK: - Streaming Delegate Inner Class
@@ -346,7 +345,10 @@ public class GoogleService: LLMServiceProtocol {
 
         // Handles the initial response headers and status code.
         func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
-            guard !isFinished else { completionHandler(.cancel); return } // Don't process if already finished
+            guard !isFinished else {
+                completionHandler(.cancel)
+                return
+            } // Don't process if already finished
 
             guard let httpResponse = response as? HTTPURLResponse else {
                 logger?.error("GoogleService [StreamingDelegate] Received non-HTTP response.", category: "GoogleService.StreamingDelegate")
@@ -438,7 +440,6 @@ public class GoogleService: LLMServiceProtocol {
                       if firstBrace > receivedDataBuffer.startIndex {
                            receivedDataBuffer.removeSubrange(receivedDataBuffer.startIndex..<firstBrace)
                       }
-
 
                  } catch {
                      // Decoding failed. If buffer seems to only contain this failed chunk, maybe discard it? Risky.

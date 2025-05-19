@@ -42,13 +42,15 @@ final class TaggingMLTaskTests: XCTestCase {
 
         // When
         guard case let .task(unwrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await unwrapped.execute()
 
         // Then
         guard let resultTags = outputs["tags"] as? [[Tag]] else {
-            XCTFail("Output 'tags' missing or of wrong type"); return
+            XCTFail("Output 'tags' missing or of wrong type")
+            return
         }
         XCTAssertEqual(resultTags.count, 2)
         XCTAssertEqual(resultTags[0], [tag1])
@@ -65,7 +67,8 @@ final class TaggingMLTaskTests: XCTestCase {
 
         // When
         guard case let .task(unwrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
 
         // Then
@@ -110,13 +113,15 @@ final class TaggingMLTaskTests: XCTestCase {
 
         // When
         guard case let .task(unwrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await unwrapped.execute(inputs: ["strings": override])
 
         // Then
         guard let resultTags = outputs["tags"] as? [[Tag]] else {
-            XCTFail("Output 'tags' missing or of wrong type"); return
+            XCTFail("Output 'tags' missing or of wrong type")
+            return
         }
         XCTAssertEqual(resultTags[0], [tagX])
         XCTAssertEqual(resultTags[1], [tagY])
@@ -142,7 +147,8 @@ final class TaggingMLTaskTests: XCTestCase {
 
         // Then
         guard let tagArrays = outputs["tags"] as? [[Tag]] else {
-            XCTFail("Output 'tags' missing or wrong type"); return
+            XCTFail("Output 'tags' missing or wrong type")
+            return
         }
         let allTags = tagArrays[0]  // ["Alice","went","to","Paris"] tags
 
@@ -186,7 +192,8 @@ final class TaggingMLTaskTests: XCTestCase {
 
         // When
         guard case let .task(unwrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
 
         // Then
@@ -204,13 +211,14 @@ final class TaggingMLTaskTests: XCTestCase {
         // Given a service that returns a different key
         let service = MockMLService(
             name: "MockMissing",
-            response: MLResponse(outputs: ["foo":"bar"], info: nil)
+            response: MLResponse(outputs: ["foo": "bar"], info: nil)
         )
         let task = TaggingMLTask(service: service, strings: ["Hello"])
 
         // When
         guard case let .task(unwrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
 
         // Then
@@ -278,7 +286,8 @@ final class TaggingMLTaskTests: XCTestCase {
 
         // When
         guard case let .task(unwrapped) = task.toComponent() else {
-            XCTFail("Failed to unwrap Workflow.Task."); return
+            XCTFail("Failed to unwrap Workflow.Task.")
+            return
         }
         let outputs = try await unwrapped.execute()
         let arrays = outputs["tags"] as! [[Tag]]
@@ -290,7 +299,7 @@ final class TaggingMLTaskTests: XCTestCase {
         let firstTokens  = arrays[0].map(\.token)
         let secondTokens = arrays[1].map(\.token)
 
-        XCTAssertEqual(firstTokens,  ["First",  "sentence"])
+        XCTAssertEqual(firstTokens, ["First", "sentence"])
         XCTAssertEqual(secondTokens, ["Second", "sentence"])
     }
 }

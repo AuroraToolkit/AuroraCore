@@ -78,7 +78,6 @@ public struct Workflow {
     /// A logger instance for logging workflow events.
     private let logger: CustomLogger?
 
-
     /**
      Initializes a new `Workflow`.
 
@@ -376,7 +375,7 @@ public struct Workflow {
 
         Task groups can execute tasks sequentially or in parallel based on the `mode` property.
      */
-    private func executeTaskGroup(_ group: TaskGroup, workflowOutputs: [String: Any]) async throws -> [String: Any]  {
+    private func executeTaskGroup(_ group: TaskGroup, workflowOutputs: [String: Any]) async throws -> [String: Any] {
         logger?.debug("Executing task group: \(group.name)", category: "Workflow")
 
         let timer = ExecutionTimer().start()
@@ -523,7 +522,6 @@ public struct Workflow {
         }
     }
 
-
     // MARK: - Execution Details
 
     /**
@@ -627,7 +625,7 @@ public struct Workflow {
          */
         public func execute(inputs: [String: Any?] = [:]) async throws -> [String: Any] {
             let mergedInputs = self.inputs
-                .merging(inputs as [String : Any]) { (_, new) in new } // Runtime inputs take precedence
+                .merging(inputs as [String: Any]) { (_, new) in new } // Runtime inputs take precedence
                 .compactMapValues { $0 }
             if let executeBlock = executeBlock {
                 return try await executeBlock(mergedInputs)
@@ -689,7 +687,6 @@ public struct Workflow {
 
         /// Holds the execution details of the task group.
         public let detailsHolder = ExecutionDetailsHolder()
-
 
         /**
          Initializes a new task group.
