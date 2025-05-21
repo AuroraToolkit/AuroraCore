@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension Dictionary {
+public extension Dictionary {
     /**
      Returns a new dictionary with transformed keys while keeping the same values.
 
@@ -16,12 +16,12 @@ extension Dictionary {
 
      - Note:This is used for example, to prefix task group names to keys in task output.
      */
-    public func mapKeys<NewKey: Hashable>(_ transform: (Key) -> NewKey) -> [NewKey: Value] {
+    func mapKeys<NewKey: Hashable>(_ transform: (Key) -> NewKey) -> [NewKey: Value] {
         return [NewKey: Value](uniqueKeysWithValues: map { (transform($0.key), $0.value) })
     }
 }
 
-extension Dictionary where Key == String {
+public extension Dictionary where Key == String {
     /**
      Resolves a value from the dictionary by its key.
      If the key exists in the dictionary, its value is returned (even if `nil`). Otherwise, the provided fallback value is returned.
@@ -31,7 +31,7 @@ extension Dictionary where Key == String {
         - fallback: The fallback value to use if the key does not exist in the dictionary.
      - Returns: The resolved value or the fallback, which can be `nil`.
      */
-    public func resolve<T>(key: String, fallback: T?) -> T? {
+    func resolve<T>(key: String, fallback: T?) -> T? {
         return resolveInternal(key: key, fallback: fallback)
     }
 
@@ -44,7 +44,7 @@ extension Dictionary where Key == String {
         - fallback: The fallback value to use if the key does not exist in the dictionary.
      - Returns: The resolved value or the fallback.
      */
-    public func resolve<T>(key: String, fallback: T) -> T {
+    func resolve<T>(key: String, fallback: T) -> T {
         return resolveInternal(key: key, fallback: fallback) ?? fallback
     }
 

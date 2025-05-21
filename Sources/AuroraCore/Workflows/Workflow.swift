@@ -88,11 +88,11 @@ public struct Workflow {
         - logger: An optional logger for logging workflow events.
      */
     public init(name: String, description: String, logger: CustomLogger? = nil, @WorkflowBuilder _ content: () -> [Component]) {
-        self.id = UUID()
+        id = UUID()
         self.name = name
         self.description = description
         self.logger = logger
-        self.componentsManager = ComponentsManager(initialComponents: content())
+        componentsManager = ComponentsManager(initialComponents: content())
     }
 
     // MARK: - Workflow Lifecycle
@@ -148,12 +148,12 @@ public struct Workflow {
     public func cancel() async {
         await stateManager.updateState(to: .canceled)
         detailsHolder.details = ExecutionDetails(
-                state: .canceled,
-                startedAt: nil,
-                endedAt: Date(),
-                executionTime: 0,
-                outputs: outputs
-            )
+            state: .canceled,
+            startedAt: nil,
+            endedAt: Date(),
+            executionTime: 0,
+            outputs: outputs
+        )
         logger?.debug("Workflow \(name) canceled.", category: "Workflow")
     }
 
@@ -227,11 +227,10 @@ public struct Workflow {
         Task outputs are collected and stored in the `outputs` dictionary for use in subsequent tasks.
      */
     private mutating func executeComponents() async throws {
-        var step: Int = 0
+        var step = 0
 
         // Remove the next component until pending components is empty.
         while !componentsManager.isEmpty, let component = componentsManager.removeFirst() {
-
             step += 1
             logger?.debug("\(name) Step \(step)")
 
@@ -257,26 +256,26 @@ public struct Workflow {
             }
 
             switch component {
-            case .task(let task):
+            case let .task(task):
                 let taskOutputs = try await executeTask(task, workflowOutputs: outputs)
-                self.outputs.merge(taskOutputs.mapKeys { "\(task.name).\($0)" }) { _, new in new }
+                outputs.merge(taskOutputs.mapKeys { "\(task.name).\($0)" }) { _, new in new }
 
-            case .taskGroup(let group):
+            case let .taskGroup(group):
                 let groupOutputs = try await executeTaskGroup(group, workflowOutputs: outputs)
-                self.outputs.merge(groupOutputs.mapKeys { "\(group.name).\($0)" }) { _, new in new }
+                outputs.merge(groupOutputs.mapKeys { "\(group.name).\($0)" }) { _, new in new }
 
-            case .subflow(var subflow):
+            case var .subflow(subflow):
                 // Execute the subflow.
                 await subflow.workflow.start()
                 // Merge subflow outputs (optionally, you can namespace these).
-                self.outputs.merge(subflow.workflow.outputs) { _, new in new }
+                outputs.merge(subflow.workflow.outputs) { _, new in new }
 
-            case .logic(let logicComponent):
+            case let .logic(logicComponent):
                 // Evaluate the logic component, which returns new components.
                 let newComponents = try await logicComponent.evaluate()
                 componentsManager.insert(newComponents)
 
-            case .trigger(let triggerComponent):
+            case let .trigger(triggerComponent):
                 do {
                     let newComponents = try await triggerComponent.waitForTrigger()
                     componentsManager.insert(newComponents)
@@ -314,7 +313,7 @@ public struct Workflow {
     private func resolveInputs(for task: Task, using workflowOutputs: [String: Any]) -> [String: Any] {
         task.inputs.reduce(into: [String: Any]()) { resolvedInputs, entry in
             let (key, value) = entry
-            if let stringValue = value as? String, stringValue.hasPrefix("{") && stringValue.hasSuffix("}") {
+            if let stringValue = value as? String, stringValue.hasPrefix("{"), stringValue.hasSuffix("}") {
                 let dynamicKey = String(stringValue.dropFirst().dropLast()) // Extract key from {key}
                 resolvedInputs[key] = workflowOutputs[dynamicKey]
             } else {
@@ -357,7 +356,8 @@ public struct Workflow {
             startedAt: timer.startTime,
             endedAt: timer.endTime,
             executionTime: duration,
-            outputs: outputs)
+            outputs: outputs
+        )
         task.updateExecutionDetails(executionDetails)
 
         logger?.debug("Task \(task.name) completed in \(String(format: "%.2f", duration)) seconds.", category: "Workflow")
@@ -394,7 +394,7 @@ public struct Workflow {
                 for task in group.tasks {
                     taskGroup.addTask {
                         let taskOutputs = try await self.executeTask(task, workflowOutputs: workflowOutputs)
-                        queue.sync {    // Ensure thread safety when updating groupOutputs
+                        queue.sync { // Ensure thread safety when updating groupOutputs
                             groupOutputs.merge(taskOutputs.mapKeys { "\(task.name).\($0)" }) { _, new in new }
                         }
                     }
@@ -419,7 +419,8 @@ public struct Workflow {
             startedAt: timer.startTime,
             endedAt: timer.endTime,
             executionTime: duration,
-            outputs: groupOutputs)
+            outputs: groupOutputs
+        )
         group.updateExecutionDetails(executionDetails)
 
         logger?.debug("Task group \(group.name) completed in \(String(format: "%.2f", duration)) seconds.", category: "Workflow")
@@ -481,7 +482,7 @@ public struct Workflow {
             - Parameter initialComponents: An optional list of initial components.
          */
         public init(initialComponents: [Component] = []) {
-            self.components = initialComponents
+            components = initialComponents
         }
 
         /**
@@ -495,10 +496,10 @@ public struct Workflow {
         }
 
         /**
-            Inserts one or more components at the beginning of the list.
+             Inserts one or more components at the beginning of the list.
 
-            - Parameter components: The components to insert.
-        */
+             - Parameter components: The components to insert.
+         */
         func insert(_ components: [Workflow.Component]) {
             self.components.insert(contentsOf: components, at: 0)
         }
@@ -609,7 +610,7 @@ public struct Workflow {
             inputs: [String: Any?] = [:],
             executeBlock: (([String: Any]) async throws -> [String: Any])? = nil
         ) {
-            self.id = UUID()
+            id = UUID()
             self.name = name ?? String(describing: Self.self) // Default to the class name
             self.description = description
             self.inputs = inputs.compactMapValues { $0 }
@@ -625,7 +626,7 @@ public struct Workflow {
          */
         public func execute(inputs: [String: Any?] = [:]) async throws -> [String: Any] {
             let mergedInputs = self.inputs
-                .merging(inputs as [String: Any]) { (_, new) in new } // Runtime inputs take precedence
+                .merging(inputs as [String: Any]) { _, new in new } // Runtime inputs take precedence
                 .compactMapValues { $0 }
             if let executeBlock = executeBlock {
                 return try await executeBlock(mergedInputs)
@@ -697,11 +698,11 @@ public struct Workflow {
             - content: A closure that declares the tasks within the group.
          */
         public init(name: String, description: String = "", mode: ExecutionMode = .sequential, @WorkflowBuilder _ content: () -> [Workflow.Component]) {
-            self.id = UUID()
+            id = UUID()
             self.name = name
             self.description = description
             self.mode = mode
-            self.tasks = content().compactMap {
+            tasks = content().compactMap {
                 if case let .task(task) = $0 {
                     return task
                 }
@@ -735,7 +736,7 @@ public struct Workflow {
      */
     public struct Subflow: WorkflowComponent {
         /// A wrapped workflow.
-        internal var workflow: Workflow
+        var workflow: Workflow
 
         /// Reference the execution details of the wrapped workflow.
         public var detailsHolder: ExecutionDetailsHolder {
@@ -743,7 +744,7 @@ public struct Workflow {
         }
 
         public init(name: String, description: String, @WorkflowBuilder _ content: () -> [Workflow.Component]) {
-            self.workflow = Workflow(name: name, description: description, content)
+            workflow = Workflow(name: name, description: description, content)
         }
 
         /// Converts this subflow into a `Workflow.Component`.
@@ -788,7 +789,7 @@ public struct Workflow {
             description: String = "",
             evaluateBlock: @escaping () async throws -> [Workflow.Component]
         ) {
-            self.id = UUID()
+            id = UUID()
             self.name = name ?? String(describing: Self.self)
             self.description = description
             self.evaluateBlock = evaluateBlock
@@ -862,7 +863,7 @@ public struct Workflow {
             description: String = "",
             triggerBlock: @escaping () async throws -> [Workflow.Component]
         ) {
-            self.id = UUID()
+            id = UUID()
             self.name = name ?? String(describing: Self.self)
             self.description = description
             self.triggerBlock = triggerBlock

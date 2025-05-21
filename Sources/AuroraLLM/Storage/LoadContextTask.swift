@@ -5,8 +5,8 @@
 //  Created by Dan Murrell Jr on 9/1/24.
 //
 
-import Foundation
 import AuroraCore
+import Foundation
 
 /**
  `LoadContextTask` is responsible for loading a `Context` object from disk.
@@ -37,7 +37,7 @@ public class LoadContextTask: WorkflowComponent {
         filename: String? = nil,
         inputs: [String: Any?] = [:]
     ) {
-        self.task = Workflow.Task(
+        task = Workflow.Task(
             name: name,
             description: "Load the context from disk",
             inputs: inputs

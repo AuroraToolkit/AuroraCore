@@ -25,8 +25,9 @@ public struct MLRequest {
             - options: Optional parameters to customize the ML request.
      */
     public init(inputs: [String: Any],
-                options: [String: Any]? = nil) {
-        self.inputs  = inputs
+                options: [String: Any]? = nil)
+    {
+        self.inputs = inputs
         self.options = options
     }
 }

@@ -1,6 +1,6 @@
-import Foundation
 import AuroraCore
 import AuroraLLM
+import Foundation
 
 /**
     This example demonstrates how to use a `DualDomainRouter` to classify input prompts into domains using two CoreML models.
@@ -59,17 +59,17 @@ struct DualDomainRoutingExample {
             ("What is photosynthesis and how does it work?", "science"),
             ("What's the current status of fusion energy research?", "science"),
             ("How do vaccines stimulate the immune system?", "science"),
-            ("What are gravitational waves and how are they detected?", "science")
+            ("What are gravitational waves and how are they detected?", "science"),
         ]
         let fallback: [(String, String)] = [
             ("What are the pros and cons of remote work?", "general"),
             ("How do people typically prepare for a big event?", "general"),
             ("What trends are shaping the future?", "general"),
             ("How do different cultures celebrate New Year?", "general"),
-            ("What are some good habits for daily life?", "general")
+            ("What are some good habits for daily life?", "general"),
         ]
 
-        self.testCases = (0..<4).flatMap { _ in base + fallback }.shuffled()
+        testCases = (0 ..< 4).flatMap { _ in base + fallback }.shuffled()
     }
 
     func execute() async {
@@ -170,7 +170,7 @@ struct DualDomainRoutingExample {
         dual: [(String, String, String?)]
     ) {
         print("📊 Comparison Summary:\n")
-        for i in 0..<testCases.count {
+        for i in 0 ..< testCases.count {
             let prompt = testCases[i].0
             let expected = testCases[i].1
             let p = primary[i].2 ?? "nil"

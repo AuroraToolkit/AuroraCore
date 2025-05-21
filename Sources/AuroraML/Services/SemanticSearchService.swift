@@ -5,9 +5,9 @@
 //  Created by Dan Murrell Jr on 5/17/25.
 //
 
+import AuroraCore
 import Foundation
 import NaturalLanguage
-import AuroraCore
 
 /**
  A simple in-memory semantic search over a static document set, using any `MLServiceProtocol`
@@ -52,8 +52,8 @@ public final class SemanticSearchService: MLServiceProtocol {
     private let logger: CustomLogger?
 
     private struct ScoredDocument {
-      let document: String
-      let score: Double
+        let document: String
+        let score: Double
     }
 
     /**
@@ -129,9 +129,9 @@ public final class SemanticSearchService: MLServiceProtocol {
 
         /// Compute cosine similarity between the query vector and each document vector.
         let scored = zip(documents, docVectors)
-          .map { document, vector in ScoredDocument(document: document, score: cosine(qVec, vector)) }
-          .sorted { $0.score > $1.score }
-          .map { ["document": $0.document, "score": $0.score] }
+            .map { document, vector in ScoredDocument(document: document, score: cosine(qVec, vector)) }
+            .sorted { $0.score > $1.score }
+            .map { ["document": $0.document, "score": $0.score] }
 
         /// Return the top K results.
         let topResults = Array(scored.prefix(topK))

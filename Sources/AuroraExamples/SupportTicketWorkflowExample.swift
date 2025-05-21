@@ -5,24 +5,24 @@
 //  Created by Dan Murrell Jr on 5/18/25.
 //
 
-import Foundation
-import NaturalLanguage
 import AuroraCore
 import AuroraML
 import AuroraTaskLibrary
+import Foundation
+import NaturalLanguage
 
 /**
  Example workflow demonstrating multi‐step support‐ticket analysis:
 
- 1. Classify ticket type with a Core ML text classifier  
- 2. Extract the user’s intent via IntentExtractionMLTask  
- 3. Run a semantic search against a static FAQ corpus  
- 4. Tag named entities in the ticket  
+ 1. Classify ticket type with a Core ML text classifier
+ 2. Extract the user’s intent via IntentExtractionMLTask
+ 3. Run a semantic search against a static FAQ corpus
+ 4. Tag named entities in the ticket
 
  The final report prints:
- • Predicted ticket types  
- • Extracted intent(s)  
- • Top-K FAQ hits  
+ • Predicted ticket types
+ • Extracted intent(s)
+ • Top-K FAQ hits
  • Recognized entities
  */
 struct SupportTicketWorkflowExample {
@@ -56,29 +56,29 @@ struct SupportTicketWorkflowExample {
 
         // Build FAQ semantic‐search over a small corpus
         let faqs = [
-          // billing_issue
-          "Why was I charged twice this month?",
-          "How can I update my credit card on file?",
+            // billing_issue
+            "Why was I charged twice this month?",
+            "How can I update my credit card on file?",
 
-          // bug_report
-          "The app crashes when I tap the upload button.",
-          "Search results always come back empty.",
+            // bug_report
+            "The app crashes when I tap the upload button.",
+            "Search results always come back empty.",
 
-          // feature_request
-          "Can you add dark mode to the app?",
-          "Please allow exporting reports as CSV.",
+            // feature_request
+            "Can you add dark mode to the app?",
+            "Please allow exporting reports as CSV.",
 
-          // login_issue
-          "Why was my account locked?",
-          "How do I reset my password?",
+            // login_issue
+            "Why was my account locked?",
+            "How do I reset my password?",
 
-          // password_reset
-          "I never received the password reset email.",
-          "The reset link keeps expiring.",
+            // password_reset
+            "I never received the password reset email.",
+            "The reset link keeps expiring.",
 
-          // account_closure
-          "How do I permanently delete my account?",
-          "Please cancel my subscription and close my profile."
+            // account_closure
+            "How do I permanently delete my account?",
+            "Please cancel my subscription and close my profile.",
         ]
         guard let embedModel = NLEmbedding.sentenceEmbedding(for: .english) else {
             print("❌ Sentence embedding unavailable")
@@ -166,9 +166,9 @@ struct SupportTicketWorkflowExample {
         await workflow.start()
 
         // Gather and print results
-        let types    = workflow.outputs["ClassifyTicket.ticketTypes"] as? [Tag] ?? []
-        let intents  = workflow.outputs["ExtractIntent.intents"] as? [[String: Any]] ?? []
-        let faqsOut  = workflow.outputs["SearchFAQs.faqHits"] as? [[String: Any]] ?? []
+        let types = workflow.outputs["ClassifyTicket.ticketTypes"] as? [Tag] ?? []
+        let intents = workflow.outputs["ExtractIntent.intents"] as? [[String: Any]] ?? []
+        let faqsOut = workflow.outputs["SearchFAQs.faqHits"] as? [[String: Any]] ?? []
         let entities = workflow.outputs["TagEntities.entities"] as? [[Tag]] ?? []
 
         print("🛎 Support Ticket Report")

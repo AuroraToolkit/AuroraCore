@@ -5,44 +5,44 @@
 //  Created by Dan Murrell Jr on 5/18/25.
 //
 
-import Foundation
 import AuroraCore
 import AuroraML
+import Foundation
 
 /**
- `ClassificationMLTask` wraps any `MLServiceProtocol` (e.g. `ClassificationService`)
- into a `WorkflowComponent`.
+  `ClassificationMLTask` wraps any `MLServiceProtocol` (e.g. `ClassificationService`)
+  into a `WorkflowComponent`.
 
- - **Inputs**
-    - `strings`: `[String]` — an array of texts to classify.
- - **Outputs**
-    - `tags`: `[Tag]` — a flat array of `Tag` objects, one per predicted label. Each `Tag` includes:
-        - `token`: the substring that was tagged
-        - `label`: the tag or category
-        - `scheme`: the tagging scheme identifier
-        - `confidence`: optional confidence score
-        - `start`: starting index of the tagged token in the source string
-        - `length`: length of the tagged token in the source string
+  - **Inputs**
+     - `strings`: `[String]` — an array of texts to classify.
+  - **Outputs**
+     - `tags`: `[Tag]` — a flat array of `Tag` objects, one per predicted label. Each `Tag` includes:
+         - `token`: the substring that was tagged
+         - `label`: the tag or category
+         - `scheme`: the tagging scheme identifier
+         - `confidence`: optional confidence score
+         - `start`: starting index of the tagged token in the source string
+         - `length`: length of the tagged token in the source string
 
- ### Example
- ```swift
- let model = try NLModel(contentsOf: myModelURL)
- let service = ClassificationService(
-    name: "SentimentClassifier",
-    model: model,
-    scheme: "sentiment",
-    maxResults: 2
- )
- let task = ClassificationMLTask(
-    service: service,
-    strings: ["I love Swift!", "This is so-so."]
- )
- guard case let .task(wrapped) = task.toComponent() else { return }
- let outputs = try await wrapped.execute()
- let tags = outputs["tags"] as? [Tag]
- print(tags)
-```
- */
+  ### Example
+  ```swift
+  let model = try NLModel(contentsOf: myModelURL)
+  let service = ClassificationService(
+     name: "SentimentClassifier",
+     model: model,
+     scheme: "sentiment",
+     maxResults: 2
+  )
+  let task = ClassificationMLTask(
+     service: service,
+     strings: ["I love Swift!", "This is so-so."]
+  )
+  guard case let .task(wrapped) = task.toComponent() else { return }
+  let outputs = try await wrapped.execute()
+  let tags = outputs["tags"] as? [Tag]
+  print(tags)
+ ```
+  */
 public class ClassificationMLTask: WorkflowComponent {
     private let task: Workflow.Task
 
@@ -61,7 +61,7 @@ public class ClassificationMLTask: WorkflowComponent {
         strings: [String]? = nil,
         inputs: [String: Any?] = [:]
     ) {
-        self.task = Workflow.Task(
+        task = Workflow.Task(
             name: name ?? String(describing: Self.self),
             description: description ?? "Run text classification using an MLServiceProtocol",
             inputs: inputs
@@ -91,5 +91,4 @@ public class ClassificationMLTask: WorkflowComponent {
     public func toComponent() -> Workflow.Component {
         .task(task)
     }
-
 }

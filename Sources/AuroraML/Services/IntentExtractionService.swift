@@ -5,8 +5,8 @@
 //  Created by Dan Murrell Jr on 5/14/25.
 //
 
-import Foundation
 import AuroraCore
+import Foundation
 import NaturalLanguage
 
 /**
@@ -40,7 +40,7 @@ public final class IntentExtractionService: MLServiceProtocol {
         logger: CustomLogger? = nil
     ) {
         self.name = name
-        self.classifier = ClassificationService(
+        classifier = ClassificationService(
             name: "IntentExtraction",
             model: model,
             scheme: "intent",
@@ -64,7 +64,7 @@ public final class IntentExtractionService: MLServiceProtocol {
         let intents: [[String: Any]] = tags.map { tag in
             [
                 "name": tag.label,
-                "confidence": tag.confidence ?? 0
+                "confidence": tag.confidence ?? 0,
             ]
         }
 

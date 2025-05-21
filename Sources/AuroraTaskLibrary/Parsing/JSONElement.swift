@@ -16,7 +16,7 @@ public enum JSONElement: Equatable {
     case object([String: JSONElement])
     case array([JSONElement])
     case string(String)
-    case number(NSNumber)   // All numeric values, including booleans as 0(false)/1(true)
+    case number(NSNumber) // All numeric values, including booleans as 0(false)/1(true)
     case null
 
     /**
@@ -57,15 +57,15 @@ public enum JSONElement: Equatable {
     /// Debug description for pretty-printing the JSON element.
     public var debugDescription: String {
         switch self {
-        case .object(let dictionary):
+        case let .object(dictionary):
             let sortedKeys = dictionary.keys.sorted() // Sort keys alphabetically
             let sortedDictionary = sortedKeys.map { "\($0): \(dictionary[$0]!.debugDescription)" }
             return "{\(sortedDictionary.joined(separator: ", "))}"
-        case .array(let array):
+        case let .array(array):
             return "[\(array.map { $0.debugDescription }.joined(separator: ", "))]"
-        case .string(let string):
+        case let .string(string):
             return "\"\(string)\""
-        case .number(let number):
+        case let .number(number):
             return "\(number)"
         case .null:
             return "null"
@@ -239,10 +239,10 @@ public enum JSONElement: Equatable {
     /// Returns the JSONElement as a `Data` object of the JSON representation, or `nil` if it cannot be converted to an `Array` or `Dictionary`.
     public func toJSONData() -> Data? {
         switch self {
-        case .object(let dict):
+        case let .object(dict):
             let jsonObject = dict.mapValues { $0.toAny() }
             return try? JSONSerialization.data(withJSONObject: jsonObject, options: [])
-        case .array(let array):
+        case let .array(array):
             let jsonArray = array.map { $0.toAny() }
             return try? JSONSerialization.data(withJSONObject: jsonArray, options: [])
         default:
@@ -267,13 +267,13 @@ public enum JSONElement: Equatable {
     /// Returns the JSONElement as an `Any` object.
     private func toAny() -> Any? {
         switch self {
-        case .object(let dict):
+        case let .object(dict):
             return dict.mapValues { $0.toAny() }
-        case .array(let array):
+        case let .array(array):
             return array.map { $0.toAny() }
-        case .string(let string):
+        case let .string(string):
             return string
-        case .number(let number):
+        case let .number(number):
             return number
         case .null:
             return NSNull()
@@ -292,15 +292,15 @@ public enum JSONElement: Equatable {
      */
     public static func == (lhs: JSONElement, rhs: JSONElement) -> Bool {
         switch (lhs, rhs) {
-        case (.string(let lhsValue), .string(let rhsValue)):
+        case let (.string(lhsValue), .string(rhsValue)):
             return lhsValue == rhsValue
-        case (.number(let lhsValue), .number(let rhsValue)):
+        case let (.number(lhsValue), .number(rhsValue)):
             return lhsValue == rhsValue
         case (.null, .null):
             return true
-        case (.array(let lhsArray), .array(let rhsArray)):
+        case let (.array(lhsArray), .array(rhsArray)):
             return lhsArray == rhsArray // Recursively compare elements
-        case (.object(let lhsDict), .object(let rhsDict)):
+        case let (.object(lhsDict), .object(rhsDict)):
             return lhsDict == rhsDict // Recursively compare key-value pairs
         default:
             return false

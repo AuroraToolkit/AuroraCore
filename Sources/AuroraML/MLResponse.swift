@@ -26,8 +26,9 @@ public struct MLResponse {
             - info: Optional metadata about the model or the response.
      */
     public init(outputs: [String: Any],
-                info: [String: Any]? = nil) {
+                info: [String: Any]? = nil)
+    {
         self.outputs = outputs
-        self.info    = info
+        self.info = info
     }
 }

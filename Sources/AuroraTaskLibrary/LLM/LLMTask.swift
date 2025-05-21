@@ -1,13 +1,13 @@
 //
 //  LLMTask.swift
-//  
+//
 //
 //  Created by Dan Murrell Jr on 9/1/24.
 //
 
-import Foundation
 import AuroraCore
 import AuroraLLM
+import Foundation
 
 /**
  `LLMTask` sends a prompt to a Large Language Model (LLM) service and returns a response.
@@ -44,7 +44,7 @@ public class LLMTask: WorkflowComponent {
         request: LLMRequest? = nil,
         inputs: [String: Any?] = [:]
     ) {
-        self.task = Workflow.Task(
+        task = Workflow.Task(
             name: name ?? String(describing: Self.self),
             description: description ?? "Send a prompt to the LLM service",
             inputs: inputs

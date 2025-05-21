@@ -5,9 +5,9 @@
 //  Created by Dan Murrell Jr on 12/6/24.
 //
 
-import Foundation
 import AuroraCore
 import AuroraLLM
+import Foundation
 
 /**
     A task that summarizes a list of strings using the LLM service.
@@ -47,7 +47,7 @@ public class SummarizeStringsTask: WorkflowComponent {
         options: SummarizerOptions? = SummarizerOptions(),
         inputs: [String: Any?] = [:]
     ) {
-        self.task = Workflow.Task(
+        task = Workflow.Task(
             name: name ?? String(describing: Self.self),
             description: "Summarize a list of strings using the LLM service",
             inputs: inputs

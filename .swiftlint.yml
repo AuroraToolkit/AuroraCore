@@ -41,3 +41,5 @@ disabled_rules:
   - function_body_length
   - line_length
   - indentation_width
+  - opening_brace
+  - trailing_comma

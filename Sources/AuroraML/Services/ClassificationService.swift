@@ -5,9 +5,9 @@
 //  Created by Dan Murrell Jr on 5/9/25.
 //
 
+import AuroraCore
 import Foundation
 import NaturalLanguage
-import AuroraCore
 
 /**
  `ClassificationService` implements `MLServiceProtocol` using Apple's `NLModel` text classifiers.

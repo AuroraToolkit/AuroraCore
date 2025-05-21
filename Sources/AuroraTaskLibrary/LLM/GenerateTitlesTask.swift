@@ -5,9 +5,9 @@
 //  Created by Dan Murrell Jr on 1/4/25.
 //
 
-import Foundation
 import AuroraCore
 import AuroraLLM
+import Foundation
 
 /**
  `GenerateTitlesTask` generates succinct and informative titles for a given list of strings using an LLM service.
@@ -47,7 +47,7 @@ public class GenerateTitlesTask: WorkflowComponent {
         maxTokens: Int = 100,
         inputs: [String: Any?] = [:]
     ) {
-        self.task = Workflow.Task(
+        task = Workflow.Task(
             name: name ?? String(describing: Self.self),
             description: "Generate succinct and informative titles for a list of strings using an LLM service.",
             inputs: inputs
@@ -100,8 +100,8 @@ public class GenerateTitlesTask: WorkflowComponent {
 
             let request = LLMRequest(
                 messages: [
-                    LLMMessage(role: .system, content: "You are an expert in title generation."),
-                    LLMMessage(role: .user, content: prompt)
+                    LLMMessage(role: .system, content: "You are an expert in title generation. Always respond with a single valid JSON object and nothing else (no markdown, explanations, or code fences)."),
+                    LLMMessage(role: .user, content: prompt),
                 ],
                 maxTokens: resolvedMaxTokens
             )
@@ -114,8 +114,8 @@ public class GenerateTitlesTask: WorkflowComponent {
 
                 // Parse the response
                 guard let data = rawResponse.data(using: .utf8),
-                    let jsonResponse = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                    let titles = jsonResponse["titles"] as? [String: [String: String]]
+                      let jsonResponse = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                      let titles = jsonResponse["titles"] as? [String: [String: String]]
                 else {
                     throw NSError(domain: "GenerateTitlesTask", code: 2, userInfo: [NSLocalizedDescriptionKey: "Failed to parse LLM response: \(response.text)"])
                 }

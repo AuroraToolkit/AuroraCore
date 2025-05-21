@@ -5,9 +5,9 @@
 //  Created by Dan Murrell Jr on 5/14/25.
 //
 
-import Foundation
 import AuroraCore
 import AuroraML
+import Foundation
 import NaturalLanguage
 
 /**
@@ -79,7 +79,7 @@ public class IntentExtractionMLTask: WorkflowComponent {
             options: [.omitPunctuation, .omitWhitespace],
             logger: CustomLogger.shared
         )
-        self.task = Workflow.Task(
+        task = Workflow.Task(
             name: name ?? String(describing: Self.self),
             description: description ?? "Extract intents + parameters from text",
             inputs: inputs

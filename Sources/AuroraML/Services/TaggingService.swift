@@ -5,9 +5,9 @@
 //  Created by Dan Murrell Jr on 5/7/25.
 //
 
+import AuroraCore
 import Foundation
 import NaturalLanguage
-import AuroraCore
 
 /**
  `TaggingService` implements `MLServiceProtocol`  for tagging text.
@@ -70,7 +70,7 @@ public final class TaggingService: MLServiceProtocol {
         for text in texts {
             tagger.string = text
             var tagsForText: [Tag] = []
-            let fullRange = text.startIndex..<text.endIndex
+            let fullRange = text.startIndex ..< text.endIndex
 
             for scheme in schemes {
                 tagger.enumerateTags(

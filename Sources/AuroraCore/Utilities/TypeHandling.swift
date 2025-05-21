@@ -15,7 +15,7 @@ extension Optional: OptionalProtocol {
     }
 }
 
-func asArray<T>(_ value: Any, of type: T.Type) -> [T]? {
+func asArray<T>(_ value: Any, of _: T.Type) -> [T]? {
     if let array = value as? [T] {
         return array
     }

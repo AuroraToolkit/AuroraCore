@@ -5,17 +5,16 @@
 //  Created by Dan Murrell Jr on 4/14/25.
 //
 
-import Foundation
-import CoreML
-import NaturalLanguage
 import AuroraCore
+import CoreML
+import Foundation
+import NaturalLanguage
 
 /// A domain router that uses a Core ML–based natural language classifier to predict the domain of a request.
-/// 
+///
 /// The router loads a compiled `.mlmodelc` file into an `NLModel` and uses it to classify incoming request content.
 /// If the predicted label is not found in the list of supported domains, the router returns "general" by default.
 public class CoreMLDomainRouter: ConfidentDomainRouter {
-
     /// The name of the router, used for logging and identification.
     public let name: String
 
@@ -30,7 +29,7 @@ public class CoreMLDomainRouter: ConfidentDomainRouter {
 
     /**
      Initializes a Core ML–based domain router using a compiled Core ML model.
-     
+
      - Parameters:
         - name: A human-readable identifier for this router.
         - modelURL: The file URL to the compiled `.mlmodelc` Core ML classifier.
@@ -46,14 +45,14 @@ public class CoreMLDomainRouter: ConfidentDomainRouter {
         }
 
         self.name = name
-        self.model = nlModel
+        model = nlModel
         self.supportedDomains = supportedDomains.map { $0.lowercased() }
         self.logger = logger
     }
 
     /**
      Determines the domain for the given `LLMRequest` using the Core ML text classifier.
-     
+
      - Parameters:
         - request: The request containing messages to be analyzed for routing.
      - Returns: A string representing the predicted domain. Returns `nil` if prediction fails or is unsupported.

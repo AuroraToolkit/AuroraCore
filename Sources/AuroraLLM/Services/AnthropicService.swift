@@ -5,9 +5,9 @@
 //  Created by Dan Murrell Jr on 9/1/24.
 //
 
+import AuroraCore
 import Foundation
 import os.log
-import AuroraCore
 
 /**
  `AnthropicService` implements the `LLMServiceProtocol` to interact with the Anthropic API.
@@ -15,7 +15,6 @@ import AuroraCore
  detailed error handling using `LLMServiceError`.
  */
 public class AnthropicService: LLMServiceProtocol {
-
     /// A logger for recording information and errors within the `AnthropicService`.
     private let logger: CustomLogger?
 
@@ -44,7 +43,7 @@ public class AnthropicService: LLMServiceProtocol {
     public var systemPrompt: String?
 
     /// The URL session used to send basic requests.
-    internal var urlSession: URLSession
+    var urlSession: URLSession
 
     /**
      Initializes a new `AnthropicService` instance with the given API key and token limit.
@@ -102,7 +101,7 @@ public class AnthropicService: LLMServiceProtocol {
      Sends a non-streaming request to the Anthropic API and retrieves the response asynchronously.
 
      - Parameter request: The `LLMRequest` containing the messages and model configuration.
-     
+
      - Returns: The `LLMResponseProtocol` containing the generated text or an error if the request fails.
      - Throws: `LLMServiceError` if the request encounters an issue (e.g., invalid response, decoding error, etc.).
      */
@@ -129,7 +128,7 @@ public class AnthropicService: LLMServiceProtocol {
             "messages": userMessages,
             "max_tokens": request.maxTokens,
             "temperature": request.temperature,
-            "top_p": request.options?.topP ?? 1.0
+            "top_p": request.options?.topP ?? 1.0,
         ]
 
         // Add the system message if available
@@ -149,7 +148,7 @@ public class AnthropicService: LLMServiceProtocol {
         urlRequest.httpMethod = "POST"
         urlRequest.httpBody = jsonData
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        urlRequest.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")  // Required Anthropic version header
+        urlRequest.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version") // Required Anthropic version header
 
         // Minimize the risk of API key exposure
         guard let apiKey = SecureStorage.getAPIKey(for: name) else {
@@ -159,7 +158,7 @@ public class AnthropicService: LLMServiceProtocol {
 
         let (data, response) = try await urlSession.data(for: urlRequest)
 
-        guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
+        guard let httpResponse = response as? HTTPURLResponse, (200 ... 299).contains(httpResponse.statusCode) else {
             throw LLMServiceError.invalidResponse(statusCode: (response as? HTTPURLResponse)?.statusCode ?? -1)
         }
 
@@ -203,7 +202,7 @@ public class AnthropicService: LLMServiceProtocol {
             "max_tokens": request.maxTokens,
             "temperature": request.temperature,
             "top_p": request.options?.topP ?? 1.0,
-            "stream": true
+            "stream": true,
         ]
 
         // Add the system message if available
@@ -214,7 +213,7 @@ public class AnthropicService: LLMServiceProtocol {
         let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
 
         guard let url = URL(string: "\(baseURL)/v1/messages") else {
-            logger?.debug("Invalid URL: \(self.baseURL)/v1/messages")
+            logger?.debug("Invalid URL: \(baseURL)/v1/messages")
             throw LLMServiceError.invalidURL
         }
 
@@ -222,7 +221,7 @@ public class AnthropicService: LLMServiceProtocol {
         urlRequest.httpMethod = "POST"
         urlRequest.httpBody = jsonData
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        urlRequest.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")  // Required Anthropic version header
+        urlRequest.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version") // Required Anthropic version header
 
         logger?.debug("AnthropicService [sendStreamingRequest] Sending streaming request with keys: \(body.keys)", category: "AnthropicService")
 
@@ -246,7 +245,7 @@ public class AnthropicService: LLMServiceProtocol {
         }
     }
 
-    internal class StreamingDelegate: NSObject, URLSessionDataDelegate {
+    class StreamingDelegate: NSObject, URLSessionDataDelegate {
         private let vendor: String
         private let model: String
         private let onPartialResponse: (String) -> Void
@@ -261,7 +260,8 @@ public class AnthropicService: LLMServiceProtocol {
              model: String,
              logger: CustomLogger? = nil,
              onPartialResponse: @escaping (String) -> Void,
-             continuation: CheckedContinuation<LLMResponseProtocol, Error>) {
+             continuation: CheckedContinuation<LLMResponseProtocol, Error>)
+        {
             self.vendor = vendor
             self.model = model
             self.logger = logger
@@ -270,7 +270,7 @@ public class AnthropicService: LLMServiceProtocol {
             logger?.debug("AnthropicService [StreamingDelegate] initialized for model: \(model)", category: "AnthropicService.StreamingDelegate")
         }
 
-        func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+        func urlSession(_: URLSession, dataTask _: URLSessionDataTask, didReceive data: Data) {
             guard let eventText = String(data: data, encoding: .utf8) else {
                 logger?.debug("AnthropicService Failed to decode data as UTF-8", category: "AnthropicService.StreamingDelegate")
                 return
@@ -315,20 +315,20 @@ public class AnthropicService: LLMServiceProtocol {
 
             if isComplete {
                 let finalResponse = AnthropicLLMResponse(
-                    id: UUID().uuidString,  // Replace with actual ID from the API if available
+                    id: UUID().uuidString, // Replace with actual ID from the API if available
                     type: "response",
                     role: "assistant",
                     vendor: vendor,
                     model: model,
                     content: accumulatedContent,
-                    stopReason: "end_turn",  // Replace with actual stop reason if available
+                    stopReason: "end_turn", // Replace with actual stop reason if available
                     usage: AnthropicLLMResponse.Usage(inputTokens: inputTokens, outputTokens: outputTokens)
                 )
                 continuation.resume(returning: finalResponse)
             }
         }
 
-        func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        func urlSession(_: URLSession, task _: URLSessionTask, didCompleteWithError error: Error?) {
             if let error = error {
                 logger?.error("AnthropicService [StreamingDelegate] Task completed with error: \(error.localizedDescription)", category: "AnthropicService.StreamingDelegate")
                 continuation.resume(throwing: error)

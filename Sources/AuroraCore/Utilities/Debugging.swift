@@ -23,17 +23,17 @@ import os
     CustomLogger.shared.log(level: .info, "Custom log message", category: "MyCategory", metadata: ["key": "value"])
     ```
  */
-final public class CustomLogger {
-    static public let shared = CustomLogger()
+public final class CustomLogger {
+    public static let shared = CustomLogger()
 
     private var loggers: [String: Logger] = [:]
     private let loggerQueue = DispatchQueue(label: "com.mutantsoup.AuroraCore.loggerQueue")
 
-#if DEBUG
-    private var enableDebugLogs = true
-#else
-    private var enableDebugLogs = false
-#endif
+    #if DEBUG
+        private var enableDebugLogs = true
+    #else
+        private var enableDebugLogs = false
+    #endif
 
     private init() {}
 

@@ -5,8 +5,8 @@
 //  Created by Dan Murrell Jr on 9/1/24.
 //
 
-import Foundation
 import AuroraCore
+import Foundation
 
 /**
  `SaveContextTask` is responsible for saving a `Context` object to disk.
@@ -42,7 +42,7 @@ public class SaveContextTask: WorkflowComponent {
         filename: String? = nil,
         inputs: [String: Any?] = [:]
     ) {
-        self.task = Workflow.Task(
+        task = Workflow.Task(
             name: name,
             description: "Save the context to disk",
             inputs: inputs

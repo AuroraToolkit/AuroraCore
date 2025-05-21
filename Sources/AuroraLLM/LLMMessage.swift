@@ -28,7 +28,7 @@ public enum LLMRole: Codable, Equatable {
             return "assistant"
         case .system:
             return "system"
-        case .custom(let role):
+        case let .custom(role):
             return role
         }
     }
@@ -43,7 +43,7 @@ public enum LLMRole: Codable, Equatable {
             try container.encode("assistant")
         case .system:
             try container.encode("system")
-        case .custom(let role):
+        case let .custom(role):
             try container.encode(role)
         }
     }

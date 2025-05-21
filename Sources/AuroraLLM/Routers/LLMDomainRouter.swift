@@ -5,8 +5,8 @@
 //  Created by Dan Murrell Jr on 4/24/25.
 //
 
-import os.log
 import AuroraCore
+import os.log
 
 /**
     The `LLMDomainRouter` class is responsible for determining the domain of a request using an LLM service.
@@ -16,18 +16,17 @@ import AuroraCore
     - Note: The router is initialized with a list of supported domains and a system prompt that guides the LLM in determining the domain. The LLM is instructed to return "unresolved" if the domain is not supported, which will return "unresolved" if included in the supported domains, or `nil` if not.
  */
 public class LLMDomainRouter: LLMDomainRouterProtocol {
-
     public let name: String
     public var service: LLMServiceProtocol
     public let supportedDomains: [String]
     private let logger: CustomLogger?
     private let defaultInstructions = """
-Evaluate the following request and determine the domain it belongs to. Domains we support are: %@.
+    Evaluate the following request and determine the domain it belongs to. Domains we support are: %@.
 
-If it doesn't fit any of these domains, just use unresolved as the domain. You should respond to any question with ONLY
-the domain name if we support it, or unresolved if we don't. Do NOT try to answer the question or provide ANY additional
-information.
-"""
+    If it doesn't fit any of these domains, just use unresolved as the domain. You should respond to any question with ONLY
+    the domain name if we support it, or unresolved if we don't. Do NOT try to answer the question or provide ANY additional
+    information.
+    """
 
     /**
      Initializes the domain router with an LLM service and a list of supported domains.
@@ -75,7 +74,7 @@ information.
         - request: The `LLMRequest` containing the prompt or context for domain determination.
 
      - Returns: A string representing the determined domain.
-     
+
      - Throws: An error if the service fails to process the request.
 
      - Discussion:

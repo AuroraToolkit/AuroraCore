@@ -3,8 +3,8 @@
 //  AuroraCore
 //
 
-import Foundation
 import AuroraCore
+import Foundation
 
 /**
  `FetchContextsTask` is responsible for retrieving a list of stored contexts from the disk.
@@ -36,7 +36,7 @@ public struct FetchContextsTask: WorkflowComponent {
         filenames: [String]? = nil,
         inputs: [String: Any?] = [:]
     ) {
-        self.task = Workflow.Task(
+        task = Workflow.Task(
             name: name,
             description: "Fetch stored contexts from disk",
             inputs: inputs

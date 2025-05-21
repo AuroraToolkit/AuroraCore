@@ -9,7 +9,6 @@ import Foundation
 
 /// Protocol defining the behavior of a domain router in the LLMManager system.
 public protocol LLMDomainRouterProtocol {
-
     /// The name of the domain router, used for logging and identification purposes.
     var name: String { get }
 

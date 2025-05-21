@@ -1,5 +1,5 @@
 //
-//  DefaultSummarizer.swift
+//  Summarizer.swift
 //  Aurora
 //
 //  Created by Dan Murrell Jr on 8/21/24.
@@ -11,7 +11,6 @@ import Foundation
  The `Summarizer` class provides an implementation of the `SummarizerProtocol`, delegating all summarization tasks to an LLM service.
  */
 public class Summarizer: SummarizerProtocol {
-
     private let llmService: LLMServiceProtocol
 
     /**
@@ -35,7 +34,7 @@ public class Summarizer: SummarizerProtocol {
     public func summarize(_ text: String, options: SummarizerOptions? = nil) async throws -> String {
         let messages: [LLMMessage] = [
             LLMMessage(role: .system, content: "Summarize the following text."),
-            LLMMessage(role: .user, content: text)
+            LLMMessage(role: .user, content: text),
         ]
 
         return try await sendToLLM(messages, options: options)
@@ -72,7 +71,7 @@ public class Summarizer: SummarizerProtocol {
             // Create messages for the LLM
             let messages: [LLMMessage] = [
                 LLMMessage(role: .system, content: summaryInstruction(for: .multiple)),
-                LLMMessage(role: .user, content: jsonString)
+                LLMMessage(role: .user, content: jsonString),
             ]
 
             // Send the request to the LLM
@@ -81,7 +80,8 @@ public class Summarizer: SummarizerProtocol {
             // Parse the JSON response
             guard let responseData = response.data(using: .utf8),
                   let jsonResponse = try? JSONSerialization.jsonObject(with: responseData) as? [String: Any],
-                  let summaries = jsonResponse["summaries"] as? [String] else {
+                  let summaries = jsonResponse["summaries"] as? [String]
+            else {
                 throw NSError(domain: "Summarizer", code: 2, userInfo: [NSLocalizedDescriptionKey: "Invalid JSON response from LLM: \(response)"])
             }
 
@@ -102,15 +102,15 @@ public class Summarizer: SummarizerProtocol {
             return "Summarize the following text:\n"
         case .multiple:
             return """
-        You are an assistant that summarizes text. I will provide a JSON object containing a list of texts under the key "texts".
-        For each text, provide a concise summary in the same JSON format under the key "summaries".
+            You are an assistant that summarizes text. I will provide a JSON object containing a list of texts under the key "texts".
+            For each text, provide a concise summary in the same JSON format under the key "summaries".
 
-        For example:
-        Input: {"texts": ["Text 1", "Text 2"]}
-        Output: {"summaries": ["Summary of Text 1", "Summary of Text 2"]}
+            For example:
+            Input: {"texts": ["Text 1", "Text 2"]}
+            Output: {"summaries": ["Summary of Text 1", "Summary of Text 2"]}
 
-        Here is the input:
-        """
+            Here is the input:
+            """
         }
     }
 

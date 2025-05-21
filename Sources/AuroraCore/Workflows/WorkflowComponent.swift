@@ -44,7 +44,7 @@ public struct AnyWorkflowComponent: WorkflowComponent {
      - Parameter component: A component conforming to `WorkflowComponent`.
      */
     public init<C: WorkflowComponent>(_ component: C) {
-        self._toComponent = component.toComponent
+        _toComponent = component.toComponent
     }
 
     /**
@@ -64,15 +64,15 @@ extension Workflow.Component {
     /// Returns the total execution time of the component.
     var executionTime: TimeInterval {
         switch self {
-        case .task(let task):
+        case let .task(task):
             return task.detailsHolder.details?.executionTime ?? 0
-        case .taskGroup(let group):
+        case let .taskGroup(group):
             return group.detailsHolder.details?.executionTime ?? 0
-        case .subflow(let subflow):
+        case let .subflow(subflow):
             return subflow.detailsHolder.details?.executionTime ?? 0
-        case .logic(let logic):
+        case let .logic(logic):
             return logic.detailsHolder.details?.executionTime ?? 0
-        case .trigger(let trigger):
+        case let .trigger(trigger):
             return trigger.detailsHolder.details?.executionTime ?? 0
         }
     }
@@ -80,16 +80,16 @@ extension Workflow.Component {
     /// Returns the current or final state of the component.
     var state: Workflow.State {
         switch self {
-        case .task(let task):
+        case let .task(task):
             return task.detailsHolder.details?.state ?? .notStarted
-        case .taskGroup(let group):
+        case let .taskGroup(group):
             return group.detailsHolder.details?.state ?? .notStarted
-        case .subflow(let subflow):
+        case let .subflow(subflow):
             // If subflow outputs are non-empty, assume it completed.
             return subflow.workflow.detailsHolder.details?.state ?? .notStarted
-        case .logic(let logic):
+        case let .logic(logic):
             return logic.detailsHolder.details?.state ?? .notStarted
-        case .trigger(let trigger):
+        case let .trigger(trigger):
             return trigger.detailsHolder.details?.state ?? .notStarted
         }
     }
@@ -97,15 +97,15 @@ extension Workflow.Component {
     /// Returns the outputs of the component.
     var outputs: [String: Any] {
         switch self {
-        case .task(let task):
+        case let .task(task):
             return task.detailsHolder.details?.outputs ?? [:]
-        case .taskGroup(let group):
+        case let .taskGroup(group):
             return group.detailsHolder.details?.outputs ?? [:]
-        case .subflow(let subflow):
+        case let .subflow(subflow):
             return subflow.workflow.outputs
-        case .logic(let logic):
+        case let .logic(logic):
             return logic.detailsHolder.details?.outputs ?? [:]
-        case .trigger(let trigger):
+        case let .trigger(trigger):
             return trigger.detailsHolder.details?.outputs ?? [:]
         }
     }
@@ -113,15 +113,15 @@ extension Workflow.Component {
     /// Returns the error that occurred during execution, if any.
     var error: Error? {
         switch self {
-        case .task(let task):
+        case let .task(task):
             return task.detailsHolder.details?.error
-        case .taskGroup(let group):
+        case let .taskGroup(group):
             return group.detailsHolder.details?.error
         case .subflow:
             return nil
-        case .logic(let logic):
+        case let .logic(logic):
             return logic.detailsHolder.details?.error
-        case .trigger(let trigger):
+        case let .trigger(trigger):
             return trigger.detailsHolder.details?.error
         }
     }

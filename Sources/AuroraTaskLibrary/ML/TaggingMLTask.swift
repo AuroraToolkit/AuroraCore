@@ -5,9 +5,9 @@
 //  Created by Dan Murrell Jr on 5/6/25.
 //
 
-import Foundation
 import AuroraCore
 import AuroraML
+import Foundation
 
 /**
  `TaggingMLTask` wraps any `MLServiceProtocol` (e.g. `TaggingService`) into a WorkflowComponent.
@@ -81,7 +81,7 @@ public class TaggingMLTask: WorkflowComponent {
         strings: [String]? = nil,
         inputs: [String: Any?] = [:]
     ) {
-        self.task = Workflow.Task(
+        task = Workflow.Task(
             name: name ?? String(describing: Self.self),
             description: description ?? "Run token tagging using an MLServiceProtocol",
             inputs: inputs

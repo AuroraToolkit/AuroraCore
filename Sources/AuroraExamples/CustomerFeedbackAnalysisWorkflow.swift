@@ -5,10 +5,10 @@
 //  Created by Dan Murrell Jr on 1/8/25.
 //
 
-import Foundation
 import AuroraCore
 import AuroraLLM
 import AuroraTaskLibrary
+import Foundation
 
 /**
  Example workflow demonstrating fetching customer feedback from an app store,
@@ -17,7 +17,6 @@ import AuroraTaskLibrary
 
 struct CustomerFeedbackAnalysisWorkflow {
     func execute() async {
-
         // Set up the required API key for your LLM service (e.g., OpenAI, Anthropic, or Ollama)
         let openAIKey = ProcessInfo.processInfo.environment["OPENAI_API_KEY"] ?? ""
         guard !openAIKey.isEmpty else {
@@ -30,7 +29,7 @@ struct CustomerFeedbackAnalysisWorkflow {
         let summarizer = Summarizer(llmService: llmService)
 
         // URL to retrieve app store reviews
-        let countryCode = "us"  // Change to your country code if needed
+        let countryCode = "us" // Change to your country code if needed
         let appId = "284708449" // Replace with your app ID, e.g. UrbanSpoon app
         let appStoreReviewsURL = "https://itunes.apple.com/\(countryCode)/rss/customerreviews/page=1/id=\(appId)/sortBy=mostRecent/json"
 
@@ -40,7 +39,6 @@ struct CustomerFeedbackAnalysisWorkflow {
             description: "Fetch, analyze, and generate insights from app store reviews.",
             logger: CustomLogger.shared
         ) {
-
             // Step 1: Fetch App Store Reviews
             FetchURLTask(
                 name: "FetchReviews",
@@ -59,13 +57,14 @@ struct CustomerFeedbackAnalysisWorkflow {
                 inputs: ["parsedJSON": "{ParseReviewsFeed.parsedJSON}"]
             ) { inputs in
                 guard let parsedJSON = inputs["parsedJSON"] as? JSONElement,
-                let feed = parsedJSON["feed"],
-                let entries = feed["entry"]?.asArray else {
+                      let feed = parsedJSON["feed"],
+                      let entries = feed["entry"]?.asArray
+                else {
                     throw NSError(
                         domain: "CustomerFeedbackAnalysisWorkflow",
                         code: 1,
                         userInfo: [NSLocalizedDescriptionKey: "No reviews found in the feed."]
-                        )
+                    )
                 }
 
                 // Extract the review text from the JSON feed
@@ -129,7 +128,7 @@ struct CustomerFeedbackAnalysisWorkflow {
         // Print the workflow outputs
         if let summaries = workflow.outputs["SummarizeReviewFindings.summaries"] as? [String] {
             print("Review Findings Summaries:")
-            summaries.enumerated().forEach { index, summary in
+            for (index, summary) in summaries.enumerated() {
                 print("\(index + 1): \(summary)")
             }
         } else {
@@ -144,7 +143,7 @@ struct CustomerFeedbackAnalysisWorkflow {
                 }
                 .sorted { $0.key < $1.key }
             print("\nLanguages found in reviews:")
-            languages.forEach { language, count in
+            for (language, count) in languages {
                 print("- \(language): \(count) review(s)")
             }
         }
@@ -168,11 +167,11 @@ struct CustomerFeedbackAnalysisWorkflow {
             var sentimentCounts = ["Positive": 0, "Neutral": 0, "Negative": 0]
             var sentimentExamples = ["Positive": [String](), "Neutral": [String](), "Negative": [String]()]
 
-            sentiments.forEach { review, sentimentInfo in
+            for (review, sentimentInfo) in sentiments {
                 guard
                     let sentiment = sentimentInfo["sentiment"] as? String,
                     let confidence = sentimentInfo["confidence"] as? Int
-                else { return }
+                else { continue }
 
                 sentimentCounts[sentiment, default: 0] += 1
 
@@ -185,14 +184,14 @@ struct CustomerFeedbackAnalysisWorkflow {
             // Display sentiment analysis summary
             let totalReviews = sentiments.count
             print("\nOverall sentiment for \(totalReviews) reviews:")
-            sentimentCounts.forEach { sentiment, count in
+            for (sentiment, count) in sentimentCounts {
                 let percentage = (Double(count) / Double(totalReviews) * 100).rounded()
                 print("- \(sentiment): \(Int(percentage))% (\(count) review(s))")
             }
 
             // Display examples for each sentiment
             print("\nSentiment examples:")
-            sentimentExamples.forEach { sentiment, examples in
+            for (sentiment, examples) in sentimentExamples {
                 print("- \(sentiment):")
                 examples.forEach { print("  \(String(describing: $0))") }
             }
@@ -200,8 +199,8 @@ struct CustomerFeedbackAnalysisWorkflow {
 
         if let suggestions = workflow.outputs["GenerateReviewSuggestions.titles"] as? [String: [String: String]] {
             print("\nActionable Insights:")
-            suggestions.forEach { review, titles in
-                titles.forEach { _, title in
+            for (review, titles) in suggestions {
+                for (_, title) in titles {
                     print("Insight: \(title)")
                 }
                 print("  Based on review: \(review)")

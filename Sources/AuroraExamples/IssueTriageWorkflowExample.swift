@@ -5,11 +5,11 @@
 //  Created by Dan Murrell Jr on 5/18/25.
 //
 
-import Foundation
-import NaturalLanguage
 import AuroraCore
 import AuroraML
 import AuroraTaskLibrary
+import Foundation
+import NaturalLanguage
 
 /**
  Example workflow demonstrating triage of a GitHub issue:
@@ -33,7 +33,7 @@ struct IssueTriageWorkflowExample {
         "Login fails with error E401",
         "How do I export data as CSV?",
         "Search returns no results",
-        "Feature: schedule automated reports"
+        "Feature: schedule automated reports",
     ]
 
     /// Runs the triage workflow on a single issue text.
@@ -141,8 +141,8 @@ struct IssueTriageWorkflowExample {
 
         // Safely unwrap each output
         let candidates = workflow.outputs["ClassifyIssue.candidates"] as? [Tag] ?? []
-        let intentArr  = workflow.outputs["ExtractIntent.intent"] as? [[String: Any]] ?? []
-        let codesArr   = workflow.outputs["TagCodes.codes"] as? [[Tag]] ?? []
+        let intentArr = workflow.outputs["ExtractIntent.intent"] as? [[String: Any]] ?? []
+        let codesArr = workflow.outputs["TagCodes.codes"] as? [[Tag]] ?? []
         let relatedArr = workflow.outputs["SearchPastIssues.related"] as? [[String: Any]] ?? []
 
         // Print a concise report

@@ -70,11 +70,11 @@ struct GoogleGenerateContentResponse: LLMResponseProtocol, Codable {
     }
 
     // Helper to create a mutable copy for setting model/vendor after decoding
-     func changingModel(to newModel: String?) -> GoogleGenerateContentResponse {
-         var copy = self
-         copy.model = newModel
-         return copy
-     }
+    func changingModel(to newModel: String?) -> GoogleGenerateContentResponse {
+        var copy = self
+        copy.model = newModel
+        return copy
+    }
 }
 
 // Structure for parsing individual streaming chunks

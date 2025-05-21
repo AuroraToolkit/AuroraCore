@@ -5,9 +5,9 @@
 //  Created by Dan Murrell Jr on 5/5/25.
 //
 
-import Foundation
 import AuroraCore
 import AuroraML
+import Foundation
 
 public class MLTask: WorkflowComponent {
     /// The wrapped task.
@@ -31,7 +31,7 @@ public class MLTask: WorkflowComponent {
         request: MLRequest? = nil,
         inputs: [String: Any?] = [:]
     ) {
-        self.task = Workflow.Task(
+        task = Workflow.Task(
             name: name ?? String(describing: Self.self),
             description: description ?? "Run on an on-device ML model",
             inputs: inputs
@@ -58,5 +58,4 @@ public class MLTask: WorkflowComponent {
     public func toComponent() -> Workflow.Component {
         .task(task)
     }
-
 }

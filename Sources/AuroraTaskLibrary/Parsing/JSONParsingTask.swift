@@ -5,9 +5,9 @@
 //  Created by Dan Murrell Jr on 1/13/25.
 //
 
+import AuroraCore
 import Foundation
 import os.log
-import AuroraCore
 
 /**
  `JSONParsingTask` parses a JSON blob and extracts its nested structure into a `JSONElement`.
@@ -36,7 +36,7 @@ public class JSONParsingTask: WorkflowComponent {
         jsonData: Data? = nil,
         inputs: [String: Any?] = [:]
     ) {
-        self.task = Workflow.Task(
+        task = Workflow.Task(
             name: name ?? String(describing: Self.self),
             description: "Parse JSON data into a nested structure",
             inputs: inputs

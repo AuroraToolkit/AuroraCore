@@ -11,7 +11,6 @@ import Foundation
  `ContextController` manages the state and operations related to a specific `Context`, including adding, removing, and updating items, as well as summarizing older items. The controller handles context-specific summarization using a connected LLM service.
  */
 public class ContextController {
-
     /// Unique identifier for the context controller.
     public let id: UUID
 
@@ -37,7 +36,7 @@ public class ContextController {
      */
     public init(context: Context? = nil, llmService: LLMServiceProtocol, summarizer: SummarizerProtocol? = nil) {
         self.context = context ?? Context(llmServiceVendor: llmService.vendor)
-        self.id = self.context.id  // Use the context's ID as the controller ID
+        id = self.context.id // Use the context's ID as the controller ID
         self.llmService = llmService
         self.summarizer = summarizer ?? Summarizer(llmService: llmService)
     }
@@ -51,8 +50,8 @@ public class ContextController {
      Note: The `Summarizer` instance will be updated to use the new LLM service.
      */
     public func updateLLMService(_ newService: LLMServiceProtocol) {
-        self.llmService = newService
-        self.summarizer = Summarizer(llmService: newService)  // Update summarizer to use new LLM
+        llmService = newService
+        summarizer = Summarizer(llmService: newService) // Update summarizer to use new LLM
     }
 
     /**
@@ -134,7 +133,7 @@ public class ContextController {
         }
 
         // Create a new summary item
-        summaries.forEach { summary in
+        for summary in summaries {
             let summaryItem = ContextItem(text: summary, isSummary: true)
             summarizedItems.append(summaryItem)
         }

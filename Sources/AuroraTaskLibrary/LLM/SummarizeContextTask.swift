@@ -1,13 +1,13 @@
 //
-//  SummarizeTask.swift
-//  
+//  SummarizeContextTask.swift
+//
 //
 //  Created by Dan Murrell Jr on 9/2/24.
 //
 
-import Foundation
 import AuroraCore
 import AuroraLLM
+import Foundation
 
 /**
  `SummarizeContextTask` is responsible for summarizing context items within a `ContextController` using the connected LLM service.
@@ -42,7 +42,7 @@ public class SummarizeContextTask: WorkflowComponent {
         options: SummarizerOptions? = nil,
         inputs: [String: Any?] = [:]
     ) {
-        self.task = Workflow.Task(
+        task = Workflow.Task(
             name: name ?? String(describing: Self.self),
             description: "Summarize the content in the context controller",
             inputs: inputs
@@ -70,7 +70,7 @@ public class SummarizeContextTask: WorkflowComponent {
             case .multiple:
                 // Create individual summaries for each item
                 let summaries = try await summarizer.summarizeGroup(itemsToSummarize, type: .multiple, options: options)
-                summaries.forEach { summary in
+                for summary in summaries {
                     contextController.addItem(content: summary, isSummary: true)
                 }
                 return ["summarizedContext": summaries]

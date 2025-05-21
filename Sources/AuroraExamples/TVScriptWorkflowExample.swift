@@ -5,10 +5,10 @@
 //  Created by Dan Murrell Jr on 12/3/24.
 //
 
-import Foundation
 import AuroraCore
 import AuroraLLM
 import AuroraTaskLibrary
+import Foundation
 
 /**
  Example workflow demonstrating fetching an RSS feed, summarizing articles, and generating a news anchor script using AuroraCore.
@@ -16,7 +16,6 @@ import AuroraTaskLibrary
 
 struct TVScriptWorkflowExample {
     func execute() async {
-
         // Set your Anthropic API key as an environment variable to run this example, e.g., `export Anthropic_API_KEY="your-api-key"`
         let anthropicAIKey = ProcessInfo.processInfo.environment["ANTHROPIC_API_KEY"] ?? ""
         if anthropicAIKey.isEmpty {
@@ -52,7 +51,6 @@ struct TVScriptWorkflowExample {
             description: "Fetch and summarize AP Tech News articles for a TV news broadcast.",
             logger: CustomLogger.shared
         ) {
-
             // Step 1: Fetch the RSS Feed
             FetchURLTask(name: "FetchFeed", url: "http://rsshub.app/apnews/topics/technology")
 
@@ -118,7 +116,7 @@ struct TVScriptWorkflowExample {
         let combinedSummaries = summaries.joined(separator: "\n\n")
         let request = LLMRequest(
             messages: [
-            LLMMessage(role: .system, content: """
+                LLMMessage(role: .system, content: """
                 Given the following article titles, descriptions, and links, please generate a script for a team of
                 TV news anchors to read on air. Feel free to rearrange the order to make the script flow better.
                 Invent a station identifier similar to KTLA and use a US city of your choice. Remember that stations
@@ -134,7 +132,7 @@ struct TVScriptWorkflowExample {
                 Typically, a TV news broadcast will end with a feel-good story or a humorous anecdote, so pick
                 the lightest story to close with, and add a closing line to wrap up the broadcast.
                 """),
-            LLMMessage(role: .user, content: "\(combinedSummaries)")
+                LLMMessage(role: .user, content: "\(combinedSummaries)"),
             ],
             maxTokens: 2048
         )
@@ -152,7 +150,7 @@ struct TVScriptWorkflowExample {
         return try await withThrowingTaskGroup(of: String?.self) { group in
             for article in articles {
                 group.addTask {
-                    return try await fetchDetailsFor(article)
+                    try await fetchDetailsFor(article)
                 }
             }
             var summarizedArticles: [String] = []
@@ -190,18 +188,19 @@ struct TVScriptWorkflowExample {
         let canonicalLink = extractFirstMatch(from: rawHTML, pattern: canonicalLinkPattern)
 
         let summary = """
-                Title: \(title ?? "N/A")
-                Description: \(description ?? "N/A")
-                Canonical Link: \(canonicalLink ?? "N/A")
-                """
+        Title: \(title ?? "N/A")
+        Description: \(description ?? "N/A")
+        Canonical Link: \(canonicalLink ?? "N/A")
+        """
         return summary
     }
 
     private func extractFirstMatch(from text: String, pattern: String) -> String? {
         let regex = try? NSRegularExpression(pattern: pattern, options: [])
-        let range = NSRange(text.startIndex..<text.endIndex, in: text)
+        let range = NSRange(text.startIndex ..< text.endIndex, in: text)
         if let match = regex?.firstMatch(in: text, options: [], range: range),
-           let resultRange = Range(match.range(at: 1), in: text) {
+           let resultRange = Range(match.range(at: 1), in: text)
+        {
             return String(text[resultRange])
         }
         return nil

@@ -1,5 +1,5 @@
 //
-//  AnthropicLLMStreamingResponse.swift
+//  AnthropicStreamingResponse.swift
 //  AuroraCore
 //
 //  Created by Dan Murrell Jr on 11/18/24.
@@ -15,7 +15,6 @@ import Foundation
  received incrementally during the streaming process.
  */
 public struct AnthropicLLMStreamingResponse: Codable {
-
     /// The type of the response event (e.g., "content_block_delta", "message_stop").
     public let type: String
 
@@ -37,7 +36,6 @@ public struct AnthropicLLMStreamingResponse: Codable {
      The delta typically provides incremental updates to the text or JSON data being streamed.
      */
     public struct Delta: Codable {
-
         /// The type of the delta (e.g., "text_delta", "input_json_delta").
         public let type: String
 
@@ -60,7 +58,6 @@ public struct AnthropicLLMStreamingResponse: Codable {
      Content blocks are self-contained pieces of data such as generated text or tool invocation details.
      */
     public struct ContentBlock: Codable {
-
         /// The type of the content block (e.g., "text", "tool_use").
         public let type: String
 
@@ -91,7 +88,6 @@ public struct AnthropicLLMStreamingResponse: Codable {
      Usage statistics track the number of input and output tokens consumed during the processing of this event.
      */
     public struct Usage: Codable {
-
         /// The number of input tokens processed up to this point, if available.
         public let inputTokens: Int?
 

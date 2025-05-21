@@ -5,9 +5,9 @@
 //  Created by Dan Murrell Jr on 1/1/25.
 //
 
-import Foundation
 import AuroraCore
 import AuroraLLM
+import Foundation
 
 /**
  `CategorizeStringsTask` is a versatile task that categorizes strings into predefined or inferred categories using a language model.
@@ -67,7 +67,7 @@ public class CategorizeStringsTask: WorkflowComponent {
         maxTokens: Int = 500,
         inputs: [String: Any?] = [:]
     ) {
-        self.task = Workflow.Task(
+        task = Workflow.Task(
             name: name ?? String(describing: Self.self),
             description: "Categorize strings using predefined or inferred categories",
             inputs: inputs
@@ -123,8 +123,8 @@ public class CategorizeStringsTask: WorkflowComponent {
 
             let request = LLMRequest(
                 messages: [
-                    LLMMessage(role: .system, content: "You are a text categorization expert."),
-                    LLMMessage(role: .user, content: categorizationPrompt)
+                    LLMMessage(role: .system, content: "You are a text categorization expert. Always respond with a single valid JSON object and nothing else (no markdown, explanations, or code fences)."),
+                    LLMMessage(role: .user, content: categorizationPrompt),
                 ],
                 maxTokens: maxTokens
             )
@@ -137,8 +137,8 @@ public class CategorizeStringsTask: WorkflowComponent {
 
                 // Parse the response into a dictionary (assumes LLM returns JSON-like structure).
                 guard let data = rawResponse.data(using: .utf8),
-                    let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                    let categorizedStrings = jsonObject["categories"] as? [String: [String]]
+                      let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                      let categorizedStrings = jsonObject["categories"] as? [String: [String]]
                 else {
                     throw NSError(
                         domain: "CategorizeStringsTask",

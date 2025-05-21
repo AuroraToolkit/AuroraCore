@@ -5,9 +5,9 @@
 //  Created by Dan Murrell Jr on 12/3/24.
 //
 
+import AuroraCore
 import Foundation
 import os.log
-import AuroraCore
 
 /**
  `RSSParsingTask` parses an RSS feed and extracts the article links.
@@ -42,7 +42,7 @@ public class RSSParsingTask: WorkflowComponent {
         feedData: Data? = nil,
         inputs: [String: Any?] = [:]
     ) {
-        self.task = Workflow.Task(
+        task = Workflow.Task(
             name: name ?? String(describing: Self.self),
             description: "Extract article links from the RSS feed",
             inputs: inputs
@@ -77,8 +77,8 @@ public class RSSParsingTask: WorkflowComponent {
 }
 
 /**
-    `RSSArticle` represents an article extracted from an RSS feed.
-*/
+ `RSSArticle` represents an article extracted from an RSS feed.
+ */
 public struct RSSArticle {
     /// The title of the article.
     public let title: String
@@ -97,7 +97,6 @@ public struct RSSArticle {
     The `RSSParserDelegate` class is responsible for parsing the RSS feed XML data.
  */
 private class RSSParserDelegate: NSObject, XMLParserDelegate {
-
     var articles: [RSSArticle] = []
     private var currentElement: String = ""
     private var currentTitle: String = ""
@@ -108,7 +107,7 @@ private class RSSParserDelegate: NSObject, XMLParserDelegate {
 
     // MARK: - XMLParserDelegate Methods
 
-    func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName: String?, attributes: [String: String]) {
+    func parser(_: XMLParser, didStartElement elementName: String, namespaceURI _: String?, qualifiedName _: String?, attributes _: [String: String]) {
         currentElement = elementName
         if elementName == "item" {
             insideItem = true
@@ -118,7 +117,7 @@ private class RSSParserDelegate: NSObject, XMLParserDelegate {
         }
     }
 
-    func parser(_ parser: XMLParser, foundCharacters string: String) {
+    func parser(_: XMLParser, foundCharacters string: String) {
         guard insideItem else { return }
 
         let trimmedString = string.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -136,7 +135,7 @@ private class RSSParserDelegate: NSObject, XMLParserDelegate {
         }
     }
 
-    func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName: String?) {
+    func parser(_: XMLParser, didEndElement elementName: String, namespaceURI _: String?, qualifiedName _: String?) {
         if elementName == "item" {
             // Validate the article before adding. Skip if title or link is empty
             if !currentTitle.isEmpty && !currentLink.isEmpty {

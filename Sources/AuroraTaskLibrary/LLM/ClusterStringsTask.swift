@@ -5,39 +5,39 @@
 //  Created by Dan Murrell Jr on 1/1/25.
 //
 
-import Foundation
 import AuroraCore
 import AuroraLLM
+import Foundation
 
 /**
- `ClusterStringsTask` groups strings into clusters based on semantic similarity, without requiring predefined categories.
+  `ClusterStringsTask` groups strings into clusters based on semantic similarity, without requiring predefined categories.
 
- - **Inputs**
-    - `strings`: The list of strings to cluster.
-    - `maxClusters`: Optional maximum number of clusters to create. If not provided, the LLM determines the optimal number dynamically.
- - **Outputs**
-    - `clusters`: A dictionary where keys are cluster IDs or inferred names, and values are lists of strings belonging to each cluster.
+  - **Inputs**
+     - `strings`: The list of strings to cluster.
+     - `maxClusters`: Optional maximum number of clusters to create. If not provided, the LLM determines the optimal number dynamically.
+  - **Outputs**
+     - `clusters`: A dictionary where keys are cluster IDs or inferred names, and values are lists of strings belonging to each cluster.
 
-### Use Cases:
-- **Customer Feedback Analysis**: Grouping customer reviews or feedback to identify trends.
-- **Content Clustering**: Organizing blog posts, news articles, or research papers into topic-based clusters.
-- **Unsupervised Data Exploration**: Automatically grouping strings for exploratory analysis when categories are unknown.
-- **Semantic Deduplication**: Identifying and grouping similar strings to detect duplicates or near-duplicates.
+ ### Use Cases:
+ - **Customer Feedback Analysis**: Grouping customer reviews or feedback to identify trends.
+ - **Content Clustering**: Organizing blog posts, news articles, or research papers into topic-based clusters.
+ - **Unsupervised Data Exploration**: Automatically grouping strings for exploratory analysis when categories are unknown.
+ - **Semantic Deduplication**: Identifying and grouping similar strings to detect duplicates or near-duplicates.
 
- ### Example:
- **Input Strings:**
- - "The stock market dropped today."
- - "AI is transforming software development."
- - "The S&P 500 index fell by 2%."
+  ### Example:
+  **Input Strings:**
+  - "The stock market dropped today."
+  - "AI is transforming software development."
+  - "The S&P 500 index fell by 2%."
 
- **Output JSON:**
- ```
- {
-   "Cluster 1": ["The stock market dropped today.", "The S&P 500 index fell by 2%."],
-   "Cluster 2": ["AI is transforming software development."]
- }
- ```
-*/
+  **Output JSON:**
+  ```
+  {
+    "Cluster 1": ["The stock market dropped today.", "The S&P 500 index fell by 2%."],
+    "Cluster 2": ["AI is transforming software development."]
+  }
+  ```
+ */
 public class ClusterStringsTask: WorkflowComponent {
     /// The wrapped task.
     private let task: Workflow.Task
@@ -61,7 +61,7 @@ public class ClusterStringsTask: WorkflowComponent {
         maxTokens: Int = 500,
         inputs: [String: Any?] = [:]
     ) {
-        self.task = Workflow.Task(
+        task = Workflow.Task(
             name: name ?? String(describing: Self.self),
             description: "Cluster strings into groups based on semantic similarity.",
             inputs: inputs
@@ -119,8 +119,8 @@ public class ClusterStringsTask: WorkflowComponent {
 
             let request = LLMRequest(
                 messages: [
-                    LLMMessage(role: .system, content: "You are an expert in semantic similarity clustering."),
-                    LLMMessage(role: .user, content: clusteringPrompt)
+                    LLMMessage(role: .system, content: "You are an expert in semantic similarity clustering. Always respond with a single valid JSON object and nothing else (no markdown, explanations, or code fences)."),
+                    LLMMessage(role: .user, content: clusteringPrompt),
                 ],
                 maxTokens: maxTokens
             )
@@ -133,7 +133,8 @@ public class ClusterStringsTask: WorkflowComponent {
 
                 // Parse the response into a dictionary (assumes LLM returns JSON-like structure).
                 guard let data = rawResponse.data(using: .utf8),
-                      let clusters = try? JSONSerialization.jsonObject(with: data) as? [String: [String]] else {
+                      let clusters = try? JSONSerialization.jsonObject(with: data) as? [String: [String]]
+                else {
                     throw NSError(
                         domain: "ClusterStringsTask",
                         code: 2,

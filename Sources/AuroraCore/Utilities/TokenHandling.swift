@@ -1,6 +1,6 @@
 //
 //  TokenHandling.swift
-//  
+//
 //
 //  Created by Dan Murrell Jr on 9/1/24.
 //
@@ -8,11 +8,10 @@
 import Foundation
 
 public extension String {
-
     /// Estimates the token count for a given string.
     /// Assumes 1 token per 4 characters as a rough estimation.
     func estimatedTokenCount() -> Int {
-        return self.count / 4
+        return count / 4
     }
 
     /**

@@ -5,9 +5,9 @@
 //  Created by Dan Murrell Jr on 1/2/25.
 //
 
-import Foundation
 import AuroraCore
 import AuroraLLM
+import Foundation
 
 /**
  `AnalyzeSentimentTask` analyzes the sentiment of a list of strings using an LLM service.
@@ -74,7 +74,7 @@ public class AnalyzeSentimentTask: WorkflowComponent {
         maxTokens: Int = 500,
         inputs: [String: Any?] = [:]
     ) {
-        self.task = Workflow.Task(
+        task = Workflow.Task(
             name: name ?? String(describing: Self.self),
             description: "Analyze the sentiment of a list of strings using an LLM service",
             inputs: inputs
@@ -154,8 +154,8 @@ public class AnalyzeSentimentTask: WorkflowComponent {
 
             let request = LLMRequest(
                 messages: [
-                    LLMMessage(role: .system, content: "You are a sentiment analysis expert."),
-                    LLMMessage(role: .user, content: sentimentPrompt)
+                    LLMMessage(role: .system, content: "You are a sentiment analysis expert. Always respond with a single valid JSON object and nothing else (no markdown, explanations, or code fences)."),
+                    LLMMessage(role: .user, content: sentimentPrompt),
                 ],
                 maxTokens: maxTokens
             )
@@ -169,7 +169,8 @@ public class AnalyzeSentimentTask: WorkflowComponent {
                 // Parse the response into a dictionary (assumes LLM returns JSON-like structure).
                 guard let data = rawResponse.data(using: .utf8),
                       let jsonResponse = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                      let sentiments = jsonResponse["sentiments"] else {
+                      let sentiments = jsonResponse["sentiments"]
+                else {
                     throw NSError(
                         domain: "AnalyzeSentimentTask",
                         code: 2,

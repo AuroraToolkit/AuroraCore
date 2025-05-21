@@ -5,16 +5,15 @@
 //  Created by Dan Murrell Jr on 9/3/24.
 //
 
+import AuroraCore
 import Foundation
 import os.log
-import AuroraCore
 
 /**
  `OllamaService` implements the `LLMServiceProtocol` to interact with the Ollama models via its API.
  This service supports customizable API base URLs and allows interaction with models using both streaming and non-streaming modes.
  */
 public class OllamaService: LLMServiceProtocol {
-
     /// A logger for recording information and errors within the `AnthropicService`.
     private let logger: CustomLogger?
 
@@ -43,7 +42,7 @@ public class OllamaService: LLMServiceProtocol {
     public var systemPrompt: String?
 
     /// The URL session used to send basic requests.
-    internal var urlSession: URLSession
+    var urlSession: URLSession
 
     /**
      Initializes a new `OllamaService` instance.
@@ -95,7 +94,7 @@ public class OllamaService: LLMServiceProtocol {
      Sends a non-streaming request to the Ollama API and retrieves the response asynchronously.
 
      - Parameter request: The `LLMRequest` containing the messages and model configuration.
-     
+
      - Returns: The `LLMResponseProtocol` containing the generated text or an error if the request fails.
      - Throws: `LLMServiceError` if the request encounters an issue (e.g., invalid response, decoding error, etc.).
      */
@@ -120,7 +119,7 @@ public class OllamaService: LLMServiceProtocol {
 
         // Construct the request body as per Ollama API, utilizing options for configurable parameters
         let body: [String: Any] = [
-            "model": request.model ?? "llama3.2",  // Default to llama3.2
+            "model": request.model ?? "llama3.2", // Default to llama3.2
             "prompt": prompt,
             "max_tokens": request.maxTokens,
             "temperature": request.temperature,
@@ -128,7 +127,7 @@ public class OllamaService: LLMServiceProtocol {
             "frequency_penalty": request.options?.frequencyPenalty ?? 0.0,
             "presence_penalty": request.options?.presencePenalty ?? 0.0,
             "stop": request.options?.stopSequences ?? [],
-            "stream": false
+            "stream": false,
         ]
 
         // Serialize the request body into JSON
@@ -145,7 +144,7 @@ public class OllamaService: LLMServiceProtocol {
         // Non-streaming response handling
         let (data, response) = try await urlSession.data(for: urlRequest)
 
-        guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
+        guard let httpResponse = response as? HTTPURLResponse, (200 ... 299).contains(httpResponse.statusCode) else {
             throw LLMServiceError.invalidResponse(statusCode: (response as? HTTPURLResponse)?.statusCode ?? -1)
         }
 
@@ -194,7 +193,7 @@ public class OllamaService: LLMServiceProtocol {
 
         // Construct the request body as per Ollama API
         let body: [String: Any] = [
-            "model": request.model ?? "llama3.2",  // Default to llama3.2
+            "model": request.model ?? "llama3.2", // Default to llama3.2
             "prompt": prompt,
             "max_tokens": request.maxTokens,
             "temperature": request.temperature,
@@ -202,7 +201,7 @@ public class OllamaService: LLMServiceProtocol {
             "frequency_penalty": request.options?.frequencyPenalty ?? 0.0,
             "presence_penalty": request.options?.presencePenalty ?? 0.0,
             "stop": request.options?.stopSequences ?? [],
-            "stream": true
+            "stream": true,
         ]
 
         let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
@@ -227,7 +226,7 @@ public class OllamaService: LLMServiceProtocol {
         }
     }
 
-    internal class StreamingDelegate: NSObject, URLSessionDataDelegate {
+    class StreamingDelegate: NSObject, URLSessionDataDelegate {
         private let vendor: String
         private let model: String
         private let onPartialResponse: (String) -> Void
@@ -240,7 +239,8 @@ public class OllamaService: LLMServiceProtocol {
              model: String,
              logger: CustomLogger? = nil,
              onPartialResponse: @escaping (String) -> Void,
-             continuation: CheckedContinuation<LLMResponseProtocol, Error>) {
+             continuation: CheckedContinuation<LLMResponseProtocol, Error>)
+        {
             self.vendor = vendor
             self.model = model
             self.logger = logger
@@ -248,7 +248,7 @@ public class OllamaService: LLMServiceProtocol {
             self.continuation = continuation
         }
 
-        func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+        func urlSession(_: URLSession, dataTask _: URLSessionDataTask, didReceive data: Data) {
             logger?.debug("Streaming response received. Processing...", category: "OllamaService.StreamingDelegate")
 
             do {
@@ -275,7 +275,7 @@ public class OllamaService: LLMServiceProtocol {
             }
         }
 
-        func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        func urlSession(_: URLSession, task _: URLSessionTask, didCompleteWithError error: Error?) {
             if let error = error {
                 continuation.resume(throwing: error)
             }

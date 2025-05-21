@@ -59,11 +59,11 @@ public protocol WorkflowReportable {
 
 extension Workflow.Task: WorkflowReportable {
     public func generateReport() -> WorkflowComponentReport {
-        if let details = self.detailsHolder.details {
+        if let details = detailsHolder.details {
             return WorkflowComponentReport(
-                id: self.id,
-                name: self.name,
-                description: self.description,
+                id: id,
+                name: name,
+                description: description,
                 type: "Task",
                 state: details.state,
                 executionTime: details.executionTime,
@@ -73,9 +73,9 @@ extension Workflow.Task: WorkflowReportable {
             )
         } else {
             return WorkflowComponentReport(
-                id: self.id,
-                name: self.name,
-                description: self.description,
+                id: id,
+                name: name,
+                description: description,
                 type: "Task",
                 state: .notStarted,
                 executionTime: nil,
@@ -89,12 +89,12 @@ extension Workflow.Task: WorkflowReportable {
 
 extension Workflow.TaskGroup: WorkflowReportable {
     public func generateReport() -> WorkflowComponentReport {
-        let childReports = self.tasks.map { $0.generateReport() }
-        if let details = self.detailsHolder.details {
+        let childReports = tasks.map { $0.generateReport() }
+        if let details = detailsHolder.details {
             return WorkflowComponentReport(
-                id: self.id,
-                name: self.name,
-                description: self.description,
+                id: id,
+                name: name,
+                description: description,
                 type: "TaskGroup",
                 state: details.state,
                 executionTime: details.executionTime,
@@ -104,9 +104,9 @@ extension Workflow.TaskGroup: WorkflowReportable {
             )
         } else {
             return WorkflowComponentReport(
-                id: self.id,
-                name: self.name,
-                description: self.description,
+                id: id,
+                name: name,
+                description: description,
                 type: "TaskGroup",
                 state: .notStarted,
                 executionTime: nil,
@@ -122,14 +122,14 @@ extension Workflow.Subflow: WorkflowReportable {
     public func generateReport() -> WorkflowComponentReport {
         // Map properties from the wrapped Workflow into a WorkflowComponentReport.
         return WorkflowComponentReport(
-            id: self.workflow.id,
-            name: self.workflow.name,
-            description: self.workflow.description,
+            id: workflow.id,
+            name: workflow.name,
+            description: workflow.description,
             type: "Subflow",
-            state: self.workflow.detailsHolder.details?.state ?? .notStarted,
-            executionTime: self.workflow.detailsHolder.details?.executionTime ?? 0.0,
-            outputs: self.workflow.outputs,
-            childReports: self.workflow.componentsManager.completedComponents.map { $0.report },
+            state: workflow.detailsHolder.details?.state ?? .notStarted,
+            executionTime: workflow.detailsHolder.details?.executionTime ?? 0.0,
+            outputs: workflow.outputs,
+            childReports: workflow.componentsManager.completedComponents.map { $0.report },
             error: nil
         )
     }
@@ -137,11 +137,11 @@ extension Workflow.Subflow: WorkflowReportable {
 
 extension Workflow.Logic: WorkflowReportable {
     public func generateReport() -> WorkflowComponentReport {
-        if let details = self.detailsHolder.details {
+        if let details = detailsHolder.details {
             return WorkflowComponentReport(
-                id: self.id,
-                name: self.name,
-                description: self.description,
+                id: id,
+                name: name,
+                description: description,
                 type: "Logic",
                 state: details.state,
                 executionTime: details.executionTime,
@@ -151,9 +151,9 @@ extension Workflow.Logic: WorkflowReportable {
             )
         } else {
             return WorkflowComponentReport(
-                id: self.id,
-                name: self.name,
-                description: self.description,
+                id: id,
+                name: name,
+                description: description,
                 type: "Logic",
                 state: .notStarted,
                 executionTime: nil,
@@ -167,11 +167,11 @@ extension Workflow.Logic: WorkflowReportable {
 
 extension Workflow.Trigger: WorkflowReportable {
     public func generateReport() -> WorkflowComponentReport {
-        if let details = self.detailsHolder.details {
+        if let details = detailsHolder.details {
             return WorkflowComponentReport(
-                id: self.id,
-                name: self.name,
-                description: self.description,
+                id: id,
+                name: name,
+                description: description,
                 type: "Trigger",
                 state: details.state,
                 executionTime: details.executionTime,
@@ -181,9 +181,9 @@ extension Workflow.Trigger: WorkflowReportable {
             )
         } else {
             return WorkflowComponentReport(
-                id: self.id,
-                name: self.name,
-                description: self.description,
+                id: id,
+                name: name,
+                description: description,
                 type: "Trigger",
                 state: .notStarted,
                 executionTime: nil,
@@ -195,19 +195,19 @@ extension Workflow.Trigger: WorkflowReportable {
     }
 }
 
-extension Workflow.Component {
+public extension Workflow.Component {
     /// Returns the report for this workflow component.
-    public var report: WorkflowComponentReport {
+    var report: WorkflowComponentReport {
         switch self {
-        case .task(let task):
+        case let .task(task):
             return task.generateReport()
-        case .taskGroup(let group):
+        case let .taskGroup(group):
             return group.generateReport()
-        case .subflow(let subflow):
+        case let .subflow(subflow):
             return subflow.generateReport()
-        case .logic(let logic):
+        case let .logic(logic):
             return logic.generateReport()
-        case .trigger(let trigger):
+        case let .trigger(trigger):
             return trigger.generateReport()
         }
     }
@@ -253,18 +253,18 @@ public struct WorkflowReport {
 
 // MARK: - Workflow Report Generation
 
-extension Workflow {
+public extension Workflow {
     /// Generates an overall report for the workflow.
-    public func generateReport() async -> WorkflowReport {
+    func generateReport() async -> WorkflowReport {
         let componentReports = componentsManager.completedComponents.map { $0.report }
         let executionTime = componentsManager.completedComponents.reduce(0.0) { $0 + $1.executionTime }
         return WorkflowReport(
-            id: self.id,
-            name: self.name,
-            description: self.description,
-            state: await self.state,
+            id: id,
+            name: name,
+            description: description,
+            state: await state,
             executionTime: executionTime,
-            outputs: self.outputs,
+            outputs: outputs,
             componentReports: componentReports,
             error: nil // Update with error info if applicable
         )
@@ -273,17 +273,16 @@ extension Workflow {
 
 // MARK: - Report Printing Extensions
 
-extension WorkflowComponentReport {
-
+public extension WorkflowComponentReport {
     /**
-    Returns a formatted string representation of the report.
+     Returns a formatted string representation of the report.
 
-    - Parameters:
-        - compact: When true, prints child reports in a condensed format.
-        - showOutputs: When true, includes the outputs in the report.
-        - indent: A string to prepend to each line (for nested reports).
-     */
-    public func printedReport(compact: Bool = false, showOutputs: Bool = true, indent: String = "") -> String {
+     - Parameters:
+         - compact: When true, prints child reports in a condensed format.
+         - showOutputs: When true, includes the outputs in the report.
+         - indent: A string to prepend to each line (for nested reports).
+      */
+    func printedReport(compact: Bool = false, showOutputs: Bool = true, indent: String = "") -> String {
         var output = ""
         output += "\(indent)Type: \(type)\n" // NEW
         output += "\(indent)ID: \(id)\n"
@@ -313,16 +312,15 @@ extension WorkflowComponentReport {
     }
 }
 
-extension WorkflowReport {
-
+public extension WorkflowReport {
     /**
-    Returns a formatted string representation of the overall workflow report.
+     Returns a formatted string representation of the overall workflow report.
 
-    - Parameters:
-        - compact: When true, child components are printed in a condensed format.
-        - showOutputs: When true, includes the outputs in the report.
-     */
-    public func printedReport(compact: Bool = false, showOutputs: Bool = true) -> String {
+     - Parameters:
+         - compact: When true, child components are printed in a condensed format.
+         - showOutputs: When true, includes the outputs in the report.
+      */
+    func printedReport(compact: Bool = false, showOutputs: Bool = true) -> String {
         var output = "Workflow Report:\n"
         output += "ID: \(id)\n"
         output += "Name: \(name)\n"

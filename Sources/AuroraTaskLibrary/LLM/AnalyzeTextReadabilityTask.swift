@@ -5,9 +5,9 @@
 //  Created by Dan Murrell Jr on 1/4/25.
 //
 
-import Foundation
 import AuroraCore
 import AuroraLLM
+import Foundation
 
 /**
  `AnalyzeTextReadabilityTask` analyzes the readability of input strings using an LLM service.
@@ -45,7 +45,7 @@ public class AnalyzeTextReadabilityTask: WorkflowComponent {
         maxTokens: Int = 500,
         inputs: [String: Any?] = [:]
     ) {
-        self.task = Workflow.Task(
+        task = Workflow.Task(
             name: name ?? String(describing: Self.self),
             description: "Analyze the readability of input strings using an LLM service.",
             inputs: inputs
@@ -100,8 +100,8 @@ public class AnalyzeTextReadabilityTask: WorkflowComponent {
 
             let request = LLMRequest(
                 messages: [
-                    LLMMessage(role: .system, content: "You are a readability analysis expert."),
-                    LLMMessage(role: .user, content: readabilityPrompt)
+                    LLMMessage(role: .system, content: "You are a readability analysis expert. Always respond with a single valid JSON object and nothing else (no markdown, explanations, or code fences)."),
+                    LLMMessage(role: .user, content: readabilityPrompt),
                 ],
                 maxTokens: maxTokens
             )
@@ -114,8 +114,8 @@ public class AnalyzeTextReadabilityTask: WorkflowComponent {
 
                 // Parse the response into a dictionary (assumes LLM returns JSON-like structure).
                 guard let data = rawResponse.data(using: .utf8),
-                    let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                    let readabilityScores = jsonObject["readabilityScores"] as? [String: [String: Any]]
+                      let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                      let readabilityScores = jsonObject["readabilityScores"] as? [String: [String: Any]]
                 else {
                     throw NSError(
                         domain: "AnalyzeTextReadabilityTask",

@@ -13,7 +13,6 @@ import Foundation
  This struct captures relevant fields from the response, including generated content, message metadata, and token usage statistics if provided by the API.
  */
 public struct AnthropicLLMResponse: LLMResponseProtocol, Codable {
-
     /// The ID of the message returned by the Anthropic API.
     public let id: String
 

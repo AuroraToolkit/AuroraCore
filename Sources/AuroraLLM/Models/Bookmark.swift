@@ -13,7 +13,6 @@ import Foundation
  Bookmarks store a label, timestamp, and the ID of the associated context item, providing a way to mark important moments or pieces of content within the context.
  */
 public struct Bookmark: Identifiable, Codable, Equatable {
-
     /// Unique identifier for the bookmark.
     public let id: UUID
 
@@ -34,10 +33,10 @@ public struct Bookmark: Identifiable, Codable, Equatable {
         - label: A descriptive label for the bookmark.
      */
     public init(contextItemID: UUID, label: String) {
-        self.id = UUID()
+        id = UUID()
         self.contextItemID = contextItemID
         self.label = label
-        self.timestamp = Date()
+        timestamp = Date()
     }
 
     /**
@@ -48,13 +47,13 @@ public struct Bookmark: Identifiable, Codable, Equatable {
      - Parameters:
         - lhs: The first bookmark to compare.
         - rhs: The second bookmark to compare.
-     
+
      - Returns: `true` if the bookmarks are equal, otherwise `false`.
      */
     public static func == (lhs: Bookmark, rhs: Bookmark) -> Bool {
         return lhs.id == rhs.id &&
-               lhs.contextItemID == rhs.contextItemID &&
-               lhs.label == rhs.label &&
-               lhs.timestamp == rhs.timestamp
+            lhs.contextItemID == rhs.contextItemID &&
+            lhs.label == rhs.label &&
+            lhs.timestamp == rhs.timestamp
     }
 }

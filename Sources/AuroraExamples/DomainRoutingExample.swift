@@ -5,16 +5,15 @@
 //  Created by Dan Murrell Jr on 11/28/24.
 //
 
-import Foundation
 import AuroraCore
 import AuroraLLM
+import Foundation
 
 /**
  An example demonstrating how to use domain-specific routing to LLM services.
  */
 struct DomainRoutingExample {
     func execute() async {
-
         // Initialize the LLMManager
         let manager = LLMManager()
 
@@ -36,21 +35,24 @@ struct DomainRoutingExample {
         let sportsService = MockLLMService(
             name: "Sports Service",
             vendor: "MockLLM",
-            expectedResult: .success(MockLLMResponse(text: "Sports Service Response")))
+            expectedResult: .success(MockLLMResponse(text: "Sports Service Response"))
+        )
         manager.registerService(sportsService, withRoutings: [.domain(sports)])
 
         // Register a mock service that answers questions about the movies domain
         let moviesService = MockLLMService(
             name: "Movies Service",
             vendor: "MockLLM",
-            expectedResult: .success(MockLLMResponse(text: "Movies Service Response")))
+            expectedResult: .success(MockLLMResponse(text: "Movies Service Response"))
+        )
         manager.registerService(moviesService, withRoutings: [.domain(movies)])
 
         // Register a mock service that answers questions about the books domain
         let booksService = MockLLMService(
             name: "Books Service",
             vendor: "MockLLM",
-            expectedResult: .success(MockLLMResponse(text: "Books Service Response")))
+            expectedResult: .success(MockLLMResponse(text: "Books Service Response"))
+        )
         manager.registerService(booksService, withRoutings: [.domain(books)])
 
         // Register a general purpose, fallback service
@@ -145,9 +147,9 @@ private class MockLLMService: LLMServiceProtocol {
 
         // Simulate returning the expected result
         switch expectedResult {
-        case .success(let response):
+        case let .success(response):
             return response
-        case .failure(let error):
+        case let .failure(error):
             throw error
         }
     }
@@ -164,16 +166,15 @@ private class MockLLMService: LLMServiceProtocol {
 
         // Return the final result after partial response simulation
         switch expectedResult {
-        case .success(let response):
+        case let .success(response):
             return response
-        case .failure(let error):
+        case let .failure(error):
             throw error
         }
     }
 }
 
 private struct MockLLMResponse: LLMResponseProtocol {
-
     /// The mock text content returned by the mock LLM.
     public var text: String
 

@@ -1,6 +1,6 @@
 //
-//  File.swift
-//  
+//  SummarizerProtocol.swift
+//
 //
 //  Created by Dan Murrell Jr on 9/1/24.
 //
@@ -11,7 +11,6 @@ import Foundation
  The `SummarizerProtocol` defines methods for summarizing content via an LLM service.
  */
 public protocol SummarizerProtocol {
-
     /**
      Summarizes text using the LLM service.
 
@@ -42,6 +41,6 @@ public protocol SummarizerProtocol {
  Enum representing different types of summaries that can be requested.
  */
 public enum SummaryType {
-    case single     // A single, combined summary for all input strings
-    case multiple   // Individual summaries for each input string
+    case single // A single, combined summary for all input strings
+    case multiple // Individual summaries for each input string
 }

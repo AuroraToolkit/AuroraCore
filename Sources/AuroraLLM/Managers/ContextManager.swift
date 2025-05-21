@@ -12,12 +12,11 @@ import Foundation
  It allows adding, removing, switching between contexts, and saving/restoring contexts from disk using tasks.
  */
 public class ContextManager {
-
     /// A dictionary mapping UUIDs to their respective `ContextController` instances.
-    internal var contextControllers: [UUID: ContextController] = [:]
+    var contextControllers: [UUID: ContextController] = [:]
 
     /// The ID of the currently active context.
-    internal var activeContextID: UUID?
+    var activeContextID: UUID?
 
     private let llmServiceFactory: LLMServiceFactory
 
@@ -87,7 +86,7 @@ public class ContextManager {
      Retrieves a `ContextController` for a given context ID.
 
      - Parameter contextID: The UUID of the context to be retrieved.
-     
+
      - Returns: The `ContextController` associated with the given context ID, or `nil` if no such context exists.
      */
     public func getContextController(for contextID: UUID) -> ContextController? {
@@ -164,7 +163,8 @@ public class ContextManager {
                 let loadTaskOutputs = try await unwrappedTask.execute()
 
                 if let loadedContext = loadTaskOutputs["context"] as? Context,
-                   let llmService = llmServiceFactory.createService(for: loadedContext) {
+                   let llmService = llmServiceFactory.createService(for: loadedContext)
+                {
                     let contextController = ContextController(context: loadedContext, llmService: llmService)
                     let contextID = loadedContext.id
                     contextControllers[contextID] = contextController

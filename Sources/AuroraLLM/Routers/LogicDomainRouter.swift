@@ -5,8 +5,8 @@
 //  Created by Dan Murrell Jr on 4/25/25.
 //
 
-import Foundation
 import AuroraCore
+import Foundation
 
 // MARK: - Routing Logic Rule
 
@@ -15,7 +15,6 @@ import AuroraCore
  and map it to a domain.
  */
 public struct LogicRule {
-
     /// Human-readable identifier for logs/metrics.
     public let name: String
 
@@ -32,7 +31,8 @@ public struct LogicRule {
     public init(name: String,
                 domain: String,
                 priority: Int = 0,
-                predicate: @escaping (LLMRequest) -> Bool) {
+                predicate: @escaping (LLMRequest) -> Bool)
+    {
         self.name = name
         self.domain = domain.lowercased()
         self.priority = priority
@@ -44,7 +44,7 @@ public struct LogicRule {
 
 /**
  Determines how the router chooses a domain when evaluating rules.
- 
+
  * `.firstMatch` – stop at the first rule that matches (fast).
  * `.highestPriority` – evaluate all rules, pick the highest `priority`.
  * `.topKThenResolve` – gather the first *k* matches, pass them to a resolver.
@@ -58,9 +58,9 @@ public enum EvaluationStrategy {
     case topKThenResolve(k: Int,
                          resolver: (_ matches: [LogicRule]) -> String?)
     case probabilisticWeights(
-            selector: (_ matches: [LogicRule]) -> [(domain: String, weight: Double)],
-            rng: RandomNumberGenerator = SystemRandomNumberGenerator()
-      )
+        selector: (_ matches: [LogicRule]) -> [(domain: String, weight: Double)],
+        rng: RandomNumberGenerator = SystemRandomNumberGenerator()
+    )
     case custom((_ matches: [LogicRule]) -> String?)
 }
 
@@ -94,7 +94,6 @@ public enum EvaluationStrategy {
  ```
  */
 public final class LogicDomainRouter: LLMDomainRouterProtocol {
-
     public let name: String
     public let supportedDomains: [String]
 
@@ -117,14 +116,13 @@ public final class LogicDomainRouter: LLMDomainRouterProtocol {
                 rules: [LogicRule],
                 defaultDomain: String? = nil,
                 evaluationStrategy: EvaluationStrategy = .firstMatch,
-                logger: CustomLogger? = nil
-    ) {
-
+                logger: CustomLogger? = nil)
+    {
         self.name = name
         self.supportedDomains = supportedDomains.map { $0.lowercased() }
         self.rules = rules
         self.defaultDomain = defaultDomain?.lowercased()
-        self.strategy = evaluationStrategy
+        strategy = evaluationStrategy
         self.logger = logger
     }
 
@@ -133,13 +131,11 @@ public final class LogicDomainRouter: LLMDomainRouterProtocol {
      or `nil` if unresolved.
      */
     public func determineDomain(for request: LLMRequest) async throws -> String? {
-
         switch strategy {
-
         case .firstMatch:
             for r in rules where r.predicate(request) {
                 logger?.debug("[\(name)] '\(r.name)' matched → \(r.domain)",
-                             category: "LogicDomainRouter")
+                              category: "LogicDomainRouter")
                 return r.domain
             }
 
@@ -150,11 +146,11 @@ public final class LogicDomainRouter: LLMDomainRouterProtocol {
             }
             if let win = winner {
                 logger?.debug("[\(name)] '\(win.name)' matched (highestPriority \(win.priority))",
-                             category: "LogicDomainRouter")
+                              category: "LogicDomainRouter")
                 return win.domain
             }
 
-        case .topKThenResolve(let k, let resolver):
+        case let .topKThenResolve(k, resolver):
             var bucket: [LogicRule] = []
             for r in rules where r.predicate(request) {
                 bucket.append(r)
@@ -174,7 +170,7 @@ public final class LogicDomainRouter: LLMDomainRouterProtocol {
                 return choice
             }
 
-        case .custom(let resolver):
+        case let .custom(resolver):
             let matches = rules.filter { $0.predicate(request) }
             if let result = resolver(matches) {
                 logger?.debug("[\(name)] custom resolver chose '\(result)'", category: "LogicDomainRouter")
@@ -183,7 +179,7 @@ public final class LogicDomainRouter: LLMDomainRouterProtocol {
         }
 
         logger?.debug("[\(name)] no rule matched → \(defaultDomain ?? "nil")",
-                     category: "LogicDomainRouter")
+                      category: "LogicDomainRouter")
         return defaultDomain
     }
 
@@ -195,7 +191,7 @@ public final class LogicDomainRouter: LLMDomainRouterProtocol {
         let total = items.reduce(0) { $0 + max($1.weight, 0) }
         guard total > 0 else { return nil }
 
-        let r = Double.random(in: 0..<total, using: &rng)
+        let r = Double.random(in: 0 ..< total, using: &rng)
         var running = 0.0
         for item in items {
             running += max(item.weight, 0)
@@ -208,19 +204,19 @@ public final class LogicDomainRouter: LLMDomainRouterProtocol {
 // MARK: - Convenience Rule Builders
 
 public extension LogicRule {
-
     /** Regex/keyword match (case-insensitive, Unicode-aware). */
     static func regex(name: String,
                       pattern: String,
                       domain: String,
-                      priority: Int = 0) -> LogicRule {
+                      priority: Int = 0) -> LogicRule
+    {
         let rx = try? NSRegularExpression(pattern: pattern,
                                           options: [.caseInsensitive])
         return LogicRule(name: name, domain: domain, priority: priority) { req in
             let text = req.messages.map(\.content).joined(separator: " ")
             return rx?.firstMatch(in: text,
-                                 options: [],
-                                 range: NSRange(text.startIndex..., in: text)) != nil
+                                  options: [],
+                                  range: NSRange(text.startIndex..., in: text)) != nil
         }
     }
 
@@ -228,7 +224,8 @@ public extension LogicRule {
     static func tokens(name: String,
                        domain: String,
                        priority: Int = 0,
-                       cmp: @escaping (Int) -> Bool) -> LogicRule {
+                       cmp: @escaping (Int) -> Bool) -> LogicRule
+    {
         LogicRule(name: name, domain: domain, priority: priority) { req in
             cmp(req.estimatedTokenCount())
         }
@@ -239,7 +236,8 @@ public extension LogicRule {
                       hours: ClosedRange<Int>,
                       domain: String,
                       priority: Int = 0,
-                      clock: @escaping () -> Date = { Date() }) -> LogicRule {
+                      clock: @escaping () -> Date = { Date() }) -> LogicRule
+    {
         LogicRule(name: name, domain: domain, priority: priority) { _ in
             hours.contains(Calendar.current.component(.hour, from: clock()))
         }

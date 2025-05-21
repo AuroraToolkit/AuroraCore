@@ -2,15 +2,14 @@
 //  LLMRoutingExample.swift
 //  AuroraCore
 
-import Foundation
 import AuroraCore
 import AuroraLLM
+import Foundation
 
 /**
     An example demonstrating how to route requests between multiple LLM services (Ollama and OpenAI) based on token limits.
  */
 struct LLMRoutingExample {
-
     func execute() async {
         // Set your OpenAI API key as an environment variable to run this example, e.g., `export OPENAI_API_KEY="your-api-key"`
         let openAIKey = ProcessInfo.processInfo.environment["OPENAI_API_KEY"] ?? ""

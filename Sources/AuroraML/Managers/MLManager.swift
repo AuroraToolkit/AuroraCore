@@ -5,8 +5,8 @@
 //  Created by Dan Murrell Jr on 5/4/25.
 //
 
-import Foundation
 import AuroraCore
+import Foundation
 
 /**
  `MLManager` is responsible for registering and managing multiple on-device ML models.
@@ -36,7 +36,7 @@ public final actor MLManager {
 
     /// Computed property to get all registered service names.
     public var registeredServiceNames: [String] {
-      Array(services.keys)
+        Array(services.keys)
     }
 
     /// The name of the currently active service.
@@ -75,8 +75,8 @@ public final actor MLManager {
         Unregisters the fallback service.
      */
     public func unregisterFallbackService() {
-      fallbackService = nil
-      logger?.debug("Cleared fallback service", category: "MLManager")
+        fallbackService = nil
+        logger?.debug("Cleared fallback service", category: "MLManager")
     }
 
     /**
@@ -101,7 +101,7 @@ public final actor MLManager {
 
         if activeServiceName == nil {
             activeServiceName = serviceName
-            logger?.debug("Active service set to: \(self.activeServiceName ?? "nil")", category: "MLManager")
+            logger?.debug("Active service set to: \(activeServiceName ?? "nil")", category: "MLManager")
         }
     }
 
@@ -130,7 +130,7 @@ public final actor MLManager {
                 domain: "MLManager",
                 code: 1,
                 userInfo: [NSLocalizedDescriptionKey:
-                            "No ML service registered for '\(serviceName)'"]
+                    "No ML service registered for '\(serviceName)'"]
             )
         }
 
@@ -158,7 +158,7 @@ public final actor MLManager {
         }
 
         activeServiceName = name
-        logger?.debug("Active service switched to: \(self.activeServiceName ?? "nil")", category: "MLManager")
+        logger?.debug("Active service switched to: \(activeServiceName ?? "nil")", category: "MLManager")
     }
 
     // MARK: - Run model inference
@@ -200,7 +200,7 @@ public final actor MLManager {
         } catch {
             logger?.error("Failed to run ML service '\(serviceName)', attempting fallback': \(error)", category: "MLManager")
             if let fallbackService {
-              return try await fallbackService.run(request: request)
+                return try await fallbackService.run(request: request)
             }
             throw error
         }

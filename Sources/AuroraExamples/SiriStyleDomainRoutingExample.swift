@@ -5,9 +5,9 @@
 //  Created by Dan Murrell Jr on 4/24/25.
 //
 
-import Foundation
 import AuroraCore
 import AuroraLLM
+import Foundation
 
 /**
  An example demonstrating a Siri-style, privacy-focused domain routing scenario.
@@ -37,7 +37,7 @@ struct SiriStyleDomainRoutingExample {
     private let testCases: [(String, String)]
 
     init() {
-        self.testCases = [
+        testCases = [
             // private, will route to on-device local LLM
             ("Remind me to call mom at 7", "private"),
             ("Read my last message", "private"),
@@ -92,7 +92,7 @@ struct SiriStyleDomainRoutingExample {
             ("What do you think about that?", "unsure"),
             ("What do you think of me?", "unsure"),
             ("Play something relaxing", "unsure"),
-            ("How should I feel right now?", "unsure")
+            ("How should I feel right now?", "unsure"),
         ]
     }
 

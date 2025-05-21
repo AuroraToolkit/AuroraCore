@@ -5,10 +5,10 @@
 //  Created by Dan Murrell Jr on 2/24/25.
 //
 
-import Foundation
 import AuroraCore
 import AuroraLLM
 import AuroraTaskLibrary
+import Foundation
 
 /**
  Example workflow demonstrating a conditional subflow for temperature monitoring.
@@ -32,7 +32,7 @@ struct TemperatureMonitorWorkflow {
     // A helper function to simulate reading the current temperature.
     func getCurrentTemperature() -> Double {
         // For demo purposes, return a random temperature between 60 and 90.
-        let temperature = Double.random(in: 60...90)
+        let temperature = Double.random(in: 60 ... 90)
         return (temperature * 100).rounded() / 100
     }
 
@@ -149,8 +149,8 @@ struct TemperatureMonitorWorkflow {
                 // Compute median.
                 let sorted = readings.sorted()
                 let median: Double = sorted.count % 2 == 1 ?
-                    sorted[sorted.count/2] :
-                    (sorted[sorted.count/2 - 1] + sorted[sorted.count/2]) / 2
+                    sorted[sorted.count / 2] :
+                    (sorted[sorted.count / 2 - 1] + sorted[sorted.count / 2]) / 2
                 // Count normal vs abnormal.
                 let normalCount = readings.filter { $0 <= self.safeThreshold }.count
                 let highCount = readings.filter { $0 > self.safeThreshold }.count
@@ -158,7 +158,7 @@ struct TemperatureMonitorWorkflow {
                     "average": average,
                     "median": median,
                     "normalCount": normalCount,
-                    "highCount": highCount
+                    "highCount": highCount,
                 ]
             }
         }
@@ -178,7 +178,8 @@ struct TemperatureMonitorWorkflow {
         print("Temperature insights:")
         // Print the normal and abnormal temperature counts.
         if let normalCount = workflow.outputs["AnalyzeTempHistory.normalCount"] as? Int,
-           let highCount = workflow.outputs["AnalyzeTempHistory.highCount"] as? Int {
+           let highCount = workflow.outputs["AnalyzeTempHistory.highCount"] as? Int
+        {
             print("Total readings: \(normalCount + highCount)")
             print("Normal temperature count: \(normalCount)")
             print("High temperature count: \(highCount)")

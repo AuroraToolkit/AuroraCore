@@ -1,8 +1,8 @@
 //
 //  main.swift
 
-import Foundation
 import AuroraCore
+import Foundation
 
 // swiftlint:disable orphaned_doc_comment
 

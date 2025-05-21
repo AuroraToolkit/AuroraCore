@@ -5,8 +5,8 @@
 //  Created by Dan Murrell Jr on 4/15/25.
 //
 
-import Foundation
 import AuroraCore
+import Foundation
 
 /**
     A struct representing a domain prediction with a label and confidence score.
@@ -19,15 +19,14 @@ public struct DualDomainPrediction: Equatable {
 }
 
 /**
-A domain router that combines two classifiers:
+ A domain router that combines two classifiers:
 
- - A **primary** router (default authority)
- - A **secondary** contrastive router (used to validate, challenge, or help resolve uncertain predictions)
+  - A **primary** router (default authority)
+  - A **secondary** contrastive router (used to validate, challenge, or help resolve uncertain predictions)
 
- The router uses confidence thresholds and an optional fallback domain to resolve disagreements.
- */
+  The router uses confidence thresholds and an optional fallback domain to resolve disagreements.
+  */
 public struct DualDomainRouter: LLMDomainRouterProtocol {
-
     /// The name of the router, used for logging and identification.
     public let name: String
 
@@ -54,32 +53,32 @@ public struct DualDomainRouter: LLMDomainRouterProtocol {
     private let secondary: LLMDomainRouterProtocol
 
     /**
-    A closure provided by the developer to resolve domain prediction conflicts
-    that cannot be automatically settled by confidence thresholds.
+     A closure provided by the developer to resolve domain prediction conflicts
+     that cannot be automatically settled by confidence thresholds.
 
-    This is the final fallback resolution step when:
-     - The primary and secondary predictions differ
-     - The confidence delta is below the resolution threshold
-     - Neither prediction meets the fallback confidence threshold
+     This is the final fallback resolution step when:
+      - The primary and secondary predictions differ
+      - The confidence delta is below the resolution threshold
+      - Neither prediction meets the fallback confidence threshold
 
-    The closure receives the predicted domains (or `nil`) from both routers
-    and should return a supported domain or `nil` if resolution is not possible.
+     The closure receives the predicted domains (or `nil`) from both routers
+     and should return a supported domain or `nil` if resolution is not possible.
 
-    Examples:
+     Examples:
 
-        // Basic: Prefer primary if available, fallback to secondary
-        resolve: { primary, secondary in
-            return primary ?? secondary
-        }
+         // Basic: Prefer primary if available, fallback to secondary
+         resolve: { primary, secondary in
+             return primary ?? secondary
+         }
 
-        // Custom logic: Favor 'technology' over 'health' in ties
-        resolve: { primary, secondary in
-            if primary == "health" && secondary == "technology" {
-                return "technology"
-            }
-            return primary ?? secondary
-        }
-    */
+         // Custom logic: Favor 'technology' over 'health' in ties
+         resolve: { primary, secondary in
+             if primary == "health" && secondary == "technology" {
+                 return "technology"
+             }
+             return primary ?? secondary
+         }
+     */
     private let resolve: (_ primary: DualDomainPrediction?, _ secondary: DualDomainPrediction?) -> String?
 
     /// Shared logger instance.
@@ -126,7 +125,7 @@ public struct DualDomainRouter: LLMDomainRouterProtocol {
         self.allowSyntheticFallbacks = allowSyntheticFallbacks
         self.logger = logger
         self.conflictLogger = conflictLogger
-        self.resolve = resolveConflict
+        resolve = resolveConflict
     }
 
     /**
@@ -180,7 +179,8 @@ public struct DualDomainRouter: LLMDomainRouterProtocol {
         )
 
         if shouldFallback(primaryPrediction, secondaryPrediction),
-           let fallback = fallbackDomain {
+           let fallback = fallbackDomain
+        {
             logger?.debug("Both predictions are below fallback threshold. Returning fallback domain '\(fallback)'.", category: "DualDomainRouter")
             return fallback
         }
@@ -210,10 +210,11 @@ public struct DualDomainRouter: LLMDomainRouterProtocol {
         This function is private and used internally to retrieve the prediction and confidence from the specified router. It handles both confident and non-confident routers. If the domain cannot be determined, the `fallbackDomain` is returned with a confidence of 0. If `fallbackDomain` is not set and `allowSyntheticFallbacks` is `true`, "unknown" is returned.
      */
     private func prediction(from router: LLMDomainRouterProtocol,
-                            for request: LLMRequest
-    ) async throws -> DualDomainPrediction? {
+                            for request: LLMRequest) async throws -> DualDomainPrediction?
+    {
         if let c = router as? ConfidentDomainRouter,
-           let (label, conf) = try await c.determineDomainWithConfidence(for: request) {
+           let (label, conf) = try await c.determineDomainWithConfidence(for: request)
+        {
             return DualDomainPrediction(label: label.lowercased(), confidence: conf)
         } else if let label = try await router.determineDomain(for: request) {
             return DualDomainPrediction(label: label.lowercased(), confidence: 1.0)
@@ -260,7 +261,6 @@ public protocol ConflictLoggingStrategy {
     A file-based conflict logger that appends conflict details to a CSV file.
  */
 public final class FileConflictLogger: ConflictLoggingStrategy {
-
     private var fileHandle: FileHandle?
     private let dateFormatter: DateFormatter
     private let logger: CustomLogger?
@@ -275,8 +275,8 @@ public final class FileConflictLogger: ConflictLoggingStrategy {
         - Note: The file will be created if it doesn't exist, and a CSV header will be added.
      */
     public init(fileName: String, directory: URL? = nil, logger: CustomLogger? = nil) {
-        self.dateFormatter = DateFormatter()
-        self.dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
 
         self.logger = logger
 
@@ -295,8 +295,8 @@ public final class FileConflictLogger: ConflictLoggingStrategy {
                     .write(to: fileURL, atomically: true, encoding: .utf8)
             }
 
-            self.fileHandle = try FileHandle(forWritingTo: fileURL)
-            self.fileHandle?.seekToEndOfFile()
+            fileHandle = try FileHandle(forWritingTo: fileURL)
+            fileHandle?.seekToEndOfFile()
             logger?.debug("CSV log file created at \(fileURL)", category: "FileConflictLogger")
         } catch {
             logger?.error("Failed to initialize file logger: \(error)", category: "FileConflictLogger")

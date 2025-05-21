@@ -5,9 +5,9 @@
 //  Created by Dan Murrell Jr on 5/7/25.
 //
 
-import Foundation
 import AuroraCore
 import AuroraML
+import Foundation
 
 /**
  `AnalyzeSentimentMLTask` performs sentiment analysis on an array of strings using any `MLServiceProtocol` implementation.
@@ -69,7 +69,7 @@ public class AnalyzeSentimentMLTask: WorkflowComponent {
         negativeThreshold: Double = -0.1,
         inputs: [String: Any?] = [:]
     ) {
-        self.task = Workflow.Task(
+        task = Workflow.Task(
             name: name ?? String(describing: Self.self),
             description: "Analyze sentiment of strings via ML",
             inputs: inputs
@@ -110,7 +110,7 @@ public class AnalyzeSentimentMLTask: WorkflowComponent {
                     let pct = Int((abs(rawScore) * 100).rounded())
                     result[text] = [
                         "sentiment": label,
-                        "confidence": pct
+                        "confidence": pct,
                     ]
                 } else {
                     result[text] = label

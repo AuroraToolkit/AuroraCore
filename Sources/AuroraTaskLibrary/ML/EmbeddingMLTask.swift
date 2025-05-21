@@ -5,9 +5,9 @@
 //  Created by Dan Murrell Jr on 5/17/25.
 //
 
-import Foundation
 import AuroraCore
 import AuroraML
+import Foundation
 
 /**
  `EmbeddingMLTask` wraps  wraps any `MLServiceProtocol` that produces embeddings into a `WorkflowComponent`.
@@ -55,7 +55,7 @@ public class EmbeddingMLTask: WorkflowComponent {
         strings: [String]? = nil,
         inputs: [String: Any?] = [:]
     ) {
-        self.task = Workflow.Task(
+        task = Workflow.Task(
             name: name ?? String(describing: Self.self),
             description: description ?? "Embed text strings into vector representations",
             inputs: inputs

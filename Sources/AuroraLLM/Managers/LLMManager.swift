@@ -5,16 +5,15 @@
 //  Created by Dan Murrell Jr on 8/19/24.
 //
 
+import AuroraCore
 import Foundation
 import os.log
-import AuroraCore
 
 /**
  `LLMManager` is responsible for managing multiple LLM services and routing requests to the appropriate service based on the specified criteria.
  It allows registering, unregistering, and selecting services based on routing options such as token limit or domain, as well as providing fallback service support.
  */
 public class LLMManager {
-
     /// Routing options for selecting an appropriate LLM service.
     public enum Routing: CustomStringConvertible, Equatable {
         case inputTokenLimit(Int)
@@ -23,9 +22,9 @@ public class LLMManager {
         /// A human-readable description of each routing strategy.
         public var description: String {
             switch self {
-            case .inputTokenLimit(let limit):
+            case let .inputTokenLimit(limit):
                 return "Input Token Limit (\(limit))"
-            case .domain(let domains):
+            case let .domain(domains):
                 return "Domain (\(domains.joined(separator: ", ")))"
             }
         }
@@ -110,7 +109,7 @@ public class LLMManager {
 
         if activeServiceName == nil {
             activeServiceName = serviceName
-            logger?.debug("Active service set to: \(self.activeServiceName ?? "nil")", category: "LLMManager")
+            logger?.debug("Active service set to: \(activeServiceName ?? "nil")", category: "LLMManager")
         }
     }
 
@@ -129,7 +128,7 @@ public class LLMManager {
 
         if activeServiceName == serviceName {
             activeServiceName = services.keys.first
-            logger?.debug("Active service set to: \(self.activeServiceName ?? "nil")", category: "LLMManager")
+            logger?.debug("Active service set to: \(activeServiceName ?? "nil")", category: "LLMManager")
         }
     }
 
@@ -148,7 +147,7 @@ public class LLMManager {
             return
         }
         activeServiceName = name
-        logger?.debug("Active service switched to: \(self.activeServiceName ?? "nil")", category: "LLMManager")
+        logger?.debug("Active service switched to: \(activeServiceName ?? "nil")", category: "LLMManager")
     }
 
     // MARK: - Route Request
@@ -267,7 +266,7 @@ public class LLMManager {
             temperature: request.temperature,
             maxTokens: request.maxTokens,
             model: request.model,
-            stream: true,   // Ensure streaming is enabled
+            stream: true, // Ensure streaming is enabled
             options: request.options
         )
         return await optimizeAndSendRequest(streamingRequest, onPartialResponse: onPartialResponse, routings: routings, buffer: buffer, trimming: trimming)
@@ -505,7 +504,8 @@ public class LLMManager {
         // Step 1: Try the active service if it meets the criteria
         if let activeServiceName = activeServiceName,
            let activeService = services[activeServiceName]?.service,
-           serviceMeetsCriteria(activeService, routings: routings, for: request, trimming: trimming) {
+           serviceMeetsCriteria(activeService, routings: routings, for: request, trimming: trimming)
+        {
             logger?.debug("Routing to active service: \(activeService.name)", category: "LLMManager")
             return activeService
         }
@@ -513,7 +513,7 @@ public class LLMManager {
         // Step 2: Try any other matching service, excluding the active service
         if let matchingService = sortedServices.first(where: {
             $0.service.name.lowercased() != activeServiceName?.lowercased() &&
-            serviceMeetsCriteria($0.service, routings: routings, for: request, trimming: trimming)
+                serviceMeetsCriteria($0.service, routings: routings, for: request, trimming: trimming)
         })?.service {
             logger?.debug("Routing to service matching strategies \(routings): \(matchingService.name)", category: "LLMManager")
             return matchingService
@@ -558,11 +558,11 @@ public class LLMManager {
 
         for routing in routings {
             switch routing {
-            case .inputTokenLimit(let limit):
+            case let .inputTokenLimit(limit):
                 if !evaluateTokenLimits(service, request: request, limit: limit, trimming: trimming) {
                     return false
                 }
-            case .domain(let preferredDomains):
+            case let .domain(preferredDomains):
                 if !evaluateDomainSupport(service, preferredDomains: preferredDomains) {
                     return false
                 }
@@ -594,7 +594,7 @@ public class LLMManager {
         _ service: LLMServiceProtocol,
         request: LLMRequest,
         limit: Int,
-        trimming: String.TrimmingStrategy
+        trimming _: String.TrimmingStrategy
     ) -> Bool {
         let originalInputTokens = request.estimatedTokenCount()
         var adjustedOutputTokens = request.maxTokens

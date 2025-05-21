@@ -11,7 +11,6 @@
  The `WorkflowBuilder` enables developers to define workflows with a clean and concise structure,
  allowing for the creation of `Workflow` objects containing `TaskGroup` and `Task` instances.
 
-
  ## Example
 
  ```swift
@@ -35,7 +34,6 @@
  */
 @resultBuilder
 public struct WorkflowBuilder {
-
     /**
      Builds a block of tasks or task groups into a single array of `Workflow.Component` objects.
 

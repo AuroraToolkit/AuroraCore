@@ -5,8 +5,8 @@
 //  Created by Dan Murrell Jr on 8/19/24.
 //
 
-import Foundation
 import AuroraCore
+import Foundation
 
 /**
  A struct representing the input to be sent to the Language Learning Model (LLM).

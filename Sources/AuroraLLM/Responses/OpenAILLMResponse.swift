@@ -19,6 +19,7 @@ public struct OpenAILLMResponse: LLMResponseProtocol, Codable {
             let role: String?
             let content: String?
         }
+
         /// Incremental response during streaming.
         let delta: Message?
         /// Complete response for non-streaming.

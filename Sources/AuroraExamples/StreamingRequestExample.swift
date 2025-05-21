@@ -2,15 +2,14 @@
 //  StreamingRequestExample.swift
 //  AuroraCore
 
-import Foundation
 import AuroraCore
 import AuroraLLM
+import Foundation
 
 /**
     An example demonstrating how to send a streaming request to the LLM service.
  */
 struct StreamingRequestExample {
-
     func execute() async {
         // Set your Anthropic API key as an environment variable to run this example, e.g., `export ANTHROPIC_API_KEY="your-api-key"`
         let apiKey = ProcessInfo.processInfo.environment["ANTHROPIC_API_KEY"] ?? ""

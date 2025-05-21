@@ -5,8 +5,8 @@
 //  Created by Dan Murrell Jr on 9/1/24.
 //
 
-import Foundation
 import AuroraCore
+import Foundation
 
 /**
  `TrimmingTask` is responsible for trimming strings to fit within a specified token limit.
@@ -44,7 +44,7 @@ public class TrimmingTask: WorkflowComponent {
     ) {
         let stringsCount = strings?.count ?? 0
         let description = stringsCount <= 1 ? "Trim string to fit within the token limit using \(strategy) strategy" : "Trim multiple strings to fit within the token limit using \(strategy) strategy"
-        self.task = Workflow.Task(
+        task = Workflow.Task(
             name: name ?? String(describing: Self.self),
             description: description,
             inputs: inputs

@@ -13,7 +13,6 @@ import Security
  This is useful for storing sensitive information like API keys and custom base URLs in a secure and persistent manner.
  */
 public class SecureStorage {
-
     /**
      Saves an API key to the secure storage (Keychain) for a specific service.
 
@@ -30,7 +29,7 @@ public class SecureStorage {
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: serviceName + "_apiKey",
             kSecValueData as String: data,
-            kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlocked
+            kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlocked,
         ]
         // Remove any existing key for the service before saving the new one
         SecItemDelete(query as CFDictionary)
@@ -54,7 +53,7 @@ public class SecureStorage {
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: serviceName + "_apiKey",
             kSecReturnData as String: kCFBooleanTrue!,
-            kSecMatchLimit as String: kSecMatchLimitOne
+            kSecMatchLimit as String: kSecMatchLimitOne,
         ]
         var dataTypeRef: AnyObject?
         let status = SecItemCopyMatching(query as CFDictionary, &dataTypeRef)
@@ -72,7 +71,7 @@ public class SecureStorage {
     public static func deleteAPIKey(for serviceName: String) {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: serviceName + "_apiKey"
+            kSecAttrAccount as String: serviceName + "_apiKey",
         ]
         SecItemDelete(query as CFDictionary)
     }
@@ -93,7 +92,7 @@ public class SecureStorage {
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: serviceName + "_baseURL",
             kSecValueData as String: data,
-            kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlocked
+            kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlocked,
         ]
         // Remove any existing base URL for the service before saving the new one
         SecItemDelete(query as CFDictionary)
@@ -106,7 +105,7 @@ public class SecureStorage {
      Retrieves the base URL from the secure storage (Keychain) for a specific service.
 
      - Parameter serviceName: The name of the service for which the base URL is retrieved.
-     
+
      - Returns: The base URL as a string, or `nil` if the base URL is not found.
      */
     public static func getBaseURL(for serviceName: String) -> String? {
@@ -114,7 +113,7 @@ public class SecureStorage {
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: serviceName + "_baseURL",
             kSecReturnData as String: kCFBooleanTrue!,
-            kSecMatchLimit as String: kSecMatchLimitOne
+            kSecMatchLimit as String: kSecMatchLimitOne,
         ]
         var dataTypeRef: AnyObject?
         let status = SecItemCopyMatching(query as CFDictionary, &dataTypeRef)
@@ -132,7 +131,7 @@ public class SecureStorage {
     public static func deleteBaseURL(for serviceName: String) {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: serviceName + "_baseURL"
+            kSecAttrAccount as String: serviceName + "_baseURL",
         ]
         SecItemDelete(query as CFDictionary)
     }

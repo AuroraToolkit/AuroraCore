@@ -15,7 +15,6 @@ import Foundation
  The context is uniquely identified by its `UUID` and contains metadata about the associated LLM service.
  */
 public struct Context: Codable, Equatable {
-
     /// Unique identifier for the context.
     public let id: UUID
 
@@ -39,7 +38,7 @@ public struct Context: Codable, Equatable {
         - creationDate: The date when the context was created. Defaults to the current date.
      */
     public init(llmServiceVendor: String, creationDate: Date = Date()) {
-        self.id = UUID()
+        id = UUID()
         self.llmServiceVendor = llmServiceVendor
         self.creationDate = creationDate
     }

@@ -5,9 +5,9 @@
 //  Created by Dan Murrell Jr on 1/2/25.
 //
 
-import Foundation
 import AuroraCore
 import AuroraLLM
+import Foundation
 
 /**
  `GenerateKeywordsTask` extracts and optionally categorizes keywords from a list of strings using an LLM service.
@@ -24,23 +24,23 @@ import AuroraLLM
  - Summarize the main topics or themes of articles, blogs, or reports.
  - Organize keywords into logical categories for better interpretation.
  - Extract key terms from user feedback or reviews for data analysis.
-*/
+ */
 public class GenerateKeywordsTask: WorkflowComponent {
     /// The wrapped task.
     private let task: Workflow.Task
 
     /**
-     Initializes a new `GenerateKeywordsTask`.
+      Initializes a new `GenerateKeywordsTask`.
 
-     - Parameters:
-        - name: The name of the task.
-        - llmService: The LLM service to use for generating keywords.
-        - strings: The list of strings to extract keywords from.
-        - categories: Optional predefined categories for grouping keywords.
-        - maxKeywords: The maximum number of keywords per string. Defaults to 5.
-        - maxTokens: The maximum number of tokens to generate in the response. Defaults to 500.
-        - inputs: Additional inputs for the task. Defaults to an empty dictionary.
-    */
+      - Parameters:
+         - name: The name of the task.
+         - llmService: The LLM service to use for generating keywords.
+         - strings: The list of strings to extract keywords from.
+         - categories: Optional predefined categories for grouping keywords.
+         - maxKeywords: The maximum number of keywords per string. Defaults to 5.
+         - maxTokens: The maximum number of tokens to generate in the response. Defaults to 500.
+         - inputs: Additional inputs for the task. Defaults to an empty dictionary.
+     */
     public init(
         name: String? = nil,
         llmService: LLMServiceProtocol,
@@ -50,7 +50,7 @@ public class GenerateKeywordsTask: WorkflowComponent {
         maxTokens: Int = 500,
         inputs: [String: Any?] = [:]
     ) {
-        self.task = Workflow.Task(
+        task = Workflow.Task(
             name: name ?? String(describing: Self.self),
             description: "Generate and categorize keywords from a list of strings",
             inputs: inputs
@@ -118,8 +118,8 @@ public class GenerateKeywordsTask: WorkflowComponent {
 
             let request = LLMRequest(
                 messages: [
-                    LLMMessage(role: .system, content: "You are an expert in keyword extraction and categorization."),
-                    LLMMessage(role: .user, content: keywordsPrompt)
+                    LLMMessage(role: .system, content: "You are an expert in keyword extraction and categorization. Always respond with a single valid JSON object and nothing else (no markdown, explanations, or code fences)."),
+                    LLMMessage(role: .user, content: keywordsPrompt),
                 ],
                 maxTokens: maxTokens
             )

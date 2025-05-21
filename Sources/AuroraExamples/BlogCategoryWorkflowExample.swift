@@ -5,11 +5,11 @@
 //  Created by Dan Murrell Jr on 5/12/25.
 //
 
-import Foundation
 import AuroraCore
+import AuroraLLM
 import AuroraML
 import AuroraTaskLibrary
-import AuroraLLM
+import Foundation
 import NaturalLanguage
 
 /**
@@ -68,14 +68,13 @@ struct BlogCategoryWorkflowExample {
             description: "Classify, summarize, and suggest categories.",
             logger: CustomLogger.shared
         ) {
-
             // Classify the post on-device
             Workflow.Task(
                 name: "ClassifyPost",
                 inputs: ["text": newPost]
             ) { inputs in
                 guard let newPost = inputs["text"] as? String else {
-                  throw NSError(domain: "ClassifyPost", code: 2, userInfo: [NSLocalizedDescriptionKey: "Missing text"])
+                    throw NSError(domain: "ClassifyPost", code: 2, userInfo: [NSLocalizedDescriptionKey: "Missing text"])
                 }
                 let output = try await service.run(request: MLRequest(inputs: ["strings": [newPost]]))
                 let tags = output.outputs["tags"] as! [Tag]
@@ -109,7 +108,7 @@ struct BlogCategoryWorkflowExample {
                 """
                 let request = LLMRequest(messages: [
                     LLMMessage(role: .system, content: "You are a helpful assistant."),
-                    LLMMessage(role: .user, content: prompt)
+                    LLMMessage(role: .user, content: prompt),
                 ])
                 let response = try await llm.sendRequest(request)
                 let data = response.text
@@ -120,8 +119,8 @@ struct BlogCategoryWorkflowExample {
                     from: data
                 )
                 return [
-                  "summary": json["summary"]?.value as? String ?? "",
-                  "suggestions": json["new_categories"]?.value as? [String] ?? []
+                    "summary": json["summary"]?.value as? String ?? "",
+                    "suggestions": json["new_categories"]?.value as? [String] ?? [],
                 ]
             }
         }
@@ -147,7 +146,6 @@ struct BlogCategoryWorkflowExample {
 
         let report = await workflow.generateReport()
         print(report.printedReport(compact: true, showOutputs: false))
-
     }
 }
 
@@ -163,10 +161,11 @@ struct AnyCodable: Codable {
             value = d.mapValues { $0.value }; return
         }
         throw DecodingError.dataCorruptedError(
-          in: c,
-          debugDescription: "Unsupported JSON type"
+            in: c,
+            debugDescription: "Unsupported JSON type"
         )
     }
+
     func encode(to encoder: Encoder) throws {
         var c = encoder.singleValueContainer()
         switch value {
@@ -176,9 +175,9 @@ struct AnyCodable: Codable {
             try c.encode(d.mapValues { AnyCodable($0) })
         default:
             throw EncodingError.invalidValue(
-              value,
-              .init(codingPath: encoder.codingPath,
-                    debugDescription: "Unsupported JSON type")
+                value,
+                .init(codingPath: encoder.codingPath,
+                      debugDescription: "Unsupported JSON type")
             )
         }
     }

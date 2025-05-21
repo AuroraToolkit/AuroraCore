@@ -3,8 +3,8 @@
 //  AuroraCore
 //
 
-import Foundation
 import AuroraCore
+import Foundation
 
 /**
  `FetchURLTask` fetches the contents of a specified URL and returns the raw data.
@@ -46,7 +46,7 @@ public struct FetchURLTask: WorkflowComponent {
         inputs: [String: Any?] = [:]
     ) {
         self.session = session
-        self.task = Workflow.Task(
+        task = Workflow.Task(
             name: name ?? String(describing: Self.self),
             description: "Fetches data from \(url ?? "a URL")",
             inputs: inputs

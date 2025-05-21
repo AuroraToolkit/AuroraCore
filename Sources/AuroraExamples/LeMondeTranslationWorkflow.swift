@@ -5,10 +5,10 @@
 //  Created by Dan Murrell Jr on 12/29/24.
 //
 
-import Foundation
 import AuroraCore
 import AuroraLLM
 import AuroraTaskLibrary
+import Foundation
 
 /**
  Example workflow demonstrating fetching news articles from Le Monde, translating them into English,
@@ -17,7 +17,6 @@ import AuroraTaskLibrary
 
 struct LeMondeTranslationWorkflow {
     func execute() async {
-
         // Set up the required API key for your LLM service (e.g., OpenAI, Anthropic, or Ollama)
         let openAIKey = ProcessInfo.processInfo.environment["OPENAI_API_KEY"] ?? ""
         guard !openAIKey.isEmpty else {
@@ -35,7 +34,6 @@ struct LeMondeTranslationWorkflow {
             description: "Fetch, translate, and summarize articles from Le Monde.",
             logger: CustomLogger.shared
         ) {
-
             // Step 1: Fetch the Le Monde RSS Feed
             FetchURLTask(name: "FetchLeMondeFeed", url: "https://www.lemonde.fr/international/rss_full.xml")
 
@@ -98,7 +96,7 @@ struct LeMondeTranslationWorkflow {
         // Print the workflow outputs
         if let summaries = workflow.outputs["SummarizeStringsTask.summaries"] as? [String] {
             print("Generated Summaries:\n")
-            summaries.enumerated().forEach { index, summary in
+            for (index, summary) in summaries.enumerated() {
                 print("\(index + 1): \(summary)")
             }
         } else {

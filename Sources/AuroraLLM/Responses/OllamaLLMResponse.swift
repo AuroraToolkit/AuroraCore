@@ -1,6 +1,6 @@
 //
 //  OllamaLLMResponse.swift
-//  
+//
 //
 //  Created by Dan Murrell Jr on 9/15/24.
 //
@@ -13,7 +13,6 @@ import Foundation
  The Ollama API returns a generated text directly in the `response` field, along with model metadata.
  */
 public struct OllamaLLMResponse: LLMResponseProtocol, Codable {
-
     /// The vendor associated with the response.
     public var vendor: String? = "Ollama"
 
