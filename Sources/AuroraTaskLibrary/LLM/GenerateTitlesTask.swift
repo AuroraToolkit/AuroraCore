@@ -18,6 +18,8 @@ import Foundation
     - `maxTokens`: Maximum tokens for the LLM response. Defaults to `100`.
  - **Outputs**
     - `titles`: A dictionary where keys are the original strings and values are dictionaries of generated titles keyed by language.
+    - `thoughts`: An array of strings containing the LLM's chain-of-thought entries, if any.
+    - `rawResponse`: The original unmodified raw response text from the LLM.
 
  ### Use Cases
  - Generate multilingual headlines for articles, blog posts, or content summaries.
@@ -100,7 +102,7 @@ public class GenerateTitlesTask: WorkflowComponent {
 
             let request = LLMRequest(
                 messages: [
-                    LLMMessage(role: .system, content: "You are an expert in title generation. Always respond with a single valid JSON object and nothing else (no markdown, explanations, or code fences)."),
+                    LLMMessage(role: .system, content: "You are an expert in title generation. Do NOT reveal any reasoning or chain-of-thought. Always respond with a single valid JSON object and nothing else (no markdown, explanations, or code fences)."),
                     LLMMessage(role: .user, content: prompt),
                 ],
                 maxTokens: resolvedMaxTokens
@@ -109,8 +111,8 @@ public class GenerateTitlesTask: WorkflowComponent {
             do {
                 let response = try await llmService.sendRequest(request)
 
-                // Strip json markdown if necessary
-                let rawResponse = response.text.stripMarkdownJSON()
+                let fullResponse = response.text
+                let (thoughts, rawResponse) = fullResponse.extractThoughtsAndStripJSON()
 
                 // Parse the response
                 guard let data = rawResponse.data(using: .utf8),
@@ -120,7 +122,11 @@ public class GenerateTitlesTask: WorkflowComponent {
                     throw NSError(domain: "GenerateTitlesTask", code: 2, userInfo: [NSLocalizedDescriptionKey: "Failed to parse LLM response: \(response.text)"])
                 }
 
-                return ["titles": titles]
+                return [
+                    "titles": titles,
+                    "thoughts": thoughts,
+                    "rawResponse": fullResponse
+                ]
             } catch {
                 throw error
             }

@@ -52,8 +52,7 @@ final class SaveContextTaskTests: XCTestCase {
 
     // Test for invalid `context` input to simulate a failure
     func testSaveContextMissingContextInput() async throws {
-        let context = Context(llmServiceVendor: "OpenAI") // Sample context
-        let task = SaveContextTask(context: context, filename: "test_context")
+        let task = SaveContextTask(context: nil, filename: "test_context")
 
         guard case let .task(unwrappedTask) = task.toComponent() else {
             XCTFail("Failed to unwrap the Workflow.Task from the component.")
@@ -72,7 +71,7 @@ final class SaveContextTaskTests: XCTestCase {
     // Test for invalid `filename` input to simulate a failure
     func testSaveContextMissingFilenameInput() async throws {
         let context = Context(llmServiceVendor: "OpenAI") // Sample context
-        let task = SaveContextTask(context: context, filename: "test_context")
+        let task = SaveContextTask(context: context, filename: nil)
 
         guard case let .task(unwrappedTask) = task.toComponent() else {
             XCTFail("Failed to unwrap the Workflow.Task from the component.")

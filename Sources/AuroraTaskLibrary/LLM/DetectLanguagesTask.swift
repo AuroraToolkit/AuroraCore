@@ -17,6 +17,8 @@ import Foundation
      - `maxTokens`: The maximum number of tokens allowed for the LLM response. Defaults to 500.
   - **Outputs**
      - `languages`: A dictionary where the keys are the input strings, and the values are the detected language codes (e.g., "en" for English, "fr" for French).
+     - `thoughts`: An array of strings containing the LLM's chain-of-thought entries, if any.
+     - `rawResponse`: The original unmodified raw response text from the LLM.
 
   ### Use Cases
   - Analyze user-generated content to understand the languages used.
@@ -106,7 +108,7 @@ public class DetectLanguagesTask: WorkflowComponent {
 
             let request = LLMRequest(
                 messages: [
-                    LLMMessage(role: .system, content: "You are a language detection expert. Always respond with a single valid JSON object and nothing else (no markdown, explanations, or code fences)."),
+                    LLMMessage(role: .system, content: "You are a language detection expert. Do NOT reveal any reasoning or chain-of-thought. Always respond with a single valid JSON object and nothing else (no markdown, explanations, or code fences)."),
                     LLMMessage(role: .user, content: detectionPrompt),
                 ],
                 maxTokens: maxTokens
@@ -115,8 +117,8 @@ public class DetectLanguagesTask: WorkflowComponent {
             do {
                 let response = try await llmService.sendRequest(request)
 
-                // Strip json markdown if necessary
-                let rawResponse = response.text.stripMarkdownJSON()
+                let fullResponse = response.text
+                let (thoughts, rawResponse) = fullResponse.extractThoughtsAndStripJSON()
 
                 // Parse the response into a dictionary
                 guard let data = rawResponse.data(using: .utf8),
@@ -126,7 +128,11 @@ public class DetectLanguagesTask: WorkflowComponent {
                     throw NSError(domain: "DetectLanguagesTask", code: 2, userInfo: [NSLocalizedDescriptionKey: "Failed to parse LLM response."])
                 }
 
-                return ["languages": detectedLanguages]
+                return [
+                    "languages": detectedLanguages,
+                    "thoughts": thoughts,
+                    "rawResponse": fullResponse
+                ]
             } catch {
                 throw error
             }

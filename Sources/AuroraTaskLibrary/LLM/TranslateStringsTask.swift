@@ -19,6 +19,8 @@ import Foundation
      - `maxTokens`: The maximum number of tokens to generate in the response. Defaults to `500`.
   - **Outputs**
      - `translations`: A dictionary where keys are the original strings and values are the translated strings.
+     - `thoughts`: An array of strings containing the LLM's chain-of-thought entries, if any.
+     - `rawResponse`: The original unmodified raw response text from the LLM.
 
   ### Use Cases
   - Translate user-generated content into a standard language for consistency in applications.
@@ -122,7 +124,7 @@ public class TranslateStringsTask: WorkflowComponent {
 
             let request = LLMRequest(
                 messages: [
-                    LLMMessage(role: .system, content: "You are a professional translator. Always respond with a single valid JSON object and nothing else (no markdown, explanations, or code fences)."),
+                    LLMMessage(role: .system, content: "You are a professional translator. Do NOT reveal any reasoning or chain-of-thought. Always respond with a single valid JSON object and nothing else (no markdown, explanations, or code fences)."),
                     LLMMessage(role: .user, content: translationPrompt),
                 ],
                 maxTokens: maxTokens
@@ -131,8 +133,8 @@ public class TranslateStringsTask: WorkflowComponent {
             do {
                 let response = try await llmService.sendRequest(request)
 
-                // Strip json markdown if necessary
-                let rawResponse = response.text.stripMarkdownJSON()
+                let fullResponse = response.text
+                let (thoughts, rawResponse) = fullResponse.extractThoughtsAndStripJSON()
 
                 guard let data = rawResponse.data(using: .utf8),
                       let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -144,7 +146,11 @@ public class TranslateStringsTask: WorkflowComponent {
                         userInfo: [NSLocalizedDescriptionKey: "Failed to parse LLM response: \(response.text)"]
                     )
                 }
-                return ["translations": translations]
+                return [
+                    "translations": translations,
+                    "thoughts": thoughts,
+                    "rawResponse": fullResponse
+                ]
             } catch {
                 throw error
             }

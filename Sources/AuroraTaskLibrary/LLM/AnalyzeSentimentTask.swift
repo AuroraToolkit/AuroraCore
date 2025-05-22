@@ -17,6 +17,8 @@ import Foundation
     - `detailed`: Boolean indicating whether to return detailed sentiment analysis. Defaults to `false`.
  - **Outputs**
     - `sentiments`: A dictionary where keys are the input strings and values are their respective sentiments.
+    - `thoughts`: An array of strings containing the LLM's chain-of-thought entries, if any.
+    - `rawResponse`: The original unmodified raw response text from the LLM.
 
  ### Use Cases:
  - Understand the emotional tone of user feedback, social media posts, or reviews.
@@ -154,7 +156,7 @@ public class AnalyzeSentimentTask: WorkflowComponent {
 
             let request = LLMRequest(
                 messages: [
-                    LLMMessage(role: .system, content: "You are a sentiment analysis expert. Always respond with a single valid JSON object and nothing else (no markdown, explanations, or code fences)."),
+                    LLMMessage(role: .system, content: "You are a sentiment analysis expert. Do NOT reveal any reasoning or chain-of-thought. Always respond with a single valid JSON object and nothing else (no markdown, explanations, or code fences)."),
                     LLMMessage(role: .user, content: sentimentPrompt),
                 ],
                 maxTokens: maxTokens
@@ -163,8 +165,8 @@ public class AnalyzeSentimentTask: WorkflowComponent {
             do {
                 let response = try await llmService.sendRequest(request)
 
-                // Strip json markdown if necessary
-                let rawResponse = response.text.stripMarkdownJSON()
+                let fullResponse = response.text
+                let (thoughts, rawResponse) = fullResponse.extractThoughtsAndStripJSON()
 
                 // Parse the response into a dictionary (assumes LLM returns JSON-like structure).
                 guard let data = rawResponse.data(using: .utf8),
@@ -178,11 +180,18 @@ public class AnalyzeSentimentTask: WorkflowComponent {
                     )
                 }
 
-                // Handle detailed or simple sentiment analysis based on response format
                 if let detailedSentiments = sentiments as? [String: [String: Any]] {
-                    return ["sentiments": detailedSentiments]
+                    return [
+                        "sentiments": detailedSentiments,
+                        "thoughts": thoughts,
+                        "rawResponse": fullResponse
+                    ]
                 } else if let simpleSentiments = sentiments as? [String: String] {
-                    return ["sentiments": simpleSentiments]
+                    return [
+                        "sentiments": simpleSentiments,
+                        "thoughts": thoughts,
+                        "rawResponse": fullResponse
+                    ]
                 } else {
                     throw NSError(
                         domain: "AnalyzeSentimentTask",

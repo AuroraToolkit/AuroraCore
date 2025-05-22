@@ -19,6 +19,8 @@ import Foundation
  - **Outputs**
     - `keywords`: A dictionary where keys are input strings and values are arrays of generated keywords.
     - `categorizedKeywords`: A dictionary of categories mapping to their associated keywords (if categories are provided).
+    - `thoughts`: An array of strings containing the LLM's chain-of-thought entries, if any.
+    - `rawResponse`: The original unmodified raw response text from the LLM.
 
  ### Use Cases:
  - Summarize the main topics or themes of articles, blogs, or reports.
@@ -118,7 +120,7 @@ public class GenerateKeywordsTask: WorkflowComponent {
 
             let request = LLMRequest(
                 messages: [
-                    LLMMessage(role: .system, content: "You are an expert in keyword extraction and categorization. Always respond with a single valid JSON object and nothing else (no markdown, explanations, or code fences)."),
+                    LLMMessage(role: .system, content: "You are an expert in keyword extraction and categorization. Do NOT reveal any reasoning or chain-of-thought. Always respond with a single valid JSON object and nothing else (no markdown, explanations, or code fences)."),
                     LLMMessage(role: .user, content: keywordsPrompt),
                 ],
                 maxTokens: maxTokens
@@ -127,8 +129,8 @@ public class GenerateKeywordsTask: WorkflowComponent {
             do {
                 let response = try await llmService.sendRequest(request)
 
-                // Strip JSON markdown if necessary
-                let rawResponse = response.text.stripMarkdownJSON()
+                let fullResponse = response.text
+                let (thoughts, rawResponse) = fullResponse.extractThoughtsAndStripJSON()
 
                 // Parse the response into a dictionary.
                 guard let data = rawResponse.data(using: .utf8),
@@ -149,6 +151,8 @@ public class GenerateKeywordsTask: WorkflowComponent {
                     outputs["categorizedKeywords"] = categorizedKeywords
                 }
 
+                outputs["thoughts"] = thoughts
+                outputs["rawResponse"] = fullResponse
                 return outputs
             } catch {
                 throw error

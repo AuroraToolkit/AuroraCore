@@ -18,6 +18,8 @@ import Foundation
 
  - **Outputs**
     - `categorizedStrings`: A dictionary where keys are the category names, and values are lists of strings belonging to each category. This output provides a structured way to analyze and use the categorized data.
+    - `thoughts`: An array of strings containing the LLM's chain-of-thought entries, if any.
+    - `rawResponse`: The original unmodified raw response text from the LLM.
 
  ### Use Cases
  - **Content Organization**: Automatically group articles, headlines, or other textual content by topic or theme for easier processing.
@@ -123,7 +125,7 @@ public class CategorizeStringsTask: WorkflowComponent {
 
             let request = LLMRequest(
                 messages: [
-                    LLMMessage(role: .system, content: "You are a text categorization expert. Always respond with a single valid JSON object and nothing else (no markdown, explanations, or code fences)."),
+                    LLMMessage(role: .system, content: "You are a text categorization expert. Do NOT reveal any reasoning or chain-of-thought. Always respond with a single valid JSON object and nothing else (no markdown, explanations, or code fences)."),
                     LLMMessage(role: .user, content: categorizationPrompt),
                 ],
                 maxTokens: maxTokens
@@ -132,8 +134,8 @@ public class CategorizeStringsTask: WorkflowComponent {
             do {
                 let response = try await llmService.sendRequest(request)
 
-                // Strip json markdown if necessary
-                let rawResponse = response.text.stripMarkdownJSON()
+                let fullResponse = response.text
+                let (thoughts, rawResponse) = fullResponse.extractThoughtsAndStripJSON()
 
                 // Parse the response into a dictionary (assumes LLM returns JSON-like structure).
                 guard let data = rawResponse.data(using: .utf8),
@@ -146,7 +148,11 @@ public class CategorizeStringsTask: WorkflowComponent {
                         userInfo: [NSLocalizedDescriptionKey: "Failed to parse LLM response."]
                     )
                 }
-                return ["categorizedStrings": categorizedStrings]
+                return [
+                    "categorizedStrings": categorizedStrings,
+                    "thoughts": thoughts,
+                    "rawResponse": fullResponse
+                ]
             } catch {
                 throw error
             }

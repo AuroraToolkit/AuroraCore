@@ -329,6 +329,12 @@ With this setup, you can run the tests on multiple LLMs and ensure your sensitiv
 - **Multimodal LLM support**: Enable multimodal LLMs for use cases beyond plain text.
 - **Advanced Workflow features**: Include prebuilt workflow templates for common AI tasks (e.g., summarization, Q&A, data extraction) to jumpstart development.
 
+## Testing
+
+AuroraToolkit includes a comprehensive suite of unit and integration tests for all modules.
+Note: LLM integration tests (using OllamaService) may occasionally exhibit non-deterministic failures due to model response variability.
+If an LLM test fails unexpectedly, please re-run the test suite—such failures are typically transient and not indicative of regressions.
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a pull request or open an issue. For more details on how to contribute, please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file.

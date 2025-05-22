@@ -19,6 +19,8 @@ import Foundation
 
   - **Outputs**
      - `relations`: A dictionary where keys are relationship types and values are arrays of tuples representing the entities involved in the relationship.
+     - `thoughts`: An array of strings containing the LLM's chain-of-thought entries, if any.
+     - `rawResponse`: The original unmodified raw response text from the LLM.
 
   ### Use Cases:
   - Extract organizational structures, geographical locations, or professional roles from text.
@@ -119,7 +121,7 @@ public class ExtractRelationsTask: WorkflowComponent {
 
             let request = LLMRequest(
                 messages: [
-                    LLMMessage(role: .system, content: "You are a relationship extraction expert. Always respond with a single valid JSON object and nothing else (no markdown, explanations, or code fences)."),
+                    LLMMessage(role: .system, content: "You are a relationship extraction expert. Do NOT reveal any reasoning or chain-of-thought. Always respond with a single valid JSON object and nothing else (no markdown, explanations, or code fences)."),
                     LLMMessage(role: .user, content: extractionPrompt),
                 ],
                 maxTokens: maxTokens
@@ -128,8 +130,8 @@ public class ExtractRelationsTask: WorkflowComponent {
             do {
                 let response = try await llmService.sendRequest(request)
 
-                // Strip json markdown if necessary
-                let rawResponse = response.text.stripMarkdownJSON()
+                let fullResponse = response.text
+                let (thoughts, rawResponse) = fullResponse.extractThoughtsAndStripJSON()
 
                 guard let data = rawResponse.data(using: .utf8),
                       let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -141,7 +143,11 @@ public class ExtractRelationsTask: WorkflowComponent {
                         userInfo: [NSLocalizedDescriptionKey: "Failed to parse LLM response."]
                     )
                 }
-                return ["relations": relations]
+                return [
+                    "relations": relations,
+                    "thoughts": thoughts,
+                    "rawResponse": fullResponse
+                ]
             } catch {
                 throw error
             }

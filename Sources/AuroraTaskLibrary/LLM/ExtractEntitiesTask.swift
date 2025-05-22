@@ -17,8 +17,10 @@ import Foundation
      - `entityTypes`: An optional array of entity types to extract (e.g., "Person", "Organization", "Location"). If not provided, all entity types will be extracted.
      - `maxTokens`: The maximum number of tokens allowed for the LLM response. Defaults to 500.
 
-  - **Outputs**
-     - `entities`: A dictionary where keys are the entity types and values are arrays of the extracted entities.
+ - **Outputs**
+    - `entities`: A dictionary where keys are the entity types and values are arrays of the extracted entities.
+    - `thoughts`: An array of strings containing the LLM's chain-of-thought entries, if any.
+    - `rawResponse`: The original unmodified raw response text from the LLM.
 
   ### Use Cases:
   - Extract names, dates, and other entities from user-generated content for analytics or reporting.
@@ -133,7 +135,7 @@ public class ExtractEntitiesTask: WorkflowComponent {
 
             let request = LLMRequest(
                 messages: [
-                    LLMMessage(role: .system, content: "You are an expert in named entity recognition. Always respond with a single valid JSON object and nothing else (no markdown, explanations, or code fences)."),
+                    LLMMessage(role: .system, content: "You are an expert in named entity recognition. Do NOT reveal any reasoning or chain-of-thought. Always respond with a single valid JSON object and nothing else (no markdown, explanations, or code fences)."),
                     LLMMessage(role: .user, content: extractionPrompt),
                 ],
                 maxTokens: maxTokens
@@ -142,8 +144,8 @@ public class ExtractEntitiesTask: WorkflowComponent {
             do {
                 let response = try await llmService.sendRequest(request)
 
-                // Strip json markdown if necessary
-                let rawResponse = response.text.stripMarkdownJSON()
+                let fullResponse = response.text
+                let (thoughts, rawResponse) = fullResponse.extractThoughtsAndStripJSON()
 
                 // Parse the response into a dictionary (assumes LLM returns JSON-like structure).
                 guard let data = rawResponse.data(using: .utf8),
@@ -156,7 +158,11 @@ public class ExtractEntitiesTask: WorkflowComponent {
                         userInfo: [NSLocalizedDescriptionKey: "Failed to parse LLM response: \(response.text)"]
                     )
                 }
-                return ["entities": entities]
+                return [
+                    "entities": entities,
+                    "thoughts": thoughts,
+                    "rawResponse": fullResponse
+                ]
             } catch {
                 throw error
             }

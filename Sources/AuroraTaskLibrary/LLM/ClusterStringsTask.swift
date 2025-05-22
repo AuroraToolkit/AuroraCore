@@ -17,6 +17,8 @@ import Foundation
      - `maxClusters`: Optional maximum number of clusters to create. If not provided, the LLM determines the optimal number dynamically.
   - **Outputs**
      - `clusters`: A dictionary where keys are cluster IDs or inferred names, and values are lists of strings belonging to each cluster.
+     - `thoughts`: An array of strings containing the LLM's chain-of-thought entries, if any.
+     - `rawResponse`: The original unmodified raw response text from the LLM.
 
  ### Use Cases:
  - **Customer Feedback Analysis**: Grouping customer reviews or feedback to identify trends.
@@ -119,7 +121,7 @@ public class ClusterStringsTask: WorkflowComponent {
 
             let request = LLMRequest(
                 messages: [
-                    LLMMessage(role: .system, content: "You are an expert in semantic similarity clustering. Always respond with a single valid JSON object and nothing else (no markdown, explanations, or code fences)."),
+                    LLMMessage(role: .system, content: "You are an expert in semantic similarity clustering. Do NOT reveal any reasoning or chain-of-thought. Always respond with a single valid JSON object and nothing else (no markdown, explanations, or code fences)."),
                     LLMMessage(role: .user, content: clusteringPrompt),
                 ],
                 maxTokens: maxTokens
@@ -128,8 +130,8 @@ public class ClusterStringsTask: WorkflowComponent {
             do {
                 let response = try await llmService.sendRequest(request)
 
-                // Strip json markdown if necessary
-                let rawResponse = response.text.stripMarkdownJSON()
+                let fullResponse = response.text
+                let (thoughts, rawResponse) = fullResponse.extractThoughtsAndStripJSON()
 
                 // Parse the response into a dictionary (assumes LLM returns JSON-like structure).
                 guard let data = rawResponse.data(using: .utf8),
@@ -141,7 +143,11 @@ public class ClusterStringsTask: WorkflowComponent {
                         userInfo: [NSLocalizedDescriptionKey: "Failed to parse LLM response."]
                     )
                 }
-                return ["clusters": clusters]
+                return [
+                    "clusters": clusters,
+                    "thoughts": thoughts,
+                    "rawResponse": fullResponse
+                ]
             } catch {
                 throw error
             }

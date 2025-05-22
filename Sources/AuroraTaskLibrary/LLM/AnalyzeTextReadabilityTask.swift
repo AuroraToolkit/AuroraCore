@@ -18,6 +18,8 @@ import Foundation
 
  - **Outputs**
     - `readabilityScores`: A dictionary where keys are the input strings and values are their readability scores (e.g., Flesch–Kincaid grade level, average word length).
+    - `thoughts`: An array of strings containing the LLM's chain-of-thought entries, if any.
+    - `rawResponse`: The original unmodified raw response text from the LLM.
 
  ### Use Cases
  - Assess the complexity of text content for target audiences.
@@ -100,7 +102,7 @@ public class AnalyzeTextReadabilityTask: WorkflowComponent {
 
             let request = LLMRequest(
                 messages: [
-                    LLMMessage(role: .system, content: "You are a readability analysis expert. Always respond with a single valid JSON object and nothing else (no markdown, explanations, or code fences)."),
+                    LLMMessage(role: .system, content: "You are a readability analysis expert. Do NOT reveal any reasoning or chain-of-thought. Always respond with a single valid JSON object and nothing else (no markdown, explanations, or code fences)."),
                     LLMMessage(role: .user, content: readabilityPrompt),
                 ],
                 maxTokens: maxTokens
@@ -109,8 +111,8 @@ public class AnalyzeTextReadabilityTask: WorkflowComponent {
             do {
                 let response = try await llmService.sendRequest(request)
 
-                // Strip json markdown if necessary
-                let rawResponse = response.text.stripMarkdownJSON()
+                let fullResponse = response.text
+                let (thoughts, rawResponse) = fullResponse.extractThoughtsAndStripJSON()
 
                 // Parse the response into a dictionary (assumes LLM returns JSON-like structure).
                 guard let data = rawResponse.data(using: .utf8),
@@ -123,7 +125,11 @@ public class AnalyzeTextReadabilityTask: WorkflowComponent {
                         userInfo: [NSLocalizedDescriptionKey: "Failed to parse LLM response: \(response.text)"]
                     )
                 }
-                return ["readabilityScores": readabilityScores]
+                return [
+                    "readabilityScores": readabilityScores,
+                    "thoughts": thoughts,
+                    "rawResponse": fullResponse
+                ]
             } catch {
                 throw error
             }
