@@ -99,14 +99,10 @@ public class ExtractEntitiesTask: WorkflowComponent {
 
             Output JSON:
             {
-              "entities": {
-                "Person": ["Sam Altman"],
-                "Organization": ["OpenAI", "Apple"],
-                "Location": ["Cupertino, California"]
-              }
+              "Person": ["Sam Altman"],
+              "Organization": ["OpenAI", "Apple"],
+              "Location": ["Cupertino, California"]
             }
-
-            Return the result as a JSON object where keys are entity types (e.g., "Person", "Organization", "Location") and values are arrays of distinct, explicitly mentioned entities.
 
             Important Instructions:
             1. Only extract entities that explicitly appear in the input strings. Do not infer additional entities or names not explicitly mentioned.
@@ -117,14 +113,7 @@ public class ExtractEntitiesTask: WorkflowComponent {
                - For example, extract "FIFA" instead of "FIFA World Cup" if "FIFA" alone captures the entity's core meaning.
                - Preserve original casing and wording unless explicitly instructed otherwise.
             4. Avoid adding unnecessary context or inferred details (e.g., do not infer "New York Yankees" if only "Yankees" is mentioned).
-            5. Output the JSON object with the following format:
-               {
-                 "entities": {
-                   "Person": [],
-                   "Organization": [],
-                   "Location": []
-                 }
-               }
+            5. Return a JSON object with entity types as keys and arrays of entities as values.
             6. Ensure the JSON object is properly formatted and valid.
             7. Ensure the JSON object is properly terminated and complete. Do not cut off or truncate the response.
             8. Do not include anything else, like markdown notation around it or any extraneous characters. The ONLY thing you should return is properly formatted, valid JSON and absolutely nothing else.
@@ -147,22 +136,39 @@ public class ExtractEntitiesTask: WorkflowComponent {
                 let fullResponse = response.text
                 let (thoughts, rawResponse) = fullResponse.extractThoughtsAndStripJSON()
 
-                // Parse the response into a dictionary (assumes LLM returns JSON-like structure).
+                // Parse the response into a dictionary
                 guard let data = rawResponse.data(using: .utf8),
-                      let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                      let entities = jsonObject["entities"] as? [String: [String]]
+                      let jsonResponse = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
                 else {
                     throw NSError(
                         domain: "ExtractEntitiesTask",
                         code: 2,
-                        userInfo: [NSLocalizedDescriptionKey: "Failed to parse LLM response: \(response.text)"]
+                        userInfo: [NSLocalizedDescriptionKey: "Failed to parse LLM response as JSON."]
                     )
                 }
-                return [
-                    "entities": entities,
-                    "thoughts": thoughts,
-                    "rawResponse": fullResponse
-                ]
+
+                // Handle both formats: wrapped in "entities" or direct mapping
+                if let wrappedEntities = jsonResponse["entities"] as? [String: [String]] {
+                    // Already wrapped format: {"entities": {"Person": [...], "Organization": [...]}}
+                    return [
+                        "entities": wrappedEntities,
+                        "thoughts": thoughts,
+                        "rawResponse": fullResponse
+                    ]
+                } else if let directEntities = jsonResponse as? [String: [String]] {
+                    // Direct format: {"Person": [...], "Organization": [...]}
+                    return [
+                        "entities": directEntities,
+                        "thoughts": thoughts,
+                        "rawResponse": fullResponse
+                    ]
+                } else {
+                    throw NSError(
+                        domain: "ExtractEntitiesTask",
+                        code: 3,
+                        userInfo: [NSLocalizedDescriptionKey: "Unexpected format for entity extraction response."]
+                    )
+                }
             } catch {
                 throw error
             }

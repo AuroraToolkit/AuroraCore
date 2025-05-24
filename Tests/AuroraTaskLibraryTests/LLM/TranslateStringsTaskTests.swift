@@ -16,9 +16,7 @@ final class TranslateStringsTaskTests: XCTestCase {
         // Given
         let mockResponseText = """
         {
-          "translations": [
-            "Bonjour tout le monde"
-          ]
+            "Hello world": "Bonjour tout le monde"
         }
         """
         let mockResponse = MockLLMResponse(text: mockResponseText, vendor: "Test Vendor")
@@ -42,11 +40,11 @@ final class TranslateStringsTaskTests: XCTestCase {
         let outputs = try await unwrappedTask.execute()
 
         // Then
-        guard let translations = outputs["translations"] as? [String] else {
+        guard let translations = outputs["translations"] as? [String: String] else {
             XCTFail("Output 'translations' not found or invalid.")
             return
         }
-        XCTAssertEqual(translations, ["Bonjour tout le monde"], "The translations should match the expected output.")
+        XCTAssertEqual(translations["Hello world"], "Bonjour tout le monde", "The translations should match the expected output.")
     }
 
     func testTranslateStringsTaskEmptyInput() async {
@@ -156,11 +154,14 @@ final class TranslateStringsTaskTests: XCTestCase {
         let outputs = try await unwrappedTask.execute()
 
         // Then
-        guard let translations = outputs["translations"] as? [String] else {
+        guard let translations = outputs["translations"] as? [String: String] else {
             XCTFail("Output 'translations' not found or invalid.")
             return
         }
         XCTAssertEqual(translations.count, 2, "There should be two translations.")
+        XCTAssertEqual(translations["Bonjour tout le monde"], "Hello everyone")
+        XCTAssertEqual(translations["Comment ça va?"], "How are you?")
+
         print("Integration test results: \(translations)")
     }
 }

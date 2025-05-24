@@ -109,15 +109,13 @@ public class AnalyzeSentimentTask: WorkflowComponent {
                 Input Strings:
                 - "I love this product!"
                 - "The service was okay."
-                - "I’m very disappointed with the quality."
+                - "I'm very disappointed with the quality."
 
-                Output JSON:
+                Expected Output JSON:
                 {
-                  "sentiments": {
-                    "I love this product!": {"sentiment": "Positive", "confidence": 95},
-                    "The service was okay.": {"sentiment": "Neutral", "confidence": 70},
-                    "I’m very disappointed with the quality.": {"sentiment": "Negative", "confidence": 90}
-                  }
+                  "I love this product!": {"sentiment": "Positive", "confidence": 95},
+                  "The service was okay.": {"sentiment": "Neutral", "confidence": 70},
+                  "I'm very disappointed with the quality.": {"sentiment": "Negative", "confidence": 90}
                 }
                 """
             } else {
@@ -128,15 +126,13 @@ public class AnalyzeSentimentTask: WorkflowComponent {
                 Input Strings:
                 - "I love this product!"
                 - "The service was okay."
-                - "I’m very disappointed with the quality."
+                - "I'm very disappointed with the quality."
 
                 Expected Output JSON:
                 {
-                  "sentiments": {
-                    "I love this product!": "Positive",
-                    "The service was okay.": "Neutral",
-                    "I’m very disappointed with the quality.": "Negative"
-                  }
+                  "I love this product!": "Positive",
+                  "The service was okay.": "Neutral",
+                  "I'm very disappointed with the quality.": "Negative"
                 }
                 """
             }
@@ -170,16 +166,26 @@ public class AnalyzeSentimentTask: WorkflowComponent {
 
                 // Parse the response into a dictionary (assumes LLM returns JSON-like structure).
                 guard let data = rawResponse.data(using: .utf8),
-                      let jsonResponse = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                      let sentiments = jsonResponse["sentiments"]
+                      let jsonResponse = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
                 else {
                     throw NSError(
                         domain: "AnalyzeSentimentTask",
                         code: 2,
-                        userInfo: [NSLocalizedDescriptionKey: "Failed to parse LLM response."]
+                        userInfo: [NSLocalizedDescriptionKey: "Failed to parse LLM response as JSON."]
                     )
                 }
 
+                // Handle two formats: wrapped in "sentiments" or direct mapping
+                let sentiments: Any
+                if let wrappedSentiments = jsonResponse["sentiments"] {
+                    // Format: {"sentiments": {...}} - some models might wrap the response in a "sentiments" key
+                    sentiments = wrappedSentiments
+                } else {
+                    // Format: {"string": "sentiment", ...} - direct mapping (preferred)
+                    sentiments = jsonResponse
+                }
+
+                // Validate and return in consistent wrapped format
                 if let detailedSentiments = sentiments as? [String: [String: Any]] {
                     return [
                         "sentiments": detailedSentiments,

@@ -75,7 +75,6 @@ public class AnalyzeTextReadabilityTask: WorkflowComponent {
 
             Output JSON:
             {
-              "readabilityScores": {
                 "This is a simple sentence.": {
                   "FleschKincaidGradeLevel": 2.3,
                   "AverageWordLength": 4.2
@@ -84,7 +83,6 @@ public class AnalyzeTextReadabilityTask: WorkflowComponent {
                   "FleschKincaidGradeLevel": 12.5,
                   "AverageWordLength": 6.8
                 }
-              }
             }
 
             Important Instructions:
@@ -116,8 +114,7 @@ public class AnalyzeTextReadabilityTask: WorkflowComponent {
 
                 // Parse the response into a dictionary (assumes LLM returns JSON-like structure).
                 guard let data = rawResponse.data(using: .utf8),
-                      let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                      let readabilityScores = jsonObject["readabilityScores"] as? [String: [String: Any]]
+                      let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
                 else {
                     throw NSError(
                         domain: "AnalyzeTextReadabilityTask",
@@ -125,11 +122,22 @@ public class AnalyzeTextReadabilityTask: WorkflowComponent {
                         userInfo: [NSLocalizedDescriptionKey: "Failed to parse LLM response: \(response.text)"]
                     )
                 }
-                return [
-                    "readabilityScores": readabilityScores,
-                    "thoughts": thoughts,
-                    "rawResponse": fullResponse
-                ]
+
+                // Handle both formats: wrapped in "readabilityScores" or direct mapping
+                if let wrappedScores = jsonObject["readabilityScores"] {
+                    return [
+                        "readabilityScores": wrappedScores,
+                        "thoughts": thoughts,
+                        "rawResponse": fullResponse
+                    ]
+                } else {
+                    // Direct format - jsonResponse IS the readability scores
+                    return [
+                        "readabilityScores": jsonObject,
+                        "thoughts": thoughts,
+                        "rawResponse": fullResponse
+                    ]
+                }
             } catch {
                 throw error
             }

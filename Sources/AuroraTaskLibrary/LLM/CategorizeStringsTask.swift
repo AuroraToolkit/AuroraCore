@@ -89,12 +89,13 @@ public class CategorizeStringsTask: WorkflowComponent {
             if let predefinedCategories = resolvedCategories, !predefinedCategories.isEmpty {
                 categorizationInstruction = "Categorize the following strings into the predefined categories: \(predefinedCategories.joined(separator: ", "))."
             } else {
+                // Both nil and empty array trigger inference
                 categorizationInstruction = "Infer appropriate categories for the following strings and categorize them."
             }
 
             let categorizationPrompt = """
             \(categorizationInstruction)
-            Return the result as a JSON object with each category as a key and an array of strings as the value.
+            Return the result as a JSON object where each category is a key and an array of strings belonging to that category is the value.
             Only return the JSON object, and nothing else.
 
             Example (for format illustration purposes only):
@@ -106,10 +107,8 @@ public class CategorizeStringsTask: WorkflowComponent {
 
             Output JSON:
             {
-              "categories": {
-                "Finance": ["The stock market experienced a significant downturn yesterday."],
-                "Technology": ["A new AI tool is revolutionizing how developers write code."]
-              }
+              "Finance": ["The stock market experienced a significant downturn yesterday."],
+              "Technology": ["A new AI tool is revolutionizing how developers write code."]
             }
 
             Important Instructions:
@@ -137,22 +136,39 @@ public class CategorizeStringsTask: WorkflowComponent {
                 let fullResponse = response.text
                 let (thoughts, rawResponse) = fullResponse.extractThoughtsAndStripJSON()
 
-                // Parse the response into a dictionary (assumes LLM returns JSON-like structure).
+                // Parse the response into a dictionary
                 guard let data = rawResponse.data(using: .utf8),
-                      let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                      let categorizedStrings = jsonObject["categories"] as? [String: [String]]
+                      let jsonResponse = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
                 else {
                     throw NSError(
                         domain: "CategorizeStringsTask",
                         code: 2,
-                        userInfo: [NSLocalizedDescriptionKey: "Failed to parse LLM response."]
+                        userInfo: [NSLocalizedDescriptionKey: "Failed to parse LLM response as JSON."]
                     )
                 }
-                return [
-                    "categorizedStrings": categorizedStrings,
-                    "thoughts": thoughts,
-                    "rawResponse": fullResponse
-                ]
+
+                // Handle both formats: wrapped in "categories" or direct mapping
+                if let wrappedCategories = jsonResponse["categories"] as? [String: [String]] {
+                    // Already wrapped format: {"categories": {"Finance": [...], "Technology": [...]}}
+                    return [
+                        "categorizedStrings": wrappedCategories,
+                        "thoughts": thoughts,
+                        "rawResponse": fullResponse
+                    ]
+                } else if let directCategories = jsonResponse as? [String: [String]] {
+                    // Direct format: {"Finance": [...], "Technology": [...]}
+                    return [
+                        "categorizedStrings": directCategories,
+                        "thoughts": thoughts,
+                        "rawResponse": fullResponse
+                    ]
+                } else {
+                    throw NSError(
+                        domain: "CategorizeStringsTask",
+                        code: 3,
+                        userInfo: [NSLocalizedDescriptionKey: "Unexpected format for categorization response."]
+                    )
+                }
             } catch {
                 throw error
             }

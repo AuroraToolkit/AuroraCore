@@ -38,10 +38,8 @@ import Foundation
  **Output JSON:**
  ```
  {
-     "translations": {
-         "Hello, how are you?": "Bonjour, comment ça va?",
-         "This is an example sentence.": "Ceci est une phrase d'exemple."
-     }
+    "Hello, how are you?": "Bonjour, comment ça va?",
+    "This is an example sentence.": "Ceci est une phrase d'exemple."
  }
  ```
 
@@ -91,7 +89,7 @@ public class TranslateStringsTask: WorkflowComponent {
             let translationPrompt = """
             Translate the following text\(resolvedSourceLanguage != nil ? " from \(resolvedSourceLanguage!)" : "") into \(resolvedTargetLanguage).
 
-            Return the result as a JSON object with the key "translations". The translations object is a JSON array of Strings that you have translated.
+            Return the result as a JSON object where each original string is a key, and the value is the translated string.
 
             Example (for format illustration purposes only):
             Input Strings:
@@ -101,18 +99,16 @@ public class TranslateStringsTask: WorkflowComponent {
             Source language: English
             Target language: French
 
-            Expected Output Format:
+            Expected Output JSON:
             {
-              "translations": {
-                "Bonjour, comment ça va?",
-                "Ceci est une phrase d'exemple."
-              }
+              "Hello, how are you?": "Bonjour, comment ça va?",
+              "This is an example sentence.": "Ceci est une phrase d'exemple."
             }
 
             Important Instructions:
-            1. Return the translations as a JSON array, with each translation corresponding to the input string at the same index.
-            2. Ensure the order of the translations matches the order of the input strings.
-            3. Only use the provided input strings. Do not include any additional text, examples, or explanations in the output.
+            1. Return the translations as a JSON object mapping original strings to their translations.
+            2. Preserve the exact original strings as keys in the JSON object.
+            3. Only translate the provided input strings. Do not include any additional text, examples, or explanations in the output.
             4. Escape all special characters in the translations as required for valid JSON, especially double quotes (e.g., use `\"` for `"`).
             5. Ensure the JSON object is properly terminated and complete. Do not cut off or truncate the response.
             6. Ensure the JSON is properly formatted and valid.
@@ -137,20 +133,37 @@ public class TranslateStringsTask: WorkflowComponent {
                 let (thoughts, rawResponse) = fullResponse.extractThoughtsAndStripJSON()
 
                 guard let data = rawResponse.data(using: .utf8),
-                      let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                      let translations = jsonObject["translations"] as? [String]
+                      let jsonResponse = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
                 else {
                     throw NSError(
                         domain: "TranslateStringsTask",
                         code: 2,
-                        userInfo: [NSLocalizedDescriptionKey: "Failed to parse LLM response: \(response.text)"]
+                        userInfo: [NSLocalizedDescriptionKey: "Failed to parse LLM response as JSON."]
                     )
                 }
-                return [
-                    "translations": translations,
-                    "thoughts": thoughts,
-                    "rawResponse": fullResponse
-                ]
+
+                // Handle both formats: wrapped in "translations" or direct mapping
+                if let wrappedTranslations = jsonResponse["translations"] as? [String: String] {
+                    // Already wrapped format: {"translations": {"original": "translated"}}
+                    return [
+                        "translations": wrappedTranslations,
+                        "thoughts": thoughts,
+                        "rawResponse": fullResponse
+                    ]
+                } else if let directTranslations = jsonResponse as? [String: String] {
+                    // Direct format: {"original": "translated"}
+                    return [
+                        "translations": directTranslations,
+                        "thoughts": thoughts,
+                        "rawResponse": fullResponse
+                    ]
+                } else {
+                    throw NSError(
+                        domain: "TranslateStringsTask",
+                        code: 3,
+                        userInfo: [NSLocalizedDescriptionKey: "Unexpected format for translation response."]
+                    )
+                }
             } catch {
                 throw error
             }

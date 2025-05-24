@@ -101,20 +101,19 @@ public class ExtractRelationsTask: WorkflowComponent {
 
             Output JSON:
             {
-              "relations": {
-                "co_founded": [["Steve Jobs", "Apple"], ["Steve Wozniak", "Apple"]],
-                "located_in": [["Apple", "Cupertino, California"]]
-              }
+              "co_founded": [["Steve Jobs", "Apple"], ["Steve Wozniak", "Apple"]],
+              "located_in": [["Apple", "Cupertino, California"]]
             }
 
             Important Instructions:
             1. Analyze the input strings and identify explicit relationships between entities.
             2. Use concise relationship types and entity names.
             3. Do not infer or guess relationships—only extract those explicitly stated.
-            4. Ensure the JSON object is properly formatted and valid.
-            5. Ensure the JSON object is properly terminated and complete. Do not cut off or truncate the response.
-            6. Do not include anything else, like markdown notation around it or any extraneous characters. The ONLY thing you should return is properly formatted, valid JSON and absolutely nothing else.
-            7. Only analyze the following texts:
+            4. Return a JSON object with relationship types as keys and arrays of entity pairs as values.
+            5. Ensure the JSON object is properly formatted and valid.
+            6. Ensure the JSON object is properly terminated and complete. Do not cut off or truncate the response.
+            7. Do not include anything else, like markdown notation around it or any extraneous characters. The ONLY thing you should return is properly formatted, valid JSON and absolutely nothing else.
+            8. Only analyze the following texts:
 
             \(resolvedStrings.joined(separator: "\n"))
             """
@@ -134,20 +133,37 @@ public class ExtractRelationsTask: WorkflowComponent {
                 let (thoughts, rawResponse) = fullResponse.extractThoughtsAndStripJSON()
 
                 guard let data = rawResponse.data(using: .utf8),
-                      let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                      let relations = jsonObject["relations"] as? [String: [[String]]]
+                      let jsonResponse = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
                 else {
                     throw NSError(
                         domain: "ExtractRelationsTask",
                         code: 2,
-                        userInfo: [NSLocalizedDescriptionKey: "Failed to parse LLM response."]
+                        userInfo: [NSLocalizedDescriptionKey: "Failed to parse LLM response as JSON."]
                     )
                 }
-                return [
-                    "relations": relations,
-                    "thoughts": thoughts,
-                    "rawResponse": fullResponse
-                ]
+
+                // Handle both formats: wrapped in "relations" or direct mapping
+                if let wrappedRelations = jsonResponse["relations"] as? [String: [[String]]] {
+                    // Already wrapped format: {"relations": {"co_founded": [...], "located_in": [...]}}
+                    return [
+                        "relations": wrappedRelations,
+                        "thoughts": thoughts,
+                        "rawResponse": fullResponse
+                    ]
+                } else if let directRelations = jsonResponse as? [String: [[String]]] {
+                    // Direct format: {"co_founded": [...], "located_in": [...]}
+                    return [
+                        "relations": directRelations,
+                        "thoughts": thoughts,
+                        "rawResponse": fullResponse
+                    ]
+                } else {
+                    throw NSError(
+                        domain: "ExtractRelationsTask",
+                        code: 3,
+                        userInfo: [NSLocalizedDescriptionKey: "Unexpected format for relation extraction response."]
+                    )
+                }
             } catch {
                 throw error
             }

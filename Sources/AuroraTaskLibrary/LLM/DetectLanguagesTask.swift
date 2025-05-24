@@ -86,10 +86,8 @@ public class DetectLanguagesTask: WorkflowComponent {
 
             Output JSON:
             {
-              "languages": {
-                "Bonjour tout le monde.": "fr",
-                "Hello world!": "en"
-              }
+              "Bonjour tout le monde.": "fr",
+              "Hello world!": "en"
             }
 
             Important Instructions:
@@ -122,17 +120,37 @@ public class DetectLanguagesTask: WorkflowComponent {
 
                 // Parse the response into a dictionary
                 guard let data = rawResponse.data(using: .utf8),
-                      let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                      let detectedLanguages = jsonObject["languages"] as? [String: String]
+                      let jsonResponse = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
                 else {
-                    throw NSError(domain: "DetectLanguagesTask", code: 2, userInfo: [NSLocalizedDescriptionKey: "Failed to parse LLM response."])
+                    throw NSError(
+                        domain: "DetectLanguagesTask", 
+                        code: 2, 
+                        userInfo: [NSLocalizedDescriptionKey: "Failed to parse LLM response as JSON."]
+                    )
                 }
 
-                return [
-                    "languages": detectedLanguages,
-                    "thoughts": thoughts,
-                    "rawResponse": fullResponse
-                ]
+                // Handle both formats: wrapped in "languages" or direct mapping
+                if let wrappedLanguages = jsonResponse["languages"] as? [String: String] {
+                    // Already wrapped format: {"languages": {"text": "en"}}
+                    return [
+                        "languages": wrappedLanguages,
+                        "thoughts": thoughts,
+                        "rawResponse": fullResponse
+                    ]
+                } else if let directLanguages = jsonResponse as? [String: String] {
+                    // Direct format: {"text": "en"}
+                    return [
+                        "languages": directLanguages,
+                        "thoughts": thoughts,
+                        "rawResponse": fullResponse
+                    ]
+                } else {
+                    throw NSError(
+                        domain: "DetectLanguagesTask",
+                        code: 3,
+                        userInfo: [NSLocalizedDescriptionKey: "Unexpected format for language detection response."]
+                    )
+                }
             } catch {
                 throw error
             }
