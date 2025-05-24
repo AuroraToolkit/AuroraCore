@@ -64,7 +64,11 @@ struct TVScriptWorkflowExample {
             ) { inputs in
                 let articles = inputs["articles"] as? [RSSArticle] ?? []
                 print("Fetched \(articles.count) articles, limiting to 10.")
-                return ["articles": Array(articles.prefix(10))]
+                let latestArticles = articles.prefix(10)
+                latestArticles.forEach {
+                    print("Article: \(String(describing: $0.title)) - \(String(describing: $0.link))")
+                }
+                return ["articles": Array(latestArticles)]
             }
 
             // Step 4: Fetch each article's main details

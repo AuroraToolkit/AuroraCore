@@ -103,9 +103,7 @@ public class GoogleService: LLMServiceProtocol {
      - Throws: `LLMServiceError` if the API key is missing, the URL is invalid, the request fails, the response is invalid (non-2xx status), or decoding fails. Also throws errors during request mapping or network issues.
      */
     public func sendRequest(_ request: LLMRequest) async throws -> LLMResponseProtocol {
-        guard !request.stream else {
-            throw LLMServiceError.custom(message: "Streaming is not supported in sendRequest(). Use sendStreamingRequest() instead.")
-        }
+        try validateStreamingConfig(request, expectStreaming: false)
 
         // Retrieve API Key securely before making the request
         guard let apiKey = SecureStorage.getAPIKey(for: name) else { // Use instance name
@@ -249,38 +247,40 @@ public class GoogleService: LLMServiceProtocol {
     // Maps the internal LLMRequest to the Google API specific request structure.
     private func mapToGoogleRequest(_ request: LLMRequest, serviceSystemPrompt: String?) throws -> GoogleGenerateContentRequest {
         var googleContents: [GoogleContent] = []
-        var currentSystemPrompt: String?
-
+        
+        // Use helper function for consistent system prompt resolution
+        let effectiveSystemPrompt = resolveSystemPrompt(from: request, serviceSystemPrompt: serviceSystemPrompt)
+        
+        // Process non-system messages
         for message in request.messages {
             let role: String
             switch message.role {
             case .user: role = "user"
             case .assistant: role = "model" // Google uses "model" for assistant role
             case .system:
-                // Use the first system message found as the system instruction
-                if currentSystemPrompt == nil {
-                    currentSystemPrompt = message.content
-                } else {
-                    // Use .info instead of .warning
-                    logger?.info("GoogleService: Multiple system messages found in request; only the first will be used as systemInstruction.", category: "GoogleService")
-                }
-                continue // Don't add system messages to the main 'contents' array
+                // Skip system messages - they're handled by effectiveSystemPrompt
+                continue
             case let .custom(customRole):
-                // Use .info instead of .warning
-                logger?.info("GoogleService: Mapping custom role '\(customRole)' to 'user'. Adjust if needed.", category: "GoogleService")
-                role = "user" // Default mapping for custom roles, adjust as needed
+                logger?.info("GoogleService: Mapping custom role '\(customRole)' to 'user'.", category: "GoogleService")
+                role = "user"
             }
-            // Ensure role is populated for contents, handle potential nil from systemInstruction mapping logic if adapted poorly
-            guard !role.isEmpty else { continue } // Should not happen with current logic, but safe guard
+            
+            guard !role.isEmpty else { continue }
             googleContents.append(GoogleContent(role: role, parts: [GooglePart(text: message.content)]))
         }
 
-        // Prioritize system message from request, fall back to service default
-        let finalSystemPrompt = currentSystemPrompt ?? serviceSystemPrompt
         var googleSystemInstruction: GoogleContent?
-        if let promptText = finalSystemPrompt, !promptText.isEmpty {
-            // System instruction has 'parts' but no 'role' according to docs examples
+        if let promptText = effectiveSystemPrompt, !promptText.isEmpty {
             googleSystemInstruction = GoogleContent(role: nil, parts: [GooglePart(text: promptText)])
+        }
+
+        // Log the effective system prompt source for debugging
+        if effectiveSystemPrompt != nil {
+            if request.systemPrompt != nil {
+                logger?.debug("GoogleService: Using request.systemPrompt override", category: "GoogleService")
+            } else {
+                logger?.debug("GoogleService: Using service default systemPrompt", category: "GoogleService")
+            }
         }
 
         // Apply output token policy here before setting maxOutputTokens in config

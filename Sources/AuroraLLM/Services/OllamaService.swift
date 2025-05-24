@@ -12,6 +12,48 @@ import os.log
 /**
  `OllamaService` implements the `LLMServiceProtocol` to interact with the Ollama models via its API.
  This service supports customizable API base URLs and allows interaction with models using both streaming and non-streaming modes.
+ 
+ ## Timeout Configuration
+ 
+ Local LLM models can vary significantly in loading and inference time depending on their size:
+ - **Small models (0.6B-2B parameters)**: Typically respond within 30 seconds
+ - **Medium models (7B-8B parameters)**: May take 60-120 seconds on first request
+ - **Large models (13B+ parameters)**: Can require 2-5 minutes for initial loading
+ 
+ By default, `OllamaService` uses extended timeouts (5 minutes for requests, 15 minutes total) to accommodate
+ large model loading times. For faster models or if you prefer quicker failure detection, you can provide
+ a custom `URLSession` with shorter timeouts.
+ 
+ ### Example: Custom Timeout Configuration
+ ```swift
+ // For faster models - use shorter timeouts
+ let fastConfig = URLSessionConfiguration.default
+ fastConfig.timeoutIntervalForRequest = 60    // 1 minute
+ fastConfig.timeoutIntervalForResource = 300  // 5 minutes
+ let fastSession = URLSession(configuration: fastConfig)
+ 
+ let ollamaService = OllamaService(
+     name: "FastOllama",
+     urlSession: fastSession
+ )
+ 
+ // For very large models - use even longer timeouts
+ let slowConfig = URLSessionConfiguration.default
+ slowConfig.timeoutIntervalForRequest = 600   // 10 minutes
+ slowConfig.timeoutIntervalForResource = 1800 // 30 minutes
+ let slowSession = URLSession(configuration: slowConfig)
+ 
+ let largeModelService = OllamaService(
+     name: "LargeModelOllama", 
+     urlSession: slowSession
+ )
+ ```
+ 
+ ## Model Performance Tips
+ 
+ - **Pre-warm large models** by running them manually first: `ollama run qwen3:14b "hello"`
+ - **Monitor system resources** when using models larger than your available RAM
+ - **Use smaller models** for development and testing to reduce wait times
  */
 public class OllamaService: LLMServiceProtocol {
     /// A logger for recording information and errors within the `AnthropicService`.
@@ -44,6 +86,12 @@ public class OllamaService: LLMServiceProtocol {
     /// The URL session used to send basic requests.
     var urlSession: URLSession
 
+    // The URL session configuration used for network requests.
+    private let sessionConfiguration: URLSessionConfiguration
+
+    // The default model for both sendRequest* methods, defaults to `gemma3`.
+    private let defaultModel = "gemma3"
+
     /**
      Initializes a new `OllamaService` instance.
 
@@ -51,16 +99,28 @@ public class OllamaService: LLMServiceProtocol {
         - vendor: The name of the service vendor (default is `"Ollama"`).
         - name: The name of the service instance (default is `"Ollama"`).
         - baseURL: The base URL for the Ollama API (default is `"http://localhost:11434"`).
-        - apiKey: An optional API key, though not required for local Ollama instances.
         - contextWindowSize: The size of the context window used by the service. Defaults to 4096.
         - maxOutputTokens: The maximum number of tokens allowed for output in a single request. Defaults to 4096.
         - inputTokenPolicy: The policy to handle input tokens exceeding the service's limit. Defaults to `.adjustToServiceLimits`.
         - outputTokenPolicy: The policy to handle output tokens exceeding the service's limit. Defaults to `.adjustToServiceLimits`.
         - systemPrompt: The default system prompt for this service, used to set the behavior or persona of the model.
-        - urlSession: The `URLSession` instance used for network requests. Defaults to a `.default` configuration.
+        - urlSession: The `URLSession` instance used for network requests. If `nil`, creates a session with extended timeouts (5 min request, 15 min total) suitable for large model loading. For faster models or custom timeout requirements, provide your own configured session.
         - logger: An optional logger for recording information and errors. Defaults to `nil`.
+        
+     - Note: The default timeout configuration is optimized for large models that may take several minutes to load initially. If you're using smaller, faster models or prefer quicker failure detection, consider providing a custom `URLSession` with shorter timeouts.
      */
-    public init(vendor: String = "Ollama", name: String = "Ollama", baseURL: String = "http://localhost:11434", contextWindowSize: Int = 4096, maxOutputTokens: Int = 4096, inputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, outputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits, systemPrompt: String? = nil, urlSession: URLSession = URLSession(configuration: .default), logger: CustomLogger? = nil) {
+    public init(
+        vendor: String = "Ollama",
+        name: String = "Ollama",
+        baseURL: String = "http://localhost:11434",
+        contextWindowSize: Int = 4096,
+        maxOutputTokens: Int = 4096,
+        inputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits,
+        outputTokenPolicy: TokenAdjustmentPolicy = .adjustToServiceLimits,
+        systemPrompt: String? = nil,
+        urlSession: URLSession? = nil,
+        logger: CustomLogger? = nil
+    ) {
         self.vendor = vendor
         self.name = name
         self.baseURL = baseURL
@@ -69,7 +129,19 @@ public class OllamaService: LLMServiceProtocol {
         self.inputTokenPolicy = inputTokenPolicy
         self.outputTokenPolicy = outputTokenPolicy
         self.systemPrompt = systemPrompt
-        self.urlSession = urlSession
+
+        // Create configuration optimized for local LLM model loading times
+        if let urlSession = urlSession {
+            self.sessionConfiguration = urlSession.configuration
+            self.urlSession = urlSession
+        } else {
+            let config = URLSessionConfiguration.default
+            config.timeoutIntervalForRequest = 300   // 5 minutes - allows for large model loading
+            config.timeoutIntervalForResource = 900  // 15 minutes - total time for complex operations
+            self.sessionConfiguration = config
+            self.urlSession = URLSession(configuration: config)
+        }
+
         self.logger = logger
     }
 
@@ -99,10 +171,7 @@ public class OllamaService: LLMServiceProtocol {
      - Throws: `LLMServiceError` if the request encounters an issue (e.g., invalid response, decoding error, etc.).
      */
     public func sendRequest(_ request: LLMRequest) async throws -> LLMResponseProtocol {
-        // Ensure streaming is disabled for this method
-        guard request.stream == false else {
-            throw LLMServiceError.custom(message: "Streaming is not supported in sendRequest(). Use sendStreamingRequest() instead.")
-        }
+        try validateStreamingConfig(request, expectStreaming: false)
 
         // Validate the base URL
         guard var components = URLComponents(string: baseURL) else {
@@ -114,12 +183,13 @@ public class OllamaService: LLMServiceProtocol {
             throw LLMServiceError.invalidURL
         }
 
-        // Combine all messages into a single prompt text, following Ollama’s expected format
-        let prompt = request.messages.map { "\($0.role.rawValue.capitalized): \($0.content)" }.joined(separator: "\n")
+        // Use helper function and combine all messages into a single prompt
+        let messages = prepareMessages(from: request, serviceSystemPrompt: systemPrompt)
+        let prompt = messages.map { "\($0.role.rawValue.capitalized): \($0.content)" }.joined(separator: "\n")
 
-        // Construct the request body as per Ollama API, utilizing options for configurable parameters
+        // Construct the request body as per Ollama API
         let body: [String: Any] = [
-            "model": request.model ?? "llama3.2", // Default to llama3.2
+            "model": request.model ?? defaultModel,
             "prompt": prompt,
             "max_tokens": request.maxTokens,
             "temperature": request.temperature,
@@ -172,11 +242,8 @@ public class OllamaService: LLMServiceProtocol {
      - Returns: The `LLMResponseProtocol` containing the final text or an error if the request fails.
      - Throws: `LLMServiceError` if the request encounters an issue (e.g., invalid response, decoding error, etc.).
      */
-    public func sendStreamingRequest(_ request: LLMRequest, onPartialResponse: ((String) -> Void)? = nil) async throws -> LLMResponseProtocol {
-        // Ensure streaming is enabled for this method
-        guard request.stream else {
-            throw LLMServiceError.custom(message: "Streaming is required in sendStreamingRequest(). Set request.stream to true.")
-        }
+    public func sendStreamingRequest(_ request: LLMRequest, onPartialResponse: ((String) -> Void)?) async throws -> LLMResponseProtocol {
+        try validateStreamingConfig(request, expectStreaming: true)
 
         // Validate the base URL
         guard var components = URLComponents(string: baseURL) else {
@@ -188,12 +255,13 @@ public class OllamaService: LLMServiceProtocol {
             throw LLMServiceError.invalidURL
         }
 
-        // Combine all messages into a single prompt text, following Ollama’s expected format
-        let prompt = request.messages.map { "\($0.role.rawValue.capitalized): \($0.content)" }.joined(separator: "\n")
+        // Use helper function and combine all messages into a single prompt
+        let messages = prepareMessages(from: request, serviceSystemPrompt: systemPrompt)
+        let prompt = messages.map { "\($0.role.rawValue.capitalized): \($0.content)" }.joined(separator: "\n")
 
         // Construct the request body as per Ollama API
         let body: [String: Any] = [
-            "model": request.model ?? "llama3.2", // Default to llama3.2
+            "model": request.model ?? defaultModel, 
             "prompt": prompt,
             "max_tokens": request.maxTokens,
             "temperature": request.temperature,
@@ -215,12 +283,12 @@ public class OllamaService: LLMServiceProtocol {
         return try await withCheckedThrowingContinuation { continuation in
             let streamingDelegate = StreamingDelegate(
                 vendor: vendor,
-                model: request.model ?? "llama3.2",
+                model: request.model ?? defaultModel,
                 logger: logger,
                 onPartialResponse: onPartialResponse ?? { _ in },
                 continuation: continuation
             )
-            let session = URLSession(configuration: .default, delegate: streamingDelegate, delegateQueue: nil)
+            let session = URLSession(configuration: self.sessionConfiguration, delegate: streamingDelegate, delegateQueue: nil)
             let task = session.dataTask(with: urlRequest)
             task.resume()
         }

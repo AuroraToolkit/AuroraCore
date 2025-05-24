@@ -28,6 +28,9 @@ public struct LLMRequest {
     /// Whether or not to stream the response (default is `false`).
     public let stream: Bool
 
+    /// Optional system prompt that overrides the service's default system prompt
+    public let systemPrompt: String?
+
     /// Additional less commonly used configuration options to influence the behavior of the LLM.
     public let options: LLMRequestOptions?
 
@@ -40,6 +43,7 @@ public struct LLMRequest {
         -  maxTokens: The maximum number of tokens to generate in the response (default is 256).
         -  model: An optional string representing the model to use (default is nil, meaning the default model for the service will be used).
         -  stream: Whether or not the response should be streamed (default is `false`).
+        -  systemPrompt: An optional string representing a custom system prompt to use and override the service system prompt (default is nil).
         -  options: An optional `LLMRequestOptions` object containing less commonly used parameters to customize the response generation.
      */
     public init(
@@ -48,6 +52,7 @@ public struct LLMRequest {
         maxTokens: Int = 256,
         model: String? = nil,
         stream: Bool = false,
+        systemPrompt: String? = nil,
         options: LLMRequestOptions? = nil
     ) {
         self.messages = messages
@@ -55,6 +60,7 @@ public struct LLMRequest {
         self.maxTokens = maxTokens
         self.model = model
         self.stream = stream
+        self.systemPrompt = systemPrompt
         self.options = options
     }
 

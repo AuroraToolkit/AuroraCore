@@ -106,21 +106,10 @@ public class AnthropicService: LLMServiceProtocol {
      - Throws: `LLMServiceError` if the request encounters an issue (e.g., invalid response, decoding error, etc.).
      */
     public func sendRequest(_ request: LLMRequest) async throws -> LLMResponseProtocol {
-        // Ensure streaming is disabled for this method
-        guard request.stream == false else {
-            throw LLMServiceError.custom(message: "Streaming is not supported in sendRequest(). Use sendStreamingRequest() instead.")
-        }
+        try validateStreamingConfig(request, expectStreaming: false)
 
-        // Map LLMMessage instances to the format expected by the API
-        var systemMessage: String?
-        let userMessages = request.messages.compactMap { message -> [String: String]? in
-            if message.role == .system {
-                systemMessage = message.content
-                return nil
-            } else {
-                return ["role": message.role.rawValue, "content": message.content]
-            }
-        }
+        // Use helper function for consistent system prompt handling
+        let (systemMessage, userMessages) = prepareAnthropicMessages(from: request, serviceSystemPrompt: systemPrompt)
 
         // Construct the body with a top-level system parameter
         var body: [String: Any] = [
@@ -178,22 +167,11 @@ public class AnthropicService: LLMServiceProtocol {
      - Returns: The `LLMResponseProtocol` containing the generated text or an error if the request fails.
      - Throws: `LLMServiceError` if the request encounters an issue (e.g., missing API key, invalid response, etc.).
      */
-    public func sendStreamingRequest(_ request: LLMRequest, onPartialResponse: ((String) -> Void)? = nil) async throws -> LLMResponseProtocol {
-        // Ensure streaming is enabled for this method
-        guard request.stream else {
-            throw LLMServiceError.custom(message: "Streaming is required in sendStreamingRequest(). Set request.stream to true.")
-        }
+    public func sendStreamingRequest(_ request: LLMRequest, onPartialResponse: ((String) -> Void)?) async throws -> LLMResponseProtocol {
+        try validateStreamingConfig(request, expectStreaming: true)
 
-        // Map LLMMessage instances to the format expected by the API
-        var systemMessage: String?
-        let userMessages = request.messages.compactMap { message -> [String: String]? in
-            if message.role == .system {
-                systemMessage = message.content
-                return nil
-            } else {
-                return ["role": message.role.rawValue, "content": message.content]
-            }
-        }
+        // Use helper function for consistent system prompt handling
+        let (systemMessage, userMessages) = prepareAnthropicMessages(from: request, serviceSystemPrompt: systemPrompt)
 
         // Construct the body with a top-level system parameter
         var body: [String: Any] = [

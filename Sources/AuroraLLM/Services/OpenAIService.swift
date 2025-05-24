@@ -87,10 +87,7 @@ public class OpenAIService: LLMServiceProtocol {
      - Throws: `LLMServiceError` if the request encounters an issue (e.g., missing API key, invalid response, etc.).
      */
     public func sendRequest(_ request: LLMRequest) async throws -> LLMResponseProtocol {
-        // Ensure streaming is disabled for this method
-        guard request.stream == false else {
-            throw LLMServiceError.custom(message: "Streaming is not supported in sendRequest(). Use sendStreamingRequest() instead.")
-        }
+        try validateStreamingConfig(request, expectStreaming: false)
 
         // Setup URL and URLRequest
         guard var components = URLComponents(string: baseURL) else {
@@ -102,9 +99,8 @@ public class OpenAIService: LLMServiceProtocol {
             throw LLMServiceError.invalidURL
         }
 
-        let messagesPayload = request.messages.map { message in
-            ["role": message.role.rawValue, "content": message.content]
-        }
+        // Use helper function for consistent system prompt handling
+        let messagesPayload = prepareOpenAIMessagesPayload(from: request, serviceSystemPrompt: systemPrompt)
 
         let body: [String: Any] = [
             "model": request.model ?? "gpt-4o",
@@ -115,7 +111,7 @@ public class OpenAIService: LLMServiceProtocol {
             "frequency_penalty": request.options?.frequencyPenalty ?? 0.0,
             "presence_penalty": request.options?.presencePenalty ?? 0.0,
             "stop": request.options?.stopSequences ?? [],
-            "stream": request.stream,
+            "stream": false,
         ]
 
         let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
@@ -160,10 +156,7 @@ public class OpenAIService: LLMServiceProtocol {
      - Throws: `LLMServiceError` if the request encounters an issue (e.g., missing API key, invalid response, etc.).
      */
     public func sendStreamingRequest(_ request: LLMRequest, onPartialResponse: ((String) -> Void)?) async throws -> LLMResponseProtocol {
-        // Ensure streaming is enabled for this method
-        guard request.stream else {
-            throw LLMServiceError.custom(message: "Streaming is required in sendStreamingRequest(). Set request.stream to true.")
-        }
+        try validateStreamingConfig(request, expectStreaming: true)
 
         // URL and request setup
         guard var components = URLComponents(string: baseURL) else {
@@ -174,9 +167,8 @@ public class OpenAIService: LLMServiceProtocol {
             throw LLMServiceError.invalidURL
         }
 
-        let messagesPayload = request.messages.map { message in
-            ["role": message.role.rawValue, "content": message.content]
-        }
+        // Use helper function for consistent system prompt handling
+        let messagesPayload = prepareOpenAIMessagesPayload(from: request, serviceSystemPrompt: systemPrompt)
 
         let body: [String: Any] = [
             "model": request.model ?? "gpt-4o",
